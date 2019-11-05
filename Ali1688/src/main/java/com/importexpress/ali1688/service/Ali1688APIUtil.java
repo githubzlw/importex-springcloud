@@ -116,7 +116,7 @@ public class Ali1688APIUtil {
         LocalDateTime now = LocalDateTime.now();
         jsonObject.put("secache_date", now);
         jsonObject.put("server_time", now);
-        jsonObject.put("item", "");
+        jsonObject.put("item", null);
         return jsonObject;
     }
 

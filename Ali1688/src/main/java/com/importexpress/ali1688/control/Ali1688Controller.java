@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ public class Ali1688Controller {
     }
 
     @GetMapping("/getItems")
-    public List<JSONObject> getItems(Long[] pid){
-        return Ali1688APIUtil.getInstance().getItems(pid);
+    public List<JSONObject> getItems(Long[] pids){
+        return Ali1688APIUtil.getInstance().getItems(pids);
     }
 }
