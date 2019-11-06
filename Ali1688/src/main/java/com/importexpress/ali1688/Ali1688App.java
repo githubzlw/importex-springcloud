@@ -14,7 +14,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 public class Ali1688App {
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
         SpringApplication.run(Ali1688App.class, args);
     }

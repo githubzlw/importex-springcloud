@@ -1,23 +1,14 @@
-package com.importexpress.ali1688.service;
+package com.importexpress.ali1688.util;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.common.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -25,21 +16,12 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/11/4
  */
 @Slf4j
-public class Ali1688APIUtil {
-
-    /**
-     * 获取商品详情
-     */
-    private static final String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?num_iid=%s&cache=no&api_name=item_get&lang=en&key=tel13661551626&secret=20191104";
-
-
-    private static final String URL_ITEM_SEARCH = "http://api.onebound.cn/1688/api_call.php?seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&cache=no&api_name=item_search_shop&lang=en&key=tel13661551626&secret=20191104";
-
+public class UrlUtil {
 
     /**
      * singleton
      */
-    private static Ali1688APIUtil singleton = null;
+    private static UrlUtil singleton = null;
 
     /**
      * The singleton HTTP client.
@@ -52,20 +34,21 @@ public class Ali1688APIUtil {
     /**
      * 构造函数
      */
-    private Ali1688APIUtil() {
+    private UrlUtil() {
 
     }
 
     /**
      * getInstance
+     *
      * @return
      */
-    public static Ali1688APIUtil getInstance() {
+    public static UrlUtil getInstance() {
 
         if (singleton == null) {
-            synchronized (Ali1688APIUtil.class) {
+            synchronized (UrlUtil.class) {
                 if (singleton == null) {
-                    singleton = new Ali1688APIUtil();
+                    singleton = new UrlUtil();
                 }
             }
         }
@@ -73,132 +56,25 @@ public class Ali1688APIUtil {
     }
 
     /**
-     * 1688商品详情查询
-     * @param pid
-     * @return
-     */
-    public JSONObject getItem(Long pid) {
-
-        try {
-            JSONObject jsonObject = callURLByGet(String.format(URL_ITEM_GET, pid));
-            String error = jsonObject.getString("error");
-            if (StringUtils.isNotEmpty(error)) {
-                log.warn("The pid:[{}] is not invalid.", pid);
-                return null;
-            } else {
-                return jsonObject;
-            }
-        } catch (IOException e) {
-            log.error("getItem", e);
-            return null;
-        }
-    }
-
-    /**
-     * get items by pid array
-     * @param pids
-     * @return
-     */
-    public List<JSONObject> getItems(Long[] pids) {
-
-        List<JSONObject> lstResult = new CopyOnWriteArrayList<JSONObject>();
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
-        for(long pid : pids){
-            executorService.execute(() -> {
-                JSONObject item = Ali1688APIUtil.getInstance().getItem(pid);
-                if(item!=null) {
-                    lstResult.add(item);
-                } else {
-                    lstResult.add(getNotExistPid());
-                }
-            });
-        }
-        executorService.shutdown();
-        try {
-            executorService.awaitTermination(10, TimeUnit.MINUTES);
-        } catch (InterruptedException e) {
-            log.error("InterruptedException",e);
-        }
-
-        return lstResult;
-    }
-
-    public List<Ali1688Item> getItemsInShop(String shopid) {
-
-        try {
-            List<Ali1688Item> result = new ArrayList<>(100);
-
-            int count = fillItems(result, shopid, 1);
-            if(count!=-1){
-                for(int i=2;i<=count;i++){
-                    fillItems(result, shopid, i);
-                }
-                return result;
-            }else{
-                log.warn("no data shopid:[{}]",shopid);
-                return null;
-            }
-
-        } catch (IOException e) {
-            log.error("getItemsInShop", e);
-            return null;
-        }
-    }
-
-    private int fillItems(List<Ali1688Item> lstAllItems,String shopid,int page) throws IOException {
-
-        log.info("begin fillItems: shopid:[{}] page:[{}]",shopid,page);
-
-        JSONObject jsonObject = callURLByGet(String.format(URL_ITEM_SEARCH, shopid,page));
-        if(!isHaveData(jsonObject)){
-            return -1;
-        }
-
-        JSONObject items = jsonObject.getJSONObject("items");
-        Ali1688Item[] ali1688Items = (Ali1688Item[]) JSON.parseObject(items.getJSONArray("item").toJSONString(), Ali1688Item[].class);
-        lstAllItems.addAll(Arrays.asList(ali1688Items));
-
-        return  Integer.parseInt(items.getString("pagecount"));
-
-    }
-
-    private boolean isHaveData(JSONObject jsonObject){
-
-        return StringUtils.isEmpty(jsonObject.getString("error"));
-    }
-
-
-    /**
-     * return offline pid json object
-     * @return
-     */
-    private JSONObject getNotExistPid() {
-        JSONObject jsonObject = new JSONObject();
-        LocalDateTime now = LocalDateTime.now();
-        jsonObject.put("secache_date", now);
-        jsonObject.put("server_time", now);
-        jsonObject.put("item", null);
-        return jsonObject;
-    }
-
-    /**
      * 调用URL（Get）
-     * @param URL
+     *
+     * @param url
      * @return
      * @throws IOException
      */
-    private JSONObject callURLByGet(String URL) throws IOException {
+    public JSONObject callUrlByGet(String url) throws IOException {
 
-        Request request = new Request.Builder().url(URL).build();
+        Request request = new Request.Builder().url(url).build();
 
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {
             throw new RuntimeException("response is not successful");
         }
-        return JSON.parseObject(response.body().string());
+        return response.body()!=null?
+                JSON.parseObject(response.body().string()):null;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         String json = "{\n" +
                 "\t\"user\": {\n" +
                 "\t\t\"id\": \"\",\n" +
@@ -358,4 +234,6 @@ public class Ali1688APIUtil {
         Ali1688Item[] ali1688Item = (Ali1688Item[]) JSON.parseObject(items.getJSONArray("item").toJSONString(), Ali1688Item[].class);
         System.out.println("ali1688Item = " + ali1688Item);
     }
+
+
 }
