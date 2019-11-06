@@ -2,9 +2,7 @@ package com.importexpress.ali1688.service;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.importexpress.ali1688.util.UrlUtil;
 import com.importexpress.common.pojo.Ali1688Item;
-import com.netflix.discovery.converters.Auto;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -7,12 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author luohao
@@ -51,7 +49,7 @@ public class Ali1688Controller {
     @GetMapping("/shop/{shopid}")
     public List<Ali1688Item> getItemsInShop(@PathVariable("shopid") String shopid) {
 
-        List<Ali1688Item> lstItems = null;
+        List<Ali1688Item> lstItems ;
         try{
             lstItems = ali1688Service.getItemsInShop(shopid);
         }catch(IllegalStateException e1){

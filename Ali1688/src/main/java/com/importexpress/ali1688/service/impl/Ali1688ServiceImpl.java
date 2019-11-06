@@ -37,13 +37,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     /**
      * 获取商品详情
      */
-    private static final String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?num_iid=%s&cache=no&api_name=item_get&lang=en&key=tel13661551626&secret=20191104";
+    private static final String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?num_iid=%s&cache=no&api_name=item_get&lang=zh-CN&key=tel13661551626&secret=20191104";
 
 
     /**
      * 获取店铺商品
      */
-    private static final String URL_ITEM_SEARCH = "http://api.onebound.cn/1688/api_call.php?seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&cache=no&api_name=item_search_shop&lang=en&key=tel13661551626&secret=20191104";
+    private static final String URL_ITEM_SEARCH = "http://api.onebound.cn/1688/api_call.php?seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&cache=no&api_name=item_search_shop&lang=zh-CN&key=tel13661551626&secret=20191104";
 
 
     /**
