@@ -6,10 +6,13 @@ import com.importexpress.common.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author luohao
@@ -25,20 +28,28 @@ public class Ali1688Controller {
         this.ali1688Service=ali1688Service;
     }
 
-    @GetMapping("/item")
-    public JSONObject getItem(@RequestParam("pid") Long pid) {
+    @GetMapping("/hello")
+    public String hello() {
 
-        return ali1688Service.getItem(pid);
+        return "hello world!";
     }
 
-    @GetMapping("/items")
-    public List<JSONObject> getItems(@RequestParam("pids") Long[] pids) {
+    @GetMapping("/pids/{pids}")
+    public List<JSONObject> pid(@PathVariable("pids") Long[] pids) {
 
-        return ali1688Service.getItems(pids);
+        if(pids !=null && pids.length==1){
+
+            List<JSONObject> lstResult = new ArrayList<JSONObject>(1);
+            lstResult.add(ali1688Service.getItem(pids[0]));
+            return lstResult;
+        }else{
+            return ali1688Service.getItems(pids);
+        }
     }
 
-    @GetMapping("/shop")
-    public List<Ali1688Item> getItemsInShop(@RequestParam("shopid") String shopid) {
+
+    @GetMapping("/shop/{shopid}")
+    public List<Ali1688Item> getItemsInShop(@PathVariable("shopid") String shopid) {
 
         List<Ali1688Item> lstItems = null;
         try{

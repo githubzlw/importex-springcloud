@@ -123,6 +123,10 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             List<Ali1688Item> result = new ArrayList<>(100);
 
             Map<String,Integer> mapSum = fillItems(result, shopid, 1);
+            if(mapSum == null ){
+                //无数据
+                return result;
+            }
             int count = mapSum.get("pagecount");
             int total = mapSum.get("total_results");
 
@@ -184,7 +188,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      */
     private boolean isHaveData(JSONObject jsonObject) {
 
-        return StringUtils.isEmpty(jsonObject.getString("error"));
+        String error = jsonObject.getString("error");
+        boolean result = StringUtils.isEmpty(error);
+        if(!result){
+            log.warn("catch return result error: [{}]",error);
+        }
+        return result;
     }
 
     /**
