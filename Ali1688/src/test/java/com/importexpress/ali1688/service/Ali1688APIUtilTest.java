@@ -2,6 +2,7 @@ package com.importexpress.ali1688.service;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.importexpress.common.pojo.Ali1688Item;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -89,5 +90,12 @@ public class Ali1688APIUtilTest {
         executorService.shutdown();
         executorService.awaitTermination(5, TimeUnit.MINUTES);
         System.err.println("not exist " + lstOfflinePid);
+    }
+
+    @Test
+    public void getItemsInShop()  {
+        List<Ali1688Item> result = Ali1688APIUtil.getInstance().getItemsInShop("shop1432227742608");
+        Assert.assertNotNull(result);
+        Assert.assertEquals(169,result.size());
     }
 }
