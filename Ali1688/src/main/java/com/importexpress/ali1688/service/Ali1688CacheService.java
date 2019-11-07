@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -57,6 +58,23 @@ public class Ali1688CacheService {
 
     public void setShop(String shopId, List<Ali1688Item> value){
         this.redisTemplate.opsForValue().set(REDIS_SHOP_PRE+shopId,JSONObject.toJSONString(value),REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
+    }
+
+    public int clearNotExistItemInCache(){
+        int count=0;
+        Set<String> keys = this.redisTemplate.keys(REDIS_PID_PRE+"*");
+        if(keys != null) {
+            for (String key : keys) {
+                String value = this.redisTemplate.opsForValue().get(key);
+                JSONObject jsonObject = JSONObject.parseObject(value);
+                if (StringUtils.isNotEmpty(jsonObject.getString("reason"))){
+                    if (this.redisTemplate.delete(key)) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
     }
 
 }

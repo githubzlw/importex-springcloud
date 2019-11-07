@@ -63,4 +63,10 @@ public class Ali1688Controller {
         }
         return lstItems;
     }
+
+    @GetMapping("/pids/clearNotExistItemInCache")
+    public int clearNotExistItemInCache() {
+
+            return ali1688Service.clearNotExistItemInCache();
+    }
 }

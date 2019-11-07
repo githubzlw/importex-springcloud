@@ -153,6 +153,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         }
     }
 
+    @Override
+    public int clearNotExistItemInCache(){
+        return this.ali1688CacheService.clearNotExistItemInCache();
+    }
+
     /**
      * fillItems
      *
@@ -215,5 +220,6 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         jsonObject.put("pid", pid);
         return jsonObject;
     }
+
 
 }

@@ -60,5 +60,12 @@ public class Ali1688ControllerTest {
                 .andExpect(jsonPath("$.[0].num_iid").value("588766108897"))
                 .andDo(print());
     }
+
+    @Test
+    public void clearNotExistItemInCache() throws Exception {
+        mockMvc.perform(get("/pids/clearNotExistItemInCache"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 }
 
