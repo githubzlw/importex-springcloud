@@ -33,3 +33,16 @@ gen
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+Ali1688/logs/
+Ali1688/src/main/java/com/importexpress/ali1688/exception/
+Ali1688/target/
+common/src/main/resources/
+common/src/test/
+common/target/
+logs/
+mail/src/main/resources/static/
+mail/target/
+pay/src/test/
+pay/target/
+registry/src/test/
+registry/target/
