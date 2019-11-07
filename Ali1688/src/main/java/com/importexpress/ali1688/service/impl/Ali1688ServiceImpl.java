@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.service.Ali1688CacheService;
 import com.importexpress.ali1688.service.Ali1688Service;
+import com.importexpress.ali1688.util.Config;
 import com.importexpress.ali1688.util.UrlUtil;
 import com.importexpress.common.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,25 +27,28 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @Service
+@Configuration
 public class Ali1688ServiceImpl implements Ali1688Service {
 
     private Ali1688CacheService ali1688CacheService;
 
+    private Config config;
+
     @Autowired
-    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService){
+    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService,Config config){
         this.ali1688CacheService = ali1688CacheService;
+        this.config = config;
     }
 
     /**
      * 获取商品详情
      */
-    private static final String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?num_iid=%s&cache=no&api_name=item_get&lang=zh-CN&key=tel13661551626&secret=20191104";
-
+    private final static String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&num_iid=%s&cache=no&api_name=item_get&lang=zh-CN";
 
     /**
      * 获取店铺商品
      */
-    private static final String URL_ITEM_SEARCH = "http://api.onebound.cn/1688/api_call.php?seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&cache=no&api_name=item_search_shop&lang=zh-CN&key=tel13661551626&secret=20191104";
+    private final static String URL_ITEM_SEARCH = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&cache=no&api_name=item_search_shop&lang=zh-CN";
 
 
     /**
@@ -61,10 +66,10 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         }
 
         try {
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, pid));
+            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_KEY,config.API_SECRET,pid));
             String error = jsonObject.getString("error");
             if (StringUtils.isNotEmpty(error)) {
-                jsonObject = getNotExistPid();
+                jsonObject = getNotExistPid(pid);
             }
             this.ali1688CacheService.setItem(pid,jsonObject);
             return jsonObject;
@@ -91,7 +96,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 if (item != null) {
                     lstResult.add(item);
                 } else {
-                    lstResult.add(getNotExistPid());
+                    lstResult.add(getNotExistPid(pid));
                 }
             });
         }
@@ -163,7 +168,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
         Map<String,Integer> result = new HashMap<>(3);
 
-        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, shopid, page));
+        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_KEY,config.API_SECRET,shopid, page));
         if (!isHaveData(jsonObject)) {
             return null;
         }
@@ -201,12 +206,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      *
      * @return
      */
-    private JSONObject getNotExistPid() {
+    private JSONObject getNotExistPid(Long pid) {
         JSONObject jsonObject = new JSONObject();
         LocalDateTime now = LocalDateTime.now();
         jsonObject.put("secache_date", now);
         jsonObject.put("server_time", now);
-        jsonObject.put("item", null);
+        jsonObject.put("reason", "no data");
+        jsonObject.put("pid", pid);
         return jsonObject;
     }
 

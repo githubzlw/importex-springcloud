@@ -11,10 +11,10 @@
 
     <modules>
         <module>common</module>
-        <module>mail</module>
         <module>registry</module>
         <module>pay</module>
         <module>ali1688</module>
+<!--        <module>mail</module>-->
     </modules>
 
     <parent>
