@@ -36,8 +36,14 @@ public interface Ali1688Service {
     List<Ali1688Item> getItemsInShop(String shopid);
 
     /**
-     * 清楚redis缓存里面下架商品
+     * 清除redis缓存里面下架商品
      * @return
      */
     int clearNotExistItemInCache();
+
+    /**
+     * 下架商品数量统计
+     * @return
+     */
+    int getNotExistItemInCache();
 }

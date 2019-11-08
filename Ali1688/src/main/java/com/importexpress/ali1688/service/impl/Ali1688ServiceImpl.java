@@ -155,7 +155,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
     @Override
     public int clearNotExistItemInCache(){
-        return this.ali1688CacheService.clearNotExistItemInCache();
+        return this.ali1688CacheService.processNotExistItemInCache(true);
+    }
+
+    @Override
+    public int getNotExistItemInCache(){
+        return this.ali1688CacheService.processNotExistItemInCache(false);
     }
 
     /**

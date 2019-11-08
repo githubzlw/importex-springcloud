@@ -60,7 +60,8 @@ public class Ali1688CacheService {
         this.redisTemplate.opsForValue().set(REDIS_SHOP_PRE+shopId,JSONObject.toJSONString(value),REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
-    public int clearNotExistItemInCache(){
+
+    public int processNotExistItemInCache(boolean isClear){
         int count=0;
         Set<String> keys = this.redisTemplate.keys(REDIS_PID_PRE+"*");
         if(keys != null) {
@@ -68,13 +69,20 @@ public class Ali1688CacheService {
                 String value = this.redisTemplate.opsForValue().get(key);
                 JSONObject jsonObject = JSONObject.parseObject(value);
                 if (StringUtils.isNotEmpty(jsonObject.getString("reason"))){
-                    if (this.redisTemplate.delete(key)) {
+                    if(isClear){
+                        if (this.redisTemplate.delete(key)) {
+                            count++;
+                        }
+                    }else{
                         count++;
                     }
+
                 }
             }
         }
         return count;
     }
+
+
 
 }

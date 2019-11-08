@@ -61,11 +61,19 @@ public class Ali1688ControllerTest {
                 .andDo(print());
     }
 
+//    @Test
+//    public void clearNotExistItemInCache() throws Exception {
+//        mockMvc.perform(get("/pids/clearNotExistItemInCache"))
+//                .andExpect(status().isOk())
+//                .andDo(print());
+//    }
+
     @Test
-    public void clearNotExistItemInCache() throws Exception {
-        mockMvc.perform(get("/pids/clearNotExistItemInCache"))
+    public void getNotExistItemInCache() throws Exception {
+        mockMvc.perform(get("/pids/getNotExistItemInCache"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 }
+
 
