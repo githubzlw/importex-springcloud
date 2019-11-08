@@ -1,13 +1,12 @@
 package com.importexpress.common.pojo;
 
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author luohao
  * @date 2019/6/25
  */
-@Slf4j
 public class MultiSiteUtil {
+
 
     public static SiteEnum siteEnum;
 
@@ -30,7 +29,6 @@ public class MultiSiteUtil {
             case PETS:
                 return 'P';
             default:
-                log.error("Unsupport siteEnum:[{}]",siteEnum);
                 throw new IllegalArgumentException("Unsupport siteEnum:"+siteEnum);
         }
     }

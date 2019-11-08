@@ -1,12 +1,10 @@
 package com.importexpress.common.pojo;
 
-import lombok.Data;
 
 /**
  * @author luohao
  * @date 2019/11/5
  */
-@Data
 public class Ali1688Item {
 
     private String num_iid;
