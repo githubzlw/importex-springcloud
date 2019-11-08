@@ -1,23 +1,23 @@
-//package com.importexpress.email.mq;
-//
+package com.importexpress.email.mq;
+
 //import com.importexpress.common.pojo.SiteEnum;
 //import com.importexpress.common.pojo.mail.MailBean;
 //import com.importexpress.common.pojo.mail.TemplateType;
-//import com.importexpress.email.service.SendMail;
-//import org.junit.Test;
-//import org.junit.runner.RunWith;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.test.context.junit4.SpringRunner;
-//
-//import java.util.HashMap;
-//import java.util.Map;
-//
-//
-//@RunWith(SpringRunner.class)
-//@SpringBootTest
-//public class SenderTest {
-//
+import com.importexpress.email.service.SendMail;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class SenderTest {
+
 //    @Autowired
 //    private SendMail sender;
 //
@@ -42,5 +42,5 @@
 //        sender.sendMail(mailBean);
 //
 //    }
-//
-//}
+
+}
