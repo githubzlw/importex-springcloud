@@ -11,7 +11,7 @@
 
     <modules>
         <module>common</module>
-        <module>ali1688</module>
+        <module>Ali1688</module>
         <module>mail</module>
         <module>registry</module>
         <module>pay</module>
