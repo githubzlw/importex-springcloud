@@ -2,9 +2,11 @@ package com.importexpress.ali1688.control;
 
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.service.Ali1688Service;
+import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -75,4 +77,17 @@ public class Ali1688Controller {
 
             return ali1688Service.getNotExistItemInCache();
     }
+
+    @GetMapping("/pids/setItemsExpire")
+    public CommonResult setItemsExpire(@Param("days")int days) {
+
+        if(days <=0 ){
+            return new CommonResult().failed("input params is invalid.");
+        }else{
+            ali1688Service.setItemsExpire(days);
+            return new CommonResult().success(null);
+        }
+    }
+
+
 }

@@ -46,4 +46,10 @@ public interface Ali1688Service {
      * @return
      */
     int getNotExistItemInCache();
+
+    /**
+     * 设置key的过期时间
+     * @param days
+     */
+    void setItemsExpire(int days);
 }

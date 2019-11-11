@@ -74,6 +74,32 @@ public class Ali1688ControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
     }
+
+    @Test
+    public void setItemsExpire1() throws Exception {
+        mockMvc.perform(get("/pids/setItemsExpire").param("days", "7"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"));
+    }
+
+    @Test
+    public void setItemsExpire2() throws Exception {
+        mockMvc.perform(get("/pids/setItemsExpire").param("days", "0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("500"));
+    }
+
+    @Test
+    public void setItemsExpire3() throws Exception {
+        mockMvc.perform(get("/pids/setItemsExpire").param("days", "-1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("500"));
+    }
+
+    @Test
+    public void setItemsExpire4() throws Exception {
+        mockMvc.perform(get("/pids/setItemsExpire").param("days", ""))
+                .andExpect(status().isBadRequest());
+    }
+
 }
-
-

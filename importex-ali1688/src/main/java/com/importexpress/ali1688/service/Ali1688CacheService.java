@@ -2,6 +2,7 @@ package com.importexpress.ali1688.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.pojo.Ali1688Item;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -17,6 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2019/11/6
  */
 @Service
+@Slf4j
 public class Ali1688CacheService {
 
     private StringRedisTemplate redisTemplate;
@@ -83,6 +85,29 @@ public class Ali1688CacheService {
         return count;
     }
 
+    /**
+     * 重新设置key的过期时间
+     * @param days
+     * @return
+     */
+    public void setItemsExpire(int days){
+
+        //商品过期时间设置
+        Set<String> keys = this.redisTemplate.keys(REDIS_PID_PRE+"*");
+        if(keys != null) {
+            for (String key : keys) {
+                this.redisTemplate.expire(key, days, TimeUnit.DAYS);
+            }
+        }
+
+        //店铺过期时间设置
+        keys = this.redisTemplate.keys(REDIS_SHOP_PRE+"*");
+        if(keys != null) {
+            for (String key : keys) {
+                this.redisTemplate.expire(key, days, TimeUnit.DAYS);
+            }
+        }
+    }
 
 
 }

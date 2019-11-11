@@ -163,6 +163,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.ali1688CacheService.processNotExistItemInCache(false);
     }
 
+    @Override
+    public void setItemsExpire(int days){
+        this.ali1688CacheService.setItemsExpire(days);
+    }
+
+
     /**
      * fillItems
      *
