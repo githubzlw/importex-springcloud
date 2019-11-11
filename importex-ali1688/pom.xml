@@ -41,6 +41,11 @@
             <artifactId>okhttp</artifactId>
             <version>3.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.importexpress</groupId>
+            <artifactId>importex-comm</artifactId>
+            <version>${importex.latest.version}</version>
+        </dependency>
 
     </dependencies>
 
