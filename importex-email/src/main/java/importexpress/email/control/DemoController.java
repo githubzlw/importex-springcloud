@@ -1,4 +1,4 @@
-package com.importexpress.email.control;
+package importexpress.email.control;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;

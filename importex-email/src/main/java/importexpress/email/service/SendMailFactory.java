@@ -1,8 +1,8 @@
-package com.importexpress.email.service;
+package importexpress.email.service;
 
-import com.importexpress.common.pojo.mail.MailBean;
-import com.importexpress.common.pojo.mail.TemplateType;
-import com.importexpress.email.service.impl.SendMailByAmazon;
+import importexpress.common.pojo.mail.MailBean;
+import importexpress.common.pojo.mail.TemplateType;
+import importexpress.email.service.impl.SendMailByAmazon;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

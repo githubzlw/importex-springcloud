@@ -1,8 +1,8 @@
-package com.importexpress.email.service.impl;
+package importexpress.email.service.impl;
 
 import com.importexpress.comm.pojo.SiteEnum;
-import com.importexpress.common.pojo.mail.MailBean;
-import com.importexpress.email.service.SendMail;
+import importexpress.common.pojo.mail.MailBean;
+import importexpress.email.service.SendMail;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

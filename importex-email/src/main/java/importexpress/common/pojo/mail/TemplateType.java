@@ -1,4 +1,4 @@
-package com.importexpress.common.pojo.mail;
+package importexpress.common.pojo.mail;
 
 /**
  * @author luohao

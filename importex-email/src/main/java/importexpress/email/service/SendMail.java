@@ -1,6 +1,7 @@
-package com.importexpress.email.service;
+package importexpress.email.service;
 
-import com.importexpress.common.pojo.mail.MailBean;
+
+import importexpress.common.pojo.mail.MailBean;
 
 public interface SendMail {
 
