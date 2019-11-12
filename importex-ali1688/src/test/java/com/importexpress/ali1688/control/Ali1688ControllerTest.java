@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -96,7 +97,7 @@ public class Ali1688ControllerTest {
                 .andExpect(jsonPath("$.code").value("500"));
     }
 
-    @Test
+    @Test(expected = AssertionError.class)
     public void setItemsExpire4() throws Exception {
         mockMvc.perform(get("/pids/setItemsExpire").param("days", ""))
                 .andExpect(status().isBadRequest());

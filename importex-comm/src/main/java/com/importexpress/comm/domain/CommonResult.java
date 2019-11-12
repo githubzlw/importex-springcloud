@@ -9,6 +9,13 @@ public class CommonResult {
     public static final int SUCCESS = 200;
     //操作失败
     public static final int FAILED = 500;
+
+    public static final int SYSTEM_ERROR = 501;
+    public static final int PARAM_ERROR = 502;
+    public static final int HTTP_METHOD_NOT_SURPPORT = 503;
+    public static final int EXPIRE_ERROR = 504;
+
+
     private int code;
     private String message;
     private Object data;

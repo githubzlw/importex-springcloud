@@ -6,6 +6,8 @@ import com.importexpress.ali1688.service.Ali1688CacheService;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
 import com.importexpress.ali1688.util.UrlUtil;
+import com.importexpress.comm.exception.BizErrorCodeEnum;
+import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -69,13 +71,16 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_KEY,config.API_SECRET,pid));
             String error = jsonObject.getString("error");
             if (StringUtils.isNotEmpty(error)) {
+                if(error.contains("你的授权已经过期")){
+                    throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
+                }
                 jsonObject = getNotExistPid(pid);
             }
             this.ali1688CacheService.setItem(pid,jsonObject);
             return jsonObject;
         } catch (IOException e) {
             log.error("getItem", e);
-            return null;
+            throw new BizException(BizErrorCodeEnum.UNSPECIFIED);
         }
     }
 
