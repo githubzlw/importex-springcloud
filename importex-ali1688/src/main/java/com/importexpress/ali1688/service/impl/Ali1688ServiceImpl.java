@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.service.Ali1688CacheService;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
+import com.importexpress.ali1688.util.InvalidPid;
 import com.importexpress.ali1688.util.UrlUtil;
 import com.importexpress.comm.exception.BizErrorCodeEnum;
 import com.importexpress.comm.exception.BizException;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
@@ -75,7 +77,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 if(error.contains("你的授权已经过期")){
                     throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
                 }
-                jsonObject = getInvalidPid(pid,"no data");
+                jsonObject = InvalidPid.of(pid,"no data");
             }
             this.ali1688CacheService.saveItemIntoRedis(pid,jsonObject);
             checkItem(pid,jsonObject);
@@ -105,11 +107,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                     if (item != null) {
                         lstResult.add(item);
                     } else {
-                        lstResult.add(getInvalidPid(pid,"no data"));
+                        lstResult.add(InvalidPid.of(pid,"no data"));
                     }
                 }catch(BizException be){
                     if(be.getErrorCode() == BizErrorCodeEnum.DESC_IS_NULL){
-                        lstResult.add(getInvalidPid(pid,BizErrorCodeEnum.DESC_IS_NULL.getDescription()));
+                        lstResult.add(InvalidPid.of(pid,BizErrorCodeEnum.DESC_IS_NULL.getDescription()));
                     }
                 }
             });
@@ -232,15 +234,6 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
-    private JSONObject getInvalidPid(Long pid,String resason) {
-        JSONObject jsonObject = new JSONObject();
-        LocalDateTime now = LocalDateTime.now();
-        jsonObject.put("secache_date", now);
-        jsonObject.put("server_time", now);
-        jsonObject.put("reason", resason);
-        jsonObject.put("pid", pid);
-        return jsonObject;
-    }
 
     private void checkItem(Long pid,JSONObject jsonObject) {
         JSONObject item = jsonObject.getJSONObject("item");
