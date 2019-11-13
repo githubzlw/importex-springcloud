@@ -46,3 +46,8 @@ pay/src/test/
 pay/target/
 registry/src/test/
 registry/target/
+importex-ali1688/target/
+importex-comm/target/
+importex-email/target/
+importex-pay/target/
+importex-registry/target/

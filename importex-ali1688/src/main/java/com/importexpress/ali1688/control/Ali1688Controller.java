@@ -77,10 +77,8 @@ public class Ali1688Controller {
         try {
             lstItems = retryer.call(callable);
 
-        } catch (RetryException e) {
+        } catch (RetryException | ExecutionException e) {
             log.warn("getItemsInShop",e);
-        } catch (ExecutionException ee) {
-            log.warn("getItemsInShop",ee);
         }
         return lstItems;
 
