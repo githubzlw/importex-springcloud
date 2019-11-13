@@ -75,7 +75,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 if(error.contains("你的授权已经过期")){
                     throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
                 }
-                jsonObject = getNotExistPid(pid);
+                jsonObject = getInvalidPid(pid,"no data");
             }
             this.ali1688CacheService.saveItemIntoRedis(pid,jsonObject);
             checkItem(pid,jsonObject);
@@ -100,11 +100,17 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         ExecutorService executorService = Executors.newFixedThreadPool(4);
         for (long pid : pids) {
             executorService.execute(() -> {
-                JSONObject item = getItem(pid);
-                if (item != null) {
-                    lstResult.add(item);
-                } else {
-                    lstResult.add(getNotExistPid(pid));
+                try{
+                    JSONObject item = getItem(pid);
+                    if (item != null) {
+                        lstResult.add(item);
+                    } else {
+                        lstResult.add(getInvalidPid(pid,"no data"));
+                    }
+                }catch(BizException be){
+                    if(be.getErrorCode() == BizErrorCodeEnum.DESC_IS_NULL){
+                        lstResult.add(getInvalidPid(pid,BizErrorCodeEnum.DESC_IS_NULL.getDescription()));
+                    }
                 }
             });
         }
@@ -225,17 +231,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return result;
     }
 
-    /**
-     * return offline pid json object
-     *
-     * @return
-     */
-    private JSONObject getNotExistPid(Long pid) {
+
+    private JSONObject getInvalidPid(Long pid,String resason) {
         JSONObject jsonObject = new JSONObject();
         LocalDateTime now = LocalDateTime.now();
         jsonObject.put("secache_date", now);
         jsonObject.put("server_time", now);
-        jsonObject.put("reason", "no data");
+        jsonObject.put("reason", resason);
         jsonObject.put("pid", pid);
         return jsonObject;
     }
@@ -244,9 +246,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         JSONObject item = jsonObject.getJSONObject("item");
         if(item !=null) {
             if(StringUtils.isEmpty(item.getString("desc"))){
-                //TODO 暂时不做处理
                 log.warn("desc is null ,pid:[{}]",pid);
-                //throw new BizException(BizErrorCodeEnum.DESC_IS_NULL);
+                throw new BizException(BizErrorCodeEnum.DESC_IS_NULL);
             }
         }
     }
