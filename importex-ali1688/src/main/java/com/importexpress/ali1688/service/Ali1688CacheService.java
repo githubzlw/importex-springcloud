@@ -1,16 +1,17 @@
 package com.importexpress.ali1688.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -44,7 +45,7 @@ public class Ali1688CacheService {
         }
     }
 
-    public void setItem(Long pid,JSONObject value){
+    public void saveItemIntoRedis(Long pid, JSONObject value){
         this.redisTemplate.opsForValue().set(REDIS_PID_PRE+pid,JSONObject.toJSONString(value),REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
@@ -107,6 +108,34 @@ public class Ali1688CacheService {
                 this.redisTemplate.expire(key, days, TimeUnit.DAYS);
             }
         }
+    }
+
+    /**
+     * desc属性为空的商品数量
+     * @return
+     */
+    public Pair<Integer,Integer> checkDescInAllPids(){
+
+        final List<String> lstCountAll = new CopyOnWriteArrayList<>();
+        final List<String> lstCountDesc = new CopyOnWriteArrayList<>();
+
+        Set<String> keys = this.redisTemplate.keys(REDIS_PID_PRE+"*");
+        if(keys != null) {
+            keys.stream().parallel().forEach( key -> {
+
+                String value = this.redisTemplate.opsForValue().get(key);
+                JSONObject jsonObject = JSONObject.parseObject(value);
+                JSONObject item = jsonObject.getJSONObject("item");
+                if(item !=null){
+                    String strDesc = item.getString("desc");
+                    if (StringUtils.isEmpty(strDesc)){
+                        lstCountDesc.add(key);
+                    }
+                    lstCountAll.add(key);
+                }
+            });
+        }
+        return  Pair.of(lstCountDesc.size(), lstCountAll.size());
     }
 
 

@@ -64,6 +64,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
         JSONObject itemFromRedis = this.ali1688CacheService.getItem(pid);
         if(itemFromRedis != null){
+            checkItem(pid,itemFromRedis);
             return itemFromRedis;
         }
 
@@ -76,7 +77,9 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 }
                 jsonObject = getNotExistPid(pid);
             }
-            this.ali1688CacheService.setItem(pid,jsonObject);
+            this.ali1688CacheService.saveItemIntoRedis(pid,jsonObject);
+            checkItem(pid,jsonObject);
+
             return jsonObject;
         } catch (IOException e) {
             log.error("getItem", e);
@@ -237,5 +240,15 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return jsonObject;
     }
 
+    private void checkItem(Long pid,JSONObject jsonObject) {
+        JSONObject item = jsonObject.getJSONObject("item");
+        if(item !=null) {
+            if(StringUtils.isEmpty(item.getString("desc"))){
+                //TODO 暂时不做处理
+                log.warn("desc is null ,pid:[{}]",pid);
+                //throw new BizException(BizErrorCodeEnum.DESC_IS_NULL);
+            }
+        }
+    }
 
 }
