@@ -1,6 +1,8 @@
 package com.importexpress.ali1688.control;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.rholder.retry.*;
+import com.google.common.base.Predicates;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.pojo.Ali1688Item;
@@ -11,8 +13,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author luohao
@@ -51,19 +57,33 @@ public class Ali1688Controller {
     @GetMapping("/shop/{shopid}")
     public List<Ali1688Item> getItemsInShop(@PathVariable("shopid") String shopid) {
 
-        List<Ali1688Item> lstItems ;
-        try{
-            lstItems = ali1688Service.getItemsInShop(shopid);
-        }catch(IllegalStateException e1){
-            try{
-                log.warn("retry getItemsInShop() , 1 times");
-                lstItems = ali1688Service.getItemsInShop(shopid);
-            }catch(IllegalStateException e2){
-                log.warn("retry getItemsInShop() , 2 times");
-                lstItems = ali1688Service.getItemsInShop(shopid);
+        List<Ali1688Item> lstItems = null;
+
+        Callable<List<Ali1688Item>> callable = new Callable<List<Ali1688Item>>() {
+
+            @Override
+            public List<Ali1688Item> call()  {
+                return  ali1688Service.getItemsInShop(shopid);
             }
+        };
+
+        Retryer<List<Ali1688Item>> retryer = RetryerBuilder.<List<Ali1688Item>>newBuilder()
+                .retryIfResult(Predicates.isNull())
+                .retryIfExceptionOfType(IllegalStateException.class)
+                .withWaitStrategy(WaitStrategies.fixedWait(2000, TimeUnit.MILLISECONDS))
+                .retryIfRuntimeException()
+                .withStopStrategy(StopStrategies.stopAfterAttempt(3))
+                .build();
+        try {
+            lstItems = retryer.call(callable);
+
+        } catch (RetryException e) {
+            log.warn("getItemsInShop",e);
+        } catch (ExecutionException ee) {
+            log.warn("getItemsInShop",ee);
         }
         return lstItems;
+
     }
 
     @GetMapping("/pids/clearNotExistItemInCache")

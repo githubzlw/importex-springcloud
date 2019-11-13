@@ -60,36 +60,11 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-<!--            &lt;!&ndash; mybatis启动器 &ndash;&gt;-->
-<!--            <dependency>-->
-<!--                <groupId>org.mybatis.spring.boot</groupId>-->
-<!--                <artifactId>mybatis-spring-boot-starter</artifactId>-->
-<!--                <version>${mybatis.starter.version}</version>-->
-<!--            </dependency>-->
-<!--            &lt;!&ndash; 通用Mapper启动器 &ndash;&gt;-->
-<!--            <dependency>-->
-<!--                <groupId>tk.mybatis</groupId>-->
-<!--                <artifactId>mapper-spring-boot-starter</artifactId>-->
-<!--                <version>${mapper.starter.version}</version>-->
-<!--            </dependency>-->
-<!--            &lt;!&ndash; 分页助手启动器 &ndash;&gt;-->
-<!--            <dependency>-->
-<!--                <groupId>com.github.pagehelper</groupId>-->
-<!--                <artifactId>pagehelper-spring-boot-starter</artifactId>-->
-<!--                <version>${pageHelper.starter.version}</version>-->
-<!--            </dependency>-->
-<!--            &lt;!&ndash; mysql驱动 &ndash;&gt;-->
-<!--            <dependency>-->
-<!--                <groupId>mysql</groupId>-->
-<!--                <artifactId>mysql-connector-java</artifactId>-->
-<!--                <version>${mysql.version}</version>-->
-<!--            </dependency>-->
-<!--            &lt;!&ndash;FastDFS客户端&ndash;&gt;-->
-<!--            <dependency>-->
-<!--                <groupId>com.github.tobato</groupId>-->
-<!--                <artifactId>fastdfs-client</artifactId>-->
-<!--                <version>${fastDFS.client.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>com.github.rholder</groupId>
+                <artifactId>guava-retrying</artifactId>
+                <version>2.0.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
