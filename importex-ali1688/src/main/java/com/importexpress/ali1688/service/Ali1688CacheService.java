@@ -114,7 +114,7 @@ public class Ali1688CacheService {
      * desc属性为空的商品数量
      * @return
      */
-    public Pair<Integer,Integer> checkDescInAllPids(){
+    public Pair<List<String>,List<String>> checkDescInAllPids(boolean isClear){
 
         final List<String> lstCountAll = new CopyOnWriteArrayList<>();
         final List<String> lstCountDesc = new CopyOnWriteArrayList<>();
@@ -130,12 +130,15 @@ public class Ali1688CacheService {
                     String strDesc = item.getString("desc");
                     if (StringUtils.isEmpty(strDesc)){
                         lstCountDesc.add(key);
+                        if(isClear){
+                            this.redisTemplate.delete(key);
+                        }
                     }
                     lstCountAll.add(key);
                 }
             });
         }
-        return  Pair.of(lstCountDesc.size(), lstCountAll.size());
+        return  Pair.of(lstCountDesc, lstCountAll);
     }
 
 

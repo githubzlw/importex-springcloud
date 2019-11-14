@@ -1,5 +1,7 @@
 package com.importexpress.ali1688.control;
 
+import com.importexpress.ali1688.service.Ali1688CacheService;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +12,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.List;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -19,6 +23,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class Ali1688ControllerTest {
+
+    @Autowired
+    private Ali1688CacheService ali1688CacheService;
 
 
     @Autowired
@@ -103,4 +110,26 @@ public class Ali1688ControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+
+    @Test
+    public void regetNoDescPids() {
+
+        Pair<List<String>, List<String>> pair = ali1688CacheService.checkDescInAllPids(true);
+
+        pair.getLeft().stream().parallel().forEach( pid -> {
+            try {
+                long lngPid = Long.parseLong(pid.split(":")[3]);
+                System.out.println("recatch pid:"+lngPid);
+                mockMvc.perform(get("/pids/"+lngPid))
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$.[0].item").exists())
+                        .andExpect(jsonPath("$.[0].item.num_iid").value(lngPid))
+                        .andDo(print());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+
+    }
 }

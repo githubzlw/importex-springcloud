@@ -30,23 +30,22 @@ public class ControllerAdviceProcessor {
     @ResponseBody
     public CommonResult handleException(HttpServletRequest request, Exception ex) {
 
-        int code = CommonResult.SYSTEM_ERROR;
+        int code = CommonResult.FAILED;
         String msg;
 
         if (ex instanceof BizException) {
 
             BizException bizException = (BizException) ex;
-
-            code = bizException.getErrorCode().getCode();
             msg = bizException.getErrorCode().getDescription();
+            log.warn("bizException: " + bizException.getErrorCode());
         }else{
             msg = ex.getMessage();
+            log.error("code: " + code + "  msg: " + msg, ex);
         }
 
         CommonResult resp = new CommonResult();
         resp.setCode(code);
         resp.setMessage(msg);
-        log.error("code: " + code + "  msg: " + msg, ex);
         return resp;
     }
 

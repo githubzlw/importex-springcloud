@@ -1,19 +1,19 @@
 package com.importexpress.comm.domain;
 
 
+import lombok.Data;
+
 /**
  * 通用返回对象
  */
+@Data
 public class CommonResult {
+
     //操作成功
     public static final int SUCCESS = 200;
+
     //操作失败
     public static final int FAILED = 500;
-
-    public static final int SYSTEM_ERROR = 501;
-    public static final int PARAM_ERROR = 502;
-    public static final int HTTP_METHOD_NOT_SURPPORT = 503;
-    public static final int EXPIRE_ERROR = 504;
 
 
     private int code;
@@ -57,27 +57,5 @@ public class CommonResult {
         return this;
     }
 
-    public int getCode() {
-        return code;
-    }
 
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Object getData() {
-        return data;
-    }
-
-    public void setData(Object data) {
-        this.data = data;
-    }
 }
