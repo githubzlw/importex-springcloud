@@ -68,7 +68,7 @@ public class UrlUtil {
 
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {
-            throw new RuntimeException("response is not successful");
+            throw new IOException("response is not successful");
         }
         return response.body()!=null?
                 JSON.parseObject(response.body().string()):null;
