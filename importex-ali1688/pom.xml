@@ -5,7 +5,7 @@
 
     <parent>
         <artifactId>importex</artifactId>
-        <groupId>com.importexpress</groupId>
+        <groupId>com.importexpress.parent</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -13,6 +13,18 @@
 
     <artifactId>importex-ali1688</artifactId>
     <name>importex-ali1688</name>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -42,13 +54,23 @@
             <version>3.9.0</version>
         </dependency>
         <dependency>
-            <groupId>com.importexpress</groupId>
+            <groupId>com.importexpress.parent</groupId>
             <artifactId>importex-comm</artifactId>
             <version>${importex.latest.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.rholder</groupId>
             <artifactId>guava-retrying</artifactId>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-aop</artifactId>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
