@@ -15,6 +15,7 @@
         <module>importex-ali1688</module>
         <module>importex-email</module>
         <module>importex-fx</module>
+        <module>importex-zuul</module>
     </modules>
 
 <!--    <parent>-->

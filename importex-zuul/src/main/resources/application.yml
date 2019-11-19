@@ -1,0 +1,9 @@
+server:
+  port: 18005
+spring:
+  application:
+    name: gateway-zuul
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:18000/eureka/
