@@ -84,6 +84,7 @@
                     <!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.importexpress.fx.FxApp</mainClass>
                     <layout>ZIP</layout>
+                    <executable>true</executable>
                 </configuration>
                 <executions>
                     <execution>
