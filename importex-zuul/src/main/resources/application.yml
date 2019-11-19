@@ -1,3 +1,8 @@
+logging:
+  file: logs/zuul.log
+  level:
+    com.importexpress: info
+
 server:
   port: 18005
 spring:

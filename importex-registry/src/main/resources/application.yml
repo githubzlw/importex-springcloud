@@ -1,3 +1,7 @@
+logging:
+  file: logs/registry.log
+  level:
+    com.importexpress: info
 server:
   port: 18000
 spring:
