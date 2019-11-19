@@ -51,3 +51,11 @@ importex-comm/target/
 importex-email/target/
 importex-pay/target/
 importex-registry/target/
+importex-comm/src/main/resources/
+importex-comm/src/test/
+importex-email/src/test/
+importex-fx/target/
+importex-pay/src/test/
+importex-registry/src/test/
+importex-zuul/src/test/
+importex-zuul/target/
