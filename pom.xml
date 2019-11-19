@@ -9,45 +9,26 @@
     <packaging>pom</packaging>
     <version>1.0.0-SNAPSHOT</version>
     <modules>
-        <module>importex-comm</module>
         <module>importex-registry</module>
+        <module>importex-zuul</module>
+        <module>importex-comm</module>
         <module>importex-pay</module>
         <module>importex-ali1688</module>
         <module>importex-email</module>
         <module>importex-fx</module>
-        <module>importex-zuul</module>
     </modules>
-
-<!--    <parent>-->
-<!--        <groupId>org.springframework.boot</groupId>-->
-<!--        <artifactId>spring-boot-starter-parent</artifactId>-->
-<!--        <version>2.0.9.RELEASE</version>-->
-<!--    </parent>-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <spring-cloud.version>Finchley.SR4</spring-cloud.version>
-<!--        <mybatis.starter.version>1.3.2</mybatis.starter.version>-->
-<!--        <mapper.starter.version>2.0.2</mapper.starter.version>-->
-<!--        <druid.starter.version>1.1.9</druid.starter.version>-->
-<!--        <mysql.version>5.1.32</mysql.version>-->
-<!--        <pageHelper.starter.version>1.2.3</pageHelper.starter.version>-->
-<!--        <fastDFS.client.version>1.26.1-RELEASE</fastDFS.client.version>-->
         <importex.latest.version>1.0.0-SNAPSHOT</importex.latest.version>
         <spring-boot.version>2.0.9.RELEASE</spring-boot.version>
 
 
     </properties>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>alimaven</id>-->
-<!--            <name>aliyun maven</name>-->
-<!--            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>-->
-<!--        </repository>-->
-<!--    </repositories>-->
     <dependencyManagement>
         <dependencies>
 <!--            <dependency>-->
@@ -91,15 +72,6 @@
             <artifactId>fastjson</artifactId>
             <version>1.2.47</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-aop</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework.boot</groupId>-->
-<!--            <artifactId>spring-boot-starter-test</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
     </dependencies>
 
     <build>
@@ -119,42 +91,5 @@
             </plugin>
         </plugins>
     </build>
-<!--    <build>-->
-<!--        <pluginManagement>-->
-<!--            <plugins>-->
-<!--                <plugin>-->
-<!--                    <artifactId>maven-resources-plugin</artifactId>-->
-<!--                    <version>3.0.2</version>-->
-<!--                </plugin>-->
-<!--                <plugin>-->
-<!--                    <artifactId>maven-compiler-plugin</artifactId>-->
-<!--                    <version>3.8.0</version>-->
-<!--                </plugin>-->
-<!--                <plugin>-->
-<!--                    <artifactId>maven-surefire-plugin</artifactId>-->
-<!--                    <version>2.22.1</version>-->
-<!--                </plugin>-->
-<!--                <plugin>-->
-<!--                    <artifactId>maven-jar-plugin</artifactId>-->
-<!--                    <version>3.0.2</version>-->
-<!--                </plugin>-->
-<!--                <plugin>-->
-<!--                    <artifactId>maven-install-plugin</artifactId>-->
-<!--                    <version>2.5.2</version>-->
-<!--                </plugin>-->
-<!--                <plugin>-->
-<!--                    <artifactId>maven-deploy-plugin</artifactId>-->
-<!--                    <version>2.8.2</version>-->
-<!--                </plugin>-->
-<!--            </plugins>-->
-<!--        </pluginManagement>-->
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
-<!--    </build>-->
-
 
 </project>
