@@ -24,9 +24,7 @@
         <java.version>1.8</java.version>
         <spring-cloud.version>Finchley.SR4</spring-cloud.version>
         <importex.latest.version>1.0.0-SNAPSHOT</importex.latest.version>
-        <spring-boot.version>2.0.9.RELEASE</spring-boot.version>
-
-
+        <spring-boot.version>2.0.6.RELEASE</spring-boot.version>
     </properties>
 
     <dependencyManagement>

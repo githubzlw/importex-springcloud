@@ -4,6 +4,32 @@ spring:
   application:
     name: gateway-zuul
 eureka:
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: ${spring.application.name}:${server.port}
   client:
     service-url:
-      defaultZone: http://127.0.0.1:18000/eureka/
+      defaultZone:   http://127.0.0.1:18000/eureka
+    registry-fetch-interval-seconds: 5
+zuul:
+  prefix: /api
+  retryable: true
+  routes:
+    fx-service: /fx-service/**
+    ali1688-service: /ali-service/**
+  ribbon:
+    eager-load:
+      enabled: true
+  ignored-services: /**
+
+ribbon:
+  ConnectTimeout: 250
+  ReadTimeout: 600000 #10 mins
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMillisecond: 10000

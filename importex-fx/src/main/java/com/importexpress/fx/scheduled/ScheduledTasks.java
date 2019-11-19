@@ -3,7 +3,6 @@ package com.importexpress.fx.scheduled;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.fx.control.FxController;
 import com.importexpress.fx.service.ExchangeRateServiceFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -30,10 +29,10 @@ public class ScheduledTasks {
     }
 
     /**
-     * 每小时刷新一次redis缓存
+     * 每3时刷新一次redis缓存
      * @throws IOException
      */
-    @Scheduled(fixedRate = 1000 * 60 * 60)
+    @Scheduled(fixedRate = 1000 * 60 * 60 * 3)
     public void getExchangeRate() throws IOException {
         final Map<String, BigDecimal> exchangeRate = serviceFactory.getExchangeRate();
         this.redisTemplate.opsForValue().set(FxController.REDIS_FX, JSONObject.toJSONString(exchangeRate));
