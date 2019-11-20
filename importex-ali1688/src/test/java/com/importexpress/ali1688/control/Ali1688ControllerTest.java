@@ -70,12 +70,12 @@ public class Ali1688ControllerTest {
     }
 
     //清空redis中没有数据的所有pid
-//    @Test
-//    public void clearNotExistItemInCache() throws Exception {
-//        mockMvc.perform(get("/pids/clearNotExistItemInCache"))
-//                .andExpect(status().isOk())
-//                .andDo(print());
-//    }
+    @Test
+    public void clearNotExistItemInCache() throws Exception {
+        mockMvc.perform(get("/pids/clearNotExistItemInCache"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
 
     @Test
     public void getNotExistItemInCache() throws Exception {

@@ -38,7 +38,9 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     /**
      * 获取商品详情
      */
-    private final static String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&num_iid=%s&cache=no&api_name=item_get&lang=zh-CN";
+    private final static String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
+
+//    private final static String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&num_iid=%s&cache=no&api_name=item_get&lang=zh-CN";
     /**
      * 获取店铺商品
      */
@@ -79,7 +81,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                     throw new BizException(BizErrorCodeEnum.LIMIT_EXCEED_FAIL);
                 }
                 log.warn("error is not empty:[{}]",error);
-                jsonObject = InvalidPid.of(pid, "no data");
+                jsonObject = InvalidPid.of(pid, error);
             }
             this.ali1688CacheService.saveItemIntoRedis(pid, jsonObject);
             checkItem(pid, jsonObject);

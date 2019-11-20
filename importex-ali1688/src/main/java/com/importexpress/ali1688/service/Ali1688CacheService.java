@@ -70,6 +70,7 @@ public class Ali1688CacheService {
                 String value = this.redisTemplate.opsForValue().get(key);
                 JSONObject jsonObject = JSONObject.parseObject(value);
                 if (StringUtils.isNotEmpty(jsonObject.getString("reason"))) {
+                    log.warn("not data pid:[{}],reason:[{}]",key,jsonObject.getString("reason"));
                     if (isClear) {
                         if (this.redisTemplate.delete(key)) {
                             count++;

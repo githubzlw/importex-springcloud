@@ -38,7 +38,6 @@ public class ControllerAdviceProcessor {
             msg = ex.getMessage();
             log.error("code: " + code + "  msg: " + msg, ex);
         }
-
         CommonResult resp = new CommonResult();
         resp.setCode(code);
         resp.setMessage(msg);
