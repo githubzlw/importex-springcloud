@@ -74,7 +74,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             if (StringUtils.isNotEmpty(error)) {
                 if (error.contains("你的授权已经过期")) {
                     throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
+                }else if(error.contains("超过")) {
+                    //TODO
+                    throw new BizException(BizErrorCodeEnum.LIMIT_EXCEED_FAIL);
                 }
+                log.warn("error is not empty:[{}]",error);
                 jsonObject = InvalidPid.of(pid, "no data");
             }
             this.ali1688CacheService.saveItemIntoRedis(pid, jsonObject);

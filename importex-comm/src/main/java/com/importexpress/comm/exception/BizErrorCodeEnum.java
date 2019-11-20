@@ -15,8 +15,9 @@ public enum BizErrorCodeEnum implements ErrorCode {
     REQUEST_ERROR(400, "入参异常,请检查入参后再次调用"),
     DESC_IS_NULL(4001,"DESC不能为空"),
 
+    FAIL(30000,"调用API返回错误"),
     EXPIRE_FAIL(30001,"你的授权已经过期"),
-    FAIL(30002,"调用API返回错误");
+    LIMIT_EXCEED_FAIL(30002,"调用次数超过使用量");
 
 
     /** 错误码 */
