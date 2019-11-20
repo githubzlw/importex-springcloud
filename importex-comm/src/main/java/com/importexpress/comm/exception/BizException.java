@@ -14,6 +14,8 @@ public class BizException extends RuntimeException {
     /** 错误码 */
     protected final ErrorCode errorCode;
 
+    private String errMsg;
+
 
     /**
      * 无参默认构造UNSPECIFIED
@@ -39,6 +41,7 @@ public class BizException extends RuntimeException {
     public BizException(final String detailedMessage) {
         super(detailedMessage);
         this.errorCode = BizErrorCodeEnum.UNSPECIFIED;
+        this.errMsg = detailedMessage;
     }
 
     /**
@@ -58,6 +61,7 @@ public class BizException extends RuntimeException {
     public BizException(final ErrorCode errorCode, final String detailedMessage) {
         super(detailedMessage);
         this.errorCode = errorCode;
+        this.errMsg = detailedMessage;
     }
 
     /**
@@ -78,6 +82,7 @@ public class BizException extends RuntimeException {
     public BizException(final String detailedMessage, final Throwable t) {
         super(detailedMessage, t);
         this.errorCode = BizErrorCodeEnum.UNSPECIFIED;
+        this.errMsg = detailedMessage;
     }
 
     /**
@@ -90,6 +95,7 @@ public class BizException extends RuntimeException {
                         final Throwable t) {
         super(detailedMessage, t);
         this.errorCode = errorCode;
+        this.errMsg = detailedMessage;
     }
 
     /**
@@ -100,6 +106,5 @@ public class BizException extends RuntimeException {
     public ErrorCode getErrorCode() {
         return errorCode;
     }
-
 
 }

@@ -18,15 +18,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author luohao
@@ -206,9 +203,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         Map<String,Integer> result = new HashMap<>(3);
 
         JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_KEY,config.API_SECRET,shopid, page));
-        if (!isHaveData(jsonObject)) {
-            return null;
-        }
+
+        checkReturnJson(jsonObject);
 
         JSONObject items = jsonObject.getJSONObject("items");
         Ali1688Item[] ali1688Items = JSON.parseObject(items.getJSONArray("item").toJSONString(), Ali1688Item[].class);
@@ -228,14 +224,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @param jsonObject
      * @return
      */
-    private boolean isHaveData(JSONObject jsonObject) {
+    private void checkReturnJson(JSONObject jsonObject) {
 
         String error = jsonObject.getString("error");
-        boolean result = StringUtils.isEmpty(error);
-        if(!result){
-            log.warn("catch return result error: [{}]",error);
+        if(!StringUtils.isEmpty(error)){
+            throw new BizException(BizErrorCodeEnum.FAIL,error);
         }
-        return result;
     }
 
 

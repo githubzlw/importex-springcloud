@@ -5,6 +5,7 @@ import com.github.rholder.retry.*;
 import com.google.common.base.Predicates;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.comm.domain.CommonResult;
+import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class Ali1688Controller {
 
 
     @GetMapping("/shop/{shopid}")
-    public List<Ali1688Item> getItemsInShop(@PathVariable("shopid") String shopid) {
+    public CommonResult getItemsInShop(@PathVariable("shopid") String shopid) {
 
         List<Ali1688Item> lstItems = null;
 
@@ -63,7 +64,8 @@ public class Ali1688Controller {
 
             @Override
             public List<Ali1688Item> call()  {
-                return  ali1688Service.getItemsInShop(shopid);
+                return ali1688Service.getItemsInShop(shopid);
+
             }
         };
 
@@ -71,17 +73,14 @@ public class Ali1688Controller {
                 .retryIfResult(Predicates.isNull())
                 .retryIfExceptionOfType(IllegalStateException.class)
                 .withWaitStrategy(WaitStrategies.fixedWait(2000, TimeUnit.MILLISECONDS))
-                .retryIfRuntimeException()
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
         try {
-            lstItems = retryer.call(callable);
-
+            return new CommonResult().success(retryer.call(callable));
         } catch (RetryException | ExecutionException e) {
-            log.warn("getItemsInShop",e);
+            log.error("getItemsInShop",e);
+            return new CommonResult().failed(e.getMessage());
         }
-        return lstItems;
-
     }
 
     @GetMapping("/pids/clearNotExistItemInCache")
