@@ -12,6 +12,7 @@ import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author luohao
@@ -52,7 +55,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     /**
      * 获取店铺商品
      */
-    private final static String URL_ITEM_SEARCH = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&cache=no&api_name=item_search_shop&lang=zh-CN";
+    private final static String URL_ITEM_SEARCH = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&api_name=item_search_shop&lang=zh-CN";
 
 
     /**
@@ -160,8 +163,10 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 log.warn("filled items's size is not same,need retry! : [{}]:[{}]",result.size(),total);
                 throw new IllegalStateException("filled items's size is not same,need retry!");
             }
-            this.ali1688CacheService.setShop(shopid,result);
-            return result;
+            //过滤掉销量=0的商品
+            List<Ali1688Item> haveSaleItems = result.stream().filter(item -> NumberUtils.toInt(item.getSales()) > 0).collect(Collectors.toList());
+            this.ali1688CacheService.setShop(shopid,haveSaleItems);
+            return haveSaleItems;
 
         } catch (IOException e) {
             log.error("getItemsInShop", e);
