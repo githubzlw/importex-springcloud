@@ -38,6 +38,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
     private Config config;
 
+    public static final int MAX_GOODS_NUMBER = 200;
+
     @Autowired
     public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService,Config config){
         this.ali1688CacheService = ali1688CacheService;
@@ -148,7 +150,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 //无数据
                 return result;
             }
-            int count = mapSum.get("pagecount");
+            int count = mapSum.get("pagecount") < MAX_GOODS_NUMBER ? mapSum.get("pagecount"): MAX_GOODS_NUMBER;
             int total = mapSum.get("total_results");
 
             if (count > 1) {
@@ -156,10 +158,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                     fillItems(result, shopid, i);
                 }
             }
-            if(result.size() != total){
-                log.warn("filled items's size is not same,need retry! : [{}]:[{}]",result.size(),total);
-                throw new IllegalStateException("filled items's size is not same,need retry!");
-            }
+
+//            if(result.size() != total){
+//                log.warn("filled items's size is not same,need retry! : [{}]:[{}]",result.size(),total);
+//                throw new IllegalStateException("filled items's size is not same,need retry!");
+//            }
+
             //过滤掉销量=0的商品
             List<Ali1688Item> haveSaleItems = result.stream().filter(item -> NumberUtils.toInt(item.getSales()) > 0).collect(Collectors.toList());
             this.ali1688CacheService.setShop(shopid,haveSaleItems);
