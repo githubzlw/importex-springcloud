@@ -17,7 +17,7 @@ public class Ali1688Item {
     private String promotion_price;
     private String volume;
     private String post_fee;
-    private String sales;
+    private int sales;
     private String detail_url;
 
 }

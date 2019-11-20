@@ -55,25 +55,6 @@ public class UrlUtil {
         return singleton;
     }
 
-    /**
-     * 调用URL（Get）
-     *
-     * @param url
-     * @return
-     * @throws IOException
-     */
-    public JSONObject callUrlByGet(String url) throws IOException {
-
-        Request request = new Request.Builder().url(url).build();
-
-        Response response = client.newCall(request).execute();
-        if (!response.isSuccessful()) {
-            throw new IOException("response is not successful");
-        }
-        return response.body()!=null?
-                JSON.parseObject(response.body().string()):null;
-    }
-
     public static void main(String[] args) {
         String json = "{\n" +
                 "\t\"user\": {\n" +
@@ -233,6 +214,25 @@ public class UrlUtil {
         JSONObject items = jsonObject.getJSONObject("items");
         Ali1688Item[] ali1688Item = (Ali1688Item[]) JSON.parseObject(items.getJSONArray("item").toJSONString(), Ali1688Item[].class);
         System.out.println("ali1688Item = " + ali1688Item);
+    }
+
+    /**
+     * 调用URL（Get）
+     *
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public JSONObject callUrlByGet(String url) throws IOException {
+
+        Request request = new Request.Builder().url(url).build();
+
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            throw new IOException("response is not successful");
+        }
+        return response.body() != null ?
+                JSON.parseObject(response.body().string()) : null;
     }
 
 

@@ -37,18 +37,21 @@ public interface Ali1688Service {
 
     /**
      * 清除redis缓存里面下架商品
+     *
      * @return
      */
     int clearNotExistItemInCache();
 
     /**
      * 下架商品数量统计
+     *
      * @return
      */
     int getNotExistItemInCache();
 
     /**
      * 设置key的过期时间
+     *
      * @param days
      */
     void setItemsExpire(int days);

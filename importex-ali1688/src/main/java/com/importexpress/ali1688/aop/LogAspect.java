@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class LogAspect {
 
     @Before("execution(* com.importexpress.ali1688.service..*.*(..))")
-    public void beforeService(JoinPoint joinPoint){
+    public void beforeService(JoinPoint joinPoint) {
         //Advice
         log.info("do before execution joinPoint: {}", joinPoint);
     }
@@ -29,7 +29,7 @@ public class LogAspect {
     }
 
     @Before("execution(* com.importexpress.ali1688.control..*.*(..))")
-    public void beforeControl(JoinPoint joinPoint){
+    public void beforeControl(JoinPoint joinPoint) {
         //Advice
         log.info("do before execution joinPoint: {}", joinPoint);
     }

@@ -62,7 +62,7 @@ public class Ali1688ControllerTest {
 
     @Test
     public void shopid() throws Exception {
-        String id = "shop1432227742608";
+        String id = "aodazhiyichang";
         mockMvc.perform(get("/shop/"+id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].num_iid").value("588766108897"))

@@ -11,11 +11,11 @@ import java.time.format.DateTimeFormatter;
  */
 public class InvalidPid {
 
-    private InvalidPid(){
+    private InvalidPid() {
 
     }
 
-    public static JSONObject of(Long pid,String resason){
+    public static JSONObject of(Long pid, String resason) {
         JSONObject jsonObject = new JSONObject();
         String now = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         jsonObject.put("secache_date", now);

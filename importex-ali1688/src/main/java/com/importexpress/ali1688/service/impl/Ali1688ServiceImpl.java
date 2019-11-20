@@ -12,7 +12,6 @@ import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
@@ -34,27 +33,24 @@ import java.util.stream.Collectors;
 @Configuration
 public class Ali1688ServiceImpl implements Ali1688Service {
 
-    private Ali1688CacheService ali1688CacheService;
-
-    private Config config;
-
-    public static final int MAX_GOODS_NUMBER = 200;
-
-    @Autowired
-    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService,Config config){
-        this.ali1688CacheService = ali1688CacheService;
-        this.config = config;
-    }
-
+    private static final int MAX_GOODS_NUMBER = 200;
+    private static final int MIN_SALES = 1;
     /**
      * 获取商品详情
      */
     private final static String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&num_iid=%s&cache=no&api_name=item_get&lang=zh-CN";
-
     /**
      * 获取店铺商品
      */
     private final static String URL_ITEM_SEARCH = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&api_name=item_search_shop&lang=zh-CN";
+    private Ali1688CacheService ali1688CacheService;
+    private Config config;
+
+    @Autowired
+    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService, Config config) {
+        this.ali1688CacheService = ali1688CacheService;
+        this.config = config;
+    }
 
 
     /**
@@ -67,22 +63,22 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     public JSONObject getItem(Long pid) {
 
         JSONObject itemFromRedis = this.ali1688CacheService.getItem(pid);
-        if(itemFromRedis != null){
-            checkItem(pid,itemFromRedis);
+        if (itemFromRedis != null) {
+            checkItem(pid, itemFromRedis);
             return itemFromRedis;
         }
 
         try {
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_KEY,config.API_SECRET,pid));
+            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_KEY, config.API_SECRET, pid));
             String error = jsonObject.getString("error");
             if (StringUtils.isNotEmpty(error)) {
-                if(error.contains("你的授权已经过期")){
+                if (error.contains("你的授权已经过期")) {
                     throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
                 }
-                jsonObject = InvalidPid.of(pid,"no data");
+                jsonObject = InvalidPid.of(pid, "no data");
             }
-            this.ali1688CacheService.saveItemIntoRedis(pid,jsonObject);
-            checkItem(pid,jsonObject);
+            this.ali1688CacheService.saveItemIntoRedis(pid, jsonObject);
+            checkItem(pid, jsonObject);
 
             return jsonObject;
         } catch (IOException e) {
@@ -104,16 +100,16 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         ExecutorService executorService = Executors.newFixedThreadPool(4);
         for (long pid : pids) {
             executorService.execute(() -> {
-                try{
+                try {
                     JSONObject item = getItem(pid);
                     if (item != null) {
                         lstResult.add(item);
                     } else {
-                        lstResult.add(InvalidPid.of(pid,"no data"));
+                        lstResult.add(InvalidPid.of(pid, "no data"));
                     }
-                }catch(BizException be){
-                    if(be.getErrorCode() == BizErrorCodeEnum.DESC_IS_NULL){
-                        lstResult.add(InvalidPid.of(pid,BizErrorCodeEnum.DESC_IS_NULL.getDescription()));
+                } catch (BizException be) {
+                    if (be.getErrorCode() == BizErrorCodeEnum.DESC_IS_NULL) {
+                        lstResult.add(InvalidPid.of(pid, BizErrorCodeEnum.DESC_IS_NULL.getDescription()));
                     }
                 }
             });
@@ -138,19 +134,19 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     public List<Ali1688Item> getItemsInShop(String shopid) {
 
         List<Ali1688Item> itemFromRedis = this.ali1688CacheService.getShop(shopid);
-        if(itemFromRedis != null){
+        if (itemFromRedis != null) {
             return itemFromRedis;
         }
 
         try {
             List<Ali1688Item> result = new ArrayList<>(100);
 
-            Map<String,Integer> mapSum = fillItems(result, shopid, 1);
-            if(mapSum == null ){
+            Map<String, Integer> mapSum = fillItems(result, shopid, 1);
+            if (mapSum == null) {
                 //无数据
                 return result;
             }
-            int count = mapSum.get("pagecount") < MAX_GOODS_NUMBER ? mapSum.get("pagecount"): MAX_GOODS_NUMBER;
+            int count = mapSum.get("pagecount") < MAX_GOODS_NUMBER ? mapSum.get("pagecount") : MAX_GOODS_NUMBER;
             int total = mapSum.get("total_results");
 
             if (count > 1) {
@@ -165,8 +161,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 //            }
 
             //过滤掉销量=0的商品
-            List<Ali1688Item> haveSaleItems = result.stream().filter(item -> NumberUtils.toInt(item.getSales()) > 0).collect(Collectors.toList());
-            this.ali1688CacheService.setShop(shopid,haveSaleItems);
+            List<Ali1688Item> haveSaleItems = result.stream().filter(item -> item.getSales() >= MIN_SALES).sorted(Comparator.comparing(Ali1688Item::getSales, Comparator.reverseOrder())).collect(Collectors.toList());
+            this.ali1688CacheService.setShop(shopid, haveSaleItems);
             return haveSaleItems;
 
         } catch (IOException e) {
@@ -176,17 +172,17 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     @Override
-    public int clearNotExistItemInCache(){
+    public int clearNotExistItemInCache() {
         return this.ali1688CacheService.processNotExistItemInCache(true);
     }
 
     @Override
-    public int getNotExistItemInCache(){
+    public int getNotExistItemInCache() {
         return this.ali1688CacheService.processNotExistItemInCache(false);
     }
 
     @Override
-    public void setItemsExpire(int days){
+    public void setItemsExpire(int days) {
         this.ali1688CacheService.setItemsExpire(days);
     }
 
@@ -200,24 +196,24 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @return
      * @throws IOException
      */
-    private Map<String,Integer> fillItems(List<Ali1688Item> lstAllItems, String shopid, int page) throws IOException {
+    private Map<String, Integer> fillItems(List<Ali1688Item> lstAllItems, String shopid, int page) throws IOException {
 
         log.info("begin fillItems: shopid:[{}] page:[{}]", shopid, page);
 
-        Map<String,Integer> result = new HashMap<>(3);
+        Map<String, Integer> result = new HashMap<>(3);
 
-        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_KEY,config.API_SECRET,shopid, page));
+        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_KEY, config.API_SECRET, shopid, page));
 
         checkReturnJson(jsonObject);
 
         JSONObject items = jsonObject.getJSONObject("items");
         Ali1688Item[] ali1688Items = JSON.parseObject(items.getJSONArray("item").toJSONString(), Ali1688Item[].class);
-        log.info("end fillItems: size:[{}] ",ali1688Items.length);
+        log.info("end fillItems: size:[{}] ", ali1688Items.length);
         lstAllItems.addAll(Arrays.asList(ali1688Items));
 
-        result.put("pagecount",Integer.parseInt(items.getString("pagecount")));
-        result.put("total_results",Integer.parseInt(items.getString("total_results")));
-        result.put("page_size",Integer.parseInt(items.getString("page_size")));
+        result.put("pagecount", Integer.parseInt(items.getString("pagecount")));
+        result.put("total_results", Integer.parseInt(items.getString("total_results")));
+        result.put("page_size", Integer.parseInt(items.getString("page_size")));
 
         return result;
     }
@@ -231,18 +227,17 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     private void checkReturnJson(JSONObject jsonObject) {
 
         String error = jsonObject.getString("error");
-        if(!StringUtils.isEmpty(error)){
-            throw new BizException(BizErrorCodeEnum.FAIL,error);
+        if (!StringUtils.isEmpty(error)) {
+            throw new BizException(BizErrorCodeEnum.FAIL, error);
         }
     }
 
 
-
-    private void checkItem(Long pid,JSONObject jsonObject) {
+    private void checkItem(Long pid, JSONObject jsonObject) {
         JSONObject item = jsonObject.getJSONObject("item");
-        if(item !=null) {
-            if(StringUtils.isEmpty(item.getString("desc"))){
-                log.warn("desc is null ,pid:[{}]",pid);
+        if (item != null) {
+            if (StringUtils.isEmpty(item.getString("desc"))) {
+                log.warn("desc is null ,pid:[{}]", pid);
                 throw new BizException(BizErrorCodeEnum.DESC_IS_NULL);
             }
         }
