@@ -68,6 +68,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         try {
             JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_KEY, config.API_SECRET, pid));
             String error = jsonObject.getString("error");
+            //if(1==1) throw new IllegalStateException("testtesttest");
             if (StringUtils.isNotEmpty(error)) {
                 if (error.contains("你的授权已经过期")) {
                     throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
@@ -77,7 +78,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 }else if(error.contains("item-not-found")) {
                     throw new IllegalStateException("item-not-found");
                 }
-                log.warn("json's error is not empty:[{}]",error);
+                log.warn("json's error is not empty:[{}]，pid:[{}]",error,pid);
                 jsonObject = InvalidPid.of(pid, error);
             }
             this.ali1688CacheService.saveItemIntoRedis(pid, jsonObject);
