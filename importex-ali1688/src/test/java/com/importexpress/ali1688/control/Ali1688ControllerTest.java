@@ -65,7 +65,7 @@ public class Ali1688ControllerTest {
         String id = "aodazhiyichang";
         mockMvc.perform(get("/shop/"+id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].num_iid").value("588766108897"))
+                .andExpect(jsonPath("$.code").value("200"))
                 .andDo(print());
     }
 

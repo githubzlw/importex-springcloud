@@ -2,11 +2,14 @@ package com.importexpress.ali1688.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.github.rholder.retry.*;
+import com.google.common.base.Predicates;
 import com.importexpress.ali1688.service.Ali1688CacheService;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
 import com.importexpress.ali1688.util.InvalidPid;
 import com.importexpress.ali1688.util.UrlUtil;
+import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.exception.BizErrorCodeEnum;
 import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
@@ -15,13 +18,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
@@ -55,14 +56,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
-    /**
-     * 1688商品详情查询
-     *
-     * @param pid
-     * @return
-     */
-    @Override
-    public JSONObject getItem(Long pid) {
+
+    private JSONObject getItemByPid(Long pid) {
 
         JSONObject itemFromRedis = this.ali1688CacheService.getItem(pid);
         if (itemFromRedis != null) {
@@ -79,8 +74,10 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 }else if(error.contains("超过")) {
                     //TODO
                     throw new BizException(BizErrorCodeEnum.LIMIT_EXCEED_FAIL);
+                }else if(error.contains("item-not-found")) {
+                    throw new IllegalStateException("item-not-found");
                 }
-                log.warn("error is not empty:[{}]",error);
+                log.warn("json's error is not empty:[{}]",error);
                 jsonObject = InvalidPid.of(pid, error);
             }
             this.ali1688CacheService.saveItemIntoRedis(pid, jsonObject);
@@ -90,6 +87,37 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         } catch (IOException e) {
             log.error("getItem", e);
             throw new BizException(BizErrorCodeEnum.UNSPECIFIED);
+        }
+    }
+
+    /**
+     * 1688商品详情查询
+     *
+     * @param pid
+     * @return
+     */
+    @Override
+    public JSONObject getItem(Long pid) {
+
+        Callable<JSONObject> callable = new Callable<JSONObject>() {
+
+            @Override
+            public JSONObject call() {
+                return getItemByPid(pid);
+
+            }
+        };
+
+        Retryer<JSONObject> retryer = RetryerBuilder.<JSONObject>newBuilder()
+                .retryIfResult(Predicates.isNull())
+                .retryIfExceptionOfType(IllegalStateException.class)
+                .withWaitStrategy(WaitStrategies.fixedWait(2000, TimeUnit.MILLISECONDS))
+                .withStopStrategy(StopStrategies.stopAfterAttempt(3))
+                .build();
+        try {
+            return retryer.call(callable);
+        } catch (RetryException | ExecutionException e) {
+            throw new BizException(e.getMessage());
         }
     }
 

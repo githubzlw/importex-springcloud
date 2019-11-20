@@ -40,7 +40,7 @@ public class BizException extends RuntimeException {
      */
     public BizException(final String detailedMessage) {
         super(detailedMessage);
-        this.errorCode = BizErrorCodeEnum.UNSPECIFIED;
+        this.errorCode = BizErrorCodeEnum.FAIL;
         this.errMsg = detailedMessage;
     }
 
@@ -50,7 +50,7 @@ public class BizException extends RuntimeException {
      */
     public BizException(final Throwable t) {
         super(t);
-        this.errorCode = BizErrorCodeEnum.UNSPECIFIED;
+        this.errorCode = BizErrorCodeEnum.FAIL;
     }
 
     /**
