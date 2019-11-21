@@ -5,6 +5,7 @@ import com.github.rholder.retry.*;
 import com.google.common.base.Predicates;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.comm.domain.CommonResult;
+import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,7 +71,8 @@ public class Ali1688Controller {
         Retryer<List<Ali1688Item>> retryer = RetryerBuilder.<List<Ali1688Item>>newBuilder()
                 .retryIfResult(Predicates.isNull())
                 .retryIfExceptionOfType(IllegalStateException.class)
-                .withWaitStrategy(WaitStrategies.fixedWait(2000, TimeUnit.MILLISECONDS))
+                .retryIfExceptionOfType(BizException.class)
+                .withWaitStrategy(WaitStrategies.randomWait(1000, TimeUnit.MILLISECONDS))
                 .withStopStrategy(StopStrategies.stopAfterAttempt(3))
                 .build();
         try {
