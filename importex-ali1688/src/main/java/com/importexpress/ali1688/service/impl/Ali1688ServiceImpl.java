@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class Ali1688ServiceImpl implements Ali1688Service {
 
     private static final int MAX_GOODS_NUMBER = 200;
-    private static final int MIN_SALES = 1;
+    private static final int MIN_SALES = 10;
 
     /**
      * 获取商品详情
