@@ -3,6 +3,7 @@ package com.importexpress.comm.pojo;
 
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * @author luohao
@@ -24,17 +25,23 @@ public class Ali1688Item {
     public int getSalesOfParse(){
         if(StringUtils.isNotEmpty(this.sales)){
             if(StringUtils.contains(this.sales,"万")){
-                return Integer.parseInt(StringUtils.replace(this.sales, "万", "0000"));
+                return NumberUtils.toInt(StringUtils.replace(this.sales, "万", "0000"));
             }else if(StringUtils.contains(this.sales,"千")){
-                return Integer.parseInt(StringUtils.replace(this.sales, "千", "000"));
+                return NumberUtils.toInt(StringUtils.replace(this.sales, "千", "000"));
             }else if(StringUtils.contains(this.sales,"百")){
-                return Integer.parseInt(StringUtils.replace(this.sales, "百", "00"));
+                return NumberUtils.toInt(StringUtils.replace(this.sales, "百", "00"));
             }else{
-                return Integer.parseInt(this.sales);
+                return NumberUtils.toInt(this.sales);
             }
         }else{
             return 0;
         }
+    }
+
+    public static void main(String[] args){
+        System.out.println(NumberUtils.toInt("1.1000"));
+        System.out.println(NumberUtils.toInt("11000"));
+        System.out.println(NumberUtils.toInt("11000万"));
     }
 
 }
