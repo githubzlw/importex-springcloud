@@ -132,7 +132,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     public List<JSONObject> getItems(Long[] pids) {
 
         List<JSONObject> lstResult = new CopyOnWriteArrayList<JSONObject>();
-        ExecutorService executorService = Executors.newFixedThreadPool(4);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (long pid : pids) {
             executorService.execute(() -> {
                 try {
