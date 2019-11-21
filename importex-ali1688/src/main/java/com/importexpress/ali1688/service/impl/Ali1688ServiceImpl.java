@@ -37,7 +37,6 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     private static final int MAX_GOODS_NUMBER = 200;
     private static final int MIN_SALES = 1;
 
-    private static ExecutorService fixedThreadPool = Executors.newFixedThreadPool(2);
     /**
      * 获取商品详情
      */
@@ -134,9 +133,9 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     public List<JSONObject> getItems(Long[] pids) {
 
         List<JSONObject> lstResult = new CopyOnWriteArrayList<JSONObject>();
-//        ExecutorService executorService = Executors.newFixedThreadPool(2);
+        ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (long pid : pids) {
-            fixedThreadPool.execute(() -> {
+            executorService.execute(() -> {
                 try {
                     JSONObject item = getItem(pid);
                     if (item != null) {
@@ -151,9 +150,9 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 }
             });
         }
-        fixedThreadPool.shutdown();
+        executorService.shutdown();
         try {
-            fixedThreadPool.awaitTermination(15, TimeUnit.MINUTES);
+            executorService.awaitTermination(10, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             log.error("InterruptedException", e);
         }
