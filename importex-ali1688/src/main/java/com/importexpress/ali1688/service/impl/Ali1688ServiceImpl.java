@@ -196,7 +196,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 //            }
 
             //过滤掉销量=0的商品
-            List<Ali1688Item> haveSaleItems = result.stream().filter(item -> item.getSales() >= MIN_SALES).sorted(Comparator.comparing(Ali1688Item::getSales, Comparator.reverseOrder())).collect(Collectors.toList());
+            List<Ali1688Item> haveSaleItems = result.stream().filter(item -> item.getSalesOfParse() >= MIN_SALES).sorted(Comparator.comparing(Ali1688Item::getSalesOfParse, Comparator.reverseOrder())).collect(Collectors.toList());
             this.ali1688CacheService.setShop(shopid, haveSaleItems);
             return haveSaleItems;
 
