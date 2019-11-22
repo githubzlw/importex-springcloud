@@ -24,10 +24,8 @@ public class AopLogUtil {
      * @throws Throwable
      */
     public static Object watchMethod(ProceedingJoinPoint joinPoint) throws Throwable {
-        Signature signature = joinPoint.getSignature();
-        String methodName = signature.getDeclaringTypeName() + "." + signature.getName();
+        log.info("执行开始[{}],args:{}", joinPoint.getSignature(),parseParams(joinPoint.getArgs()));
 
-        log.info("执行[{}]开始,args:{}", joinPoint.getSignature(),parseParams(joinPoint.getArgs()));
         // 定义返回对象、得到方法需要的参数
         Object obj ;
         long startTime = System.currentTimeMillis();
@@ -35,19 +33,19 @@ public class AopLogUtil {
             Object[] args = joinPoint.getArgs();
             obj = joinPoint.proceed(args);
         } catch (Throwable e) {
-            log.error("统计某方法执行耗时环绕通知出错", e);
+            log.error("执行出错", e);
             throw e;
         }
         long diffTime = System.currentTimeMillis() - startTime;
         if(log.isDebugEnabled()){
-            log.debug("执行[{}]结束,返回值:{},执行耗时:{}ms", joinPoint.getSignature(),obj,diffTime);
+            log.debug("执行结束[{}],耗时:{}ms,返回值:{}", joinPoint.getSignature(),diffTime,obj);
         }else{
-            log.info("执行[{}]结束,执行耗时:{}ms", joinPoint.getSignature(),diffTime);
+            log.info("执行结束[{}],耗时:{}ms", joinPoint.getSignature(),diffTime);
         }
 
         // 打印耗时的信息
         if (diffTime > MAX_TIME ) {
-            log.info("执行[{}]结束,返回值:{},执行耗时(超过阈值):{}ms", joinPoint.getSignature(),obj,diffTime);
+            log.warn("执行结束[{}],耗时:{}ms", joinPoint.getSignature(),diffTime);
         }
         return obj;
     }
@@ -58,19 +56,13 @@ public class AopLogUtil {
      * @return str
      */
     private static String parseParams(Object[] params) {
-        if (null == params || params.length <= 0) {
-            return " NO PARAMS ";
-        }
-        StringBuilder param = new StringBuilder("Parameters: ");
+        StringBuilder param = new StringBuilder();
         for (Object obj : params) {
             if (obj != null) {
-                param.append(obj).append(" ");
-            } else {
-                param.append(" NULL ");
+                param.append(obj).append(",");
             }
         }
         return param.toString();
     }
-
 
 }
