@@ -37,16 +37,17 @@ public class AopLogUtil {
             throw e;
         }
         long diffTime = System.currentTimeMillis() - startTime;
-        if(log.isDebugEnabled()){
-            log.debug("执行结束[{}],耗时:{}ms,返回值:{}", joinPoint.getSignature(),diffTime,obj);
-        }else{
-            log.info("执行结束[{}],耗时:{}ms", joinPoint.getSignature(),diffTime);
-        }
-
         // 打印耗时的信息
         if (diffTime > MAX_TIME ) {
             log.warn("执行结束[{}],耗时:{}ms", joinPoint.getSignature(),diffTime);
+        }else{
+            if(log.isDebugEnabled()){
+                log.debug("执行结束[{}],耗时:{}ms,返回值:{}", joinPoint.getSignature(),diffTime,obj);
+            }else{
+                log.info("执行结束[{}],耗时:{}ms", joinPoint.getSignature(),diffTime);
+            }
         }
+
         return obj;
     }
 
