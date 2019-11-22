@@ -14,7 +14,7 @@ public class AopLogUtil {
     /**
      * 超过此时间显示警告
      */
-    private static final long MAX_TIME = 3000;
+    private static final long MAX_TIME = 5000;
 
     /**
      * 日志记录
@@ -59,7 +59,7 @@ public class AopLogUtil {
         StringBuilder param = new StringBuilder();
         for (Object obj : params) {
             if (obj != null) {
-                param.append(obj).append(",");
+                param.append(obj).append(" ");
             }
         }
         return param.toString();
