@@ -2,7 +2,6 @@ package com.importexpress.comm.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 
 
 /**
@@ -24,7 +23,7 @@ public class AopLogUtil {
      * @throws Throwable
      */
     public static Object watchMethod(ProceedingJoinPoint joinPoint) throws Throwable {
-        log.info("执行开始[{}],args:{}", joinPoint.getSignature(),parseParams(joinPoint.getArgs()));
+        log.info("begin exec[{}],args:{}", joinPoint.getSignature(),parseParams(joinPoint.getArgs()));
 
         // 定义返回对象、得到方法需要的参数
         Object obj ;
@@ -33,18 +32,18 @@ public class AopLogUtil {
             Object[] args = joinPoint.getArgs();
             obj = joinPoint.proceed(args);
         } catch (Throwable e) {
-            log.error("执行出错", e);
+            log.error("exec error", e);
             throw e;
         }
         long diffTime = System.currentTimeMillis() - startTime;
         // 打印耗时的信息
         if (diffTime > MAX_TIME ) {
-            log.warn("执行结束[{}],耗时:{}ms", joinPoint.getSignature(),diffTime);
+            log.warn("end exec[{}],spend:{}ms", joinPoint.getSignature(),diffTime);
         }else{
             if(log.isDebugEnabled()){
-                log.debug("执行结束[{}],耗时:{}ms,返回值:{}", joinPoint.getSignature(),diffTime,obj);
+                log.debug("end exec[{}],spend:{}ms,return:{}", joinPoint.getSignature(),diffTime,obj);
             }else{
-                log.info("执行结束[{}],耗时:{}ms", joinPoint.getSignature(),diffTime);
+                log.info("end exec[{}],spend:{}ms", joinPoint.getSignature(),diffTime);
             }
         }
 
