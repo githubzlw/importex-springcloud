@@ -19,8 +19,8 @@ public class AopLogUtil {
 
     /**
      * 日志记录
-     * @param joinPoint
-     * @return
+     * @param joinPoint joinPoint
+     * @return object
      * @throws Throwable
      */
     public static Object watchMethod(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -52,12 +52,12 @@ public class AopLogUtil {
         // 打印耗时的信息
         long diffTime = endTime - startTime;
         if (diffTime > MAX_TIME ) {
-            log.warn("---" + methodName + " 方法执行耗时：" + diffTime + " ms");
+            log.warn("方法[{}]执行耗时:{}ms",methodName,diffTime);
             log.warn(joinPoint.getSignature().toString());
             log.warn(parseParams(joinPoint.getArgs()));
             log.warn("返回值[{}]", obj!=null ? obj:" NULL ");
         } else {
-            log.info("---" + methodName + " 方法执行耗时：" + diffTime + " ms");
+            log.info("方法[{}]执行耗时:{}ms",methodName,diffTime);
         }
 
         return obj;
