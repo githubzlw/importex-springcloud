@@ -1,47 +1,36 @@
 package com.importexpress.fx.aop;
 
-import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
+import com.importexpress.comm.util.AopLogUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Service;
 
 /**
  * @author luohao
- * @date 2019/11/6
+ * @date 2019/11/22
  */
 @Aspect
 @Service
-@Slf4j
 public class LogAspect {
 
-    @Before("execution(* com.importexpress.fx.service..*.*(..))")
-    public void beforeService(JoinPoint joinPoint){
-        //Advice
-        log.info("do before execution joinPoint: {}", joinPoint);
+    @Pointcut("execution(* com.importexpress.fx.control..*.*(..))")
+    public void controlLog() {
     }
 
-    @AfterReturning(value = "execution(* com.importexpress.fx.service..*.*(..))",
-            returning = "result")
-    public void afterReturningService(JoinPoint joinPoint, Object result) {
-        log.info("do after {} returned with value joinPoint:{}", joinPoint, result);
+    @Around("controlLog()")
+    public Object controlAround(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        return AopLogUtil.watchMethod(joinPoint);
     }
 
-    @Before("execution(* com.importexpress.fx.control..*.*(..))")
-    public void beforeControl(JoinPoint joinPoint){
-        //Advice
-        log.info("do before execution joinPoint: {}", joinPoint);
+    @Pointcut("execution(* com.importexpress.fx.service..*.*(..))")
+    public void serviceLog() {
     }
 
-    @AfterReturning(value = "execution(* com.importexpress.fx.control..*.*(..))",
-            returning = "result")
-    public void afterReturningControl(JoinPoint joinPoint, Object result) {
-        log.info("do after {} returned with value joinPoint:{}", joinPoint, result);
+
+    @Around("serviceLog()")
+    public Object serviceAround(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        return AopLogUtil.watchMethod(joinPoint);
     }
-
-//    @After(value = "execution(* com.importexpress.fx.service..*.*(..))")
-//    public void after(JoinPoint joinPoint) {
-//        log.info("do after execution joinPoint: {}", joinPoint);
-//    }
-
 }

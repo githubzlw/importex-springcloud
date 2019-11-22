@@ -36,7 +36,7 @@ public class FxControllerTest {
 
     @Test
     public void fx() throws Exception {
-        mockMvc.perform(get("/fx/"))
+        mockMvc.perform(get("/fx"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
