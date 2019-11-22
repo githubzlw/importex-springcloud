@@ -1,7 +1,6 @@
 package com.importexpress.comm.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 
@@ -44,7 +43,7 @@ public class AopLogUtil {
             throw e;
         }
 
-        log.info("返回值[{}]", obj!=null ? ToStringBuilder.reflectionToString(obj):" NULL ");
+        log.info("返回值[{}]", obj!=null ? obj:" NULL ");
 
         log.info("执行[{}]结束", joinPoint.getSignature().getName());
 
@@ -56,7 +55,7 @@ public class AopLogUtil {
             log.warn("---" + methodName + " 方法执行耗时：" + diffTime + " ms");
             log.warn(joinPoint.getSignature().toString());
             log.warn(parseParams(joinPoint.getArgs()));
-            log.warn("返回值[{}]", obj!=null ? ToStringBuilder.reflectionToString(obj):" NULL ");
+            log.warn("返回值[{}]", obj!=null ? obj:" NULL ");
             log.warn("---------------End---------------");
         } else {
             log.info("---" + methodName + " 方法执行耗时：" + diffTime + " ms");
@@ -77,7 +76,7 @@ public class AopLogUtil {
         StringBuilder param = new StringBuilder("Parameters: ");
         for (Object obj : params) {
             if (obj != null) {
-                param.append(ToStringBuilder.reflectionToString(obj)).append(" ");
+                param.append(obj).append(" ");
             } else {
                 param.append(" NULL ");
             }
