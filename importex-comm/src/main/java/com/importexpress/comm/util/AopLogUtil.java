@@ -39,7 +39,11 @@ public class AopLogUtil {
             throw e;
         }
         long diffTime = System.currentTimeMillis() - startTime;
-        log.info("执行[{}]结束,返回值:{},执行耗时:{}ms", joinPoint.getSignature(),obj,diffTime);
+        if(log.isDebugEnabled()){
+            log.debug("执行[{}]结束,返回值:{},执行耗时:{}ms", joinPoint.getSignature(),obj,diffTime);
+        }else{
+            log.info("执行[{}]结束,执行耗时:{}ms", joinPoint.getSignature(),diffTime);
+        }
 
         // 打印耗时的信息
         if (diffTime > MAX_TIME ) {
