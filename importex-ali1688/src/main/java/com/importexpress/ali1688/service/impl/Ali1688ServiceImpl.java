@@ -9,7 +9,6 @@ import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
 import com.importexpress.ali1688.util.InvalidPid;
 import com.importexpress.ali1688.util.UrlUtil;
-import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.exception.BizErrorCodeEnum;
 import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
@@ -18,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.IOException;
 import java.util.*;
@@ -40,13 +38,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     /**
      * 获取商品详情
      */
-    private final static String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
+    private final static String URL_ITEM_GET = "%sapi_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
 
-//    private final static String URL_ITEM_GET = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&num_iid=%s&cache=no&api_name=item_get&lang=zh-CN";
+//    private final static String URL_ITEM_GET = "%sapi_call.php?key=%s&secret=%s&num_iid=%s&cache=no&api_name=item_get&lang=zh-CN";
     /**
      * 获取店铺商品
      */
-    private final static String URL_ITEM_SEARCH = "http://api.onebound.cn/1688/api_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&api_name=item_search_shop&lang=zh-CN";
+    private final static String URL_ITEM_SEARCH = "%sapi_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&api_name=item_search_shop&lang=zh-CN";
     private Ali1688CacheService ali1688CacheService;
     private Config config;
 
@@ -67,7 +65,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         }
 
         try {
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_KEY, config.API_SECRET, pid));
+            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
             String error = jsonObject.getString("error");
             //if(1==1) throw new IllegalStateException("testtesttest");
             if (StringUtils.isNotEmpty(error)) {
@@ -238,7 +236,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
         Map<String, Integer> result = new HashMap<>(3);
 
-        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_KEY, config.API_SECRET, shopid, page));
+        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_HOST,config.API_KEY, config.API_SECRET, shopid, page));
 
         checkReturnJson(jsonObject);
 

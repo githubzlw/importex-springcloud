@@ -42,7 +42,7 @@ public class Ali1688ControllerTest {
 
     @Test
     public void pid() throws Exception {
-        String pid = "540325659804";
+        String pid = "548125319390";
         mockMvc.perform(get("/pids/"+pid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].item").exists())
