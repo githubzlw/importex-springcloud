@@ -56,7 +56,6 @@ public class AopLogUtil {
             log.warn(joinPoint.getSignature().toString());
             log.warn(parseParams(joinPoint.getArgs()));
             log.warn("返回值[{}]", obj!=null ? obj:" NULL ");
-            log.warn("---------------End---------------");
         } else {
             log.info("---" + methodName + " 方法执行耗时：" + diffTime + " ms");
         }
