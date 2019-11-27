@@ -16,7 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @EnableScheduling
 @SpringBootApplication
-@MapperScan("com.importexpress.shopify.mapper")
+@MapperScan("com.importexpress.shopify.mapper.*")
 public class ShopifyApp {
 
     public static void main(String[] args) {

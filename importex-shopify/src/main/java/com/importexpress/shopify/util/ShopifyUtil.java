@@ -5,6 +5,8 @@ import com.importexpress.shopify.exception.ShopifyException;
 import com.importexpress.shopify.util.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.http.client.support.BasicAuthorizationInterceptor;
 import org.springframework.stereotype.Service;
@@ -24,12 +26,16 @@ import java.util.Map;
 public class ShopifyUtil {
 
 
-    @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
     private Config config;
 
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        // Do any additional configuration here
+        return builder.build();
+    }
 
     /**
      * postForEntity
