@@ -6,22 +6,22 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Config {
 
-    @Value("${SHOPIFY.CLIENT_ID}")
+    @Value("${shopify.client_id}")
     public String SHOPIFY_CLIENT_ID;
 
-    @Value("${SHOPIFY.CLIENT_SECRET}")
+    @Value("${shopify.client_secret}")
     public String SHOPIFY_CLIENT_SECRET;
 
-    @Value("${SHOPIFY.SCOPE}")
+    @Value("${shopify.scope}")
     public String SHOPIFY_SCOPE;
 
-    @Value("${SHOPIFY.REDIRECT_URI}")
+    @Value("${shopify.redirect_uri}")
     public String SHOPIFY_REDIRECT_URI;
 
-    @Value("${SHOPIFY.URI_PRODUCTS}")
+    @Value("${shopify.uri_products}")
     public String SHOPIFY_URI_PRODUCTS;
 
-    @Value("${SHOPIFY.URI_ORDERS}")
+    @Value("${shopify.uri_orders}")
     public String SHOPIFY_URI_ORDERS;
 
 }
