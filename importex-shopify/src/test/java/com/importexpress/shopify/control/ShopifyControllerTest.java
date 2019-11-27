@@ -2,7 +2,9 @@ package com.importexpress.shopify.control;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.importexpress.shopify.mapper.ShopifyAuthMapper;
 import com.importexpress.shopify.pojo.GoodsBean;
+import com.importexpress.shopify.pojo.ShopifyAuth;
 import com.importexpress.shopify.pojo.ShopifyRequestWrap;
 import com.importexpress.shopify.pojo.TypeBean;
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,6 +36,9 @@ public class ShopifyControllerTest {
     @Autowired
     private WebApplicationContext wac;
 
+
+    @Autowired
+    private ShopifyAuthMapper shopifyAuthMapper;
 
     private MockMvc mockMvc;
 
@@ -84,5 +89,13 @@ public class ShopifyControllerTest {
     public void getOrders() throws Exception {
         mockMvc.perform(post("/shopify/get/order").param("shopname", "importxtest"))
                 .andExpect(status().isOk()).andDo(print());
+    }
+
+
+    @Test
+    public void selectByShopNameTest(){
+        String shopName = "importxtest";
+        List<ShopifyAuth> list = shopifyAuthMapper.selectByShopName(shopName);
+        System.err.println(list);
     }
 }
