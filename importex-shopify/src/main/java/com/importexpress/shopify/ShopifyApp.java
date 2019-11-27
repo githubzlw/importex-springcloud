@@ -1,5 +1,6 @@
 package com.importexpress.shopify;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -15,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @EnableScheduling
 @SpringBootApplication
+@MapperScan("com.importexpress.shopify.mapper")
 public class ShopifyApp {
 
     public static void main(String[] args) {

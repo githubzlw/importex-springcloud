@@ -5,11 +5,13 @@ import com.importexpress.shopify.pojo.ShopifyAuthExample;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.session.RowBounds;
-import org.springframework.stereotype.Service;
+import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
+@Component
+@Mapper
 public interface ShopifyAuthMapper {
     int countByExample(ShopifyAuthExample example);
 
