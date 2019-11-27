@@ -3,7 +3,7 @@ package com.importexpress.shopify.service.impl;
 
 import com.google.gson.Gson;
 import com.importexpress.shopify.exception.ShopifyException;
-import com.importexpress.shopify.help.ShopifyHelp;
+import com.importexpress.shopify.util.ShopifyUtil;
 import com.importexpress.shopify.mapper.ShopifyAuthMapper;
 import com.importexpress.shopify.pojo.ShopifyAuth;
 import com.importexpress.shopify.pojo.ShopifyAuthExample;
@@ -36,6 +36,10 @@ public class ShopifyServiceImpl implements ShopifyService {
     @Autowired
     private Config config;
 
+    @Autowired
+    private ShopifyUtil shopifyUtil;
+
+
     /**
      * 取得店铺授权的token
      *
@@ -49,7 +53,7 @@ public class ShopifyServiceImpl implements ShopifyService {
 
         log.info("shopName:[{}]",shopName);
 
-        HashMap<String, String> result = ShopifyHelp.INSTANCE.postForEntity(shopName, code);
+        HashMap<String, String> result = shopifyUtil.postForEntity(shopName, code);
 
         return result;
     }
@@ -121,7 +125,7 @@ public class ShopifyServiceImpl implements ShopifyService {
 
         Gson gson = new Gson();
         String json = gson.toJson(productWraper);
-        String returnJson = ShopifyHelp.INSTANCE.postForObject(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), getShopifyToken(shopName), json);
+        String returnJson = shopifyUtil.postForObject(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), getShopifyToken(shopName), json);
         log.info("returnJson:[{}]",returnJson);
         ProductWraper result = gson.fromJson(returnJson, ProductWraper.class);
         return result;
@@ -137,7 +141,7 @@ public class ShopifyServiceImpl implements ShopifyService {
     @Override
     public ProductsWraper getProduct(String shopName) {
 
-        String json = ShopifyHelp.INSTANCE.exchange(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), getShopifyToken(shopName));
+        String json = shopifyUtil.exchange(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), getShopifyToken(shopName));
         ProductsWraper result = new Gson().fromJson(json, ProductsWraper.class);
         return result;
     }
@@ -149,7 +153,7 @@ public class ShopifyServiceImpl implements ShopifyService {
     @Override
     public OrdersWraper getOrders(String shopName) {
 
-        String json = ShopifyHelp.INSTANCE.exchange(String.format(config.SHOPIFY_URI_ORDERS, shopName), getShopifyToken(shopName));
+        String json = shopifyUtil.exchange(String.format(config.SHOPIFY_URI_ORDERS, shopName), getShopifyToken(shopName));
         OrdersWraper result = new Gson().fromJson(json, OrdersWraper.class);
         return result;
     }

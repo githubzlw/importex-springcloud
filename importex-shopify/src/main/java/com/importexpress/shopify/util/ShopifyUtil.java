@@ -1,4 +1,4 @@
-package com.importexpress.shopify.help;
+package com.importexpress.shopify.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.importexpress.shopify.exception.ShopifyException;
@@ -21,20 +21,22 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public enum ShopifyHelp {
-
-    INSTANCE;
-
-    private final static String URI_OAUTH = "https://%s.myshopify.com/admin/oauth/access_token";
+public class ShopifyUtil {
 
 
-
-    private static RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     private Config config;
 
 
+    /**
+     * postForEntity
+     * @param shopname
+     * @param code
+     * @return
+     */
     public HashMap<String, String> postForEntity(String shopname, String code) {
 
         Map<String, String> params = new HashMap<>();
@@ -43,7 +45,7 @@ public enum ShopifyHelp {
         params.put("code", code);
 
         ResponseEntity<String> response =
-                restTemplate.postForEntity(String.format(URI_OAUTH, shopname), params, String.class);
+                restTemplate.postForEntity(String.format(config.SHOPIFY_URI_OAUTH, shopname), params, String.class);
 
 
         try {
@@ -56,6 +58,13 @@ public enum ShopifyHelp {
 
     }
 
+    /**
+     * postForObject
+     * @param uri
+     * @param token
+     * @param json
+     * @return
+     */
     public String postForObject(String uri, String token, String json) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -72,6 +81,12 @@ public enum ShopifyHelp {
 
     }
 
+    /**
+     * exchange
+     * @param uri
+     * @param token
+     * @return
+     */
     public String exchange(String uri, String token) {
 
         HttpHeaders headers = new HttpHeaders();
@@ -89,6 +104,11 @@ public enum ShopifyHelp {
     }
 
 
+    /**
+     * getForObjectByBAI
+     * @param uri
+     * @return
+     */
     public String getForObjectByBAI(String uri) {
 
         BasicAuthorizationInterceptor basicAuthorizationInterceptor =
@@ -103,6 +123,12 @@ public enum ShopifyHelp {
 
     }
 
+    /**
+     * postForObjectByBAI
+     * @param uri
+     * @param json
+     * @return
+     */
     public String postForObjectByBAI(String uri, String json) {
 
         BasicAuthorizationInterceptor basicAuthorizationInterceptor =
@@ -119,8 +145,13 @@ public enum ShopifyHelp {
 
     }
 
+    /**
+     * getShopName
+     * @param shop
+     * @return
+     */
     public String getShopName(String shop){
-        Assert.notNull(shop);
+        Assert.notNull(shop,"shop must not be null");
         return shop.substring(0, shop.indexOf(".")-1);
     }
 }

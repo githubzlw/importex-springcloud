@@ -24,4 +24,7 @@ public class Config {
     @Value("${shopify.uri_orders}")
     public String SHOPIFY_URI_ORDERS;
 
+    @Value("${shopify.uri_oauth}")
+    public String SHOPIFY_URI_OAUTH;
+
 }
