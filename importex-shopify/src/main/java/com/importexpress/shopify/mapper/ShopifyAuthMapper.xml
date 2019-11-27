@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.importExpress.aws.mapper.ShopifyAuthMapper" >
+<mapper namespace="com.importexpress.shopify.mapper.ShopifyAuthMapper" >
   <resultMap id="BaseResultMap" type="com.importexpress.shopify.pojo.ShopifyAuth" >
     <id column="id" property="id" jdbcType="INTEGER" />
     <result column="shop_name" property="shopName" jdbcType="VARCHAR" />
@@ -85,7 +85,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
-    select 
+    select
     <include refid="Base_Column_List" />
     from shopify_auth
     where id = #{id,jdbcType=INTEGER}
@@ -101,10 +101,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.importexpress.shopify.pojo.ShopifyAuth" >
-    insert into shopify_auth (id, shop_name, access_token, 
+    insert into shopify_auth (id, shop_name, access_token,
       scope, create_time, update_time
       )
-    values (#{id,jdbcType=INTEGER}, #{shopName,jdbcType=VARCHAR}, #{accessToken,jdbcType=VARCHAR}, 
+    values (#{id,jdbcType=INTEGER}, #{shopName,jdbcType=VARCHAR}, #{accessToken,jdbcType=VARCHAR},
       #{scope,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
