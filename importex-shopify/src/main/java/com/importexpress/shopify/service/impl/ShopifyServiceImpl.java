@@ -14,7 +14,6 @@ import com.importexpress.shopify.pojo.product.ShopifyBean;
 import com.importexpress.shopify.service.ShopifyService;
 import com.importexpress.shopify.util.Config;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -30,14 +29,17 @@ import java.util.List;
 @Service
 public class ShopifyServiceImpl implements ShopifyService {
 
-    @Autowired
-    private ShopifyAuthMapper shopifyAuthMapper;
+    private final ShopifyAuthMapper shopifyAuthMapper;
 
-    @Autowired
-    private Config config;
+    private final Config config;
 
-    @Autowired
-    private ShopifyUtil shopifyUtil;
+    private final ShopifyUtil shopifyUtil;
+
+    public ShopifyServiceImpl(ShopifyAuthMapper shopifyAuthMapper, Config config, ShopifyUtil shopifyUtil) {
+        this.shopifyAuthMapper = shopifyAuthMapper;
+        this.config = config;
+        this.shopifyUtil = shopifyUtil;
+    }
 
 
     /**
@@ -59,7 +61,7 @@ public class ShopifyServiceImpl implements ShopifyService {
     }
 
     /**
-     * save token into db
+     * 保存shopify的店铺信息到db
      * @param shopName
      * @param token
      * @param scope
@@ -73,10 +75,10 @@ public class ShopifyServiceImpl implements ShopifyService {
         List<ShopifyAuth> shopifyAuths = shopifyAuthMapper.selectByExample(shopifyAuthExample);
         if(shopifyAuths!=null && shopifyAuths.size()>0){
             if(shopifyAuths.size()>1){
-                throw new ShopifyException("1004", "shopifyAuth table exist many recordes");
+                throw new ShopifyException("1004", "exist many recorders in table(shopifyAuth)");
             }
 
-            log.warn("update token info by shop name:[{}]",shopName);
+            log.info("update token info by shop name:[{}]",shopName);
             ShopifyAuth shopifyAuth = shopifyAuths.get(0);
             shopifyAuth.setAccessToken(token);
             shopifyAuth.setScope(scope);
@@ -106,12 +108,14 @@ public class ShopifyServiceImpl implements ShopifyService {
         ShopifyAuthExample shopifyAuthExample = new ShopifyAuthExample();
         shopifyAuthExample.createCriteria().andShopNameEqualTo(shopName);
         List<ShopifyAuth> shopifyAuths = shopifyAuthMapper.selectByExample(shopifyAuthExample);
+        Assert.isTrue(shopifyAuths!=null,"select from table 's data is null");
+        Assert.isTrue(shopifyAuths.size()==1,"select from table 's data > 1");
         return shopifyAuths.get(0).getAccessToken();
     }
 
 
     /**
-     * 上线产品
+     * 铺货到shopify
      *
      * @param shopName
      * @param productWraper
@@ -158,11 +162,21 @@ public class ShopifyServiceImpl implements ShopifyService {
         return result;
     }
 
+    /**
+     * insertShopifyIdWithPid
+     * @param  shopifyBean
+     * @return
+     */
     @Override
     public int insertShopifyIdWithPid(ShopifyBean shopifyBean) {
         return shopifyAuthMapper.insertShopifyIdWithPid(shopifyBean);
     }
 
+    /**
+     * queryPidbyShopifyName
+     * @param shopifyName : shopify店铺名
+     * @return
+     */
     @Override
     public List<ShopifyBean> queryPidbyShopifyName(String shopifyName) {
         return shopifyAuthMapper.queryPidbyShopifyName(shopifyName);
