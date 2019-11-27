@@ -2,6 +2,7 @@ package com.importexpress.shopify.control;
 
 
 import com.importexpress.shopify.pojo.orders.OrdersWraper;
+import com.importexpress.shopify.util.Config;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import com.importexpress.shopify.pojo.product.*;
@@ -37,10 +38,11 @@ public class ShopifyController {
     @Autowired
     private SkuJsonParse skuJsonParse;
 
+    @Autowired
+    private Config config;
 
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final String SHOPIFY_COM = ".myshopify.com";
-    private static List<ZoneBean> zoneBeanList = null;
 
     @GetMapping(value = "/auth/callback")
     public String auth(String code, String hmac, String timestamp, String state, String shop, String itemId,
@@ -62,7 +64,7 @@ public class ShopifyController {
             }
         }
 
-        SecretKeySpec keySpec = new SecretKeySpec(client_secret.getBytes(), HMAC_ALGORITHM);
+        SecretKeySpec keySpec = new SecretKeySpec(config.SHOPIFY_CLIENT_SECRET.getBytes(), HMAC_ALGORITHM);
         Mac mac = null;
         String rtUrl = "apa/shopifyBindResult.html";
         model.addAttribute("isShopify", 0);
