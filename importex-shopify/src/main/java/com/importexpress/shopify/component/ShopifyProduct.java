@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,12 +21,16 @@ public class ShopifyProduct {
     @Autowired
     private SkuJsonParse skuJsonParse;
 
+    /**
+     * @param goods
+     * @return
+     */
     public Product toProduct(GoodsBean goods){
         Product product = new Product();
-        product.setTitle(goods.getPName());
+        product.setTitle(goods.getName());
 
-        String info_ori = info(goods.getInfo_ori());
-        StringBuilder details = details(goods.getPInfo());
+        String info_ori = info(goods.getInfoHtml());
+        StringBuilder details = details(goods.getInfo());
         details.append(info_ori);
         product.setBody_html(details.toString());
 
@@ -42,15 +45,17 @@ public class ShopifyProduct {
         OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
         product.setOptions(wrap.getOptions());
 
-        List<Images> lstImages = images(goods.getPImage());
+        List<Images> lstImages = images(goods.getImage());
         lstImages.addAll(wrap.getLstImages());
         product.setImages(lstImages);
         return product;
     }
 
 
-
-
+    /**图片
+     * @param pImage
+     * @return
+     */
     private List<Images>  images( List<String> pImage){
         List<Images> lstImages = Lists.newArrayList();
         Images images;
@@ -62,6 +67,11 @@ public class ShopifyProduct {
         }
         return lstImages;
     }
+
+    /**规格
+     * @param category
+     * @return
+     */
     private String productType(String category){
         if (StringUtils.isNotBlank(category)) {
             String[] categorys = category.split("(\\^\\^)");
@@ -71,6 +81,11 @@ public class ShopifyProduct {
         }
         return "";
     }
+
+    /**详情
+     * @param info
+     * @return
+     */
     private String info(String info){
         if (StringUtils.isNotBlank(info)) {
             info = info.replaceAll("src=\".*/newindex/img/dot.gif\"", "");
@@ -81,7 +96,11 @@ public class ShopifyProduct {
         return info;
     }
 
-    private StringBuilder details(HashMap<String, String> detail){
+    /**明细
+     * @param detail
+     * @return
+     */
+    private StringBuilder details(Map<String, String> detail){
         StringBuilder sb = new StringBuilder();
         if (detail != null && !detail.isEmpty()) {
             sb.append("<div>");

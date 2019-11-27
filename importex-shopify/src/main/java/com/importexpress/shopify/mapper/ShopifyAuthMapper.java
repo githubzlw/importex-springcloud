@@ -1,17 +1,14 @@
 package com.importexpress.shopify.mapper;
 
 import com.importexpress.shopify.pojo.ShopifyAuth;
-import com.importexpress.shopify.pojo.ShopifyAuthExample;
-import com.importexpress.shopify.pojo.product.ShopifyBean;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
 @Mapper
-public interface ShopifyAuthMapper {
-    int countByExample(ShopifyAuthExample example);
+public interface ShopifyAuthMapper{
+  /*  int countByExample(ShopifyAuthExample example);
 
     int deleteByExample(ShopifyAuthExample example);
 
@@ -23,9 +20,13 @@ public interface ShopifyAuthMapper {
 
     List<ShopifyAuth> selectByExampleWithRowbounds(ShopifyAuthExample example, RowBounds rowBounds);
 
-    List<ShopifyAuth> selectByExample(ShopifyAuthExample example);
+    List<ShopifyAuth> selectByExample(ShopifyAuthExample example);*/
 
-    ShopifyAuth selectByPrimaryKey(Integer id);
+    @Select("select id,shop_name,access_token,scope,create_time,update_time " +
+            "from shopify_auth where shop_name=#{shopName}")
+    List<ShopifyAuth> selectByShopName(String shopName);
+
+   /* ShopifyAuth selectByPrimaryKey(Integer id);
 
     int updateByExampleSelective(@Param("record") ShopifyAuth record, @Param("example") ShopifyAuthExample example);
 
@@ -33,7 +34,7 @@ public interface ShopifyAuthMapper {
 
     int updateByPrimaryKeySelective(ShopifyAuth record);
 
-    int updateByPrimaryKey(ShopifyAuth record);
+    int updateByPrimaryKey(ShopifyAuth record);*/
 
     /**
      * 绑定shopify铺货的ID与我司网站的PID关联
@@ -41,7 +42,7 @@ public interface ShopifyAuthMapper {
      * @param  shopifyBean
      * @return
      */
-    int insertShopifyIdWithPid(ShopifyBean shopifyBean);
+//    int insertShopifyIdWithPid(ShopifyBean shopifyBean);
 
     /**
      *  根据shopify店铺名称获取所有对应的PID
@@ -49,6 +50,6 @@ public interface ShopifyAuthMapper {
      * @param shopifyName
      * @return
      */
-    List<ShopifyBean> queryPidbyShopifyName(@Param("shopifyName") String shopifyName);
+//    List<ShopifyBean> queryPidbyShopifyName(@Param("shopifyName") String shopifyName);
 
 }

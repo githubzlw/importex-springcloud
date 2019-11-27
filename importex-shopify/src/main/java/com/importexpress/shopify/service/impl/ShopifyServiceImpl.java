@@ -14,6 +14,7 @@ import com.importexpress.shopify.pojo.product.ShopifyBean;
 import com.importexpress.shopify.service.ShopifyService;
 import com.importexpress.shopify.util.Config;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -29,14 +30,14 @@ import java.util.List;
 @Service
 public class ShopifyServiceImpl implements ShopifyService {
 
-    private final ShopifyAuthMapper shopifyAuthMapper;
+    @Autowired
+    private  ShopifyAuthMapper shopifyAuthMapper;
 
     private final Config config;
 
     private final ShopifyUtil shopifyUtil;
 
-    public ShopifyServiceImpl(ShopifyAuthMapper shopifyAuthMapper, Config config, ShopifyUtil shopifyUtil) {
-        this.shopifyAuthMapper = shopifyAuthMapper;
+    public ShopifyServiceImpl( Config config, ShopifyUtil shopifyUtil) {
         this.config = config;
         this.shopifyUtil = shopifyUtil;
     }
@@ -72,7 +73,7 @@ public class ShopifyServiceImpl implements ShopifyService {
 
         ShopifyAuthExample shopifyAuthExample = new ShopifyAuthExample();
         shopifyAuthExample.or().andShopNameEqualTo(shopName);
-        List<ShopifyAuth> shopifyAuths = shopifyAuthMapper.selectByExample(shopifyAuthExample);
+        List<ShopifyAuth> shopifyAuths = null;//shopifyAuthMapper.selectByExample(shopifyAuthExample);
         if(shopifyAuths!=null && shopifyAuths.size()>0){
             if(shopifyAuths.size()>1){
                 throw new ShopifyException("1004", "exist many recorders in table(shopifyAuth)");
@@ -83,7 +84,7 @@ public class ShopifyServiceImpl implements ShopifyService {
             shopifyAuth.setAccessToken(token);
             shopifyAuth.setScope(scope);
             shopifyAuth.setUpdateTime(new Date());
-            return shopifyAuthMapper.updateByPrimaryKey(shopifyAuth);
+            return 0;//shopifyAuthMapper.updateByPrimaryKey(shopifyAuth);
         }else{
             ShopifyAuth shopifyAuth = new ShopifyAuth();
             shopifyAuth.setShopName(shopName);
@@ -92,7 +93,7 @@ public class ShopifyServiceImpl implements ShopifyService {
             Date now = new Date();
             shopifyAuth.setCreateTime(now);
             shopifyAuth.setUpdateTime(now);
-            return shopifyAuthMapper.insert(shopifyAuth);
+            return 0;//shopifyAuthMapper.insert(shopifyAuth);
         }
 
 
@@ -105,9 +106,7 @@ public class ShopifyServiceImpl implements ShopifyService {
      */
     private String getShopifyToken(String shopName) {
 
-        ShopifyAuthExample shopifyAuthExample = new ShopifyAuthExample();
-        shopifyAuthExample.createCriteria().andShopNameEqualTo(shopName);
-        List<ShopifyAuth> shopifyAuths = shopifyAuthMapper.selectByExample(shopifyAuthExample);
+        List<ShopifyAuth> shopifyAuths = shopifyAuthMapper.selectByShopName(shopName);
         Assert.isTrue(shopifyAuths!=null,"select from table 's data is null");
         Assert.isTrue(shopifyAuths.size()==1,"select from table 's data > 1");
         return shopifyAuths.get(0).getAccessToken();
@@ -169,7 +168,7 @@ public class ShopifyServiceImpl implements ShopifyService {
      */
     @Override
     public int insertShopifyIdWithPid(ShopifyBean shopifyBean) {
-        return shopifyAuthMapper.insertShopifyIdWithPid(shopifyBean);
+        return 0;//shopifyAuthMapper.insertShopifyIdWithPid(shopifyBean);
     }
 
     /**
@@ -179,7 +178,7 @@ public class ShopifyServiceImpl implements ShopifyService {
      */
     @Override
     public List<ShopifyBean> queryPidbyShopifyName(String shopifyName) {
-        return shopifyAuthMapper.queryPidbyShopifyName(shopifyName);
+        return null;//shopifyAuthMapper.queryPidbyShopifyName(shopifyName);
     }
 
 

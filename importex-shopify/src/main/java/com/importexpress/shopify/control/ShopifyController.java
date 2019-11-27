@@ -12,14 +12,10 @@ import com.importexpress.shopify.pojo.product.ShopifyBean;
 import com.importexpress.shopify.service.ShopifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -134,7 +130,7 @@ public class ShopifyController {
             return new CommonResult().failed("shopname is null");
         }
         GoodsBean goods = wrap.getGoods();
-        if (goods == null || StringUtils.isBlank(goods.getPID())) {
+        if (goods == null || StringUtils.isBlank(goods.getPid())) {
             return new CommonResult().failed("product is null");
         }
         ProductWraper productWraper = new ProductWraper();
@@ -146,12 +142,12 @@ public class ShopifyController {
             if(productWraper == null){
                 return new CommonResult().failed("add shopify product failed");
             }
-            // 铺货完成后，绑定店铺数据信息，方便下单后对应ID获取我们产品ID
-            ShopifyBean shopifyBean = new ShopifyBean();
-            shopifyBean.setShopifyName(shopname);
-            shopifyBean.setShopifyPid(String.valueOf(productWraper.getProduct().getId()));
-            shopifyBean.setPid(goods.getPID());
-            shopifyService.insertShopifyIdWithPid(shopifyBean);
+            // 铺货完成后，绑定店铺数据信息，方便下单后对应ID获取我们产 品ID
+//            ShopifyBean shopifyBean = new ShopifyBean();
+//            shopifyBean.setShopifyName(shopname);
+//            shopifyBean.setShopifyPid(String.valueOf(productWraper.getProduct().getId()));
+//            shopifyBean.setPid(goods.getPid());
+//            shopifyService.insertShopifyIdWithPid(shopifyBean);
         } catch (Exception e) {
             log.error("add product", e);
             return new CommonResult().failed(e.getMessage());
