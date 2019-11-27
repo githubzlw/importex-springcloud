@@ -249,4 +249,8 @@
     select id,shopify_name as shopifyName,shopify_pid as shopifyPid,pid
     from shopify_pid_info where shopify_name = #{shopifyName}
   </select>
+
+  <insert id="insertShopifyOrderList" parameterType="com.importexpress.shopify.pojo.orders.Orders">
+    insert into
+  </insert>
 </mapper>
