@@ -1,14 +1,12 @@
 package com.importexpress.shopify.control;
 
 
-import com.importexpress.shopify.pojo.orders.Line_items;
-import com.importexpress.shopify.pojo.orders.Orders;
 import com.importexpress.shopify.pojo.orders.OrdersWraper;
-import com.importexpress.shopify.pojo.orders.Shipping_address;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang.StringUtils;
 import com.importexpress.shopify.pojo.product.*;
 import com.importexpress.shopify.service.ShopifyService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,9 +37,6 @@ public class ShopifyController {
     @Autowired
     private SkuJsonParse skuJsonParse;
 
-
-    private String client_secret = PropertyUtils.getValueFromShopifyFile("CLIENT_SECRET");
-    private String client_id = PropertyUtils.getValueFromShopifyFile("CLIENT_ID");
 
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private static final String SHOPIFY_COM = ".myshopify.com";
