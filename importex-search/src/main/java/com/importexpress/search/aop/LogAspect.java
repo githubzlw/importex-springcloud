@@ -1,4 +1,4 @@
-package com.importexpress.ali1688.aop;
+package com.importexpress.search.aop;
 
 import com.importexpress.comm.util.AopLogUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LogAspect {
 
-    @Pointcut("execution(* com.importexpress.ali1688.control..*.*(..))")
+    @Pointcut("execution(* com.importexpress.search.control..*.*(..))")
     public void controlLog() {
     }
 
@@ -25,7 +25,7 @@ public class LogAspect {
         return AopLogUtil.watchMethod(joinPoint);
     }
 
-    @Pointcut("execution(* com.importexpress.ali1688.service..*.*(..))")
+    @Pointcut("execution(* com.importexpress.search.service..*.*(..))")
     public void serviceLog() {
     }
 

@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class Ali1688ControllerTest {
     @Test
     public void pid() throws Exception {
         String pid = "548125319390";
-        mockMvc.perform(get("/pids/"+pid))
+        mockMvc.perform(get("/pids/" + pid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].item").exists())
                 .andExpect(jsonPath("$.[0].item.num_iid").value(pid))
@@ -53,7 +52,7 @@ public class Ali1688ControllerTest {
     @Test
     public void pids() throws Exception {
         String pid = "548125319390,550142549080";
-        mockMvc.perform(get("/pids/"+pid))
+        mockMvc.perform(get("/pids/" + pid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].item.num_iid").exists())
                 .andExpect(jsonPath("$.[1].item.num_iid").exists())
@@ -63,7 +62,7 @@ public class Ali1688ControllerTest {
     @Test
     public void shopid() throws Exception {
         String id = "aodazhiyichang";
-        mockMvc.perform(get("/shop/"+id))
+        mockMvc.perform(get("/shop/" + id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("200"))
                 .andDo(print());
@@ -117,11 +116,11 @@ public class Ali1688ControllerTest {
 
         Pair<List<String>, List<String>> pair = ali1688CacheService.checkDescInAllPids(true);
 
-        pair.getLeft().stream().parallel().forEach( pid -> {
+        pair.getLeft().stream().parallel().forEach(pid -> {
             try {
                 long lngPid = Long.parseLong(pid.split(":")[3]);
-                System.out.println("recatch pid:"+lngPid);
-                mockMvc.perform(get("/pids/"+lngPid))
+                System.out.println("recatch pid:" + lngPid);
+                mockMvc.perform(get("/pids/" + lngPid))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$.[0].item").exists())
                         .andExpect(jsonPath("$.[0].item.num_iid").value(lngPid))

@@ -1,4 +1,4 @@
-package com.importexpress.ali1688.util;
+package com.importexpress.comm.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;

@@ -8,7 +8,7 @@ import com.importexpress.ali1688.service.Ali1688CacheService;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
 import com.importexpress.ali1688.util.InvalidPid;
-import com.importexpress.ali1688.util.UrlUtil;
+import com.importexpress.comm.util.UrlUtil;
 import com.importexpress.comm.exception.BizErrorCodeEnum;
 import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
@@ -55,7 +55,6 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
-
     private JSONObject getItemByPid(Long pid) {
 
         JSONObject itemFromRedis = this.ali1688CacheService.getItem(pid);
@@ -71,13 +70,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             if (StringUtils.isNotEmpty(error)) {
                 if (error.contains("你的授权已经过期")) {
                     throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
-                }else if(error.contains("超过")) {
+                } else if (error.contains("超过")) {
                     //TODO
                     throw new BizException(BizErrorCodeEnum.LIMIT_EXCEED_FAIL);
-                }else if(error.contains("item-not-found")) {
+                } else if (error.contains("item-not-found")) {
                     throw new IllegalStateException("item-not-found");
                 }
-                log.warn("json's error is not empty:[{}]，pid:[{}]",error,pid);
+                log.warn("json's error is not empty:[{}]，pid:[{}]", error, pid);
                 jsonObject = InvalidPid.of(pid, error);
             }
             this.ali1688CacheService.saveItemIntoRedis(pid, jsonObject);
@@ -236,7 +235,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
         Map<String, Integer> result = new HashMap<>(3);
 
-        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_HOST,config.API_KEY, config.API_SECRET, shopid, page));
+        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_HOST, config.API_KEY, config.API_SECRET, shopid, page));
 
         checkReturnJson(jsonObject);
 

@@ -2,9 +2,9 @@ package com.importexpress.fx.service.impl;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.importexpress.comm.util.UrlUtil;
 import com.importexpress.fx.service.ExchangeRateService;
 import com.importexpress.fx.util.CurrencyEnum;
-import com.importexpress.fx.util.UrlUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
