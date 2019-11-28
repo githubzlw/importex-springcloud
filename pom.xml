@@ -18,7 +18,6 @@
         <module>importex-fx</module>
         <module>importex-search</module>
         <module>importex-shopify</module>
-        <module>importex-user</module>
     </modules>
 
     <properties>
