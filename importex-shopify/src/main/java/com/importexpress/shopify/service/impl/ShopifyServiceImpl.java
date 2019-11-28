@@ -2,7 +2,11 @@ package com.importexpress.shopify.service.impl;
 
 
 import com.google.gson.Gson;
+import com.importexpress.comm.domain.CommonResult;
+import com.importexpress.shopify.component.ShopifyProduct;
 import com.importexpress.shopify.exception.ShopifyException;
+import com.importexpress.shopify.pojo.ShopifyData;
+import com.importexpress.shopify.pojo.product.Product;
 import com.importexpress.shopify.util.ShopifyUtil;
 import com.importexpress.shopify.mapper.ShopifyAuthMapper;
 import com.importexpress.shopify.pojo.ShopifyAuth;
@@ -29,15 +33,16 @@ import java.util.List;
 @Slf4j
 @Service
 public class ShopifyServiceImpl implements ShopifyService {
-
-    @Autowired
     private  ShopifyAuthMapper shopifyAuthMapper;
 
     private final Config config;
 
     private final ShopifyUtil shopifyUtil;
+    @Autowired
+    private ShopifyProduct shopifyProduct;
 
-    public ShopifyServiceImpl( Config config, ShopifyUtil shopifyUtil) {
+    public ShopifyServiceImpl(ShopifyAuthMapper shopifyAuthMapper, Config config, ShopifyUtil shopifyUtil) {
+        this.shopifyAuthMapper = shopifyAuthMapper;
         this.config = config;
         this.shopifyUtil = shopifyUtil;
     }
@@ -71,9 +76,7 @@ public class ShopifyServiceImpl implements ShopifyService {
     @Override
     public int saveShopifyAuth(String shopName, String token,String scope) {
 
-        ShopifyAuthExample shopifyAuthExample = new ShopifyAuthExample();
-        shopifyAuthExample.or().andShopNameEqualTo(shopName);
-        List<ShopifyAuth> shopifyAuths = null;//shopifyAuthMapper.selectByExample(shopifyAuthExample);
+        List<ShopifyAuth> shopifyAuths = shopifyAuthMapper.selectByShopName(shopName);
         if(shopifyAuths!=null && shopifyAuths.size()>0){
             if(shopifyAuths.size()>1){
                 throw new ShopifyException("1004", "exist many recorders in table(shopifyAuth)");
@@ -84,7 +87,8 @@ public class ShopifyServiceImpl implements ShopifyService {
             shopifyAuth.setAccessToken(token);
             shopifyAuth.setScope(scope);
             shopifyAuth.setUpdateTime(new Date());
-            return 0;//shopifyAuthMapper.updateByPrimaryKey(shopifyAuth);
+            shopifyAuth.setShopName(shopName);
+            return shopifyAuthMapper.updateByPrimaryKey(shopifyAuth);
         }else{
             ShopifyAuth shopifyAuth = new ShopifyAuth();
             shopifyAuth.setShopName(shopName);
@@ -93,7 +97,7 @@ public class ShopifyServiceImpl implements ShopifyService {
             Date now = new Date();
             shopifyAuth.setCreateTime(now);
             shopifyAuth.setUpdateTime(now);
-            return 0;//shopifyAuthMapper.insert(shopifyAuth);
+            return shopifyAuthMapper.insert(shopifyAuth);
         }
 
 
@@ -168,7 +172,21 @@ public class ShopifyServiceImpl implements ShopifyService {
      */
     @Override
     public int insertShopifyIdWithPid(ShopifyBean shopifyBean) {
-        return 0;//shopifyAuthMapper.insertShopifyIdWithPid(shopifyBean);
+        ShopifyBean sopifyId= shopifyAuthMapper.selectShopifyId(shopifyBean);
+        if(sopifyId != null){
+            return shopifyAuthMapper.updateShopifyIdWithPid(shopifyBean);
+        }else{
+            return shopifyAuthMapper.insertShopifyIdWithPid(shopifyBean);
+        }
+    }
+    /**
+     * insertShopifyIdWithPid
+     * @param  shopifyBean
+     * @return
+     */
+    @Override
+    public ShopifyBean selectShopifyId(ShopifyBean shopifyBean) {
+        return shopifyAuthMapper.selectShopifyId(shopifyBean);
     }
 
     /**
@@ -178,7 +196,30 @@ public class ShopifyServiceImpl implements ShopifyService {
      */
     @Override
     public List<ShopifyBean> queryPidbyShopifyName(String shopifyName) {
-        return null;//shopifyAuthMapper.queryPidbyShopifyName(shopifyName);
+        return shopifyAuthMapper.queryPidbyShopifyName(shopifyName);
+    }
+    @Override
+    public ProductWraper onlineProduct(String shopname, ShopifyData goods) {
+        Product product = shopifyProduct.toProduct(goods);
+
+        ShopifyBean shopifyBean = new ShopifyBean();
+        shopifyBean.setShopifyName(shopname);
+        shopifyBean.setPid(goods.getPid());
+        ShopifyBean shopifyId = selectShopifyId(shopifyBean);
+        if(shopifyId != null ){
+            product.setId(Long.parseLong(shopifyId.getShopifyPid()));
+        }
+        ProductWraper productWraper = new ProductWraper();
+        productWraper.setProduct(product);
+        productWraper = addProduct(shopname, productWraper);
+
+        if(productWraper != null && productWraper.getProduct() != null){
+            // 铺货完成后，绑定店铺数据信息，方便下单后对应ID获取我们产 品ID
+            shopifyBean.setShopifyPid(String.valueOf(productWraper.getProduct().getId()));
+            insertShopifyIdWithPid(shopifyBean);
+        }
+
+        return productWraper;
     }
 
 

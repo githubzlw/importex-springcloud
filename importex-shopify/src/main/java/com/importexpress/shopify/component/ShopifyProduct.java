@@ -1,8 +1,8 @@
 package com.importexpress.shopify.component;
 
 import com.google.common.collect.Lists;
-import com.importexpress.shopify.pojo.GoodsBean;
 import com.importexpress.shopify.pojo.OptionWrap;
+import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.Images;
 import com.importexpress.shopify.pojo.product.Product;
 import com.importexpress.shopify.pojo.product.Variants;
@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class ShopifyProduct {
      * @param goods
      * @return
      */
-    public Product toProduct(GoodsBean goods){
+    public Product toProduct(ShopifyData goods){
         Product product = new Product();
         product.setTitle(goods.getName());
 
@@ -107,7 +107,7 @@ public class ShopifyProduct {
             Iterator<Map.Entry<String, String>> iterator = detail.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, String> next = iterator.next();
-                sb.append("<span>").append(next.getValue()).append("</span>");
+                sb.append("<span style=\"margin-left: 10px;\">").append(next.getValue()).append("</span><br>");
             }
             sb.append("</div");
         }

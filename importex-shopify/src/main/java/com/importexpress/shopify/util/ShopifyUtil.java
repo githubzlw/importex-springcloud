@@ -26,6 +26,7 @@ import java.util.Map;
 public class ShopifyUtil {
 
 
+    @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
