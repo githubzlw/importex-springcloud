@@ -107,7 +107,7 @@ public class SkuJsonParse {
 		//规格数据
 		List<String> type1=Lists.newArrayList(),type2=Lists.newArrayList(),type3=Lists.newArrayList();
 		String typeName1 = "",typeName2 = "",typeName3 = "";
-		List<Images> image = Lists.newArrayList();
+		List<String> image = Lists.newArrayList();
 		Map<String,String> markMap = Maps.newHashMap();
 		int typeIndex = 1;
 		Images img;
@@ -121,9 +121,7 @@ public class SkuJsonParse {
 			markMap.put(type, markType);
 
 			if(StringUtils.isNotBlank(typeBean.getImg())){
-				img = new Images();
-				img.setSrc(typeBean.getImg().replace(".60x60", ".400x400"));
-				image.add(img);
+				image.add(typeBean.getImg().replace(".60x60", ".400x400"));
 			}
 			if("type1".equals(markType)){
 				typeName1 = typeBean.getType();

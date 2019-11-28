@@ -1,24 +1,30 @@
 package com.importexpress.shopify.control;
 
 
+import com.google.gson.Gson;
 import com.importexpress.comm.domain.CommonResult;
-import com.importexpress.shopify.component.ShopifyProduct;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.ShopifyRequestWrap;
 import com.importexpress.shopify.pojo.orders.OrdersWraper;
-import com.importexpress.shopify.pojo.product.Product;
 import com.importexpress.shopify.pojo.product.ProductWraper;
-import com.importexpress.shopify.pojo.product.ShopifyBean;
 import com.importexpress.shopify.service.ShopifyService;
+import com.importexpress.shopify.util.Config;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Slf4j
 @RestController
@@ -28,20 +34,16 @@ public class ShopifyController {
     @Autowired
     private ShopifyService shopifyService;
 
-
-    /*private String client_secret = PropertyUtils.getValueFromShopifyFile("CLIENT_SECRET");
-    private String client_id = PropertyUtils.getValueFromShopifyFile("CLIENT_ID");
+    @Autowired
+    private Config config;
 
     private static final String HMAC_ALGORITHM = "HmacSHA256";
-    private static final String SHOPIFY_COM = ".myshopify.com";
-    private static List<ZoneBean> zoneBeanList = null;
 
     @GetMapping(value = "/auth/callback")
-    public String auth(String code, String hmac, String timestamp, String state, String shop, String itemId,
-                       HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
-        log.info("code:{},hmac:{},timestamp:{},state:{},shop:{}", code, hmac, timestamp, state, shop);
+    public CommonResult auth(String code, String hmac, String state, String shop,
+                       HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        shop=shop.replace(SHOPIFY_COM, "");
+        log.info("code:{},hmac:{},state:{},shop:{}", code, hmac, state, shop);
 
         Map<String, String[]> parameters = request.getParameterMap();
         String data = null;
@@ -55,66 +57,30 @@ public class ShopifyController {
                 }
             }
         }
-
-        SecretKeySpec keySpec = new SecretKeySpec(client_secret.getBytes(), HMAC_ALGORITHM);
-        Mac mac = null;
-        String rtUrl = "apa/shopifyBindResult.html";
-        model.addAttribute("isShopify", 0);
+        CommonResult commonResult = new CommonResult();
+        SecretKeySpec keySpec = new SecretKeySpec(config.SHOPIFY_CLIENT_ID.getBytes(), HMAC_ALGORITHM);
         try {
-
-            mac = Mac.getInstance(HMAC_ALGORITHM);
+            Mac mac = Mac.getInstance(HMAC_ALGORITHM);
             mac.init(keySpec);
             byte[] rawHmac = mac.doFinal(data.getBytes());
             if (Hex.encodeHexString(rawHmac).equals(request.getParameter("hmac"))) {
                 log.info("HMAC IS VERIFIED");
-                HashMap<String, String> result = new HashMap<>();
-                try {
-                    result = shopifyService.getAccessToken(shop, code);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                HashMap<String, String> result = shopifyService.getAccessToken(shop, code);
                 String accessToken = result.get("access_token");
                 String scope = result.get("scope");
                 shopifyService.saveShopifyAuth(shop, accessToken, scope);
-                // jxw begin 更新user表字段
-                UserBean userBean = userWebUtil.getUserInfo(request, response);
-                String preShopName = shop;
-                if (shop.contains(SHOPIFY_COM)) {
-                    preShopName = shop.replace(SHOPIFY_COM, "");
-                }
-                userService.updateUserShopifyFlag(userBean.getId(), shop);
-                userBean.setShopifyName(shop);
-                userBean.setShopifyFlag(1);
-                // 更新session
-                LoginHelp.loginSucceed(request, response, userBean);
-                // jxw end
-                model.addAttribute("result", "ok");
-                model.addAttribute("shop", shop);
-
-                // 获取产品信息
-                if (StringUtils.isNotBlank(itemId)) {
-                    GoodsBean goods = customGoodsDriver.goodsDriver(itemId);
-                    model.addAttribute("isShopify", 1);
-                    rtUrl = "redirect:" + goods.getpUrl();
-                } else {
-                    model.addAttribute("isShopify", 0);
-                }
+                commonResult.success("HMAC IS VERIFIED,authorization successed");
             } else {
                 log.warn("HMAC IS NOT VERIFIED");
-                model.addAttribute("result", "error");
-                model.addAttribute("shop", shop);
+                commonResult.failed("HMAC IS NOT VERIFIED");
             }
 
         } catch (Exception e) {
             log.error("auth", e);
-            e.printStackTrace();
-            model.addAttribute("result", "error");
-            model.addAttribute("shop", shop);
-        } finally {
-            return rtUrl;
+            commonResult.failed(e.getMessage());
         }
-    }*/
+        return commonResult;
+    }
     /**
      * shopify铺货
      *
@@ -143,7 +109,7 @@ public class ShopifyController {
             log.error("add product", e);
             return new CommonResult().failed(e.getMessage());
         }
-        return new CommonResult().success(productWraper);
+        return new CommonResult().success(new Gson().toJson(productWraper));
     }
 
     /**

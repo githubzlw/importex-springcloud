@@ -1,6 +1,7 @@
 package com.importexpress.shopify.component;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.importexpress.shopify.pojo.OptionWrap;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.Images;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -44,9 +46,9 @@ public class ShopifyProduct {
 
         OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
         product.setOptions(wrap.getOptions());
-
-        List<Images> lstImages = images(goods.getImage());
-        lstImages.addAll(wrap.getLstImages());
+        List<String> lstImg = wrap.getLstImages();
+        lstImg.addAll(goods.getImage());
+        List<Images> lstImages = images(lstImg);
         product.setImages(lstImages);
         return product;
     }
@@ -58,9 +60,11 @@ public class ShopifyProduct {
      */
     private List<Images>  images( List<String> pImage){
         List<Images> lstImages = Lists.newArrayList();
+        Set<String> setImage = Sets.newHashSet(pImage);
         Images images;
-        for (int i = 0, size = pImage.size(); i < size; i++) {
-            String imgSrc = pImage.get(i).replace(".60x60", ".400x400");
+        Iterator<String> iterator = setImage.iterator();
+        while (iterator.hasNext()) {
+            String imgSrc = iterator.next().replace(".60x60", ".400x400");
             images = new Images();
             images.setSrc(imgSrc);
             lstImages.add(images);
