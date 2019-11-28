@@ -46,8 +46,8 @@ public class ShopifyProduct {
 
         OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
         product.setOptions(wrap.getOptions());
-        List<String> lstImg = wrap.getLstImages();
-        lstImg.addAll(goods.getImage());
+        List<String> lstImg = goods.getImage();
+        lstImg.addAll(wrap.getLstImages());
         List<Images> lstImages = images(lstImg);
         product.setImages(lstImages);
         return product;
