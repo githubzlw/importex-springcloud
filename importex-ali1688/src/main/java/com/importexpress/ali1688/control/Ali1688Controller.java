@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -41,15 +42,15 @@ public class Ali1688Controller {
     }
 
     @GetMapping("/pids/{pids}")
-    public List<JSONObject> pid(@PathVariable("pids") Long[] pids) {
+    public List<JSONObject> pid(@PathVariable("pids") Long[] pids,@RequestParam(value="isCache",required = false,defaultValue = "true") boolean isCache) {
 
         if (pids != null && pids.length == 1) {
 
             List<JSONObject> lstResult = new ArrayList<JSONObject>(1);
-            lstResult.add(ali1688Service.getItem(pids[0]));
+            lstResult.add(ali1688Service.getItem(pids[0],isCache));
             return lstResult;
         } else {
-            return ali1688Service.getItems(pids);
+            return ali1688Service.getItems(pids,isCache);
         }
     }
 

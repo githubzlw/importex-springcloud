@@ -17,7 +17,7 @@ public interface Ali1688Service {
      * @param pid
      * @return
      */
-    JSONObject getItem(Long pid);
+    JSONObject getItem(Long pid,boolean isCache);
 
     /**
      * get items by pid array
@@ -25,7 +25,7 @@ public interface Ali1688Service {
      * @param pids
      * @return
      */
-    List<JSONObject> getItems(Long[] pids);
+    List<JSONObject> getItems(Long[] pids,boolean isCache);
 
     /**
      * get Items In Shop

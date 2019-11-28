@@ -55,12 +55,14 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
-    private JSONObject getItemByPid(Long pid) {
+    private JSONObject getItemByPid(Long pid,boolean isCache) {
 
-        JSONObject itemFromRedis = this.ali1688CacheService.getItem(pid);
-        if (itemFromRedis != null) {
-            checkItem(pid, itemFromRedis);
-            return itemFromRedis;
+        if(isCache) {
+            JSONObject itemFromRedis = this.ali1688CacheService.getItem(pid);
+            if (itemFromRedis != null) {
+                checkItem(pid, itemFromRedis);
+                return itemFromRedis;
+            }
         }
 
         try {
@@ -96,13 +98,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @return
      */
     @Override
-    public JSONObject getItem(Long pid) {
+    public JSONObject getItem(Long pid,boolean isCache) {
 
         Callable<JSONObject> callable = new Callable<JSONObject>() {
 
             @Override
             public JSONObject call() {
-                return getItemByPid(pid);
+                return getItemByPid(pid,isCache);
 
             }
         };
@@ -127,14 +129,14 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @return
      */
     @Override
-    public List<JSONObject> getItems(Long[] pids) {
+    public List<JSONObject> getItems(Long[] pids,boolean isCache) {
 
         List<JSONObject> lstResult = new CopyOnWriteArrayList<JSONObject>();
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (long pid : pids) {
             executorService.execute(() -> {
                 try {
-                    JSONObject item = getItem(pid);
+                    JSONObject item = getItem(pid,isCache);
                     if (item != null) {
                         lstResult.add(item);
                     } else {

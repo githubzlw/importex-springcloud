@@ -40,9 +40,19 @@ public class Ali1688ControllerTest {
 
 
     @Test
-    public void pid() throws Exception {
+    public void pid1() throws Exception {
         String pid = "548125319390";
         mockMvc.perform(get("/pids/" + pid))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].item").exists())
+                .andExpect(jsonPath("$.[0].item.num_iid").value(pid))
+                .andDo(print());
+    }
+
+    @Test
+    public void pid2() throws Exception {
+        String pid = "548125319390";
+        mockMvc.perform(get("/pids/" + pid).param("isCache", "false"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.[0].item").exists())
                 .andExpect(jsonPath("$.[0].item.num_iid").value(pid))
