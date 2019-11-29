@@ -17,8 +17,6 @@ public interface ShopifyService {
 
     ProductWraper addProduct(String shopname, ProductWraper productWraper);
 
-    ProductsWraper getProduct(String shopname);
-
     int saveShopifyAuth(String shopName,String access_token, String scope);
 
     OrdersWraper getOrders(String shopName);
@@ -36,14 +34,6 @@ public interface ShopifyService {
      * @return
      */
     ShopifyBean selectShopifyId(ShopifyBean shopifyBean);
-
-    /**
-     *  根据shopify店铺名称获取所有对应的PID
-     *
-     * @param shopifyName : shopify店铺名
-     * @return
-     */
-    List<ShopifyBean> queryPidbyShopifyName(String shopifyName);
 
     /**铺货
      * @param shopname
