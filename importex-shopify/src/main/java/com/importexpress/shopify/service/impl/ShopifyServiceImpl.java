@@ -139,21 +139,6 @@ public class ShopifyServiceImpl implements ShopifyService {
         return result;
     }
 
-
-    /**
-     * 获得所有产品
-     *
-     * @param shopName
-     * @return
-     */
-    @Override
-    public ProductsWraper getProduct(String shopName) {
-
-        String json = shopifyUtil.exchange(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), getShopifyToken(shopName));
-        ProductsWraper result = new Gson().fromJson(json, ProductsWraper.class);
-        return result;
-    }
-
     /**
      * 获取所有订单
      * @param shopName
@@ -194,15 +179,6 @@ public class ShopifyServiceImpl implements ShopifyService {
         return shopifyAuthMapper.selectShopifyId(shopifyBean);
     }
 
-    /**
-     * queryPidbyShopifyName
-     * @param shopifyName : shopify店铺名
-     * @return
-     */
-    @Override
-    public List<ShopifyBean> queryPidbyShopifyName(String shopifyName) {
-        return shopifyAuthMapper.queryPidbyShopifyName(shopifyName);
-    }
     @Override
     public ProductWraper onlineProduct(String shopname, ShopifyData goods) {
         Product product = shopifyProduct.toProduct(goods);

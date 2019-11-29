@@ -4,28 +4,16 @@ import com.importexpress.shopify.pojo.ShopifyAuth;
 import com.importexpress.shopify.pojo.ShopifyAuthExample;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
 import org.apache.ibatis.annotations.*;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-
+@Component
 @Mapper
 public interface ShopifyAuthMapper{
-  /*  int countByExample(ShopifyAuthExample example);
-
-    int deleteByExample(ShopifyAuthExample example);*/
-
-    int deleteByPrimaryKey(Integer id);
-
     @Insert(" insert into shopify_auth (id, shop_name, access_token,scope, create_time, update_time )" +
             "values (#{id,jdbcType=INTEGER}, #{shopName,jdbcType=VARCHAR}, #{accessToken,jdbcType=VARCHAR}," +
             " #{scope,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})")
     int insert(ShopifyAuth record);
-
-//    int insertSelective(ShopifyAuth record);
-
-    /* List<ShopifyAuth> selectByExampleWithRowbounds(ShopifyAuthExample example, RowBounds rowBounds);
-
-    List<ShopifyAuth> selectByExample(ShopifyAuthExample example);*/
-
 
     @Select("select id,shop_name,access_token,scope,create_time,update_time " +
             "from shopify_auth where shop_name=#{shopName}")
@@ -39,14 +27,6 @@ public interface ShopifyAuthMapper{
     })
     List<ShopifyAuth> selectByShopName(String shopName);
 
-   /* ShopifyAuth selectByPrimaryKey(Integer id);
-
-    int updateByExampleSelective(@Param("record") ShopifyAuth record, @Param("example") ShopifyAuthExample example);
-
-    int updateByExample(@Param("record") ShopifyAuth record, @Param("example") ShopifyAuthExample example);*/
-
-
-    int updateByPrimaryKeySelective(ShopifyAuth record);
     @Update("update shopify_auth set  shop_name = #{shopName,jdbcType=VARCHAR}, " +
             "access_token = #{accessToken,jdbcType=VARCHAR}," +
             "scope = #{scope,jdbcType=VARCHAR}," +
@@ -96,20 +76,5 @@ public interface ShopifyAuthMapper{
             @Result(column = "pid", property = "pid")
     })
     ShopifyBean selectShopifyId(ShopifyBean shopifyBean);
-
-    /**
-     *  根据shopify店铺名称获取所有对应的PID
-     *
-     * @param shopifyName
-     * @return
-     */
-    @Select("select id,shopify_name,shopify_pid,pid from shopify_pid_info where shopify_name = #{shopifyName}")
-    @Results({
-            @Result(column = "id", property = "id"),
-            @Result(column = "shopify_name", property = "shopifyName"),
-            @Result(column = "shopify_pid", property = "shopifyPid"),
-            @Result(column = "pid", property = "pid")
-    })
-    List<ShopifyBean> queryPidbyShopifyName(@Param("shopifyName") String shopifyName);
 
 }

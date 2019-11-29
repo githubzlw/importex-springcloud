@@ -7,7 +7,7 @@
 
     <script type="text/javascript">
         $(function () {
-            doQuery("1");
+            // doQuery("1");
         });
 
         function doQuery(orderNo) {
@@ -20,33 +20,69 @@
                     if (data.code == 200) {
 
                         var json = data.data;
-                        if(json && json !=undefined){
+                        if (json && json != undefined) {
+                            var dtData = json.details;
                             var content = '';
                             $("#details_body").empty();
-                            for(var i=0;i<json.length;i++ ){
+                            for (var i = 0; i < dtData.length; i++) {
                                 content = '';
-                                content +='<tr>';
+                                content += '<tr>';
 
-                                content +='<td>'+json[i].id+'</td>';
-                                content +='<td>'+json[i].email+'</td>';
-                                content +='<td>'+json[i].number+'</td>';
-                                content +='<td>'+json[i].user_id+'</td>';
-                                content +='<td>'+json[i].currency+'</td>';
-                                content +='<td>'+json[i].total_weight+'</td>';
-                                content +='<td>'+json[i].total_price+'</td>';
-                                content +='<td>'+json[i].created_at+'</td>';
-                                content +='<td>'+json[i].updated_at+'</td>';
-                                content +='<td>'+json[i].total_price_usd+'</td>';
-                                content +='<td>'+json[i].total_tax+'</td>';
+                                content += '<td>' + dtData[i].variant_id + '</td>';
+                                content += '<td>' + dtData[i].title + '</td>';
+                                content += '<td>' + dtData[i].quantity + '</td>';
+                                content += '<td>' + dtData[i].sku + '</td>';
+                                content += '<td>' + dtData[i].variant_title + '</td>';
+                                content += '<td>' + dtData[i].vendor + '</td>';
+                                content += '<td>' + dtData[i].fulfillment_service + '</td>';
+                                content += '<td>' + dtData[i].product_id + '</td>';
+                                content += '<td>' + dtData[i].requires_shipping + '</td>';
+                                content += '<td>' + dtData[i].taxable + '</td>';
+                                content += '<td>' + dtData[i].gift_card + '</td>';
 
-                                content +='<td>'+json[i].order_number+'</td>';
-                                content +='<td>'+json[i].total_line_items_price+'</td>';
-                                content +='<td>'+json[i].order_status_url+'</td>';
-                                content +='<td>'+json[i].note+'</td>';
+                                content += '<td>' + dtData[i].name + '</td>';
+                                content += '<td>' + dtData[i].variant_inventory_management + '</td>';
+                                content += '<td>' + dtData[i].product_exists + '</td>';
+                                content += '<td>' + dtData[i].fulfillable_quantity + '</td>';
 
-                                content +='</tr>';
-                                $("#shopify_tbody").append(content);
+                                content += '<td>' + dtData[i].grams + '</td>';
+                                content += '<td>' + dtData[i].price + '</td>';
+                                content += '<td>' + dtData[i].total_discount + '</td>';
+                                content += '<td>' + dtData[i].fulfillment_status + '</td>';
+                                content += '<td>' + dtData[i].admin_graphql_api_id + '</td>';
+
+                                content += '</tr>';
+                                $("#details_body").append(content);
                             }
+
+
+                            var dtData = json.address;
+                            var content = '';
+
+                            $("#adrress_body").empty();
+
+                            content = '';
+                            content += '<tr>';
+                            content += '<td>' + dtData.id + '</td>';
+                            content += '<td>' + dtData.first_name + '</td>';
+                            content += '<td>' + dtData.address1 + '</td>';
+                            content += '<td>' + dtData.phone + '</td>';
+                            content += '<td>' + dtData.city + '</td>';
+                            content += '<td>' + dtData.zip + '</td>';
+                            content += '<td>' + dtData.province + '</td>';
+                            content += '<td>' + dtData.country + '</td>';
+                            content += '<td>' + dtData.last_name + '</td>';
+                            content += '<td>' + dtData.address2 + '</td>';
+                            content += '<td>' + dtData.company + '</td>';
+                            content += '<td>' + dtData.latitude + '</td>';
+                            content += '<td>' + dtData.longitude + '</td>';
+                            content += '<td>' + dtData.name + '</td>';
+                            content += '<td>' + dtData.country_code + '</td>';
+                            content += '<td>' + dtData.province_code + '</td>';
+
+                            content += '</tr>';
+                            $("#adrress_body").append(content);
+
                         }
                     } else {
                         console.log(url + " error:" + data.message);
@@ -61,10 +97,9 @@
 </head>
 <body>
 
-<table>
+<table border="1">
     <caption>Order Address</caption>
-
-
+    <thead>
     <tr>
         <td>id</td>
         <td>first_name</td>
@@ -83,10 +118,16 @@
         <td>country_code</td>
         <td>province_code</td>
     </tr>
+    </thead>
+
+
+    <tbody id="adrress_body">
+
+    </tbody>
 </table>
 
 
-<table>
+<table border="1">
     <caption>Order Details</caption>
 
     <thead>
@@ -116,4 +157,30 @@
     <tbody id="details_body"></tbody>
 </table>
 </body>
+<script type="text/javascript">
+    window.onload = function () {
+        var url = document.location.href;
+        var begin = url.indexOf("?");
+        if (begin != -1) {
+            var paramsStr = url.substring(begin + 1, url.length);
+            var paramLst = paramsStr.split("&");
+            if (paramLst.length > 0) {
+                var orderNo = "";
+                for (var i = 0; i < paramLst.length; i++) {
+                    var sgParam = paramLst[i];
+                    sgParamLst = sgParam.split("=");
+                    if (sgParamLst.length == 2) {
+                        if (sgParamLst[0] == "orderNo") {
+                            orderNo = sgParamLst[1];
+                            break;
+                        }
+                    }
+                }
+                if (orderNo && orderNo != "") {
+                    doQuery(orderNo);
+                }
+            }
+        }
+    }
+</script>
 </html>
