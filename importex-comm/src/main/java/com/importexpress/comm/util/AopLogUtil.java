@@ -1,7 +1,11 @@
 package com.importexpress.comm.util;
 
+import com.google.common.base.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
+
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -27,7 +31,7 @@ public class AopLogUtil {
 
         // 定义返回对象、得到方法需要的参数
         Object obj ;
-        long startTime = System.currentTimeMillis();
+        Stopwatch stopwatch = Stopwatch.createStarted();
         try {
             Object[] args = joinPoint.getArgs();
             obj = joinPoint.proceed(args);
@@ -35,7 +39,7 @@ public class AopLogUtil {
             log.error("exec error", e);
             throw e;
         }
-        long diffTime = System.currentTimeMillis() - startTime;
+        long diffTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         // 打印耗时的信息
         if (diffTime > MAX_TIME ) {
             log.warn("end exec[{}],spend:{}ms", joinPoint.getSignature(),diffTime);
@@ -59,7 +63,11 @@ public class AopLogUtil {
         StringBuilder param = new StringBuilder();
         for (Object obj : params) {
             if (obj != null) {
-                param.append(obj).append(" ");
+                if(obj.getClass().isArray()){
+                    param.append(ArrayUtils.toString(obj)).append(" ");
+                }else{
+                    param.append(obj).append(" ");
+                }
             }
         }
         return param.toString();
