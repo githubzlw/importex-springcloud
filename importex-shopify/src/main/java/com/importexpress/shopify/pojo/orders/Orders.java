@@ -15,6 +15,7 @@ import java.util.List;
 @Data
 public class Orders {
 
+    private int num_id;
     private long id;
     private String email;
     private String closed_at;

@@ -118,9 +118,20 @@ public class ShopifyOrderController {
 
         if (CollectionUtils.isNotEmpty(existList)) {
             // 过滤已经存在的订单
-            Set<Long> idSet = new HashSet<>(existList.size() * 2);
-            existList.stream().forEach(e -> idSet.add(e.getId()));
-            insertList = shopifyOrderList.stream().filter(e -> idSet.contains(e.getId())).collect(Collectors.toList());
+            Map<Long,Orders> idSet = new HashMap<>(existList.size() * 2);
+            existList.stream().forEach(e -> idSet.put(e.getId(),e));
+            insertList = shopifyOrderList.stream().filter(e -> {
+                if(idSet.containsKey(e.getId())){
+                     Orders tempOrder = idSet.get(e.getId());
+                     if(!tempOrder.getTotal_price_usd().equalsIgnoreCase(e.getTotal_price_usd())
+                             || !tempOrder.getFinancial_status().equalsIgnoreCase(e.getFinancial_status())){
+                         return true;
+                     }
+                     return false;
+                }else{
+                    return true;
+                }
+            }).collect(Collectors.toList());
             idSet.clear();
         } else {
             insertList = new ArrayList<>(shopifyOrderList);
@@ -128,6 +139,7 @@ public class ShopifyOrderController {
         if (CollectionUtils.isNotEmpty(insertList)) {
             for (Orders orderInfo : insertList) {
                 try {
+                    orderInfo.setShopify_name(shopifyName);
                     shopifyOrderService.insertOrderInfoSingle(orderInfo);
                     if (CollectionUtils.isNotEmpty(orderInfo.getLine_items())) {
                         for (Line_items item : orderInfo.getLine_items()) {
