@@ -55,9 +55,20 @@ public class ShopifyOrderControllerTest {
 
 
     @Test
+    public void getShopifyOrderByShopifyName() throws Exception {
+
+        String shopifyName = "importxtest";
+        MvcResult mvcResult = mockMvc
+                .perform(get("/shopifyOrder/list/" + shopifyName))
+                .andExpect(status().isOk()).andDo(print())
+                .andExpect(jsonPath("$.code").value("200")).andReturn();
+        System.out.println(mvcResult.getResponse().getContentAsString());
+    }
+
+    @Test
     public void getDetailsByOrderNo() throws Exception {
 
-        long orderNo = 1;
+        long orderNo = 1875136217122L;
         MvcResult mvcResult = mockMvc
                 .perform(get("/shopifyOrder/getDetailsByOrderNo/" + orderNo))
                 .andExpect(status().isOk()).andDo(print())

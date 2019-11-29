@@ -16,54 +16,57 @@
             $.ajax({
                 type: "GET",
                 url: url,
-                data: {"pageNum":pageNum,"limitNum":10},
+                data: {"pageNum": pageNum, "limitNum": 10},
                 success: function (data) {
                     if (data.code == 200) {
 
                         var json = data.data;
-                        if(json && json !=undefined){
+                        if (json && json != undefined) {
                             $("#current_page").val(pageNum);
                             var totalPage = json.length / 10;
-                            if(json.length % 10 > 0){
-                                totalPage ++;
+                            if (json.length % 10 > 0) {
+                                totalPage++;
                             }
                             $("#total_page").val(totalPage);
                             $("#rs_total").val(json.length);
                             $("#btn_span").empty();
-                            if(totalPage > pageNum +1){
-                                $("#btn_span").append('<button onclick="doQuery('+ (pageNum +1) +')">下一页</button>');
-                            } else{
+                            if (totalPage > pageNum + 1) {
+                                $("#btn_span").append('<button onclick="doQuery(' + (pageNum + 1) + ')">下一页</button>');
+                            } else {
                                 $("#btn_span").append('<button>下一页</button>');
                             }
-                            if(pageNum - 1 > 0){
-                                $("#btn_span").append('<button onclick="doQuery('+ (pageNum - 1) +')">上一页</button>');
-                            } else{
+                            if (pageNum - 1 > 0) {
+                                $("#btn_span").append('<button onclick="doQuery(' + (pageNum - 1) + ')">上一页</button>');
+                            } else {
                                 $("#btn_span").append('<button>上一页</button>');
                             }
                             var content = '';
                             $("#shopify_tbody").empty();
-                            for(var i=0;i<json.length;i++ ){
+                            for (var i = 0; i < json.length; i++) {
                                 content = '';
-                                content +='<tr>';
+                                content += '<tr>';
 
-                                content +='<td>'+json[i].id+'</td>';
-                                content +='<td>'+json[i].email+'</td>';
-                                content +='<td>'+json[i].number+'</td>';
-                                content +='<td>'+json[i].user_id+'</td>';
-                                content +='<td>'+json[i].currency+'</td>';
-                                content +='<td>'+json[i].total_weight+'</td>';
-                                content +='<td>'+json[i].total_price+'</td>';
-                                content +='<td>'+json[i].created_at+'</td>';
-                                content +='<td>'+json[i].updated_at+'</td>';
-                                content +='<td>'+json[i].total_price_usd+'</td>';
-                                content +='<td>'+json[i].total_tax+'</td>';
+                                content += '<td>' + json[i].id + '</td>';
+                                content += '<td>' + json[i].name + '</td>';
+                                content += '<td>' + json[i].email + '</td>';
+                                content += '<td>' + json[i].number + '</td>';
+                                content += '<td>' + json[i].user_id + '</td>';
+                                content += '<td>' + json[i].currency + '</td>';
+                                content += '<td>' + json[i].total_weight + '</td>';
+                                content += '<td>' + json[i].total_price + '</td>';
+                                content += '<td>' + json[i].created_at + '</td>';
+                                content += '<td>' + json[i].updated_at + '</td>';
+                                content += '<td>' + json[i].total_price_usd + '</td>';
+                                content += '<td>' + json[i].total_tax + '</td>';
 
-                                content +='<td>'+json[i].order_number+'</td>';
-                                content +='<td>'+json[i].total_line_items_price+'</td>';
-                                content +='<td>'+json[i].order_status_url+'</td>';
-                                content +='<td>'+json[i].note+'</td>';
+                                content += '<td>' + json[i].order_number + '</td>';
+                                content += '<td>' + json[i].total_line_items_price + '</td>';
+                                content += '<td>' + json[i].order_status_url + '</td>';
+                                content += '<td>' + json[i].note + '</td>';
+                                content += '<td><a target="_blank" href="/html/shopifyDetails.html?orderNo=' + json[i].id
+                                    + '">details</a></td>';
 
-                                content +='</tr>';
+                                content += '</tr>';
                                 $("#shopify_tbody").append(content);
                             }
                         }
@@ -81,8 +84,9 @@
 <body>
 
 <span>ShopifyName:<input id="query_shopify_name" value=""/></span>
+<span><button onclick="doQuery(1)">查询</button></span>
 
-<table>
+<table border="1">
     <caption>Shopify Order List</caption>
     <thead>
     <tr>
@@ -102,6 +106,7 @@
         <td>total_line_items_price</td>
         <td>order_status_url</td>
         <td>note</td>
+        <td>order_details</td>
     </tr>
     </thead>
     <tbody id="shopify_tbody">
