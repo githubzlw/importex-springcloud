@@ -64,7 +64,7 @@ public class ShopifyOrderController {
     }
 
 
-    @RequestMapping("/genOrder/{shopifyName}")
+    @RequestMapping("/getOrder/{shopifyName}")
     public CommonResult genOrderByByShopifyName(@PathVariable(value = "shopifyName") String shopifyName) {
         CommonResult rs = new CommonResult();
         Assert.notNull(shopifyName, "shopifyName is null");
