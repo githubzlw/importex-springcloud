@@ -112,39 +112,4 @@ public class ShopifyController {
         return new CommonResult().success(new Gson().toJson(productWraper));
     }
 
-    /**
-     * shopify获取订单列表
-     *
-     * @param request
-     * @param response
-     */
-    @PostMapping(value = "/get/order")
-    @ResponseBody
-    public Map<String, Object> getOrders(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("status", 200);
-
-        //shopify店铺名称 例如："importxtest";//
-        String shopName = request.getParameter("shopname");
-        if (StringUtils.isBlank(shopName)) {
-            resultMap.put("status", 500);
-            resultMap.put("message","shopname is null");
-            return resultMap;
-        }
-        try {
-            OrdersWraper orders = shopifyService.getOrders(shopName);
-            if (orders != null && orders.getOrders() != null) {
-//                genShopifyOrderInfo(shopName, orders);
-            }
-            resultMap.put("orders", orders);
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("get order", e);
-            resultMap.put("status", 500);
-            resultMap.put("message", e.getMessage().length() > 50 ? e.getMessage().substring(0,50) : e.getMessage());
-        }
-        return resultMap;
-    }
-
-
 }
