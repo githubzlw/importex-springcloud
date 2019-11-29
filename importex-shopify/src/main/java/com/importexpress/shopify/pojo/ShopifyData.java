@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,7 +12,7 @@ import java.util.Map;
  * @author abc
  */
 @Data
-public class GoodsBean implements Serializable {
+public class ShopifyData implements Serializable {
 
 	private static final long serialVersionUID = -4952290032355580137L;
 	@ApiModelProperty("//商品名称")
@@ -32,5 +31,8 @@ public class GoodsBean implements Serializable {
 	private Map<String, String> info;
 	@ApiModelProperty("//商品详细（图片+文字）")
 	private String infoHtml;
+	@ApiModelProperty("/sku")
 	private String skuProducts;
+	@ApiModelProperty("价格")
+	private String price;
 }

@@ -1,8 +1,9 @@
 package com.importexpress.shopify.component;
 
 import com.google.common.collect.Lists;
-import com.importexpress.shopify.pojo.GoodsBean;
+import com.google.common.collect.Sets;
 import com.importexpress.shopify.pojo.OptionWrap;
+import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.Images;
 import com.importexpress.shopify.pojo.product.Product;
 import com.importexpress.shopify.pojo.product.Variants;
@@ -10,10 +11,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.HashMap;
+
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -25,7 +27,7 @@ public class ShopifyProduct {
      * @param goods
      * @return
      */
-    public Product toProduct(GoodsBean goods){
+    public Product toProduct(ShopifyData goods){
         Product product = new Product();
         product.setTitle(goods.getName());
 
@@ -44,9 +46,9 @@ public class ShopifyProduct {
 
         OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
         product.setOptions(wrap.getOptions());
-
-        List<Images> lstImages = images(goods.getImage());
-        lstImages.addAll(wrap.getLstImages());
+        List<String> lstImg = goods.getImage();
+        lstImg.addAll(wrap.getLstImages());
+        List<Images> lstImages = images(lstImg);
         product.setImages(lstImages);
         return product;
     }
@@ -58,9 +60,11 @@ public class ShopifyProduct {
      */
     private List<Images>  images( List<String> pImage){
         List<Images> lstImages = Lists.newArrayList();
+        Set<String> setImage = Sets.newHashSet(pImage);
         Images images;
-        for (int i = 0, size = pImage.size(); i < size; i++) {
-            String imgSrc = pImage.get(i).replace(".60x60", ".400x400");
+        Iterator<String> iterator = setImage.iterator();
+        while (iterator.hasNext()) {
+            String imgSrc = iterator.next().replace(".60x60", ".400x400");
             images = new Images();
             images.setSrc(imgSrc);
             lstImages.add(images);
@@ -107,7 +111,7 @@ public class ShopifyProduct {
             Iterator<Map.Entry<String, String>> iterator = detail.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<String, String> next = iterator.next();
-                sb.append("<span>").append(next.getValue()).append("</span>");
+                sb.append("<span style=\"margin-left: 10px;\">").append(next.getValue()).append("</span><br>");
             }
             sb.append("</div");
         }

@@ -9,4 +9,5 @@ public class ShopifyBean {
     private String shopifyPid;
     private String pid;
     private String shopifyInfo;
+    private String createTime;
 }
