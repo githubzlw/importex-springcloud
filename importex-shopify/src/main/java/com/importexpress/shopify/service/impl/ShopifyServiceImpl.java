@@ -1,6 +1,7 @@
 package com.importexpress.shopify.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.shopify.component.ShopifyProduct;
@@ -174,11 +175,14 @@ public class ShopifyServiceImpl implements ShopifyService {
     @Override
     public int insertShopifyIdWithPid(ShopifyBean shopifyBean) {
         ShopifyBean sopifyId= shopifyAuthMapper.selectShopifyId(shopifyBean);
+        int result = 0;
         if(sopifyId != null){
-            return shopifyAuthMapper.updateShopifyIdWithPid(shopifyBean);
+            result = shopifyAuthMapper.updateShopifyIdWithPid(shopifyBean);
         }else{
-            return shopifyAuthMapper.insertShopifyIdWithPid(shopifyBean);
+            result = shopifyAuthMapper.insertShopifyIdWithPid(shopifyBean);
         }
+        shopifyAuthMapper.insertShopifyIdLog(shopifyBean);
+        return result;
     }
     /**
      * insertShopifyIdWithPid
@@ -217,11 +221,9 @@ public class ShopifyServiceImpl implements ShopifyService {
         if(productWraper != null && productWraper.getProduct() != null){
             // 铺货完成后，绑定店铺数据信息，方便下单后对应ID获取我们产 品ID
             shopifyBean.setShopifyPid(String.valueOf(productWraper.getProduct().getId()));
+            shopifyBean.setShopifyInfo(JSONObject.toJSONString(productWraper));
             insertShopifyIdWithPid(shopifyBean);
         }
-
         return productWraper;
     }
-
-
 }
