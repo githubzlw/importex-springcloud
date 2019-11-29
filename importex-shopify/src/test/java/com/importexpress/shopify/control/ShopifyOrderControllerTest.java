@@ -43,11 +43,11 @@ public class ShopifyOrderControllerTest {
 
 
     @Test
-    public void genOrderByByShopifyName() throws Exception {
+    public void getOrderByByShopifyName() throws Exception {
 
         String shopifyName = "importxtest";
         MvcResult mvcResult = mockMvc
-                .perform(get("/shopifyOrder/genOrder/" + shopifyName))
+                .perform(get("/shopifyOrder/getOrder/" + shopifyName))
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath("$.code").value("200")).andReturn();
         System.out.println(mvcResult.getResponse().getContentAsString());
