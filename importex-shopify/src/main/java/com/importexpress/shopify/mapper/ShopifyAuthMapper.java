@@ -20,7 +20,7 @@ public interface ShopifyAuthMapper{
             " #{scope,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})")
     int insert(ShopifyAuth record);
 
-    int insertSelective(ShopifyAuth record);
+//    int insertSelective(ShopifyAuth record);
 
     /* List<ShopifyAuth> selectByExampleWithRowbounds(ShopifyAuthExample example, RowBounds rowBounds);
 
@@ -60,8 +60,17 @@ public interface ShopifyAuthMapper{
      * @param  shopifyBean
      * @return
      */
-    @Insert("insert into shopify_pid_info(shopify_name,shopify_pid,pid,shopify_info,create_time )" +
+    @Insert("insert into shopify_pid_info_log(shopify_name,shopify_pid,pid,shopify_info,create_time )" +
             "values( #{shopifyName},#{shopifyPid},#{pid},#{shopifyInfo},now())")
+    int insertShopifyIdLog(ShopifyBean shopifyBean);
+    /**
+     * 绑定shopify铺货的ID与我司网站的PID关联
+     *
+     * @param  shopifyBean
+     * @return
+     */
+    @Insert("insert into shopify_pid_info(shopify_name,shopify_pid,pid,create_time )" +
+            "values( #{shopifyName},#{shopifyPid},#{pid},now())")
     int insertShopifyIdWithPid(ShopifyBean shopifyBean);
     /**
      * 绑定shopify铺货的ID与我司网站的PID关联
@@ -69,7 +78,7 @@ public interface ShopifyAuthMapper{
      * @param  shopifyBean
      * @return
      */
-    @Update("update shopify_pid_info set shopify_pid=#{shopifyPid},shopify_info=#{shopifyInfo} " +
+    @Update("update shopify_pid_info set shopify_pid=#{shopifyPid} " +
             "where  shopify_name=#{shopifyName} and pid=#{pid}")
     int updateShopifyIdWithPid(ShopifyBean shopifyBean);
     /**
@@ -84,9 +93,7 @@ public interface ShopifyAuthMapper{
             @Result(column = "id", property = "id"),
             @Result(column = "shopify_name", property = "shopifyName"),
             @Result(column = "shopify_pid", property = "shopifyPid"),
-            @Result(column = "pid", property = "pid"),
-            @Result(column = "create_time", property = "createTime"),
-            @Result(column = "shopify_info", property = "shopifyInfo")
+            @Result(column = "pid", property = "pid")
     })
     ShopifyBean selectShopifyId(ShopifyBean shopifyBean);
 
@@ -101,9 +108,7 @@ public interface ShopifyAuthMapper{
             @Result(column = "id", property = "id"),
             @Result(column = "shopify_name", property = "shopifyName"),
             @Result(column = "shopify_pid", property = "shopifyPid"),
-            @Result(column = "pid", property = "pid"),
-            @Result(column = "create_time", property = "createTime"),
-            @Result(column = "shopify_info", property = "shopifyInfo")
+            @Result(column = "pid", property = "pid")
     })
     List<ShopifyBean> queryPidbyShopifyName(@Param("shopifyName") String shopifyName);
 

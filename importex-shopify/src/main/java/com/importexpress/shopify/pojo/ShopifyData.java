@@ -35,4 +35,6 @@ public class ShopifyData implements Serializable {
 	private String skuProducts;
 	@ApiModelProperty("价格")
 	private String price;
+	@ApiModelProperty("网站")
+	private String vendor;
 }

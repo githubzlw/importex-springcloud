@@ -4,14 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.importexpress.shopify.pojo.OptionWrap;
 import com.importexpress.shopify.pojo.ShopifyData;
-import com.importexpress.shopify.pojo.product.Images;
-import com.importexpress.shopify.pojo.product.Product;
-import com.importexpress.shopify.pojo.product.Variants;
+import com.importexpress.shopify.pojo.product.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +33,16 @@ public class ShopifyProduct {
         details.append(info_ori);
         product.setBody_html(details.toString());
 
-        product.setVendor("www.import-express.com");
+        product.setVendor(goods.getVendor());
         String category = productType(goods.getCategory());
         product.setProduct_type(category);
 
         List<Variants> lstVariants = skuJsonParse.sku2Variants(goods.getSkuProducts(),
                 goods.getType(), goods.getPerWeight(), "kg");
+        if(lstVariants.isEmpty()){
+            Variants variant = variant(goods.getPrice(),goods.getPerWeight());
+            lstVariants.add(variant);
+        }
         product.setVariants(lstVariants);
 
         OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
@@ -53,6 +54,28 @@ public class ShopifyProduct {
         return product;
     }
 
+    private Variants variant(String goodsPrice,String weight){
+        goodsPrice  = goodsPrice.split("-")[0];
+        Variants variants = new Variants();
+        variants.setPrice(goodsPrice);
+        variants.setRequires_shipping(true);
+        variants.setWeight(weight);
+        variants.setWeight_unit("kg");
+        variants.setCountry_code_of_origin("CN");
+        variants.setInventory_policy("deny");
+        variants.setInventory_quantity(999);
+        variants.setInventory_management("shopify");
+        List<PresentmentPrices> presentment_prices = Lists.newArrayList();
+        PresentmentPrices prices = new PresentmentPrices();
+        prices.setCompare_at_price(null);
+        Price price = new Price();
+        price.setAmount(goodsPrice);
+        price.setCurrency_code("USD");
+        prices.setPrice(price);
+        presentment_prices.add(prices);
+        variants.setPresentment_prices(presentment_prices);
+        return variants;
+    }
 
     /**图片
      * @param pImage
