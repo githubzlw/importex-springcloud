@@ -16,6 +16,7 @@ import java.util.List;
 public class Line_items {
 
     private long id;
+    private long order_no;
     private long variant_id;
     private String title;
     private int quantity;

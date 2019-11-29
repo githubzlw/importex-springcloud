@@ -26,6 +26,7 @@ import java.util.Map;
 public class ShopifyUtil {
 
 
+    @Autowired
     private RestTemplate restTemplate;
 
     @Autowired
@@ -104,6 +105,7 @@ public class ShopifyUtil {
             ResponseEntity<String> response = restTemplate.exchange(uri, HttpMethod.GET, entity, String.class, params);
             return response.getBody();
         } catch (Exception e) {
+            e.printStackTrace();
             log.error("exchange",e);
             throw new ShopifyException("1003", "exchange error");
         }

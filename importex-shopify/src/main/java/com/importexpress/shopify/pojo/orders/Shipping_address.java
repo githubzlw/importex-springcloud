@@ -14,6 +14,8 @@ import lombok.Data;
 @Data
 public class Shipping_address {
 
+    private long id;
+    private long order_no;
     private String first_name;
     private String address1;
     private String phone;

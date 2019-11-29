@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopify Order Details</title>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            doQuery("1");
+        });
+
+        function doQuery(orderNo) {
+            var url = "/shopifyOrder/getDetailsByOrderNo/" + orderNo;
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: {},
+                success: function (data) {
+                    if (data.code == 200) {
+
+                        var json = data.data;
+                        if(json && json !=undefined){
+                            var content = '';
+                            $("#details_body").empty();
+                            for(var i=0;i<json.length;i++ ){
+                                content = '';
+                                content +='<tr>';
+
+                                content +='<td>'+json[i].id+'</td>';
+                                content +='<td>'+json[i].email+'</td>';
+                                content +='<td>'+json[i].number+'</td>';
+                                content +='<td>'+json[i].user_id+'</td>';
+                                content +='<td>'+json[i].currency+'</td>';
+                                content +='<td>'+json[i].total_weight+'</td>';
+                                content +='<td>'+json[i].total_price+'</td>';
+                                content +='<td>'+json[i].created_at+'</td>';
+                                content +='<td>'+json[i].updated_at+'</td>';
+                                content +='<td>'+json[i].total_price_usd+'</td>';
+                                content +='<td>'+json[i].total_tax+'</td>';
+
+                                content +='<td>'+json[i].order_number+'</td>';
+                                content +='<td>'+json[i].total_line_items_price+'</td>';
+                                content +='<td>'+json[i].order_status_url+'</td>';
+                                content +='<td>'+json[i].note+'</td>';
+
+                                content +='</tr>';
+                                $("#shopify_tbody").append(content);
+                            }
+                        }
+                    } else {
+                        console.log(url + " error:" + data.message);
+                    }
+                },
+                error: function (res) {
+                    console.log(url + " error!!")
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+
+<table>
+    <caption>Order Address</caption>
+
+
+    <tr>
+        <td>id</td>
+        <td>first_name</td>
+        <td>address1</td>
+        <td>phone</td>
+        <td>city</td>
+        <td>zip</td>
+        <td>province</td>
+        <td>country</td>
+        <td>last_name</td>
+        <td>address2</td>
+        <td>company</td>
+        <td>latitude</td>
+        <td>longitude</td>
+        <td>name</td>
+        <td>country_code</td>
+        <td>province_code</td>
+    </tr>
+</table>
+
+
+<table>
+    <caption>Order Details</caption>
+
+    <thead>
+    <tr>
+        <td>variant_id</td>
+        <td>title</td>
+        <td>quantity</td>
+        <td>sku</td>
+        <td>variant_title</td>
+        <td>vendor</td>
+        <td>fulfillment_service</td>
+        <td>product_id</td>
+        <td>requires_shipping</td>
+        <td>taxable</td>
+        <td>gift_card</td>
+        <td>name</td>
+        <td>variant_inventory_management</td>
+        <td>product_exists</td>
+        <td>fulfillable_quantity</td>
+        <td>grams</td>
+        <td>price</td>
+        <td>total_discount</td>
+        <td>fulfillment_status</td>
+        <td>admin_graphql_api_id</td>
+    </tr>
+    </thead>
+    <tbody id="details_body"></tbody>
+</table>
+</body>
+</html>

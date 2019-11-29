@@ -156,7 +156,8 @@ public class ShopifyServiceImpl implements ShopifyService {
     @Override
     public OrdersWraper getOrders(String shopName) {
 
-        String json = shopifyUtil.exchange(String.format(config.SHOPIFY_URI_ORDERS, shopName), getShopifyToken(shopName));
+        String url = String.format(config.SHOPIFY_URI_ORDERS, shopName);
+        String json = shopifyUtil.exchange(url, getShopifyToken(shopName));
         OrdersWraper result = new Gson().fromJson(json, OrdersWraper.class);
         return result;
     }

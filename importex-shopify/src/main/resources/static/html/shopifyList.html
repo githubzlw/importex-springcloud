@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shopify Order List</title>
+    <script src="/js/jquery-3.4.1.min.js"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            doQuery(1);
+        });
+
+        function doQuery(pageNum) {
+            var shopify_name = $("#query_shopify_name").val();
+            var url = "/shopifyOrder/list/" + shopify_name;
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: {"pageNum":pageNum,"limitNum":10},
+                success: function (data) {
+                    if (data.code == 200) {
+
+                        var json = data.data;
+                        if(json && json !=undefined){
+                            $("#current_page").val(pageNum);
+                            var totalPage = json.length / 10;
+                            if(json.length % 10 > 0){
+                                totalPage ++;
+                            }
+                            $("#total_page").val(totalPage);
+                            $("#rs_total").val(json.length);
+                            $("#btn_span").empty();
+                            if(totalPage > pageNum +1){
+                                $("#btn_span").append('<button onclick="doQuery('+ (pageNum +1) +')">下一页</button>');
+                            } else{
+                                $("#btn_span").append('<button>下一页</button>');
+                            }
+                            if(pageNum - 1 > 0){
+                                $("#btn_span").append('<button onclick="doQuery('+ (pageNum - 1) +')">上一页</button>');
+                            } else{
+                                $("#btn_span").append('<button>上一页</button>');
+                            }
+                            var content = '';
+                            $("#shopify_tbody").empty();
+                            for(var i=0;i<json.length;i++ ){
+                                content = '';
+                                content +='<tr>';
+
+                                content +='<td>'+json[i].id+'</td>';
+                                content +='<td>'+json[i].email+'</td>';
+                                content +='<td>'+json[i].number+'</td>';
+                                content +='<td>'+json[i].user_id+'</td>';
+                                content +='<td>'+json[i].currency+'</td>';
+                                content +='<td>'+json[i].total_weight+'</td>';
+                                content +='<td>'+json[i].total_price+'</td>';
+                                content +='<td>'+json[i].created_at+'</td>';
+                                content +='<td>'+json[i].updated_at+'</td>';
+                                content +='<td>'+json[i].total_price_usd+'</td>';
+                                content +='<td>'+json[i].total_tax+'</td>';
+
+                                content +='<td>'+json[i].order_number+'</td>';
+                                content +='<td>'+json[i].total_line_items_price+'</td>';
+                                content +='<td>'+json[i].order_status_url+'</td>';
+                                content +='<td>'+json[i].note+'</td>';
+
+                                content +='</tr>';
+                                $("#shopify_tbody").append(content);
+                            }
+                        }
+                    } else {
+                        console.log(url + " error:" + data.message);
+                    }
+                },
+                error: function (res) {
+                    console.log(url + " error!!")
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+
+<span>ShopifyName:<input id="query_shopify_name" value=""/></span>
+
+<table>
+    <caption>Shopify Order List</caption>
+    <thead>
+    <tr>
+        <td>id</td>
+        <td>name</td>
+        <td>email</td>
+        <td>number</td>
+        <td>user_id</td>
+        <td>currency</td>
+        <td>total_weight</td>
+        <td>total_price</td>
+        <td>created_at</td>
+        <td>updated_at</td>
+        <td>total_price_usd</td>
+        <td>total_tax</td>
+        <td>order_number</td>
+        <td>total_line_items_price</td>
+        <td>order_status_url</td>
+        <td>note</td>
+    </tr>
+    </thead>
+    <tbody id="shopify_tbody">
+
+    </tbody>
+
+</table>
+
+<div>
+
+    当前页:<span id="current_page"></span>
+    总页:<span id="total_page"></span>
+    总数:<span id="rs_total"></span>
+    <span id="btn_span"></span>
+
+</div>
+
+
+</body>
+</html>

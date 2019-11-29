@@ -2,6 +2,8 @@ package com.importexpress.shopify.mapper;
 
 import com.importexpress.shopify.pojo.ShopifyAuth;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Result;
+import org.apache.ibatis.annotations.Results;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -22,8 +24,8 @@ public interface ShopifyAuthMapper{
 
     List<ShopifyAuth> selectByExample(ShopifyAuthExample example);*/
 
-    @Select("select id,shop_name,access_token,scope,create_time,update_time " +
-            "from shopify_auth where shop_name=#{shopName}")
+    @Select("select id,shop_name as shopName,access_token as accessToken,scope,create_time as createTime,update_time as updateTime " +
+            " from shopify_auth where shop_name=#{shopName}")
     List<ShopifyAuth> selectByShopName(String shopName);
 
    /* ShopifyAuth selectByPrimaryKey(Integer id);

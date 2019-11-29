@@ -86,6 +86,11 @@ public class Orders {
     private List<Refunds> refunds;
     private Payment_details payment_details;
     private Customer customer;
+
+    private String shopify_name;
+    private String create_time;
+    private String update_time;
+
     public void setId(long id) {
          this.id = id;
      }

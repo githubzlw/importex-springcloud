@@ -1,11 +1,14 @@
 package com.importexpress.shopify.pojo.orders;
 
+import lombok.Data;
+
 /**
  * Auto-generated: 2019-04-30 15:43:48
  *
  * @author bejson.com (i@bejson.com)
  * @website http://www.bejson.com/java2pojo/
  */
+@Data
 public class Customer {
 
     private long id;
