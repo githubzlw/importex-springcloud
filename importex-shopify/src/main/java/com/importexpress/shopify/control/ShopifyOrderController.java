@@ -5,8 +5,8 @@ import com.importexpress.shopify.pojo.orders.Line_items;
 import com.importexpress.shopify.pojo.orders.Orders;
 import com.importexpress.shopify.pojo.orders.OrdersWraper;
 import com.importexpress.shopify.pojo.orders.Shipping_address;
+import com.importexpress.shopify.service.ShopifyAuthService;
 import com.importexpress.shopify.service.ShopifyOrderService;
-import com.importexpress.shopify.service.ShopifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class ShopifyOrderController {
 
     @Autowired
-    private ShopifyService shopifyService;
+    private ShopifyAuthService shopifyAuthService;
 
     @Autowired
     private ShopifyOrderService shopifyOrderService;
@@ -70,7 +70,7 @@ public class ShopifyOrderController {
         Assert.notNull(shopifyName, "shopifyName is null");
 
         try {
-            OrdersWraper orders = shopifyService.getOrders(shopifyName);
+            OrdersWraper orders = shopifyOrderService.getOrders(shopifyName);
             if (orders != null && orders.getOrders() != null) {
                 genShopifyOrderInfo(shopifyName, orders);
                 rs.success(orders.getOrders().size());

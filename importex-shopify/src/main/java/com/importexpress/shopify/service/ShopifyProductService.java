@@ -2,25 +2,12 @@ package com.importexpress.shopify.service;
 
 
 import com.importexpress.shopify.pojo.ShopifyData;
-import com.importexpress.shopify.pojo.orders.OrdersWraper;
 import com.importexpress.shopify.pojo.product.ProductWraper;
-import com.importexpress.shopify.pojo.product.ProductsWraper;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-
-public interface ShopifyService {
-
-    HashMap<String, String> getAccessToken(String shopname, String code) throws IOException;
+public interface ShopifyProductService {
 
     ProductWraper addProduct(String shopname, ProductWraper productWraper);
-
-    int saveShopifyAuth(String shopName,String access_token, String scope);
-
-    OrdersWraper getOrders(String shopName);
-
     /**
      * 绑定shopify铺货的ID与我司网站的PID关联
      *

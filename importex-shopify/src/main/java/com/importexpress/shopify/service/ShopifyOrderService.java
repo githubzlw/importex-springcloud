@@ -2,6 +2,7 @@ package com.importexpress.shopify.service;
 
 import com.importexpress.shopify.pojo.orders.Line_items;
 import com.importexpress.shopify.pojo.orders.Orders;
+import com.importexpress.shopify.pojo.orders.OrdersWraper;
 import com.importexpress.shopify.pojo.orders.Shipping_address;
 
 import java.util.List;
@@ -13,6 +14,11 @@ import java.util.List;
  * @date:2019/11/28
  */
 public interface ShopifyOrderService {
+    /**获取shopify订单
+     * @param shopName
+     * @return
+     */
+    OrdersWraper getOrders(String shopName);
 
 
     /**

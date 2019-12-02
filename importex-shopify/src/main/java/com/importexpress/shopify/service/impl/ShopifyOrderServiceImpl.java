@@ -1,10 +1,16 @@
 package com.importexpress.shopify.service.impl;
 
+import com.google.gson.Gson;
+import com.importexpress.shopify.mapper.ShopifyAuthMapper;
 import com.importexpress.shopify.mapper.ShopifyOrderMapper;
 import com.importexpress.shopify.pojo.orders.Line_items;
 import com.importexpress.shopify.pojo.orders.Orders;
+import com.importexpress.shopify.pojo.orders.OrdersWraper;
 import com.importexpress.shopify.pojo.orders.Shipping_address;
+import com.importexpress.shopify.service.ShopifyAuthService;
 import com.importexpress.shopify.service.ShopifyOrderService;
+import com.importexpress.shopify.util.Config;
+import com.importexpress.shopify.util.ShopifyUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +27,12 @@ public class ShopifyOrderServiceImpl implements ShopifyOrderService {
 
     @Autowired
     private ShopifyOrderMapper shopifyOrderMapper;
+    @Autowired
+    private Config config;
+    @Autowired
+    private ShopifyUtil shopifyUtil;
+    @Autowired
+    private ShopifyAuthService shopifyAuthService;
 
     @Override
     public List<Orders> queryListByShopifyName(String shopifyName) {
@@ -50,6 +62,18 @@ public class ShopifyOrderServiceImpl implements ShopifyOrderService {
     @Override
     public int insertIntoOrderAddress(Shipping_address address) {
         return shopifyOrderMapper.insertIntoOrderAddress(address);
+    }
+    /**
+     * 获取所有订单
+     * @param shopName
+     */
+    @Override
+    public OrdersWraper getOrders(String shopName) {
+
+        String url = String.format(config.SHOPIFY_URI_ORDERS, shopName);
+        String json = shopifyUtil.exchange(url, shopifyAuthService.getShopifyToken(shopName));
+        OrdersWraper result = new Gson().fromJson(json, OrdersWraper.class);
+        return result;
     }
 
 }

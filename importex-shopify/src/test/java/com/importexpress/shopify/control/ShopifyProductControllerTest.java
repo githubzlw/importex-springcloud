@@ -20,6 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -28,14 +29,9 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ShopifyControllerTest {
+public class ShopifyProductControllerTest {
     @Autowired
     private WebApplicationContext wac;
-
-
-    @Autowired
-    private ShopifyAuthMapper shopifyAuthMapper;
-
     private MockMvc mockMvc;
 
     @Before
@@ -75,7 +71,7 @@ public class ShopifyControllerTest {
         wrap.setData(goods);
         wrap.setShopname("importxtest");
         String requestJson = JSONObject.toJSONString(wrap);
-        mockMvc.perform(post("/shopify/add/product")
+        mockMvc.perform(post("/shopifyProduct/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk()).andDo(print());
 
@@ -87,11 +83,4 @@ public class ShopifyControllerTest {
                 .andExpect(status().isOk()).andDo(print());
     }
 
-
-    @Test
-    public void selectByShopNameTest(){
-        String shopName = "importxtest";
-        List<ShopifyAuth> list = shopifyAuthMapper.selectByShopName(shopName);
-        System.err.println(list);
-    }
 }
