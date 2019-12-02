@@ -1,7 +1,6 @@
 package com.importexpress.shopify.service.impl;
 
 import com.google.gson.Gson;
-import com.importexpress.shopify.mapper.ShopifyAuthMapper;
 import com.importexpress.shopify.mapper.ShopifyOrderMapper;
 import com.importexpress.shopify.pojo.orders.Line_items;
 import com.importexpress.shopify.pojo.orders.Orders;
@@ -70,8 +69,10 @@ public class ShopifyOrderServiceImpl implements ShopifyOrderService {
     public int insertIntoOrderAddress(Shipping_address address) {
         return shopifyOrderMapper.insertIntoOrderAddress(address);
     }
+
     /**
      * 获取所有订单
+     *
      * @param shopName
      */
     @Override
