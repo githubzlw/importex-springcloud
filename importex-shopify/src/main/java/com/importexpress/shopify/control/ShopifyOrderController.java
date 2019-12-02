@@ -11,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@RequestMapping("/shopifyOrder")
+@RequestMapping("/shopify")
 public class ShopifyOrderController {
 
     @Autowired
@@ -36,17 +34,11 @@ public class ShopifyOrderController {
     private ShopifyOrderService shopifyOrderService;
 
 
-    @RequestMapping("/list/{shopifyName}")
+    @GetMapping("/{shopifyName}")
     public CommonResult getShopifyOrderByShopifyName(
-            @PathVariable(value = "shopifyName") String shopifyName, Long pageNum, Long limitNum) {
+            @PathVariable(value = "shopifyName") String shopifyName, @RequestParam(value="pageNum",required = false,defaultValue = "1") Long pageNum,@RequestParam(value="limitNum",required = false,defaultValue = "10") Long limitNum) {
         CommonResult rs = new CommonResult();
 
-        if (pageNum == null || pageNum < 1L) {
-            pageNum = 1L;
-        }
-        if (limitNum == null || limitNum < 1L) {
-            limitNum = 10L;
-        }
         try {
 
             List<Orders> ordersList = shopifyOrderService.queryListByShopifyName(shopifyName);
@@ -64,7 +56,7 @@ public class ShopifyOrderController {
     }
 
 
-    @RequestMapping("/getOrder/{shopifyName}")
+    @RequestMapping("/{shopifyName}/orders")
     public CommonResult genOrderByByShopifyName(@PathVariable(value = "shopifyName") String shopifyName) {
         CommonResult rs = new CommonResult();
         Assert.notNull(shopifyName, "shopifyName is null");
@@ -87,7 +79,7 @@ public class ShopifyOrderController {
     }
 
 
-    @RequestMapping("/getDetailsByOrderNo/{orderNo}")
+    @RequestMapping("/{shopifyName}/orders/{orderNo}")
     public CommonResult getDetailsByOrderNo(@PathVariable(value = "orderNo") Long orderNo) {
         CommonResult rs = new CommonResult();
         Assert.notNull(orderNo, "orderNo is null");
