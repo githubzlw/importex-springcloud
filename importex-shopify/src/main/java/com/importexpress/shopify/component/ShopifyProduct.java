@@ -2,10 +2,12 @@ package com.importexpress.shopify.component;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.importexpress.shopify.exception.ShopifyException;
 import com.importexpress.shopify.pojo.OptionWrap;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.*;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,7 +26,7 @@ public class ShopifyProduct {
      * @param goods
      * @return
      */
-    public Product toProduct(ShopifyData goods){
+    public Product toProduct(ShopifyData goods) throws ShopifyException {
         Product product = new Product();
         product.setTitle(goods.getName());
 
@@ -37,6 +39,12 @@ public class ShopifyProduct {
         String category = productType(goods.getCategory());
         product.setProduct_type(category);
 
+        OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
+        product.setOptions(wrap.getOptions());
+        if(wrap.getOptions().isEmpty()){
+            throw  new ShopifyException("Product options has something wrong");
+        }
+
         List<Variants> lstVariants = skuJsonParse.sku2Variants(goods.getSkuProducts(),
                 goods.getType(), goods.getPerWeight(), "kg");
         if(lstVariants.isEmpty()){
@@ -45,16 +53,21 @@ public class ShopifyProduct {
         }
         product.setVariants(lstVariants);
 
-        OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
-        product.setOptions(wrap.getOptions());
+
         List<String> lstImg = goods.getImage();
         lstImg.addAll(wrap.getLstImages());
         List<Images> lstImages = images(lstImg);
+        if(lstImages.isEmpty()){
+            throw  new ShopifyException("Product has no images");
+        }
         product.setImages(lstImages);
         return product;
     }
 
-    private Variants variant(String goodsPrice,String weight){
+    private Variants variant(String goodsPrice,String weight) throws ShopifyException{
+        if(StringUtils.isBlank(goodsPrice)){
+            throw  new ShopifyException("The price is not valid");
+        }
         goodsPrice  = goodsPrice.split("-")[0];
         Variants variants = new Variants();
         variants.setPrice(goodsPrice);
@@ -81,7 +94,10 @@ public class ShopifyProduct {
      * @param pImage
      * @return
      */
-    private List<Images>  images( List<String> pImage){
+    private List<Images>  images( List<String> pImage) throws ShopifyException{
+        if(pImage == null || pImage.isEmpty()){
+            throw  new ShopifyException("The image is empty");
+        }
         List<Images> lstImages = Lists.newArrayList();
         Set<String> setImage = Sets.newHashSet(pImage);
         Images images;
