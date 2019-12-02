@@ -16,20 +16,23 @@
             $.ajax({
                 type: "GET",
                 url: url,
-                data: {"pageNum": pageNum, "limitNum": 10},
+                /*data: {"pageNum": pageNum, "limitNum": 10},*/
+                data: {},
                 success: function (data) {
                     if (data.code == 200) {
 
                         var json = data.data;
                         if (json && json != undefined) {
-                            $("#current_page").val(pageNum);
+                            $("#rs_total").val(json.length);
+
+                            /*$("#current_page").val(pageNum);
                             var totalPage = json.length / 10;
                             if (json.length % 10 > 0) {
                                 totalPage++;
                             }
-                            $("#total_page").val(totalPage);
-                            $("#rs_total").val(json.length);
-                            $("#btn_span").empty();
+                            $("#total_page").val(totalPage);*/
+
+                            /*$("#btn_span").empty();
                             if (totalPage > pageNum + 1) {
                                 $("#btn_span").append('<button onclick="doQuery(' + (pageNum + 1) + ')">下一页</button>');
                             } else {
@@ -39,7 +42,7 @@
                                 $("#btn_span").append('<button onclick="doQuery(' + (pageNum - 1) + ')">上一页</button>');
                             } else {
                                 $("#btn_span").append('<button>上一页</button>');
-                            }
+                            }*/
                             var content = '';
                             $("#shopify_tbody").empty();
                             for (var i = 0; i < json.length; i++) {
@@ -117,8 +120,8 @@
 
 <div>
 
-    当前页:<span id="current_page"></span>
-    总页:<span id="total_page"></span>
+    <!--当前页:<span id="current_page"></span>-->
+    <!--总页:<span id="total_page"></span>-->
     总数:<span id="rs_total"></span>
     <span id="btn_span"></span>
 

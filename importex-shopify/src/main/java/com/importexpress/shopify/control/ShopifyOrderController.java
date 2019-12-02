@@ -13,7 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -36,17 +39,20 @@ public class ShopifyOrderController {
 
     @GetMapping("/{shopifyName}")
     public CommonResult getShopifyOrderByShopifyName(
-            @PathVariable(value = "shopifyName") String shopifyName, @RequestParam(value="pageNum",required = false,defaultValue = "1") Long pageNum,@RequestParam(value="limitNum",required = false,defaultValue = "10") Long limitNum) {
+            @PathVariable(value = "shopifyName") String shopifyName, @RequestParam(value = "pageNum", required = false, defaultValue = "1") Long pageNum, @RequestParam(value = "limitNum", required = false, defaultValue = "10") Long limitNum) {
         CommonResult rs = new CommonResult();
 
         try {
 
             List<Orders> ordersList = shopifyOrderService.queryListByShopifyName(shopifyName);
-            List<Orders> rsList = new ArrayList<>();
+            /*List<Orders> rsList = new ArrayList<>();
+            暂不分页
             if (CollectionUtils.isNotEmpty(ordersList)) {
                 rsList = ordersList.stream().skip((pageNum - 1) * limitNum).limit(limitNum).collect(Collectors.toList());
             }
             rs.success(rsList);
+            */
+            rs.success(ordersList);
         } catch (Exception e) {
             rs.failed("shopifyName:" + shopifyName + "error:" + e.getMessage());
             e.printStackTrace();
@@ -64,7 +70,7 @@ public class ShopifyOrderController {
         try {
             OrdersWraper orders = shopifyOrderService.getOrders(shopifyName);
             if (orders != null && orders.getOrders() != null) {
-                genShopifyOrderInfo(shopifyName, orders);
+                shopifyOrderService.genShopifyOrderInfo(shopifyName, orders);
                 rs.success(orders.getOrders().size());
             } else {
                 rs.success(0);
@@ -80,7 +86,8 @@ public class ShopifyOrderController {
 
 
     @RequestMapping("/{shopifyName}/orders/{orderNo}")
-    public CommonResult getDetailsByOrderNo(@PathVariable(value = "orderNo") Long orderNo) {
+    public CommonResult getDetailsByOrderNo(@PathVariable(value = "shopifyName") String shopifyName,
+                                            @PathVariable(value = "orderNo") Long orderNo) {
         CommonResult rs = new CommonResult();
         Assert.notNull(orderNo, "orderNo is null");
 
@@ -93,63 +100,11 @@ public class ShopifyOrderController {
             rsMap.put("address", shipping_address);
             rs.success(rsMap);
         } catch (Exception e) {
-            rs.failed("shopifyName:" + orderNo + ",error:" + e.getMessage());
+            rs.failed("shopifyName:" + shopifyName + ",orderNo:" + ",error:" + orderNo + "," + e.getMessage());
             e.printStackTrace();
-            log.error("shopifyName:" + orderNo + ",error:", e);
+            log.error("shopifyName:" + shopifyName + ",orderNo:" + ",error:", e);
         }
         return rs;
-    }
-
-
-    private void genShopifyOrderInfo(String shopifyName, OrdersWraper orders) {
-        List<Orders> shopifyOrderList = orders.getOrders();
-
-        List<Orders> existList = shopifyOrderService.queryListByShopifyName(shopifyName);
-
-        List<Orders> insertList = new ArrayList<>();
-
-        if (CollectionUtils.isNotEmpty(existList)) {
-            // 过滤已经存在的订单
-            Map<Long,Orders> idSet = new HashMap<>(existList.size() * 2);
-            existList.stream().forEach(e -> idSet.put(e.getId(),e));
-            insertList = shopifyOrderList.stream().filter(e -> {
-                if(idSet.containsKey(e.getId())){
-                     Orders tempOrder = idSet.get(e.getId());
-                     if(!tempOrder.getTotal_price_usd().equalsIgnoreCase(e.getTotal_price_usd())
-                             || !tempOrder.getFinancial_status().equalsIgnoreCase(e.getFinancial_status())){
-                         return true;
-                     }
-                     return false;
-                }else{
-                    return true;
-                }
-            }).collect(Collectors.toList());
-            idSet.clear();
-        } else {
-            insertList = new ArrayList<>(shopifyOrderList);
-        }
-        if (CollectionUtils.isNotEmpty(insertList)) {
-            for (Orders orderInfo : insertList) {
-                try {
-                    orderInfo.setShopify_name(shopifyName);
-                    shopifyOrderService.insertOrderInfoSingle(orderInfo);
-                    if (CollectionUtils.isNotEmpty(orderInfo.getLine_items())) {
-                        for (Line_items item : orderInfo.getLine_items()) {
-                            item.setOrder_no(orderInfo.getId());
-                            shopifyOrderService.insertOrderDetails(item);
-                        }
-                    }
-                    if (orderInfo.getShipping_address() != null) {
-                        orderInfo.getShipping_address().setOrder_no(orderInfo.getId());
-                        shopifyOrderService.insertIntoOrderAddress(orderInfo.getShipping_address());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    log.error("genShopifyOrderInfo error:", e);
-                }
-            }
-        }
-        shopifyOrderList.clear();
     }
 
 }

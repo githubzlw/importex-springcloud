@@ -70,4 +70,12 @@ public interface ShopifyOrderService {
      */
     int insertIntoOrderAddress(Shipping_address address);
 
+    /**
+     * 解析从shopify过来的订单保存到数据库
+     *
+     * @param shopifyName
+     * @param orders
+     */
+    void genShopifyOrderInfo(String shopifyName, OrdersWraper orders);
+
 }
