@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.rholder.retry.*;
 import com.google.common.base.Predicates;
+import com.importexpress.ali1688.mapper.PidQueueMapper;
+import com.importexpress.ali1688.model.PidQueue;
 import com.importexpress.ali1688.service.Ali1688CacheService;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -47,11 +50,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     private final static String URL_ITEM_SEARCH = "%sapi_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&api_name=item_search_shop&lang=zh-CN";
     private Ali1688CacheService ali1688CacheService;
     private Config config;
+    private PidQueueMapper pidQueueMapper;
 
     @Autowired
-    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService, Config config) {
+    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService, Config config,PidQueueMapper pidQueueMapper) {
         this.ali1688CacheService = ali1688CacheService;
         this.config = config;
+        this.pidQueueMapper = pidQueueMapper;
     }
 
 
@@ -219,6 +224,29 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     @Override
     public void setItemsExpire(int days) {
         this.ali1688CacheService.setItemsExpire(days);
+    }
+
+    @Override
+    public int pushPid(String shopId,int pid)
+    {
+        PidQueue pidQueue = new PidQueue();
+        pidQueue.setPid(pid);
+
+        PidQueue select = this.pidQueueMapper.selectOne(pidQueue);
+        if(select !=null){
+            //update
+            select.setShopId(shopId);
+            select.setUpdateTime(new Date());
+            return this.pidQueueMapper.updateByPrimaryKey(select);
+        }else{
+            //insert
+            pidQueue.setShopId(shopId);
+            pidQueue.setStatus((byte)0);
+            Date now = new Date();
+            pidQueue.setCreateTime(now);
+            pidQueue.setUpdateTime(now);
+            return this.pidQueueMapper.insert(pidQueue);
+        }
     }
 
 
