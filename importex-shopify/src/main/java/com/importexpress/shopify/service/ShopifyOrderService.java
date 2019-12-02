@@ -2,6 +2,7 @@ package com.importexpress.shopify.service;
 
 import com.importexpress.shopify.pojo.orders.Line_items;
 import com.importexpress.shopify.pojo.orders.Orders;
+import com.importexpress.shopify.pojo.orders.OrdersWraper;
 import com.importexpress.shopify.pojo.orders.Shipping_address;
 
 import java.util.List;
@@ -63,5 +64,13 @@ public interface ShopifyOrderService {
      * @return
      */
     int insertIntoOrderAddress(Shipping_address address);
+
+    /**
+     * 解析从shopify过来的订单保存到数据库
+     *
+     * @param shopifyName
+     * @param orders
+     */
+    void genShopifyOrderInfo(String shopifyName, OrdersWraper orders);
 
 }

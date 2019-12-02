@@ -30,10 +30,6 @@ public class ShopifyOrderControllerTest {
     @Autowired
     private WebApplicationContext wac;
 
-
-    @Autowired
-    private ShopifyAuthMapper shopifyAuthMapper;
-
     private MockMvc mockMvc;
 
     @Before
@@ -47,7 +43,7 @@ public class ShopifyOrderControllerTest {
 
         String shopifyName = "importxtest";
         MvcResult mvcResult = mockMvc
-                .perform(get("/shopifyOrder/getOrder/" + shopifyName))
+                .perform(get("/shopify/" + shopifyName + "/orders"))
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath("$.code").value("200")).andReturn();
         System.out.println(mvcResult.getResponse().getContentAsString());
@@ -59,7 +55,7 @@ public class ShopifyOrderControllerTest {
 
         String shopifyName = "importxtest";
         MvcResult mvcResult = mockMvc
-                .perform(get("/shopifyOrder/list/" + shopifyName))
+                .perform(get("/shopify/" + shopifyName ))
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath("$.code").value("200")).andReturn();
         System.out.println(mvcResult.getResponse().getContentAsString());
@@ -68,9 +64,10 @@ public class ShopifyOrderControllerTest {
     @Test
     public void getDetailsByOrderNo() throws Exception {
 
+        String shopifyName = "importxtest";
         long orderNo = 1875136217122L;
         MvcResult mvcResult = mockMvc
-                .perform(get("/shopifyOrder/getDetailsByOrderNo/" + orderNo))
+                .perform(get("/shopify/" + shopifyName + "/orders/" + orderNo))
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath("$.code").value("200")).andReturn();
         System.out.println(mvcResult.getResponse().getContentAsString());
