@@ -55,4 +55,6 @@ public interface Ali1688Service {
      * @param days
      */
     void setItemsExpire(int days);
+
+    int pushPid(String shopId,int pid);
 }

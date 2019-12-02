@@ -14,6 +14,11 @@ import java.util.List;
  * @date:2019/11/28
  */
 public interface ShopifyOrderService {
+    /**获取shopify订单
+     * @param shopName
+     * @return
+     */
+    OrdersWraper getOrders(String shopName);
 
 
     /**

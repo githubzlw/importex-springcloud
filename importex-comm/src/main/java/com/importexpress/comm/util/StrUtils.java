@@ -1,14 +1,12 @@
-package com.importexpress.shopify.util;
+package com.importexpress.comm.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component
 public class StrUtils {
 
 	private StrUtils(){}

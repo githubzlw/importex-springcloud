@@ -7,7 +7,7 @@ import com.importexpress.shopify.pojo.SkuAttr;
 import com.importexpress.shopify.pojo.SkuVal;
 import com.importexpress.shopify.pojo.TypeBean;
 import com.importexpress.shopify.pojo.product.*;
-import com.importexpress.shopify.util.StrUtils;
+import com.importexpress.comm.util.StrUtils;
 import lombok.extern.slf4j.Slf4j;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * *****************************************************************************************
