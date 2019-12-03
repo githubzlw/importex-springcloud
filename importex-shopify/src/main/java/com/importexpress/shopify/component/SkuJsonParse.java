@@ -157,7 +157,7 @@ public class SkuJsonParse {
      * @return
      */
     public List<Variants> sku2Variants(String skuProducts, List<TypeBean> typeList, String weight, String weightUnit){
-    	if(StringUtils.isBlank(skuProducts)) {
+    	if(StringUtils.isBlank(skuProducts) || typeList == null || typeList.isEmpty()) {
     		return Lists.newArrayList();
     	}
     	Map<String,TypeBean> typeMap = new HashMap<>();

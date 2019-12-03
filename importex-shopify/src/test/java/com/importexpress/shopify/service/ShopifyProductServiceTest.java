@@ -1,6 +1,7 @@
 package com.importexpress.shopify.service;
 
 import com.importexpress.shopify.pojo.product.ShopifyBean;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class ShopifyProductServiceTest {
         shopifyBean.setShopifyName("importxtest");
         shopifyBean.setShopifyPid("4354622750756");
         int save = shopifyProductService.insertShopifyIdWithPid(shopifyBean);
-        System.out.println(save);
+        Assert.assertEquals("插入失败",1,save);
     }
     @Test
     public void selectShopifyId(){
@@ -33,12 +34,6 @@ public class ShopifyProductServiceTest {
         shopifyBean.setShopifyInfo("");
         shopifyBean.setShopifyName("importxtest");
         ShopifyBean shopifyBean1 = shopifyProductService.selectShopifyId(shopifyBean);
-        if(shopifyBean1 != null){
-            System.out.println(shopifyBean1.toString());
-        }else{
-            System.err.println("出错啦");
-
-        }
+        Assert.assertEquals("查询结果不一致","ShopifyBean(id=16, shopifyName=importxtest, shopifyPid=3859844661282, pid=44525827299, shopifyInfo=null, createTime=null)",shopifyBean1.toString());
     }
-
 }

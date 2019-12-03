@@ -97,7 +97,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
     }
 
     @Override
-    public ProductWraper onlineProduct(String shopname, ShopifyData goods) {
+    public ProductWraper onlineProduct(String shopname, ShopifyData goods) throws ShopifyException{
         Product product = shopifyProduct.toProduct(goods);
 
         ShopifyBean shopifyBean = new ShopifyBean();

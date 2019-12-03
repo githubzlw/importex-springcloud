@@ -1,6 +1,7 @@
 package com.importexpress.shopify.service;
 
 
+import com.importexpress.shopify.exception.ShopifyException;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.ProductWraper;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
@@ -27,7 +28,7 @@ public interface ShopifyProductService {
      * @param goods
      * @return
      */
-    ProductWraper onlineProduct(String shopname, ShopifyData goods);
+    ProductWraper onlineProduct(String shopname, ShopifyData goods) throws ShopifyException;
 
 
 }
