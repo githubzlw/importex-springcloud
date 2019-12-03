@@ -115,6 +115,12 @@ public class Ali1688Controller {
         return ali1688Service.clearAllPidInCache();
     }
 
+    @GetMapping("/pids/clearAllShopInCache")
+    public int clearAllShopInCache() {
+
+        return ali1688Service.clearAllShopInCache();
+    }
+
     @GetMapping("/pids/getNotExistItemInCache")
     public int getNotExistItemInCache() {
 

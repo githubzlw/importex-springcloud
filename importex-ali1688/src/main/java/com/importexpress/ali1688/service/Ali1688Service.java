@@ -45,6 +45,8 @@ public interface Ali1688Service {
 
     int clearAllPidInCache();
 
+    int clearAllShopInCache();
+
     /**
      * 下架商品数量统计
      *

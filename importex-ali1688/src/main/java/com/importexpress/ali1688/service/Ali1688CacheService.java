@@ -102,6 +102,22 @@ public class Ali1688CacheService {
     }
 
     /**
+     * 清除所有店铺的缓存
+     * @return
+     */
+    public int clearAllShopInCache() {
+        int count = 0;
+        Set<String> keys = this.redisTemplate.keys(REDIS_SHOP_PRE + "*");
+        if (keys != null) {
+            for (String key : keys) {
+                this.redisTemplate.delete(key);
+                count++;
+                }
+            }
+        return count;
+    }
+
+    /**
      * 重新设置key的过期时间
      *
      * @param days

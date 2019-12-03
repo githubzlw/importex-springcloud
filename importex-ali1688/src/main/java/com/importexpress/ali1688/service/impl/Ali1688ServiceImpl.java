@@ -222,6 +222,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.ali1688CacheService.clearAllPidInCache();
     }
 
+    @Override
+    public int clearAllShopInCache() {
+        return this.ali1688CacheService.clearAllShopInCache();
+    }
+
 
     @Override
     public int getNotExistItemInCache() {
