@@ -86,6 +86,22 @@ public class Ali1688CacheService {
     }
 
     /**
+     * 清除所有pid的缓存
+     * @return
+     */
+    public int clearAllPidInCache() {
+        int count = 0;
+        Set<String> keys = this.redisTemplate.keys(REDIS_PID_PRE + "*");
+        if (keys != null) {
+            for (String key : keys) {
+                this.redisTemplate.delete(key);
+                count++;
+                }
+            }
+        return count;
+    }
+
+    /**
      * 重新设置key的过期时间
      *
      * @param days

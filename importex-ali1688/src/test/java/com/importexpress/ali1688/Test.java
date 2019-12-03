@@ -10,9 +10,8 @@ import com.google.common.base.CharMatcher;
 public class Test {
 
     @org.junit.Test
-    public void test1(){
+    public void test1() {
         System.out.println(CharMatcher.anyOf("0123456789.").retainFrom("abc1111]"));
-
 
 
         System.out.println(CharMatcher.anyOf("0123456789.").retainFrom("[1213.10]"));

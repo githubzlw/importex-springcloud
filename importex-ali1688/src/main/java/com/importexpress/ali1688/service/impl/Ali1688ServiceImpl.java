@@ -10,18 +10,19 @@ import com.importexpress.ali1688.service.Ali1688CacheService;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
 import com.importexpress.ali1688.util.InvalidPid;
-import com.importexpress.comm.util.UrlUtil;
 import com.importexpress.comm.exception.BizErrorCodeEnum;
 import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
+import com.importexpress.comm.util.UrlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -53,16 +54,16 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     private PidQueueMapper pidQueueMapper;
 
     @Autowired
-    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService, Config config,PidQueueMapper pidQueueMapper) {
+    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService, Config config, PidQueueMapper pidQueueMapper) {
         this.ali1688CacheService = ali1688CacheService;
         this.config = config;
         this.pidQueueMapper = pidQueueMapper;
     }
 
 
-    private JSONObject getItemByPid(Long pid,boolean isCache) {
+    private JSONObject getItemByPid(Long pid, boolean isCache) {
 
-        if(isCache) {
+        if (isCache) {
             JSONObject itemFromRedis = this.ali1688CacheService.getItem(pid);
             if (itemFromRedis != null) {
                 checkItem(pid, itemFromRedis);
@@ -103,13 +104,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @return
      */
     @Override
-    public JSONObject getItem(Long pid,boolean isCache) {
+    public JSONObject getItem(Long pid, boolean isCache) {
 
         Callable<JSONObject> callable = new Callable<JSONObject>() {
 
             @Override
             public JSONObject call() {
-                return getItemByPid(pid,isCache);
+                return getItemByPid(pid, isCache);
 
             }
         };
@@ -134,14 +135,14 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @return
      */
     @Override
-    public List<JSONObject> getItems(Long[] pids,boolean isCache) {
+    public List<JSONObject> getItems(Long[] pids, boolean isCache) {
 
         List<JSONObject> lstResult = new CopyOnWriteArrayList<JSONObject>();
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (long pid : pids) {
             executorService.execute(() -> {
                 try {
-                    JSONObject item = getItem(pid,isCache);
+                    JSONObject item = getItem(pid, isCache);
                     if (item != null) {
                         lstResult.add(item);
                     } else {
@@ -217,6 +218,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     @Override
+    public int clearAllPidInCache() {
+        return this.ali1688CacheService.clearAllPidInCache();
+    }
+
+
+    @Override
     public int getNotExistItemInCache() {
         return this.ali1688CacheService.processNotExistItemInCache(false);
     }
@@ -227,21 +234,48 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     @Override
-    public int pushPid(String shopId,int pid)
-    {
+    public List<PidQueue> getAllPids(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+
+        Example example = new Example(PidQueue.class);
+        example.setOrderByClause("update_time DESC");
+        return this.pidQueueMapper.selectByExampleAndRowBounds(example, new RowBounds(offset, pageSize));
+    }
+
+
+    @Override
+    public List<PidQueue> getAllUnStartPids() {
+
+        PidQueue pidQueue = new PidQueue();
+        pidQueue.setStatus((byte) 0);
+        return this.pidQueueMapper.select(pidQueue);
+    }
+
+    @Override
+    public int updatePidQueue(int id, int status) {
+
+        PidQueue pidQueue = new PidQueue();
+        pidQueue.setId(id);
+        pidQueue.setStatus((byte) status);
+        pidQueue.setUpdateTime(new Date());
+        return this.pidQueueMapper.updateByPrimaryKeySelective(pidQueue);
+    }
+
+    @Override
+    public int pushPid(String shopId, int pid) {
         PidQueue pidQueue = new PidQueue();
         pidQueue.setPid(pid);
 
         PidQueue select = this.pidQueueMapper.selectOne(pidQueue);
-        if(select !=null){
+        if (select != null) {
             //update
             select.setShopId(shopId);
             select.setUpdateTime(new Date());
             return this.pidQueueMapper.updateByPrimaryKey(select);
-        }else{
+        } else {
             //insert
             pidQueue.setShopId(shopId);
-            pidQueue.setStatus((byte)0);
+            pidQueue.setStatus((byte) 0);
             Date now = new Date();
             pidQueue.setCreateTime(now);
             pidQueue.setUpdateTime(now);

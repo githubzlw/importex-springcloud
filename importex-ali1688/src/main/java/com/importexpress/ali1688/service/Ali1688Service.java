@@ -1,6 +1,7 @@
 package com.importexpress.ali1688.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.importexpress.ali1688.model.PidQueue;
 import com.importexpress.comm.pojo.Ali1688Item;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public interface Ali1688Service {
      * @param pid
      * @return
      */
-    JSONObject getItem(Long pid,boolean isCache);
+    JSONObject getItem(Long pid, boolean isCache);
 
     /**
      * get items by pid array
@@ -25,7 +26,7 @@ public interface Ali1688Service {
      * @param pids
      * @return
      */
-    List<JSONObject> getItems(Long[] pids,boolean isCache);
+    List<JSONObject> getItems(Long[] pids, boolean isCache);
 
     /**
      * get Items In Shop
@@ -42,6 +43,8 @@ public interface Ali1688Service {
      */
     int clearNotExistItemInCache();
 
+    int clearAllPidInCache();
+
     /**
      * 下架商品数量统计
      *
@@ -56,5 +59,11 @@ public interface Ali1688Service {
      */
     void setItemsExpire(int days);
 
-    int pushPid(String shopId,int pid);
+    List<PidQueue> getAllPids(int page, int pageSize);
+
+    List<PidQueue> getAllUnStartPids();
+
+    int updatePidQueue(int id, int status);
+
+    int pushPid(String shopId, int pid);
 }

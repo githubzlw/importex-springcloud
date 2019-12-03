@@ -1,7 +1,7 @@
 package com.importexpress.ali1688.model;
 
-import java.util.Date;
 import javax.persistence.*;
+import java.util.Date;
 
 @Table(name = "pid_queue")
 public class PidQueue {
@@ -15,7 +15,7 @@ public class PidQueue {
     private Integer pid;
 
     /**
-     * 0:初始  1:已执行 2:多次执行
+     * 0:初始  1:已执行
      */
     private Byte status;
 

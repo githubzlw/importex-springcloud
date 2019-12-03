@@ -28,9 +28,9 @@ public class Ali1688APITest {
     @Test
     public void getItem() {
 
-        Assert.assertNotNull(ali1688Service.getItem(574271927688L,true).getString("item"));
+        Assert.assertNotNull(ali1688Service.getItem(574271927688L, true).getString("item"));
 
-        Assert.assertNull(ali1688Service.getItem(574271927689L,true).getString("item"));
+        Assert.assertNull(ali1688Service.getItem(574271927689L, true).getString("item"));
 
     }
 
@@ -43,7 +43,7 @@ public class Ali1688APITest {
         List<Long> lstOfflinePid = new ArrayList<>();
         for (long pid : pids) {
 
-            JSONObject item = ali1688Service.getItem(pid,true);
+            JSONObject item = ali1688Service.getItem(pid, true);
             Assert.assertNotNull(item);
             if (item.getString("item") == null) {
                 lstOfflinePid.add(pid);
@@ -61,7 +61,7 @@ public class Ali1688APITest {
         List<Long> lstPids = Arrays.asList(pids);
         List<Long> lstOfflinePid = new ArrayList<>();
         lstPids.stream().parallel().forEach(pid -> {
-            JSONObject item = ali1688Service.getItem(pid,true);
+            JSONObject item = ali1688Service.getItem(pid, true);
             Assert.assertNotNull(item);
             if (item.getString("item") == null) {
                 lstOfflinePid.add(pid);
@@ -82,7 +82,7 @@ public class Ali1688APITest {
             executorService.execute(new Runnable() {
                 @Override
                 public void run() {
-                    JSONObject item = ali1688Service.getItem(pid,true);
+                    JSONObject item = ali1688Service.getItem(pid, true);
                     Assert.assertNotNull(item);
                     if (item.getString("item") == null) {
                         lstOfflinePid.add(pid);
