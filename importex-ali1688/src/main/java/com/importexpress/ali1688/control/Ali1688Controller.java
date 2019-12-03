@@ -3,6 +3,7 @@ package com.importexpress.ali1688.control;
 import com.alibaba.fastjson.JSONObject;
 import com.github.rholder.retry.*;
 import com.google.common.base.Predicates;
+import com.importexpress.ali1688.model.PidQueue;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
 import com.importexpress.comm.domain.CommonResult;
@@ -10,7 +11,6 @@ import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.util.Assert;
@@ -136,6 +136,16 @@ public class Ali1688Controller {
             ali1688Service.setItemsExpire(days);
             return new CommonResult().success(null);
         }
+    }
+
+    @GetMapping("/queue/allunstartpids.json")
+    public String getAllUnStartPids() {
+
+        JSONObject jsonObject = new JSONObject();
+        List<PidQueue> allUnStartPids = ali1688Service.getAllUnStartPids();
+        jsonObject.put("total", allUnStartPids.size());
+        jsonObject.put("rows", allUnStartPids);
+        return jsonObject.toJSONString();
     }
 
     /**
