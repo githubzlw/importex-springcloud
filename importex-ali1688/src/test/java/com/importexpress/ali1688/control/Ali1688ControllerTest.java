@@ -14,6 +14,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -147,7 +148,12 @@ public class Ali1688ControllerTest {
                 e.printStackTrace();
             }
         });
+    }
 
-
+    @Test
+    public void putPidIntoQueue() throws Exception {
+        mockMvc.perform(put("/queue/123456"))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 }

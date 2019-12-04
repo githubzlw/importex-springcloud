@@ -63,9 +63,13 @@ public interface Ali1688Service {
 
     List<PidQueue> getAllPids(int page, int pageSize);
 
+    List<PidQueue> getAllPids();
+
     List<PidQueue> getAllUnStartPids();
 
     int updatePidQueue(int id, int status);
 
     int pushPid(String shopId, int pid);
+
+    int deleteIdInQueue(int id);
 }

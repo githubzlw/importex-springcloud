@@ -19,14 +19,15 @@ public class Ali1688PidQueueTest {
     private Ali1688Service ali1688Service;
 
     @Test
-    public void pushPid() {
-        IntStream.range(1, 100).forEach(i -> ali1688Service.pushPid("shop002", i));
+    public void pushPid()
+    {
+        IntStream.range(10000, 100000).forEach(i -> ali1688Service.pushPid("shop002", i));
     }
 
     @Test
     public void updatePidQueue() {
 
-        IntStream.range(1, 50).forEach(i -> ali1688Service.updatePidQueue(i, 1));
+        IntStream.range(10000, 100000).forEach(i -> ali1688Service.updatePidQueue(i, 0));
     }
 
 

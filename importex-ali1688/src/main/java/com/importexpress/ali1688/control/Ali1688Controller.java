@@ -14,10 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -143,9 +140,31 @@ public class Ali1688Controller {
 
         JSONObject jsonObject = new JSONObject();
         List<PidQueue> allUnStartPids = ali1688Service.getAllUnStartPids();
+
         jsonObject.put("total", allUnStartPids.size());
         jsonObject.put("rows", allUnStartPids);
         return jsonObject.toJSONString();
+    }
+
+    @GetMapping("/queue/allpids.json")
+    public String getAllPids() {
+
+        JSONObject jsonObject = new JSONObject();
+        List<PidQueue> allPids = ali1688Service.getAllPids();
+
+        jsonObject.put("total", allPids.size());
+        jsonObject.put("rows", allPids);
+        return jsonObject.toJSONString();
+    }
+
+    @DeleteMapping("/queue/{id}")
+    public int deleteIdInQueue(@PathVariable("id") int id) {
+        return ali1688Service.deleteIdInQueue(id);
+    }
+
+    @PutMapping("/queue/{pid}")
+    public int putPidIntoQueue(@PathVariable("pid") int pid,@RequestParam(value = "shopId", required = false) String shopId) {
+        return ali1688Service.pushPid(shopId, pid);
     }
 
     /**

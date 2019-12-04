@@ -247,6 +247,14 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.pidQueueMapper.selectByExampleAndRowBounds(example, new RowBounds(offset, pageSize));
     }
 
+    @Override
+    public List<PidQueue> getAllPids() {
+
+        Example example = new Example(PidQueue.class);
+        example.setOrderByClause("update_time DESC");
+        return this.pidQueueMapper.selectByExample(example);
+    }
+
 
     @Override
     public List<PidQueue> getAllUnStartPids() {
@@ -287,6 +295,15 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             return this.pidQueueMapper.insert(pidQueue);
         }
     }
+
+    @Override
+    public int deleteIdInQueue(int id) {
+
+        PidQueue pidQueue = new PidQueue();
+        pidQueue.setId(id);
+        return this.pidQueueMapper.deleteByPrimaryKey(pidQueue);
+    }
+
 
 
     /**

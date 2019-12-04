@@ -8,22 +8,60 @@
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
 </head>
 <body>
-<table id="tb_departments" data-filter-control="true" data-show-columns="true"></table>
+<table id="tb_list" data-filter-control="true" data-show-columns="true">
+    <thead>
+    <tr>
+        <th data-field="checked" ></th>
+        <th data-field="id" ></th>
+        <th data-field="shopId" ></th>
+        <th data-field="pid" ></th>
+        <th data-field="status" data-formatter="statusFormat"></th>
+        <th data-field="createTime" data-formatter="dateFormat"></th>
+        <th data-field="updateTime" data-formatter="dateFormat"></th>
+    </tr>
+    </thead>
+</table>
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
 <script>
     window.operateEvents = {
         // 当点击 class=delete 时触发
         'click .delete': function (e,value,row,index) {
-            // 在 console 打印出整行数据
+
             console.log(row);
+            $.ajax({
+                url: '/queue/'+row.id,
+                type: 'DELETE',
+                success: function(result) {
+                    // Do something with the result
+                }
+            });
         }
     };
 
-    $('#tb_departments').bootstrapTable({
-        url: '/queue/allunstartpids.json',         //请求后台的 URL（*）
+    const $tableID = $('#tb_list');
+    $tableID.on('click', '.table-remove', function () {
+
+        $(this).parents('tr').detach();
+    });
+
+    function statusFormat(value, row, index) {
+        if(value === 0){
+            return "初始"
+        }else if(value === 1){
+            return "已执行"
+        }
+    }
+
+    function dateFormat(value, row, index) {
+        return moment(value).format('YYYY/MM/DD HH:MM:SS:SSS');
+    }
+
+    $('#tb_list').bootstrapTable({
+        url: '/queue/allpids.json',         //请求后台的 URL（*）
         method: 'get',                      //请求方式（*）
         // data: data,                      //当不使用上面的后台请求时，使用data来接收数据
         toolbar: '#toolbar',                //工具按钮用哪个容器
@@ -54,27 +92,26 @@
         }, {
             field: 'id', title: 'ID'       //我们取json中id的值，并将表头title设置为ID
         }, {
-            field: 'shopId', title: 'shopId'         //我们取 json 中 username 的值，并将表头 title 设置为用户名
+            field: 'shopId', title: '店铺ID'         //我们取 json 中 username 的值，并将表头 title 设置为用户名
         },{
-            field: 'pid', title: 'pid'                //我们取 json 中 sex 的值，并将表头 title 设置为性别
+            field: 'pid', title: 'PID'                //我们取 json 中 sex 的值，并将表头 title 设置为性别
         },{
-            field: 'status', title: 'status'               //我们取 json 中 city 的值，并将表头 title 设置为城市
+            field: 'status', title: '状态'               //我们取 json 中 city 的值，并将表头 title 设置为城市
         },{
-            field: 'createTime', title: 'createTime'               //我们取 json 中 sign 的值，并将表头 title 设置为签名
+            field: 'createTime', title: '创建时间'
         },{
-            field: 'updateTime', title: 'updateTime'           //我们取 json 中 classify 的值，并将表头 title 设置为分类
+            field: 'updateTime', title: '更新时间'
         },{
             //ormatter:function(value,row,index) 对后台传入数据 进行操作 对数据重新赋值 返回 return 到前台
             // events 触发事件
             field: 'Button',title:"操作",align: 'center',events:operateEvents,formatter:function(value,row,index){
-                var del = '<button type="button" class="btn btn-danger delete">删除</button>'
+                var del = '<span class="table-remove"><button type="button" class="btn btn-danger delete">删除</button></span>'
                 return del;
             }
         }
         ],
-        responseHandler: function (e) {
-            console.log(e);
-            return { "rows": e.rows, "total": e.total };
+        responseHandler: function (res) {
+            return { "rows": res.rows, "total": res.total };
         }
     });
 </script>
