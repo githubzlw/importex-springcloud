@@ -56,15 +56,13 @@ public class ShopifyProductControllerTest {
                 .content(requestJson)).andExpect(status().isOk()).andDo(print());
 
     }
-    @Test
+    @Test(expected =NullPointerException.class)
     public void addProductNoParam() throws Exception {
-        String jsonWrap = JSONObject.toJSONString(null);
-        MockHttpServletResponse response = mockMvc.perform(post("/shopifyProduct/product")
+        String jsonWrap = null;
+        mockMvc.perform(post("/shopifyProduct/product")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonWrap)).andExpect(status().isOk())
+                .content(jsonWrap))
                 .andReturn().getResponse();
-        Assert.assertEquals("error",
-                "{\"code\":500,\"message\":\"request parameter is null\",\"data\":null}",response.getContentAsString());
     }
     @Test
     public void addProductNoShop() throws Exception {
@@ -95,7 +93,9 @@ public class ShopifyProductControllerTest {
     public void addProductOtherError() throws Exception {
         ShopifyRequestWrap wrap = new ShopifyRequestWrap();
         //设置data()方法: goods.setType(null);
-        wrap.setData(data());
+        ShopifyData data = data();
+        data.setType(null);
+        wrap.setData(data);
         wrap.setShopname("importxtest");
         String requestJson = JSONObject.toJSONString(wrap);
         MockHttpServletResponse response = mockMvc.perform(post("/shopifyProduct/product")
@@ -104,12 +104,6 @@ public class ShopifyProductControllerTest {
                 .andReturn().getResponse();
         Assert.assertEquals("error",
                 "{\"code\":500,\"message\":\"Product options has something wrong\",\"data\":null}",response.getContentAsString());
-    }
-
-    @Test
-    public void getOrders() throws Exception {
-        mockMvc.perform(post("/shopify/get/order").param("shopname", "importxtest"))
-                .andExpect(status().isOk()).andDo(print());
     }
 
     private ShopifyData data(){
