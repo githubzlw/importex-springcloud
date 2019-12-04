@@ -2,131 +2,145 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shopify Order List</title>
-    <script src="/js/jquery-3.4.1.min.js"></script>
-
-    <script type="text/javascript">
-        $(function () {
-            doQuery(1);
-        });
-
-        function doQuery(pageNum) {
-            var shopify_name = $("#query_shopify_name").val();
-            var url = "/shopifyOrder/list/" + shopify_name;
-            $.ajax({
-                type: "GET",
-                url: url,
-                /*data: {"pageNum": pageNum, "limitNum": 10},*/
-                data: {},
-                success: function (data) {
-                    if (data.code == 200) {
-
-                        var json = data.data;
-                        if (json && json != undefined) {
-                            $("#rs_total").val(json.length);
-
-                            /*$("#current_page").val(pageNum);
-                            var totalPage = json.length / 10;
-                            if (json.length % 10 > 0) {
-                                totalPage++;
-                            }
-                            $("#total_page").val(totalPage);*/
-
-                            /*$("#btn_span").empty();
-                            if (totalPage > pageNum + 1) {
-                                $("#btn_span").append('<button onclick="doQuery(' + (pageNum + 1) + ')">下一页</button>');
-                            } else {
-                                $("#btn_span").append('<button>下一页</button>');
-                            }
-                            if (pageNum - 1 > 0) {
-                                $("#btn_span").append('<button onclick="doQuery(' + (pageNum - 1) + ')">上一页</button>');
-                            } else {
-                                $("#btn_span").append('<button>上一页</button>');
-                            }*/
-                            var content = '';
-                            $("#shopify_tbody").empty();
-                            for (var i = 0; i < json.length; i++) {
-                                content = '';
-                                content += '<tr>';
-
-                                content += '<td>' + json[i].id + '</td>';
-                                content += '<td>' + json[i].name + '</td>';
-                                content += '<td>' + json[i].email + '</td>';
-                                content += '<td>' + json[i].number + '</td>';
-                                content += '<td>' + json[i].user_id + '</td>';
-                                content += '<td>' + json[i].currency + '</td>';
-                                content += '<td>' + json[i].total_weight + '</td>';
-                                content += '<td>' + json[i].total_price + '</td>';
-                                content += '<td>' + json[i].created_at + '</td>';
-                                content += '<td>' + json[i].updated_at + '</td>';
-                                content += '<td>' + json[i].total_price_usd + '</td>';
-                                content += '<td>' + json[i].total_tax + '</td>';
-
-                                content += '<td>' + json[i].order_number + '</td>';
-                                content += '<td>' + json[i].total_line_items_price + '</td>';
-                                content += '<td>' + json[i].order_status_url + '</td>';
-                                content += '<td>' + json[i].note + '</td>';
-                                content += '<td><a target="_blank" href="/html/shopifyDetails.html?orderNo=' + json[i].id
-                                    + '">details</a></td>';
-
-                                content += '</tr>';
-                                $("#shopify_tbody").append(content);
-                            }
-                        }
-                    } else {
-                        console.log(url + " error:" + data.message);
-                    }
-                },
-                error: function (res) {
-                    console.log(url + " error!!")
-                }
-            });
-        }
-    </script>
+    <title>Shopify订单</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
 </head>
 <body>
 
-<span>ShopifyName:<input id="query_shopify_name" value=""/></span>
-<span><button onclick="doQuery(1)">查询</button></span>
-
-<table border="1">
-    <caption>Shopify Order List</caption>
+<table id="tb_list" data-filter-control="true" data-show-columns="true">
     <thead>
     <tr>
-        <td>id</td>
-        <td>name</td>
-        <td>email</td>
-        <td>number</td>
-        <td>user_id</td>
-        <td>currency</td>
-        <td>total_weight</td>
-        <td>total_price</td>
-        <td>created_at</td>
-        <td>updated_at</td>
-        <td>total_price_usd</td>
-        <td>total_tax</td>
-        <td>order_number</td>
-        <td>total_line_items_price</td>
-        <td>order_status_url</td>
-        <td>note</td>
-        <td>order_details</td>
+        <th data-field="checked"></th>
+        <th data-field="id"></th>
+        <th data-field="name"></th>
+        <th data-field="email"></th>
+        <th data-field="number"></th>
+        <th data-field="user_id"></th>
+        <th data-field="currency"></th>
+        <th data-field="total_weight"></th>
+        <th data-field="total_price"></th>
+        <th data-field="created_at"></th>
+        <th data-field="updated_at"></th>
+        <th data-field="total_price_usd"></th>
+        <th data-field="total_tax"></th>
+        <th data-field="order_number"></th>
+        <th data-field="total_line_items_price"></th>
+        <th data-field="order_status_url" data-formatter="orderStatusUrlFormat"></th>
+        <th data-field="note"></th>
+        <th data-field="order_details" data-formatter="orderDetailsFormat"></th>
     </tr>
     </thead>
-    <tbody id="shopify_tbody">
-
-    </tbody>
-
 </table>
+</body>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script>
 
-<div>
+    var shopifyName = "shopifyName";
+    window.onload = function () {
+        shopifyName = getUrlParam("shopifyName");
+        if (shopifyName) {
+            initTable(shopifyName);
+        }
+    };
 
-    <!--当前页:<span id="current_page"></span>-->
-    <!--总页:<span id="total_page"></span>-->
-    总数:<span id="rs_total"></span>
-    <span id="btn_span"></span>
 
-</div>
+    function orderStatusUrlFormat(value, row, index) {
+        return '<a href="' + value + '" target="_blank">Go To OrderStatus</a>';
+    }
 
+    function orderDetailsFormat(value, row, index) {
+        return '<a target="_blank" href="/html/shopifyDetails.html?shopifyName=' + shopifyName + '&orderNo=' + row.id + '">details</a>';
+    }
 
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]);
+        return null; //返回参数值
+    }
+
+    function initTable(shopifyName) {
+        $('#tb_list').bootstrapTable({
+            url: '/api/shopify/' + shopifyName,         //请求后台的 URL（*）
+            method: 'get',                      //请求方式（*）
+            // data: data,                      //当不使用上面的后台请求时，使用data来接收数据
+            toolbar: '#toolbar',                //工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            cache: false,                       //是否使用缓存，默认为 true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,                   //是否显示分页（*）
+            sortable: false,                    //是否启用排序
+            sortOrder: "asc",                   //排序方式
+            sidePagination: "client",           //分页方式：client 客户端分页，server 服务端分页（*）
+            pageNumber: 1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                        //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以个人感觉意义不大
+            strictSearch: true,                 //启用严格搜索。禁用比较检查。
+            showColumns: true,                  //是否显示所有的列
+            showRefresh: true,                  //是否显示刷新按钮
+            minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: true,                //是否启用点击选中行
+            //height: 500,                        //行高，如果没有设置 height 属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+            showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                  //是否显示父子表
+            showExport: true,                   //是否显示导出
+            exportDataType: "basic",            //basic', 'all', 'selected'.
+            columns: [{
+                field: 'id', title: 'ID'
+            }, {
+                field: 'name', title: 'Name'
+            }, {
+                field: 'email', title: 'Email'
+            }, {
+                field: 'number', title: 'Number'
+            }, {
+                field: 'user_id', title: 'UserId'
+            }, {
+                field: 'currency', title: 'Currency'
+            }, {
+                field: 'total_weight', title: 'TotalWeight'
+            }, {
+                field: 'total_price', title: 'TotalPrice'
+            }, {
+                field: 'created_at', title: 'CreateTime'
+            }, {
+                field: 'updated_at', title: 'UpdateTime'
+            }, {
+                field: 'total_price_usd', title: 'TotalPrice(USD)'
+            }, {
+                field: 'total_tax', title: 'TotalTax'
+            }, {
+                field: 'order_number', title: 'OrderNumber'
+            }, {
+                field: 'total_line_items_price', title: 'TotalLineItemsPrice'
+            }, {
+                field: 'order_status_url', title: 'OrderStatusUrl'
+            }, {
+                field: 'note', title: 'note'
+            }, {
+                field: 'order_details', title: 'OrderDetails'
+            }],
+            responseHandler: function (res) {
+                return {"rows": res.rows, "total": res.total};
+            }
+        });
+    }
+</script>
 </body>
 </html>
