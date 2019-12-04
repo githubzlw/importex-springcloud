@@ -29,7 +29,7 @@ public class FxController {
     private StringRedisTemplate redisTemplate;
 
     @Autowired
-    public FxController(ExchangeRateServiceFactory serviceFactory,StringRedisTemplate redisTemplate) {
+    public FxController(ExchangeRateServiceFactory serviceFactory, StringRedisTemplate redisTemplate) {
         this.serviceFactory = serviceFactory;
         this.redisTemplate = redisTemplate;
     }
@@ -41,9 +41,9 @@ public class FxController {
 
         //from cache read
         String fxJson = this.redisTemplate.opsForValue().get(REDIS_FX);
-        if(fxJson != null){
-            return JSONObject.parseObject(fxJson,Map.class);
-        }else{
+        if (fxJson != null) {
+            return JSONObject.parseObject(fxJson, Map.class);
+        } else {
             //from url read
             try {
                 final Map<String, BigDecimal> exchangeRate = serviceFactory.getExchangeRate();

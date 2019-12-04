@@ -11,24 +11,24 @@ import java.io.IOException;
 public class IpServiceImpl implements IpService {
 
     /**
-     {
-     "code": 0,
-     "data": {
-     "ip": "124.78.168.185",
-     "country": "中国",
-     "area": "",
-     "region": "上海",
-     "city": "上海",
-     "county": "XX",
-     "isp": "电信",
-     "country_id": "CN",
-     "area_id": "",
-     "region_id": "310000",
-     "city_id": "310100",
-     "county_id": "xx",
-     "isp_id": "100017"
-     }
-     }
+     * {
+     * "code": 0,
+     * "data": {
+     * "ip": "124.78.168.185",
+     * "country": "中国",
+     * "area": "",
+     * "region": "上海",
+     * "city": "上海",
+     * "county": "XX",
+     * "isp": "电信",
+     * "country_id": "CN",
+     * "area_id": "",
+     * "region_id": "310000",
+     * "city_id": "310100",
+     * "county_id": "xx",
+     * "isp_id": "100017"
+     * }
+     * }
      */
 
     private static final String URL = "http://ip-api.com/json/%s";
@@ -39,7 +39,7 @@ public class IpServiceImpl implements IpService {
 
     @Override
     public JSONObject queryIp(String ip) throws IOException {
-        return  UrlUtil.getInstance().callUrlByGet(String.format(URL, ip));
+        return UrlUtil.getInstance().callUrlByGet(String.format(URL, ip));
     }
 
 

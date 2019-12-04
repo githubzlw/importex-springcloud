@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -42,18 +41,18 @@ public class IpController {
     public CommonResult ip(@NonNull String ip) {
 
         //from cache read
-        String result =(String)this.redisTemplate.opsForHash().get(REDIS_HASH_IP,ip);
-        if(StringUtils.isNotEmpty(result)){
+        String result = (String) this.redisTemplate.opsForHash().get(REDIS_HASH_IP, ip);
+        if (StringUtils.isNotEmpty(result)) {
             return CommonResult.success(result);
-        }else{
+        } else {
             //from url read
             try {
                 JSONObject json = this.ipService.queryIp(ip);
-                if(!"success".equals(json.getString("status"))){
+                if (!"success".equals(json.getString("status"))) {
                     return CommonResult.failed("ip search result is fault");
-                }else{
+                } else {
                     String country = json.getString("countryCode");
-                    this.redisTemplate.opsForHash().put(REDIS_HASH_IP,ip,country);
+                    this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, country);
                     return CommonResult.success(country);
                 }
             } catch (IOException e) {

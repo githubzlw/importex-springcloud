@@ -30,6 +30,7 @@ public class ScheduledTasks {
 
     /**
      * 每3时刷新一次redis缓存
+     *
      * @throws IOException
      */
     @Scheduled(fixedRate = 1000 * 60 * 60 * 3)
