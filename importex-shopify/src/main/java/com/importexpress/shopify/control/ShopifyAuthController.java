@@ -20,15 +20,22 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**
+ * @author luohao
+ */
 @Slf4j
 @RestController
 @RequestMapping("/shopifyAuth")
 public class ShopifyAuthController {
     private static final String HMAC_ALGORITHM = "HmacSHA256";
-    @Autowired
-    private Config config;
-    @Autowired
-    private ShopifyAuthService shopifyAuthService;
+    private final Config config;
+    private final ShopifyAuthService shopifyAuthService;
+
+    public ShopifyAuthController(Config config, ShopifyAuthService shopifyAuthService) {
+        this.config = config;
+        this.shopifyAuthService = shopifyAuthService;
+    }
+
     @GetMapping(value = "/auth")
     public CommonResult auth(String code, String hmac, String state, String shop,
                              HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -47,7 +54,6 @@ public class ShopifyAuthController {
                 }
             }
         }
-        CommonResult commonResult = new CommonResult();
         SecretKeySpec keySpec = new SecretKeySpec(config.SHOPIFY_CLIENT_ID.getBytes(), HMAC_ALGORITHM);
         try {
             Mac mac = Mac.getInstance(HMAC_ALGORITHM);
@@ -59,16 +65,15 @@ public class ShopifyAuthController {
                 String accessToken = result.get("access_token");
                 String scope = result.get("scope");
                 shopifyAuthService.saveShopifyAuth(shop, accessToken, scope);
-                commonResult.success("HMAC IS VERIFIED,authorization successed");
+                return CommonResult.success();
             } else {
                 log.warn("HMAC IS NOT VERIFIED");
-                commonResult.failed("HMAC IS NOT VERIFIED");
+                return CommonResult.failed("HMAC IS NOT VERIFIED");
             }
 
         } catch (Exception e) {
             log.error("auth", e);
-            commonResult.failed(e.getMessage());
+            return CommonResult.failed(e.getMessage());
         }
-        return commonResult;
     }
 }

@@ -29,8 +29,11 @@ import java.util.TreeSet;
 @RequestMapping("/shopifyProduct")
 public class ShopifyProductController {
 
-    @Autowired
-    private ShopifyProductService shopifyProductService;
+    private final ShopifyProductService shopifyProductService;
+
+    public ShopifyProductController(ShopifyProductService shopifyProductService) {
+        this.shopifyProductService = shopifyProductService;
+    }
 
     /**
      * shopify铺货
@@ -40,27 +43,27 @@ public class ShopifyProductController {
     @PostMapping("/product")
     public CommonResult addProduct(@RequestBody ShopifyRequestWrap wrap) {
         if (wrap == null) {
-            return new CommonResult().failed("request parameter is null");
+            return CommonResult.failed("request parameter is null");
         }
         String shopname = wrap.getShopname();
         if (StringUtils.isBlank(shopname)) {
-            return new CommonResult().failed("shopname is null");
+            return CommonResult.failed("shopname is null");
         }
         ShopifyData goods = wrap.getData();
         if (goods == null || StringUtils.isBlank(goods.getPid())) {
-            return new CommonResult().failed("product is null");
+            return CommonResult.failed("product is null");
         }
         ProductWraper productWraper;
         try {
             productWraper = shopifyProductService.onlineProduct(shopname,goods);
             if(productWraper == null){
-                return new CommonResult().failed("add shopify product failed");
+                return CommonResult.failed("add shopify product failed");
             }
         } catch (Exception e) {
             log.error("add product", e);
-            return new CommonResult().failed(e.getMessage());
+            return CommonResult.failed(e.getMessage());
         }
-        return new CommonResult().success(new Gson().toJson(productWraper));
+        return CommonResult.success(new Gson().toJson(productWraper));
     }
 
 }

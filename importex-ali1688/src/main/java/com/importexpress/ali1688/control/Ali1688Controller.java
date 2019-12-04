@@ -71,7 +71,7 @@ public class Ali1688Controller {
     public CommonResult getItemsInShop(@PathVariable("shopid") String shopid) {
 
         if(!isRunnable()){
-            return new CommonResult().failed("非运行期间");
+            return CommonResult.failed("非运行期间");
         }
 
         List<Ali1688Item> lstItems = null;
@@ -93,10 +93,10 @@ public class Ali1688Controller {
                 .withStopStrategy(StopStrategies.stopAfterAttempt(2))
                 .build();
         try {
-            return new CommonResult().success(retryer.call(callable));
+            return CommonResult.success(retryer.call(callable));
         } catch (RetryException | ExecutionException e) {
             log.error("getItemsInShop", e);
-            return new CommonResult().failed(e.getMessage());
+            return CommonResult.failed(e.getMessage());
         }
     }
 
@@ -128,10 +128,10 @@ public class Ali1688Controller {
     public CommonResult setItemsExpire(@Param("days") int days) {
 
         if (days <= 0) {
-            return new CommonResult().failed("input params is invalid.");
+            return CommonResult.failed("input params is invalid.");
         } else {
             ali1688Service.setItemsExpire(days);
-            return new CommonResult().success(null);
+            return CommonResult.success();
         }
     }
 

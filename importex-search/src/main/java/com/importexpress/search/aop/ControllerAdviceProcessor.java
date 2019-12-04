@@ -19,8 +19,11 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class ControllerAdviceProcessor {
 
-    @Autowired
-    protected MessageSource messageSource;
+    protected final MessageSource messageSource;
+
+    public ControllerAdviceProcessor(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
@@ -38,10 +41,7 @@ public class ControllerAdviceProcessor {
             msg = ex.getMessage();
             log.error("code: " + code + "  msg: " + msg, ex);
         }
-        CommonResult resp = new CommonResult();
-        resp.setCode(code);
-        resp.setMessage(msg);
-        return resp;
+        return CommonResult.failed(msg);
     }
 
 }

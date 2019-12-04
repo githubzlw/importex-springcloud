@@ -2,6 +2,8 @@ package com.importexpress.fx.control;
 
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.fx.service.ExchangeRateServiceFactory;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -18,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  */
 @RestController
 @Slf4j
+@Api(tags = "汇率查询接口")
 public class FxController {
 
     public static final String REDIS_FX = "fx";
@@ -34,6 +37,7 @@ public class FxController {
 
 
     @GetMapping("/fx")
+    @ApiOperation("汇率查询")
     public Map<String, BigDecimal> fx() {
 
         //from cache read

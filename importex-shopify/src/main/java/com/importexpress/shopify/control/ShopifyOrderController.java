@@ -7,6 +7,8 @@ import com.importexpress.shopify.pojo.orders.OrdersWraper;
 import com.importexpress.shopify.pojo.orders.Shipping_address;
 import com.importexpress.shopify.service.ShopifyAuthService;
 import com.importexpress.shopify.service.ShopifyOrderService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,20 +30,23 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("/shopify")
+@Api(tags = "shopify订单调用接口")
 public class ShopifyOrderController {
 
-    @Autowired
-    private ShopifyAuthService shopifyAuthService;
+    private final ShopifyAuthService shopifyAuthService;
 
-    @Autowired
-    private ShopifyOrderService shopifyOrderService;
+    private final ShopifyOrderService shopifyOrderService;
+
+    public ShopifyOrderController(ShopifyAuthService shopifyAuthService, ShopifyOrderService shopifyOrderService) {
+        this.shopifyAuthService = shopifyAuthService;
+        this.shopifyOrderService = shopifyOrderService;
+    }
 
 
     @GetMapping("/{shopifyName}")
+    @ApiOperation("店铺一览")
     public CommonResult getShopifyOrderByShopifyName(
             @PathVariable(value = "shopifyName") String shopifyName, @RequestParam(value = "pageNum", required = false, defaultValue = "1") Long pageNum, @RequestParam(value = "limitNum", required = false, defaultValue = "10") Long limitNum) {
-        CommonResult rs = new CommonResult();
-
         try {
 
             List<Orders> ordersList = shopifyOrderService.queryListByShopifyName(shopifyName);
@@ -52,43 +57,40 @@ public class ShopifyOrderController {
             }
             rs.success(rsList);
             */
-            rs.success(ordersList);
+            return CommonResult.success(ordersList);
         } catch (Exception e) {
-            rs.failed("shopifyName:" + shopifyName + "error:" + e.getMessage());
             e.printStackTrace();
             log.error("shopifyName:" + shopifyName + "error:", e);
+            return CommonResult.failed("shopifyName:" + shopifyName + "error:" + e.getMessage());
         }
-        return rs;
     }
 
 
-    @RequestMapping("/{shopifyName}/orders")
+    @GetMapping("/{shopifyName}/orders")
     public CommonResult genOrderByByShopifyName(@PathVariable(value = "shopifyName") String shopifyName) {
-        CommonResult rs = new CommonResult();
+
         Assert.notNull(shopifyName, "shopifyName is null");
 
         try {
             OrdersWraper orders = shopifyOrderService.getOrders(shopifyName);
             if (orders != null && orders.getOrders() != null) {
                 shopifyOrderService.genShopifyOrderInfo(shopifyName, orders);
-                rs.success(orders.getOrders().size());
+                return CommonResult.success(orders.getOrders().size());
             } else {
-                rs.success(0);
+                return CommonResult.success(0);
             }
 
         } catch (Exception e) {
-            rs.failed("shopifyName:" + shopifyName + ",error:" + e.getMessage());
             e.printStackTrace();
             log.error("shopifyName:" + shopifyName + ",error:", e);
+            return CommonResult.failed("shopifyName:" + shopifyName + ",error:" + e.getMessage());
         }
-        return rs;
     }
 
 
-    @RequestMapping("/{shopifyName}/orders/{orderNo}")
+    @GetMapping("/{shopifyName}/orders/{orderNo}")
     public CommonResult getDetailsByOrderNo(@PathVariable(value = "shopifyName") String shopifyName,
                                             @PathVariable(value = "orderNo") Long orderNo) {
-        CommonResult rs = new CommonResult();
         Assert.notNull(orderNo, "orderNo is null");
 
         Map<String, Object> rsMap = new HashMap<>();
@@ -98,13 +100,12 @@ public class ShopifyOrderController {
 
             rsMap.put("details", line_itemsList);
             rsMap.put("address", shipping_address);
-            rs.success(rsMap);
+            return CommonResult.success(rsMap);
         } catch (Exception e) {
-            rs.failed("shopifyName:" + shopifyName + ",orderNo:" + ",error:" + orderNo + "," + e.getMessage());
             e.printStackTrace();
             log.error("shopifyName:" + shopifyName + ",orderNo:" + ",error:", e);
+            return CommonResult.failed("shopifyName:" + shopifyName + ",orderNo:" + ",error:" + orderNo + "," + e.getMessage());
         }
-        return rs;
     }
 
 }

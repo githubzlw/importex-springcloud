@@ -87,7 +87,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         return result;
     }
     /**
-     * insertShopifyIdWithPid
+     * selectShopifyId
      * @param  shopifyBean
      * @return
      */
