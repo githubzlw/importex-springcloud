@@ -29,8 +29,6 @@ public class ShopifyAuthServiceImpl implements ShopifyAuthService {
     private final Config config;
 
     private final ShopifyUtil shopifyUtil;
-    @Autowired
-    private ShopifyProduct shopifyProduct;
 
     public ShopifyAuthServiceImpl(ShopifyAuthMapper shopifyAuthMapper, Config config, ShopifyUtil shopifyUtil) {
         this.shopifyAuthMapper = shopifyAuthMapper;

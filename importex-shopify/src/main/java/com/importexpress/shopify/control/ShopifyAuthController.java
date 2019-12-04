@@ -3,10 +3,14 @@ package com.importexpress.shopify.control;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.shopify.service.ShopifyAuthService;
 import com.importexpress.shopify.util.Config;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +30,7 @@ import java.util.TreeSet;
 @Slf4j
 @RestController
 @RequestMapping("/api/shopify")
+@Api(tags = "shopify授权调用接口")
 public class ShopifyAuthController {
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private final Config config;
@@ -37,8 +42,13 @@ public class ShopifyAuthController {
     }
 
     @GetMapping(value = "/auth")
-    public CommonResult auth(String code, String hmac, String state, String shop,
-                             HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @ApiOperation("授权")
+    public CommonResult auth(
+            @ApiParam(name="code",value="shopify返回的code",required=true) @PathVariable(value = "code")String code,
+            @ApiParam(name="hmac",value="shopify返回的hmac",required=true) @PathVariable(value = "hmac")String hmac,
+            @ApiParam(name="state",value="shopify返回的state",required=true) @PathVariable(value = "state")String state,
+            @ApiParam(name="shop",value="shopify店铺名",required=true) @PathVariable(value = "shop")String shop,
+                             HttpServletRequest request, HttpServletResponse response) {
 
         log.info("code:{},hmac:{},state:{},shop:{}", code, hmac, state, shop);
 
