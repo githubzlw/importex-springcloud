@@ -52,7 +52,7 @@ public class IpController {
                 if(!"success".equals(json.getString("status"))){
                     return CommonResult.failed("ip search result is fault");
                 }else{
-                    String country = json.getString("country");
+                    String country = json.getString("countryCode");
                     this.redisTemplate.opsForHash().put(REDIS_HASH_IP,ip,country);
                     return CommonResult.success(country);
                 }
