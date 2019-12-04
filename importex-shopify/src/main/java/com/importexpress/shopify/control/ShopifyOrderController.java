@@ -43,7 +43,7 @@ public class ShopifyOrderController {
 
 
     @GetMapping("/{shopifyName}")
-    @ApiOperation("店铺一览")
+    @ApiOperation("该店铺下订单一览")
     public JSONObject getShopifyOrderListByShopifyName(
             @ApiParam(name = "shopifyName", value = "shopify店铺名", required = true)
             @PathVariable(value = "shopifyName") String shopifyName) {
@@ -59,7 +59,7 @@ public class ShopifyOrderController {
             log.error("shopifyName:" + shopifyName + "error:", e);
             jsonObject.put("message", "shopifyName:" + shopifyName + "error:" + e.getMessage());
             jsonObject.put("code", 500);
-            jsonObject.put("total",0);
+            jsonObject.put("total", 0);
             jsonObject.put("rows", new ArrayList<>());
         }
         return jsonObject;
@@ -82,7 +82,6 @@ public class ShopifyOrderController {
             } else {
                 return CommonResult.success(0);
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             log.error("shopifyName:" + shopifyName + ",error:", e);
@@ -92,7 +91,7 @@ public class ShopifyOrderController {
 
 
     @GetMapping("/{shopifyName}/orders/{orderNo}")
-    @ApiOperation("根据订单号获取shopify店铺名下的订单信息")
+    @ApiOperation("根据订单号获取shopify店铺名下的订单详情信息")
     public CommonResult getDetailsByOrderNo(
             @ApiParam(name = "shopifyName", value = "shopify店铺名", required = true)
             @PathVariable(value = "shopifyName") String shopifyName,
@@ -105,10 +104,8 @@ public class ShopifyOrderController {
             List<Line_items> line_itemsList = shopifyOrderService.queryOrderDetailsByOrderId(orderNo);
             Shipping_address shipping_address = shopifyOrderService.queryOrderAddressByOrderId(orderNo);
 
-            List<Shipping_address> addressList = new ArrayList<>();
-            addressList.add(shipping_address);
             rsMap.put("details", line_itemsList);
-            rsMap.put("address", addressList);
+            rsMap.put("address", shipping_address);
             return CommonResult.success(rsMap);
         } catch (Exception e) {
             e.printStackTrace();

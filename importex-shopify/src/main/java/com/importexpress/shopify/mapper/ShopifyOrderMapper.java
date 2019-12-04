@@ -41,6 +41,9 @@ public interface ShopifyOrderMapper {
     @Insert(SqlProvider.SINGLE_ORDER_ADDRESS_INSERT)
     int insertIntoOrderAddress(Shipping_address address);
 
+    @Select("select shopify_name from user where shopify_flag = 1 and length(ifnull(shopify_name,'')) > 0")
+    List<String> queryShopifyNameFromUser();
+
 
     class SqlProvider {
 

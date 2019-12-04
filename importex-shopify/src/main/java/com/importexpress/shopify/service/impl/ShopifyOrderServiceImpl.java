@@ -13,6 +13,7 @@ import com.importexpress.shopify.util.ShopifyUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -85,6 +86,7 @@ public class ShopifyOrderServiceImpl implements ShopifyOrderService {
     }
 
     @Override
+    @Async(value = "threadPoolTaskExecutor")
     public void genShopifyOrderInfo(String shopifyName, OrdersWraper orders) {
         List<Orders> shopifyOrderList = orders.getOrders();
 
@@ -134,6 +136,11 @@ public class ShopifyOrderServiceImpl implements ShopifyOrderService {
             }
         }
         shopifyOrderList.clear();
+    }
+
+    @Override
+    public List<String> queryShopifyNameFromUser() {
+        return shopifyOrderMapper.queryShopifyNameFromUser();
     }
 
 }

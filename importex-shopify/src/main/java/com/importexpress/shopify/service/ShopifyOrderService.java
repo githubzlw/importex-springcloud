@@ -78,4 +78,10 @@ public interface ShopifyOrderService {
      */
     void genShopifyOrderInfo(String shopifyName, OrdersWraper orders);
 
+    /**
+     * 从用户表获取shopify店铺名称数据
+     * @return
+     */
+    List<String> queryShopifyNameFromUser();
+
 }

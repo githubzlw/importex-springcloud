@@ -110,23 +110,16 @@ public class ShopifyOrderControllerTest {
         Assert.assertNotNull("地址查询结果异常", mapJson.getString("address"));
 
         Assert.assertNotNull("地址Json数据格式异常", mapJson.getString("address"));
-        List<Shipping_address> shipping_addressList = JSONArray.parseArray(mapJson.getString("address"), Shipping_address.class);
-        Assert.assertTrue("地址Json数据格式异常", CollectionUtils.isNotEmpty(shipping_addressList));
+        Shipping_address shipping_address = JSONObject.parseObject(mapJson.getString("address"), Shipping_address.class);
+        Assert.assertNotNull("地址Json数据格式异常", shipping_address);
 
-        int count = 0;
-        for (Shipping_address address : shipping_addressList) {
-            if (orderNo == address.getOrder_no()) {
-                count++;
-            }
-        }
-
-        Assert.assertEquals("获取地址中未包含订单号:" + orderNo, shipping_addressList.size(), count);
+        Assert.assertEquals("获取详情中未包含订单号:", orderNo, shipping_address.getOrder_no());
 
         Assert.assertNotNull("详情查询结果异常", mapJson.getString("details"));
         List<Line_items> line_itemsList = JSONArray.parseArray(mapJson.getString("details"), Line_items.class);
         Assert.assertTrue("详情Json数据格式异常", CollectionUtils.isNotEmpty(line_itemsList));
 
-        count = 0;
+        int count = 0;
         for (Line_items lineItem : line_itemsList) {
             if (orderNo == lineItem.getOrder_no()) {
                 count++;
