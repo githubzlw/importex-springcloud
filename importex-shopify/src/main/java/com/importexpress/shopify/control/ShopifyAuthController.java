@@ -25,7 +25,7 @@ import java.util.TreeSet;
  */
 @Slf4j
 @RestController
-@RequestMapping("/shopifyAuth")
+@RequestMapping("/api/shopify")
 public class ShopifyAuthController {
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private final Config config;

@@ -26,7 +26,7 @@ import java.util.TreeSet;
 
 @Slf4j
 @RestController
-@RequestMapping("/shopifyProduct")
+@RequestMapping("/api/shopify")
 public class ShopifyProductController {
 
     private final ShopifyProductService shopifyProductService;
