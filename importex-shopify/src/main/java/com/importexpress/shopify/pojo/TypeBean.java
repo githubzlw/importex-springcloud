@@ -1,5 +1,6 @@
 package com.importexpress.shopify.pojo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -18,12 +19,14 @@ public class TypeBean implements Serializable, Comparable<TypeBean>,Cloneable{
 	private static final long serialVersionUID = 6798772789095149437L;
 	@Tolerate
 	public TypeBean(){}
-	private String type;//规格类型
-	private String value;//规格值
-	private String img;//图片
-	private String id;//id
-	private String lableType;
-	private String sell;
+	@ApiModelProperty("规格类型")
+	private String type;
+	@ApiModelProperty("规格值")
+	private String value;
+	@ApiModelProperty("图片")
+	private String img;
+	@ApiModelProperty("规格ID")
+	private String id;
 	public void setValue(String value) {
 		if(value!=null){
 			value = value.replaceAll("\"", "").replaceAll("'", "");

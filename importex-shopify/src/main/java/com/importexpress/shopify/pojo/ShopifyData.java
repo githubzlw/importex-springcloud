@@ -15,26 +15,26 @@ import java.util.Map;
 public class ShopifyData implements Serializable {
 
 	private static final long serialVersionUID = -4952290032355580137L;
-	@ApiModelProperty("//商品名称")
+	@ApiModelProperty(value = "商品名称",required = true)
 	private String name;
-	@ApiModelProperty("//商品id")
+	@ApiModelProperty(value ="商品id",required = true)
 	private String pid;
-	@ApiModelProperty("//商品类别")
+	@ApiModelProperty(value ="商品类别",required = true)
 	private String category;
-	@ApiModelProperty("//packing 重量")
+	@ApiModelProperty(value ="重量",required = true)
 	private String perWeight;
-	@ApiModelProperty("//商品规格")
+	@ApiModelProperty(value ="商品规格",required = true)
 	private List<TypeBean> type;
-	@ApiModelProperty("//商品图片")
+	@ApiModelProperty(value ="商品图片",required = true)
 	private List<String> image;
-	@ApiModelProperty("//商品详细信息")
-	private Map<String, String> info;
-	@ApiModelProperty("//商品详细（图片+文字）")
+	@ApiModelProperty(value ="商品详细信息",required = true)
+	private List<String> info;
+	@ApiModelProperty(value ="商品详细(图片+文字)",required = true)
 	private String infoHtml;
-	@ApiModelProperty("/sku")
+	@ApiModelProperty(value ="sku",required = true)
 	private String skuProducts;
-	@ApiModelProperty("价格")
+	@ApiModelProperty(value ="价格",required = true)
 	private String price;
-	@ApiModelProperty("网站")
+	@ApiModelProperty(value ="网站",required = true)
 	private String vendor;
 }

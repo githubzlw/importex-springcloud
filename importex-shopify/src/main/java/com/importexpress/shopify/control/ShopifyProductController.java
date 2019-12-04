@@ -8,6 +8,9 @@ import com.importexpress.shopify.pojo.ShopifyRequestWrap;
 import com.importexpress.shopify.pojo.product.ProductWraper;
 import com.importexpress.shopify.service.ShopifyProductService;
 import com.importexpress.shopify.util.Config;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +30,7 @@ import java.util.TreeSet;
 @Slf4j
 @RestController
 @RequestMapping("/api/shopify")
+@Api(tags = "shopify铺货调用接口")
 public class ShopifyProductController {
 
     private final ShopifyProductService shopifyProductService;
@@ -41,7 +45,8 @@ public class ShopifyProductController {
      * @param wrap
      */
     @PostMapping("/product")
-    public CommonResult addProduct(@RequestBody ShopifyRequestWrap wrap) {
+    @ApiOperation("铺货")
+    public CommonResult addProduct(@ApiParam(name="shopifyRequestWrap",value="铺货参数",required=true) @RequestBody ShopifyRequestWrap wrap) {
         if (wrap == null) {
             return CommonResult.failed("request parameter is null");
         }

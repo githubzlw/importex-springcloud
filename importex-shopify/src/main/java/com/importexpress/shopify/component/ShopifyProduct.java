@@ -143,15 +143,13 @@ public class ShopifyProduct {
      * @param detail
      * @return
      */
-    private StringBuilder details(Map<String, String> detail){
+    private StringBuilder details(List<String> detail){
         StringBuilder sb = new StringBuilder();
         if (detail != null && !detail.isEmpty()) {
             sb.append("<div>");
-            Iterator<Map.Entry<String, String>> iterator = detail.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<String, String> next = iterator.next();
-                sb.append("<span style=\"margin-left: 10px;\">").append(next.getValue()).append("</span><br>");
-            }
+            detail.stream().forEach(d->{
+                sb.append("<span style=\"margin-left: 10px;\">").append(d).append("</span><br>");
+            });
             sb.append("</div");
         }
         return sb;

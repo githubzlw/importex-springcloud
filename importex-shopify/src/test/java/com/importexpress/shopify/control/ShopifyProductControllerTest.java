@@ -51,7 +51,7 @@ public class ShopifyProductControllerTest {
         wrap.setData(data());
         wrap.setShopname("importxtest");
         String requestJson = JSONObject.toJSONString(wrap);
-        mockMvc.perform(post("/shopifyProduct/product")
+        mockMvc.perform(post("/api/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk()).andDo(print());
 
@@ -59,7 +59,7 @@ public class ShopifyProductControllerTest {
     @Test(expected =NullPointerException.class)
     public void addProductNoParam() throws Exception {
         String jsonWrap = null;
-        mockMvc.perform(post("/shopifyProduct/product")
+        mockMvc.perform(post("/api/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonWrap))
                 .andReturn().getResponse();
@@ -69,7 +69,7 @@ public class ShopifyProductControllerTest {
         ShopifyRequestWrap wrap = new ShopifyRequestWrap();
 
         String requestJson = JSONObject.toJSONString(wrap);
-        MockHttpServletResponse response = mockMvc.perform(post("/shopifyProduct/product")
+        MockHttpServletResponse response = mockMvc.perform(post("/api/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk())
                 .andReturn().getResponse();
@@ -82,7 +82,7 @@ public class ShopifyProductControllerTest {
         wrap.setData(null);
         wrap.setShopname("importxtest");
         String requestJson = JSONObject.toJSONString(wrap);
-        MockHttpServletResponse response = mockMvc.perform(post("/shopifyProduct/product")
+        MockHttpServletResponse response = mockMvc.perform(post("/api/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk())
                 .andReturn().getResponse();
@@ -98,7 +98,7 @@ public class ShopifyProductControllerTest {
         wrap.setData(data);
         wrap.setShopname("importxtest");
         String requestJson = JSONObject.toJSONString(wrap);
-        MockHttpServletResponse response = mockMvc.perform(post("/shopifyProduct/product")
+        MockHttpServletResponse response = mockMvc.perform(post("/api/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk())
                 .andReturn().getResponse();
@@ -110,13 +110,13 @@ public class ShopifyProductControllerTest {
         ShopifyData goods = new ShopifyData();
         goods.setPid("536420633473");
         goods.setInfoHtml("");
-        HashMap<String, String>  details = Maps.newHashMap();
-        details.put("1","Material:Plastic/resin");
-        details.put("2","Style:women");
-        details.put("3","Material:not");
-        details.put("4","Color:Gold . Silver .KC Gold");
-        details.put("5","Species:Earring");
-        details.put("6","Product Dimensions:20.0 cm * 10.0 cm * 10.0 cm");
+        List<String>  details = Lists.newArrayList();
+        details.add("Material:Plastic/resin");
+        details.add("Style:women");
+        details.add("Material:not");
+        details.add("Color:Gold . Silver .KC Gold");
+        details.add("Species:Earring");
+        details.add("Product Dimensions:20.0 cm * 10.0 cm * 10.0 cm");
         goods.setInfo(details);
         goods.setName("update Large And Simple Alloy Ball Dropping Alloy Earrings EZ0628");
         List<TypeBean> lstType = Lists.newArrayList();

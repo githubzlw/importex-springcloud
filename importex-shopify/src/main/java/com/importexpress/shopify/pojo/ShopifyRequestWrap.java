@@ -1,5 +1,6 @@
 package com.importexpress.shopify.pojo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -8,13 +9,9 @@ import lombok.Data;
 @Data
 public class ShopifyRequestWrap {
 
-    /**
-     * 店铺名称
-     */
+    @ApiModelProperty(value = "店铺名称",required = true)
     private String shopname;
 
-    /**
-     * 数据
-     */
+    @ApiModelProperty(value = "商品数据",required = true)
     private ShopifyData data;
 }
