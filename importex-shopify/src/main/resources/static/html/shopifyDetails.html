@@ -2,185 +2,276 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shopify Order Details</title>
-    <script src="/js/jquery-3.4.1.min.js"></script>
-
-    <script type="text/javascript">
-        $(function () {
-            // doQuery("1");
-        });
-
-        function doQuery(orderNo) {
-            var url = "/shopifyOrder/getDetailsByOrderNo/" + orderNo;
-            $.ajax({
-                type: "GET",
-                url: url,
-                data: {},
-                success: function (data) {
-                    if (data.code == 200) {
-
-                        var json = data.data;
-                        if (json && json != undefined) {
-                            var dtData = json.details;
-                            var content = '';
-                            $("#details_body").empty();
-                            for (var i = 0; i < dtData.length; i++) {
-                                content = '';
-                                content += '<tr>';
-
-                                content += '<td>' + dtData[i].variant_id + '</td>';
-                                content += '<td>' + dtData[i].title + '</td>';
-                                content += '<td>' + dtData[i].quantity + '</td>';
-                                content += '<td>' + dtData[i].sku + '</td>';
-                                content += '<td>' + dtData[i].variant_title + '</td>';
-                                content += '<td>' + dtData[i].vendor + '</td>';
-                                content += '<td>' + dtData[i].fulfillment_service + '</td>';
-                                content += '<td>' + dtData[i].product_id + '</td>';
-                                content += '<td>' + dtData[i].requires_shipping + '</td>';
-                                content += '<td>' + dtData[i].taxable + '</td>';
-                                content += '<td>' + dtData[i].gift_card + '</td>';
-
-                                content += '<td>' + dtData[i].name + '</td>';
-                                content += '<td>' + dtData[i].variant_inventory_management + '</td>';
-                                content += '<td>' + dtData[i].product_exists + '</td>';
-                                content += '<td>' + dtData[i].fulfillable_quantity + '</td>';
-
-                                content += '<td>' + dtData[i].grams + '</td>';
-                                content += '<td>' + dtData[i].price + '</td>';
-                                content += '<td>' + dtData[i].total_discount + '</td>';
-                                content += '<td>' + dtData[i].fulfillment_status + '</td>';
-                                content += '<td>' + dtData[i].admin_graphql_api_id + '</td>';
-
-                                content += '</tr>';
-                                $("#details_body").append(content);
-                            }
-
-
-                            var dtData = json.address;
-                            var content = '';
-
-                            $("#adrress_body").empty();
-
-                            content = '';
-                            content += '<tr>';
-                            content += '<td>' + dtData.id + '</td>';
-                            content += '<td>' + dtData.first_name + '</td>';
-                            content += '<td>' + dtData.address1 + '</td>';
-                            content += '<td>' + dtData.phone + '</td>';
-                            content += '<td>' + dtData.city + '</td>';
-                            content += '<td>' + dtData.zip + '</td>';
-                            content += '<td>' + dtData.province + '</td>';
-                            content += '<td>' + dtData.country + '</td>';
-                            content += '<td>' + dtData.last_name + '</td>';
-                            content += '<td>' + dtData.address2 + '</td>';
-                            content += '<td>' + dtData.company + '</td>';
-                            content += '<td>' + dtData.latitude + '</td>';
-                            content += '<td>' + dtData.longitude + '</td>';
-                            content += '<td>' + dtData.name + '</td>';
-                            content += '<td>' + dtData.country_code + '</td>';
-                            content += '<td>' + dtData.province_code + '</td>';
-
-                            content += '</tr>';
-                            $("#adrress_body").append(content);
-
-                        }
-                    } else {
-                        console.log(url + " error:" + data.message);
-                    }
-                },
-                error: function (res) {
-                    console.log(url + " error!!")
-                }
-            });
-        }
-    </script>
+    <title>Shopify订单</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+          integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
 </head>
 <body>
 
-<table border="1">
-    <caption>Order Address</caption>
-    <thead>
-    <tr>
-        <td>id</td>
-        <td>first_name</td>
-        <td>address1</td>
-        <td>phone</td>
-        <td>city</td>
-        <td>zip</td>
-        <td>province</td>
-        <td>country</td>
-        <td>last_name</td>
-        <td>address2</td>
-        <td>company</td>
-        <td>latitude</td>
-        <td>longitude</td>
-        <td>name</td>
-        <td>country_code</td>
-        <td>province_code</td>
-    </tr>
-    </thead>
+<div style="width: 100%;height: 20%;">
+    <div id="ad_toolbar"><h4 style="text-align: center">Order Address</h4></div>
+    <table id="ad_info" data-filter-control="true" data-show-columns="true">
+        <thead>
+        <tr>
+            <th data-field="id"></th>
+            <th data-field="first_name"></th>
+            <th data-field="address1"></th>
+            <th data-field="phone"></th>
+            <th data-field="city"></th>
+            <th data-field="zip"></th>
+            <th data-field="province"></th>
+            <th data-field="country"></th>
+            <th data-field="last_name"></th>
+            <th data-field="address2"></th>
+            <th data-field="company"></th>
+            <th data-field="latitude"></th>
+            <th data-field="longitude"></th>
+            <th data-field="name"></th>
+            <th data-field="country_code"></th>
+            <th data-field="province_code"></th>
+        </tr>
+        </thead>
+    </table>
 
+</div>
 
-    <tbody id="adrress_body">
+<div style="width: 100%;height: 79%;">
+    <div id="dt_toolbar"><h4 style="text-align: center">Order Details</h4></div>
+    <table id="dt_list" data-filter-control="true" data-show-columns="true">
+        <thead>
+        <tr>
+            <th data-field="id"></th>
+            <th data-field="variant_id"></th>
+            <th data-field="title"></th>
+            <th data-field="quantity"></th>
+            <th data-field="sku"></th>
+            <th data-field="variant_title"></th>
+            <th data-field="vendor"></th>
+            <th data-field="fulfillment_service"></th>
+            <th data-field="product_id"></th>
+            <th data-field="requires_shipping"></th>
+            <th data-field="taxable"></th>
+            <th data-field="gift_card"></th>
+            <th data-field="name"></th>
+            <th data-field="variant_inventory_management"></th>
+            <th data-field="product_exists"></th>
+            <th data-field="fulfillable_quantity"></th>
+            <th data-field="grams"></th>
+            <th data-field="price"></th>
+            <th data-field="total_discount"></th>
+            <th data-field="fulfillment_status"></th>
+            <th data-field="admin_graphql_api_id"></th>
+        </tr>
+        </thead>
+    </table>
 
-    </tbody>
-</table>
-
-
-<table border="1">
-    <caption>Order Details</caption>
-
-    <thead>
-    <tr>
-        <td>variant_id</td>
-        <td>title</td>
-        <td>quantity</td>
-        <td>sku</td>
-        <td>variant_title</td>
-        <td>vendor</td>
-        <td>fulfillment_service</td>
-        <td>product_id</td>
-        <td>requires_shipping</td>
-        <td>taxable</td>
-        <td>gift_card</td>
-        <td>name</td>
-        <td>variant_inventory_management</td>
-        <td>product_exists</td>
-        <td>fulfillable_quantity</td>
-        <td>grams</td>
-        <td>price</td>
-        <td>total_discount</td>
-        <td>fulfillment_status</td>
-        <td>admin_graphql_api_id</td>
-    </tr>
-    </thead>
-    <tbody id="details_body"></tbody>
-</table>
+</div>
 </body>
-<script type="text/javascript">
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
+        integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+        integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+        crossorigin="anonymous"></script>
+<script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
+<script src="https://momentjs.com/downloads/moment.min.js"></script>
+<script>
+
     window.onload = function () {
-        var url = document.location.href;
-        var begin = url.indexOf("?");
-        if (begin != -1) {
-            var paramsStr = url.substring(begin + 1, url.length);
-            var paramLst = paramsStr.split("&");
-            if (paramLst.length > 0) {
-                var orderNo = "";
-                for (var i = 0; i < paramLst.length; i++) {
-                    var sgParam = paramLst[i];
-                    sgParamLst = sgParam.split("=");
-                    if (sgParamLst.length == 2) {
-                        if (sgParamLst[0] == "orderNo") {
-                            orderNo = sgParamLst[1];
-                            break;
-                        }
-                    }
-                }
-                if (orderNo && orderNo != "") {
-                    doQuery(orderNo);
-                }
-            }
+        var shopifyName = getUrlParam("shopifyName");
+        var orderNo = getUrlParam("orderNo");
+        if (shopifyName && orderNo) {
+            doQuery(shopifyName, orderNo);
         }
+    };
+
+    //获取url中的参数
+    function getUrlParam(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+        var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+        if (r != null) return unescape(r[2]);
+        return null; //返回参数值
+    }
+
+    function doQuery(shopifyName, orderNo) {
+        var url = "/api/shopify/" + shopifyName + "/orders/" + orderNo;
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: {},
+            success: function (data) {
+                if (data.code == 200) {
+                    var json = data.data;
+                    var adData = json.address;
+                    if (adData) {
+                        initAddressTable(adData);
+                    }
+                    var dtData = json.details;
+                    if (dtData) {
+                        initDetailsTable(dtData);
+                    }
+                } else {
+                    console.log(url + " error:" + data.message);
+                }
+            },
+            error: function (res) {
+                console.log(url + " error!!")
+            }
+        });
+    }
+
+    function initDetailsTable(detailsData) {
+        $('#dt_list').bootstrapTable({
+            url: '',         //请求后台的 URL（*）
+            title: 'Order Details',
+            method: 'get',                      //请求方式（*）
+            // data: data,                      //当不使用上面的后台请求时，使用data来接收数据
+            striped: true,                      //是否显示行间隔色
+            toolbar: '#dt_toolbar',
+            cache: false,                       //是否使用缓存，默认为 true，所以一般情况下需要设置一下这个属性（*）
+            pagination: true,                   //是否显示分页（*）
+            sortable: false,                    //是否启用排序
+            sortOrder: "asc",                   //排序方式
+            sidePagination: "client",           //分页方式：client 客户端分页，server 服务端分页（*）
+            pageNumber: 1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                        //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            search: true,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以个人感觉意义不大
+            strictSearch: true,                 //启用严格搜索。禁用比较检查。
+            showColumns: true,                  //是否显示所有的列
+            showRefresh: true,                  //是否显示刷新按钮
+            minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: true,                //是否启用点击选中行
+            //height: 500,                        //行高，如果没有设置 height 属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+            showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                  //是否显示父子表
+            showExport: true,                   //是否显示导出
+            exportDataType: "basic",            //basic', 'all', 'selected'.
+            columns: [{
+                field: 'id', title: 'ID'
+            }, {
+                field: 'variant_id', title: 'variantId'
+            }, {
+                field: 'title', title: 'Title'
+            }, {
+                field: 'quantity', title: 'Quantity'
+            }, {
+                field: 'sku', title: 'Sku'
+            }, {
+                field: 'variant_title', title: 'VariantTitle'
+            }, {
+                field: 'vendor', title: 'Vendor'
+            }, {
+                field: 'fulfillment_service', title: 'FulfillmentService'
+            }, {
+                field: 'product_id', title: 'ProductId'
+            }, {
+                field: 'requires_shipping', title: 'RequiresShipping'
+            }, {
+                field: 'taxable', title: 'Taxable'
+            }, {
+                field: 'gift_card', title: 'Gift_card'
+            }, {
+                field: 'name', title: 'Name'
+            }, {
+                field: 'variant_inventory_management', title: 'VariantInventoryManagement'
+            }, {
+                field: 'product_exists', title: 'ProductExists'
+            }, {
+                field: 'fulfillable_quantity', title: 'FulfillableQuantity'
+            }, {
+                field: 'grams', title: 'Grams'
+            }, {
+                field: 'price', title: 'Price'
+            }, {
+                field: 'total_discount', title: 'TotalDiscount'
+            }, {
+                field: 'fulfillment_status', title: 'FulfillmentStatus'
+            }, {
+                field: 'admin_graphql_api_id', title: 'AdminGraphqlApiId'
+            }],
+            responseHandler: function (res) {
+                return {"rows": res.rows, "total": res.total};
+            }
+        });
+        $('#dt_list').bootstrapTable('load', detailsData);
+    }
+
+    function initAddressTable(addressData) {
+        $('#ad_info').bootstrapTable({
+            url: '',         //请求后台的 URL（*）
+            method: 'get',                      //请求方式（*）
+            // data: data,                      //当不使用上面的后台请求时，使用data来接收数据
+            striped: true,                      //是否显示行间隔色
+            toolbar: '#ad_toolbar',
+            cache: false,                       //是否使用缓存，默认为 true，所以一般情况下需要设置一下这个属性（*）
+            pagination: false,                   //是否显示分页（*）
+            sortable: false,                    //是否启用排序
+            sortOrder: "asc",                   //排序方式
+            sidePagination: "client",           //分页方式：client 客户端分页，server 服务端分页（*）
+            pageNumber: 1,                       //初始化加载第一页，默认第一页
+            pageSize: 10,                        //每页的记录行数（*）
+            pageList: [10, 25, 50, 100],        //可供选择的每页的行数（*）
+            search: false,                       //是否显示表格搜索，此搜索是客户端搜索，不会进服务端，所以个人感觉意义不大
+            strictSearch: false,                 //启用严格搜索。禁用比较检查。
+            showColumns: true,                  //是否显示所有的列
+            showRefresh: true,                  //是否显示刷新按钮
+            minimumCountColumns: 2,             //最少允许的列数
+            clickToSelect: true,                //是否启用点击选中行
+            //height: 500,                        //行高，如果没有设置 height 属性，表格自动根据记录条数觉得表格高度
+            uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
+            showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+            cardView: false,                    //是否显示详细视图
+            detailView: false,                  //是否显示父子表
+            showExport: true,                   //是否显示导出
+            exportDataType: "basic",            //basic', 'all', 'selected'.
+            columns: [{
+                field: 'id', title: 'ID'
+            }, {
+                field: 'first_name', title: 'FirstName'
+            }, {
+                field: 'address1', title: 'Address1'
+            }, {
+                field: 'phone', title: 'Phone'
+            }, {
+                field: 'city', title: 'City'
+            }, {
+                field: 'zip', title: 'Zip'
+            }, {
+                field: 'province', title: 'Province'
+            }, {
+                field: 'country', title: 'Country'
+            }, {
+                field: 'last_name', title: 'LastName'
+            }, {
+                field: 'address2', title: 'Address2'
+            }, {
+                field: 'company', title: 'Company'
+            }, {
+                field: 'latitude', title: 'Latitude'
+            }, {
+                field: 'longitude', title: 'Longitude'
+            }, {
+                field: 'name', title: 'Name'
+            }, {
+                field: 'country_code', title: 'CountryCode'
+            }, {
+                field: 'province_code', title: 'ProvinceCode'
+            }],
+            responseHandler: function (res) {
+                return {"rows": res.rows, "total": res.total};
+            }
+        });
+        $('#ad_info').bootstrapTable('load', addressData);
     }
 </script>
+</body>
 </html>
