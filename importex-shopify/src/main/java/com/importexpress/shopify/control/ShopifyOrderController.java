@@ -5,21 +5,17 @@ import com.importexpress.shopify.pojo.orders.Line_items;
 import com.importexpress.shopify.pojo.orders.Orders;
 import com.importexpress.shopify.pojo.orders.OrdersWraper;
 import com.importexpress.shopify.pojo.orders.Shipping_address;
-import com.importexpress.shopify.service.ShopifyAuthService;
 import com.importexpress.shopify.service.ShopifyOrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author: JiangXW
@@ -29,16 +25,14 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RestController
-@RequestMapping("/shopify")
+@RequestMapping("/api/shopify")
 @Api(tags = "shopify订单调用接口")
 public class ShopifyOrderController {
 
-    private final ShopifyAuthService shopifyAuthService;
 
     private final ShopifyOrderService shopifyOrderService;
 
-    public ShopifyOrderController(ShopifyAuthService shopifyAuthService, ShopifyOrderService shopifyOrderService) {
-        this.shopifyAuthService = shopifyAuthService;
+    public ShopifyOrderController(ShopifyOrderService shopifyOrderService) {
         this.shopifyOrderService = shopifyOrderService;
     }
 
@@ -46,20 +40,12 @@ public class ShopifyOrderController {
     @GetMapping("/{shopifyName}")
     @ApiOperation("店铺一览")
     public CommonResult getShopifyOrderByShopifyName(
-            @PathVariable(value = "shopifyName") String shopifyName, @RequestParam(value = "pageNum", required = false, defaultValue = "1") Long pageNum, @RequestParam(value = "limitNum", required = false, defaultValue = "10") Long limitNum) {
+            @ApiParam(name="shopifyName",value="shopify店铺名",required=true) @PathVariable(value = "shopifyName") String shopifyName) {
         try {
 
             List<Orders> ordersList = shopifyOrderService.queryListByShopifyName(shopifyName);
-            /*List<Orders> rsList = new ArrayList<>();
-            暂不分页
-            if (CollectionUtils.isNotEmpty(ordersList)) {
-                rsList = ordersList.stream().skip((pageNum - 1) * limitNum).limit(limitNum).collect(Collectors.toList());
-            }
-            rs.success(rsList);
-            */
             return CommonResult.success(ordersList);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("shopifyName:" + shopifyName + "error:", e);
             return CommonResult.failed("shopifyName:" + shopifyName + "error:" + e.getMessage());
         }
