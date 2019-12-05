@@ -21,7 +21,7 @@ zuul:
   prefix: /api
   retryable: true
   routes:
-    fx-service: /fx-service/**
+    utils-service: /utils-service/**
     ali1688-service: /ali-service/**
   ribbon:
     eager-load:
