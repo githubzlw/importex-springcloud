@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Shopify订单</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
@@ -72,6 +73,13 @@
         return null; //返回参数值
     }
 
+
+    // 如果是移动设备则启用卡片视图
+    var isCardView = false;
+    if (/Android|iPhone|iPad|iPod|BlackBerry|webOS|Windows Phone|SymbianOS|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        isCardView = true;
+    }
+
     function initTable(shopifyName) {
         $('#tb_list').bootstrapTable({
             url: '/api/shopify/' + shopifyName,         //请求后台的 URL（*）
@@ -96,7 +104,7 @@
             //height: 500,                        //行高，如果没有设置 height 属性，表格自动根据记录条数觉得表格高度
             uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
             showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
-            cardView: false,                    //是否显示详细视图
+            cardView: isCardView,                    //是否显示详细视图
             detailView: false,                  //是否显示父子表
             showExport: true,                   //是否显示导出
             exportDataType: "basic",            //basic', 'all', 'selected'.

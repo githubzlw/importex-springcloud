@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Shopify订单</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
@@ -11,8 +12,12 @@
 </head>
 <body>
 
-<div style="width: 100%;height: 6%;">
-    <p id="ad_info"></p>
+<div class="container-fluid" style="width: 100%;height: 6%;">
+    <div class="row">
+        <div class="col-md-12">
+            <p style="margin-top: 10px;"><b>Address:</b><span id="ad_info"></span></p>
+        </div>
+    </div>
 </div>
 
 <div style="width: 100%;height: 93%;">
@@ -59,6 +64,12 @@
 <script src="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.js"></script>
 <script src="https://momentjs.com/downloads/moment.min.js"></script>
 <script>
+
+    // 如果是移动设备则启用卡片视图
+    var isCardView = false;
+    if (/Android|iPhone|iPad|iPod|BlackBerry|webOS|Windows Phone|SymbianOS|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        isCardView = true;
+    }
 
     window.onload = function () {
         var shopifyName = getUrlParam("shopifyName");
@@ -128,7 +139,7 @@
             //height: 500,                        //行高，如果没有设置 height 属性，表格自动根据记录条数觉得表格高度
             uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
             showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
-            cardView: false,                    //是否显示详细视图
+            cardView: isCardView,                    //是否显示详细视图
             detailView: false,                  //是否显示父子表
             showExport: true,                   //是否显示导出
             exportDataType: "basic",            //basic', 'all', 'selected'.
@@ -209,7 +220,7 @@
         if(addressData.zip){
             countent += addressData.zip + ' ';
         }
-        $("#ad_info").append(countent);
+        $("#ad_info").text(countent);
     }
 </script>
 </body>
