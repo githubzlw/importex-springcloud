@@ -2,12 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>pids list</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
 </head>
 <body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="text-center">
+                PID列表
+            </h3>
+        </div>
+    </div>
+</div>
 <table id="tb_list" data-filter-control="true" data-show-columns="true">
     <thead>
     <tr>
@@ -60,6 +70,12 @@
         return moment(value).format('YYYY/MM/DD HH:MM:SS:SSS');
     }
 
+    // 如果是移动设备则启用卡片视图
+    var isCardView = false;
+    if (/Android|iPhone|iPad|iPod|BlackBerry|webOS|Windows Phone|SymbianOS|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        isCardView = true;
+    }
+
     $('#tb_list').bootstrapTable({
         url: '/queue/allpids.json',         //请求后台的 URL（*）
         method: 'get',                      //请求方式（*）
@@ -83,7 +99,7 @@
         //height: 500,                        //行高，如果没有设置 height 属性，表格自动根据记录条数觉得表格高度
         uniqueId: "ID",                     //每一行的唯一标识，一般为主键列
         showToggle:true,                    //是否显示详细视图和列表视图的切换按钮
-        cardView: false,                    //是否显示详细视图
+        cardView: isCardView,                    //是否显示详细视图
         detailView: false,                  //是否显示父子表
         showExport: true,                   //是否显示导出
         exportDataType: "basic",            //basic', 'all', 'selected'.
