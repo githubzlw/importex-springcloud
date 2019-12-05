@@ -3,7 +3,6 @@ package com.importexpress.comm.domain;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -61,7 +60,7 @@ public class CommonResult {
     }
 
     /**
-     * 普通成功返回（带message)
+     * 普通成功返回
      */
     public static CommonResult success(String message,Object data) {
         CommonResult commonResult = new CommonResult(SUCCESS);
