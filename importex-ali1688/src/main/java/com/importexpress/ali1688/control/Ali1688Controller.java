@@ -52,7 +52,7 @@ public class Ali1688Controller {
     @GetMapping("/pids/{pids}")
     public List<JSONObject> pid(@PathVariable("pids") Long[] pids, @RequestParam(value = "isCache", required = false, defaultValue = "true") boolean isCache) {
 
-        if(!isRunnable()){
+        if(!isRunnable(false)){
             return null;
         }
 
@@ -70,7 +70,7 @@ public class Ali1688Controller {
     @GetMapping("/shop/{shopid}")
     public CommonResult getItemsInShop(@PathVariable("shopid") String shopid) {
 
-        if(!isRunnable()){
+        if(!isRunnable(true)){
             return CommonResult.failed("非运行期间");
         }
 
@@ -169,19 +169,40 @@ public class Ali1688Controller {
 
     /**
      * 是否是可以运行的日期
+     * @param isShop
      * @return
      */
-    private boolean isRunnable(){
-        String[] split = StringUtils.split(config.dates, ',');
-        Assert.notNull(split,"config.dates is null");
-        Assert.isTrue(split.length>0,"config.dates is empty");
-        boolean result = Arrays.asList(split).contains(Integer.toString(LocalDate.now().getDayOfWeek().getValue()));
-        if (result && LocalDateTime.now().getHour()>23 && LocalDateTime.now().getMinute()>30) {
-            //23:30开始不执行程序
-            return false;
+    private boolean isRunnable(boolean isShop){
+        String[] splitPid = StringUtils.split(config.datesPid, ',');
+        String[] splitShop = StringUtils.split(config.datesShop, ',');
+        Assert.notNull(splitPid,"config.datesPid is null");
+        Assert.notNull(splitShop,"config.datesShop is null");
+        Assert.isTrue(splitPid.length>0,"config.datesPid is empty");
+        Assert.isTrue(splitShop.length>0,"config.splitShop is empty");
+
+        boolean isRunPid = Arrays.asList(splitPid).contains(Integer.toString(LocalDate.now().getDayOfWeek().getValue()));
+        boolean isRunShop = Arrays.asList(splitShop).contains(Integer.toString(LocalDate.now().getDayOfWeek().getValue()));
+
+        if(isShop){
+            //控制店铺抓取
+            if (isRunShop
+                    && !(LocalDateTime.now().getHour()==23 && LocalDateTime.now().getMinute()>30)) {
+                return true;
+            }else{
+                //23:30开始不执行程序
+                return false;
+            }
         }else{
-            return result;
+            //控制PID抓取
+            if (isRunPid
+                    && !(LocalDateTime.now().getHour()==23 && LocalDateTime.now().getMinute()>30)) {
+                return true;
+            }else{
+                //23:30开始不执行程序
+                return false;
+            }
         }
+
     }
 
 

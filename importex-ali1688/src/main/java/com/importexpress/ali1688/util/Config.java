@@ -17,7 +17,10 @@ public class Config {
     public String API_SECRET;
 
 
-    @Value("${ali1688api.dates}")
-    public String dates;
+    @Value("${ali1688api.dates.pid}")
+    public String datesPid;
+
+    @Value("${ali1688api.dates.shop}")
+    public String datesShop;
 
 }

@@ -19,10 +19,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
@@ -38,6 +41,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
     private static final int MAX_GOODS_NUMBER = 200;
     private static final int MIN_SALES = 10;
+    private static final String REDIS_CALL_COUNT = "ali:call:count";
+
+    private static final String YYYYMMDD = "yyyyMMdd";
+
+    private final StringRedisTemplate redisTemplate;
 
     /**
      * 获取商品详情
@@ -54,10 +62,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     private PidQueueMapper pidQueueMapper;
 
     @Autowired
-    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService, Config config, PidQueueMapper pidQueueMapper) {
+    public Ali1688ServiceImpl(Ali1688CacheService ali1688CacheService, Config config, PidQueueMapper pidQueueMapper, StringRedisTemplate redisTemplate) {
         this.ali1688CacheService = ali1688CacheService;
         this.config = config;
         this.pidQueueMapper = pidQueueMapper;
+        this.redisTemplate = redisTemplate;
     }
 
 
@@ -73,6 +82,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
         try {
             JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
+            String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
+            this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "pid_"+strYmd, 1);
             String error = jsonObject.getString("error");
             //if(1==1) throw new IllegalStateException("testtesttest");
             if (StringUtils.isNotEmpty(error)) {
@@ -322,6 +333,9 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         Map<String, Integer> result = new HashMap<>(3);
 
         JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_HOST, config.API_KEY, config.API_SECRET, shopid, page));
+
+        String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
+        this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "shop_"+strYmd, 1);
 
         checkReturnJson(jsonObject);
 
