@@ -8,10 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -39,7 +36,7 @@ public class ShopifyAuthController {
         this.shopifyAuthService = shopifyAuthService;
     }
 
-    @GetMapping(value = "/auth")
+    @PostMapping(value = "/auth")
     @ApiOperation("授权")
     public CommonResult auth(
             @ApiParam(name="code",value="shopify返回的code",required=true) @PathVariable(value = "code")String code,
