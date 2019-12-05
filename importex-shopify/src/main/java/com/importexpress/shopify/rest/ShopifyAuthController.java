@@ -1,4 +1,4 @@
-package com.importexpress.shopify.control;
+package com.importexpress.shopify.rest;
 
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.shopify.service.ShopifyAuthService;
@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +17,6 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.SortedSet;
@@ -29,7 +27,7 @@ import java.util.TreeSet;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/shopify")
+@RequestMapping("/shopify")
 @Api(tags = "shopify授权调用接口")
 public class ShopifyAuthController {
     private static final String HMAC_ALGORITHM = "HmacSHA256";

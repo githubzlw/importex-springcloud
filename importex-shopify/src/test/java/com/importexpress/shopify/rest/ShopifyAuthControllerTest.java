@@ -1,13 +1,7 @@
-package com.importexpress.shopify.control;
+package com.importexpress.shopify.rest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
-import com.importexpress.shopify.mapper.ShopifyAuthMapper;
-import com.importexpress.shopify.pojo.ShopifyAuth;
-import com.importexpress.shopify.pojo.ShopifyData;
-import com.importexpress.shopify.pojo.ShopifyRequestWrap;
-import com.importexpress.shopify.pojo.TypeBean;
-import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,8 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

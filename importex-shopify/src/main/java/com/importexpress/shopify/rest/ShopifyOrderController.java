@@ -1,4 +1,4 @@
-package com.importexpress.shopify.control;
+package com.importexpress.shopify.rest;
 
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.domain.CommonResult;
@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
-@RequestMapping("/api/shopify")
+@RequestMapping("/shopify")
 @Api(tags = "shopify订单调用接口")
 public class ShopifyOrderController {
 

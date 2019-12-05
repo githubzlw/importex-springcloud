@@ -1,9 +1,6 @@
-package com.importexpress.shopify.control;
+package com.importexpress.shopify.rest;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Maps;
-import com.importexpress.shopify.mapper.ShopifyAuthMapper;
-import com.importexpress.shopify.pojo.ShopifyAuth;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.ShopifyRequestWrap;
 import com.importexpress.shopify.pojo.TypeBean;
@@ -14,18 +11,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
@@ -51,7 +43,7 @@ public class ShopifyProductControllerTest {
         wrap.setData(data());
         wrap.setShopname("importxtest");
         String requestJson = JSONObject.toJSONString(wrap);
-        mockMvc.perform(post("/api/shopify/product")
+        mockMvc.perform(post("/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk()).andDo(print());
 
@@ -59,7 +51,7 @@ public class ShopifyProductControllerTest {
     @Test(expected =NullPointerException.class)
     public void addProductNoParam() throws Exception {
         String jsonWrap = null;
-        mockMvc.perform(post("/api/shopify/product")
+        mockMvc.perform(post("/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(jsonWrap))
                 .andReturn().getResponse();
@@ -69,7 +61,7 @@ public class ShopifyProductControllerTest {
         ShopifyRequestWrap wrap = new ShopifyRequestWrap();
 
         String requestJson = JSONObject.toJSONString(wrap);
-        MockHttpServletResponse response = mockMvc.perform(post("/api/shopify/product")
+        MockHttpServletResponse response = mockMvc.perform(post("/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk())
                 .andReturn().getResponse();
@@ -82,7 +74,7 @@ public class ShopifyProductControllerTest {
         wrap.setData(null);
         wrap.setShopname("importxtest");
         String requestJson = JSONObject.toJSONString(wrap);
-        MockHttpServletResponse response = mockMvc.perform(post("/api/shopify/product")
+        MockHttpServletResponse response = mockMvc.perform(post("/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk())
                 .andReturn().getResponse();
@@ -98,7 +90,7 @@ public class ShopifyProductControllerTest {
         wrap.setData(data);
         wrap.setShopname("importxtest");
         String requestJson = JSONObject.toJSONString(wrap);
-        MockHttpServletResponse response = mockMvc.perform(post("/api/shopify/product")
+        MockHttpServletResponse response = mockMvc.perform(post("/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson)).andExpect(status().isOk())
                 .andReturn().getResponse();

@@ -1,4 +1,4 @@
-package com.importexpress.shopify.control;
+package com.importexpress.shopify.rest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -51,7 +51,7 @@ public class ShopifyOrderControllerTest {
 
         String shopifyName = "importxtest";
         MvcResult mvcResult = mockMvc
-                .perform(get("/api/shopify/" + shopifyName))
+                .perform(get("/shopify/" + shopifyName))
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath("$.code").value("200")).andReturn();
         String rsStr = mvcResult.getResponse().getContentAsString();
@@ -78,7 +78,7 @@ public class ShopifyOrderControllerTest {
 
         String shopifyName = "importxtest";
         MvcResult mvcResult = mockMvc
-                .perform(get("/api/shopify/" + shopifyName + "/orders"))
+                .perform(get("/shopify/" + shopifyName + "/orders"))
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath("$.code").value("200")).andReturn();
         String rsStr = mvcResult.getResponse().getContentAsString();
@@ -97,7 +97,7 @@ public class ShopifyOrderControllerTest {
         String shopifyName = "importxtest";
         long orderNo = 1875136217122L;
         MvcResult mvcResult = mockMvc
-                .perform(get("/api/shopify/" + shopifyName + "/orders/" + orderNo))
+                .perform(get("/shopify/" + shopifyName + "/orders/" + orderNo))
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath("$.code").value("200")).andReturn();
 
