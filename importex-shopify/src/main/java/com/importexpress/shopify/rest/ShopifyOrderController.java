@@ -109,7 +109,7 @@ public class ShopifyOrderController {
             return CommonResult.success(rsMap);
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("shopifyName:" + shopifyName + ",orderNo:" + ",error:", e);
+            log.error("shopifyName:" + shopifyName + ",orderNo:"+ orderNo + ",error:", e);
             return CommonResult.failed("shopifyName:" + shopifyName + ",orderNo:" + ",error:" + orderNo + "," + e.getMessage());
         }
     }
