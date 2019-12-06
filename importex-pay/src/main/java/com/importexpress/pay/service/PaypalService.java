@@ -1,5 +1,7 @@
 package com.importexpress.pay.service;
 
+import com.importexpress.comm.domain.CommonResult;
+
 import java.io.IOException;
 
 /**
@@ -7,5 +9,5 @@ import java.io.IOException;
  * @date 2019/12/6
  */
 public interface PaypalService {
-    boolean refund(String captureId, Double amount) throws IOException;
+    CommonResult refund(String captureId, Double amount) throws IOException;
 }

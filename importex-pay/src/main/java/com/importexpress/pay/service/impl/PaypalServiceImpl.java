@@ -1,6 +1,7 @@
 package com.importexpress.pay.service.impl;
 
 import com.braintreepayments.http.HttpResponse;
+import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.pay.service.PaypalService;
 import com.importexpress.pay.util.Config;
 import com.paypal.core.PayPalEnvironment;
@@ -26,7 +27,7 @@ public class PaypalServiceImpl implements PaypalService {
     }
 
     @Override
-    public boolean refund(String captureId, Double amount) throws IOException {
+    public CommonResult refund(String captureId, Double amount) {
 
         CapturesRefundRequest request = new CapturesRefundRequest(captureId);
         request.prefer("return=representation");
@@ -38,13 +39,19 @@ public class PaypalServiceImpl implements PaypalService {
         refundRequest.amount(money);
         request.requestBody(refundRequest);
 
-        HttpResponse<Refund> response = this.getPayPalHttpClient().execute(request);
+        HttpResponse<Refund> response = null;
+        try {
+            response = this.getPayPalHttpClient().execute(request);
+        } catch(IOException ioe){
+            log.error("refund",ioe);
+            return CommonResult.failed(ioe.getMessage());
+        }
         log.info("response: [{}]", response);
         if (response.statusCode() == 200) {
             //TODO 成功
-            return true;
+            return CommonResult.success();
         } else {
-            return false;
+            return CommonResult.failed("statuscode="+response.statusCode());
         }
     }
 
