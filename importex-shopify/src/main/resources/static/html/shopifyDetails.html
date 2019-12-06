@@ -88,7 +88,7 @@
     }
 
     function doQuery(shopifyName, orderNo) {
-        var url = "/api/shopify/" + shopifyName + "/orders/" + orderNo;
+        var url = "/shopify/" + shopifyName + "/orders/" + orderNo;
         $.ajax({
             type: "GET",
             url: url,

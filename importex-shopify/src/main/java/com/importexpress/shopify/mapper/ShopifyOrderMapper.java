@@ -3,10 +3,7 @@ package com.importexpress.shopify.mapper;
 import com.importexpress.shopify.pojo.orders.Line_items;
 import com.importexpress.shopify.pojo.orders.Orders;
 import com.importexpress.shopify.pojo.orders.Shipping_address;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -35,11 +32,17 @@ public interface ShopifyOrderMapper {
     @Insert(SqlProvider.SINGLE_ORDER_DETAILS_INSERT)
     int insertOrderDetails(Line_items item);
 
+    @Delete("delete from shopify_order_details where order_no =#{order_no}")
+    int deleteOrderDetails(Long orderNo);
+
     @Select(SqlProvider.SINGLE_ORDER_ADDRESS_QUERY)
     Shipping_address queryOrderAddressByOrderId(long orderNo);
 
     @Insert(SqlProvider.SINGLE_ORDER_ADDRESS_INSERT)
     int insertIntoOrderAddress(Shipping_address address);
+
+    @Delete("delete from shopify_order_address where order_no =#{order_no}")
+    int deleteOrderAddress(Long orderNo);
 
     @Select("select shopify_name from user where shopify_flag = 1 and length(ifnull(shopify_name,'')) > 0")
     List<String> queryShopifyNameFromUser();
