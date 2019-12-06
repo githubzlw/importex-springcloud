@@ -68,7 +68,10 @@
             <version>1.19.1</version>
             <scope>compile</scope>
         </dependency>
-
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
     </dependencies>
 
 
