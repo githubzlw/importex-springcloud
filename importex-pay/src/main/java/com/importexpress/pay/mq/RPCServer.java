@@ -46,18 +46,15 @@ public class RPCServer implements Runnable {
 
                 String response = "";
                 try {
-                    String json = new String(delivery.getBody(), "UTF-8");
-                    log.info("input json:[{}]",json);
-                    JSONObject jsonObject =null;
                     try {
-                        jsonObject = JSONObject.parseObject(json);
-                    }catch(RuntimeException re){
+                        String json = new String(delivery.getBody(), "UTF-8");
+                        log.info("input :[{}]",json);
+                        JSONObject jsonObject = JSONObject.parseObject(json);
+                        CommonResult refund = paypalService.refund(jsonObject.getString("captureId"), jsonObject.getDouble("amount"));
+                        response = JSONObject.toJSONString(refund);
+                    }catch(Exception re){
                         response = JSONObject.toJSONString(CommonResult.failed(re.getMessage()));
                     }
-                    CommonResult refund = paypalService.refund(jsonObject.getString("captureId"), jsonObject.getDouble("amount"));
-                    response = JSONObject.toJSONString(refund);
-                } catch (Exception e) {
-                    log.error("Exception",e);
                 } finally {
                     channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8"));
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);

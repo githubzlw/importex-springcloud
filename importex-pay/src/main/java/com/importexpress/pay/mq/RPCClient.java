@@ -72,7 +72,7 @@ public class RPCClient implements AutoCloseable {
     public static void main(String[] argv) {
         try (RPCClient rpcClient = new RPCClient()) {
             System.out.println(rpcClient.call("{'captureId':'aaaa','amount':1.1}"));
-            System.out.println(rpcClient.call("{'captureId':'74Y59251KF272460A','amount':1.1}"));
+            System.out.println(rpcClient.call("{'captureId':'0G915709VH258105T','amount':1.1}"));
             System.out.println(rpcClient.call("abc"));
         } catch (IOException | TimeoutException | InterruptedException e) {
             log.error("main",e);
