@@ -119,13 +119,18 @@ public class ShopifyOrderServiceImpl implements ShopifyOrderService {
                 try {
                     orderInfo.setShopify_name(shopifyName);
                     shopifyOrderMapper.insertOrderInfoSingle(orderInfo);
+
                     if (CollectionUtils.isNotEmpty(orderInfo.getLine_items())) {
+                        // 删除原来数据
+                        shopifyOrderMapper.deleteOrderDetails(orderInfo.getId());
                         for (Line_items item : orderInfo.getLine_items()) {
                             item.setOrder_no(orderInfo.getId());
                             shopifyOrderMapper.insertOrderDetails(item);
                         }
                     }
                     if (orderInfo.getShipping_address() != null) {
+                        // 删除原来数据
+                        shopifyOrderMapper.deleteOrderAddress(orderInfo.getId());
                         orderInfo.getShipping_address().setOrder_no(orderInfo.getId());
                         shopifyOrderMapper.insertIntoOrderAddress(orderInfo.getShipping_address());
                     }
