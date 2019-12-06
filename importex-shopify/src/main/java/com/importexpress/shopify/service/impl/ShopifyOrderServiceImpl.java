@@ -86,7 +86,6 @@ public class ShopifyOrderServiceImpl implements ShopifyOrderService {
     }
 
     @Override
-    @Async(value = "threadPoolTaskExecutor")
     public void genShopifyOrderInfo(String shopifyName, OrdersWraper orders) {
         List<Orders> shopifyOrderList = orders.getOrders();
 

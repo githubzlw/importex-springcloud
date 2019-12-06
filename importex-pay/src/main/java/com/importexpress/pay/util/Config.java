@@ -19,4 +19,20 @@ public class Config {
     @Value("${PAYPAL.CLIENT_SECRET}")
     public String PaypalClientSecret;
 
+    @Value("${rabbitmq.host}")
+    public String rabbitmqHost;
+
+    @Value("${rabbitmq.port}")
+    public int rabbitmqPort;
+
+    @Value("${rabbitmq.username}")
+    public String rabbitmqUser;
+
+    @Value("${rabbitmq.password}")
+    public String rabbitmqPass;
+
+    @Value("${rabbitmq.rpc.qname}")
+    public String qnameRpc;
+
+
 }

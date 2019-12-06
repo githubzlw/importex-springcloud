@@ -2,6 +2,7 @@ package com.importexpress.pay.service.impl;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.braintreepayments.http.HttpResponse;
+import com.braintreepayments.http.exceptions.HttpException;
 import com.braintreepayments.http.exceptions.SerializeException;
 import com.braintreepayments.http.serializer.Json;
 import com.google.common.base.MoreObjects;
@@ -189,8 +190,8 @@ public class PaypalServiceImpl implements PaypalService {
         try {
             response = this.getPayPalHttpClient().execute(request);
         } catch(IOException ioe){
-            log.error("refund",ioe);
-            return CommonResult.failed(ioe.getMessage());
+            log.error("IOException",ioe);
+            return CommonResult.failed(ioe.getClass().getName()+":"+ ioe.getMessage());
         }
         log.info(new JSONObject(new Json()
                 .serialize(response.result())).toString(4));
