@@ -12,10 +12,6 @@
     <artifactId>importex-pay</artifactId>
     <packaging>jar</packaging>
 
-    <properties>
-        <mail.version>1.5.5</mail.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -44,6 +40,11 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.paypal.sdk</groupId>
+            <artifactId>checkout-sdk</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 

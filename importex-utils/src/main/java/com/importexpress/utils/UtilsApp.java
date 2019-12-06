@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author luohao
  */
 @EnableDiscoveryClient
-@EnableFeignClients
 @EnableScheduling
 @SpringBootApplication
 public class UtilsApp {

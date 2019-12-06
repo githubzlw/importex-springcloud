@@ -1,4 +1,4 @@
-package com.importexpress.ali1688;
+package com.importexpress.pay;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,7 +10,6 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @author luohao
  */
 @EnableDiscoveryClient
-@EnableFeignClients
 @SpringBootApplication
 public class PayApp {
 

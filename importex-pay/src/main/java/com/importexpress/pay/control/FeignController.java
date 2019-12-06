@@ -1,14 +1,13 @@
-package com.importexpress.ali1688.control;
+package com.importexpress.pay.control;
 
 import com.alibaba.fastjson.JSONObject;
-import com.importexpress.ali1688.service.feign.Ali1688ServiceFeign;
-import com.importexpress.ali1688.service.feign.DemoServiceFeign;
+import com.importexpress.pay.service.feign.Ali1688ServiceFeign;
+import com.importexpress.pay.service.feign.DemoServiceFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
