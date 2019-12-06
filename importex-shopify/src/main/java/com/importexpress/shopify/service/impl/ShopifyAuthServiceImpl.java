@@ -1,7 +1,6 @@
 package com.importexpress.shopify.service.impl;
 
 
-import com.importexpress.shopify.component.ShopifyProduct;
 import com.importexpress.shopify.exception.ShopifyException;
 import com.importexpress.shopify.mapper.ShopifyAuthMapper;
 import com.importexpress.shopify.pojo.ShopifyAuth;
@@ -9,7 +8,6 @@ import com.importexpress.shopify.service.ShopifyAuthService;
 import com.importexpress.shopify.util.Config;
 import com.importexpress.shopify.util.ShopifyUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 

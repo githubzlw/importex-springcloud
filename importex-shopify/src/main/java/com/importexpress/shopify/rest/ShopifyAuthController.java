@@ -2,12 +2,14 @@ package com.importexpress.shopify.rest;
 
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.shopify.service.ShopifyAuthService;
+import com.importexpress.shopify.service.UserService;
 import com.importexpress.shopify.util.Config;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.Mac;
@@ -30,6 +32,8 @@ public class ShopifyAuthController {
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private final Config config;
     private final ShopifyAuthService shopifyAuthService;
+    @Autowired
+    private UserService userService;
 
     public ShopifyAuthController(Config config, ShopifyAuthService shopifyAuthService) {
         this.config = config;
@@ -43,6 +47,7 @@ public class ShopifyAuthController {
             @ApiParam(name="hmac",value="shopify返回的hmac",required=true) @PathVariable(value = "hmac")String hmac,
             @ApiParam(name="state",value="shopify返回的state",required=true) @PathVariable(value = "state")String state,
             @ApiParam(name="shop",value="shopify店铺名",required=true) @PathVariable(value = "shop")String shop,
+            @ApiParam(name="userId",value="用户ID",required=true) @PathVariable(value = "userId")int userId,
                              HttpServletRequest request, HttpServletResponse response) {
 
         log.info("code:{},hmac:{},state:{},shop:{}", code, hmac, state, shop);
@@ -69,8 +74,12 @@ public class ShopifyAuthController {
                 HashMap<String, String> result = shopifyAuthService.getAccessToken(shop, code);
                 String accessToken = result.get("access_token");
                 String scope = result.get("scope");
-                shopifyAuthService.saveShopifyAuth(shop, accessToken, scope);
-                return CommonResult.success();
+                int auth = shopifyAuthService.saveShopifyAuth(shop, accessToken, scope);
+                if(auth > 0){
+                    userService.updateUserShopifyFlag(userId, shop);
+                    return CommonResult.success("SAVE SHOPIFY AUTH SUCCESSED");
+                }
+                return CommonResult.failed("SAVE SHOPIFY AUTH ERROR");
             } else {
                 log.warn("HMAC IS NOT VERIFIED");
                 return CommonResult.failed("HMAC IS NOT VERIFIED");
