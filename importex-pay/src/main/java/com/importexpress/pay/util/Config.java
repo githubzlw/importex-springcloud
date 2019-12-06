@@ -9,6 +9,10 @@ public class Config {
     @Value("${PAYPAL.SANDBOX}")
     public boolean isPaypalSandbox;
 
+    @Value("${PAYPAL.MODE}")
+    public String paypalMode;
+
+
     @Value("${PAYPAL.CLIENT_ID}")
     public String PaypalClientId;
 
