@@ -27,4 +27,7 @@ public class Config {
     @Value("${shopify.uri_oauth}")
     public String SHOPIFY_URI_OAUTH;
 
+    @Value("")
+    public String SHOPUFY_HOST;
+
 }

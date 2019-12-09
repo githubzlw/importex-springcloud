@@ -29,6 +29,7 @@ import java.util.TreeSet;
 @RequestMapping("/shopify")
 @Api(tags = "shopify授权调用接口")
 public class ShopifyAuthController {
+    private static final String SHOPIFY_COM = ".myshopify.com";
     private static final String HMAC_ALGORITHM = "HmacSHA256";
     private final Config config;
     private final ShopifyAuthService shopifyAuthService;
@@ -41,7 +42,7 @@ public class ShopifyAuthController {
     }
 
     @PostMapping(value = "/auth")
-    @ApiOperation("授权")
+    @ApiOperation("授权回调")
     public CommonResult auth(
             @ApiParam(name="code",value="shopify返回的code",required=true) @PathVariable(value = "code")String code,
             @ApiParam(name="hmac",value="shopify返回的hmac",required=true) @PathVariable(value = "hmac")String hmac,
@@ -88,6 +89,23 @@ public class ShopifyAuthController {
         } catch (Exception e) {
             log.error("auth", e);
             return CommonResult.failed(e.getMessage());
+        }
+    }
+    @GetMapping(value = "/authuri")
+    @ApiOperation("请求授权接口")
+    public CommonResult authUri(
+            @ApiParam(name="shop",value="shopify店铺名称",required=true) @PathVariable(value = "shop")String shop){
+        try {
+            //请求授权
+            shop = shop.replace(SHOPIFY_COM, "");
+            String authUri  = "https://"+shop+".myshopify.com/admin/oauth/authorize?client_id="
+                    + config.SHOPIFY_CLIENT_ID + "&scope="+config.SHOPIFY_SCOPE+"&redirect_uri="
+                    +config.SHOPIFY_REDIRECT_URI;
+            return  CommonResult.success(authUri);
+        } catch (Exception e) {
+            log.error("auth", e);
+            e.printStackTrace();
+            return CommonResult.failed("");
         }
     }
 }
