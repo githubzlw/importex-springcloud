@@ -59,50 +59,15 @@ public class RPCServer implements Runnable {
                         .correlationId(delivery.getProperties().getCorrelationId())
                         .build();
 
-                String response = "";
+                String res = "";
                 try {
                     try {
-                        String json = new String(delivery.getBody(), "UTF-8");
-                        log.info("input :[{}]",json);
-                        JSONObject jsonObject = JSONObject.parseObject(json);
-                        //"{'step':1}")
-                        //"{'step':2,'uuid':'xxxxxxx','captureId':'74Y59251KF272460A','amount':2.0}")
-                        int intStep = jsonObject.getIntValue("step");
-                        Assert.isTrue(intStep ==1 || intStep ==2,"The input step is invalid");
-                        CommonResult refund;
-                        if(intStep==1){
-                            String randomUUID = paypalService.getRandomUUID();
-                            refund=CommonResult.success(randomUUID);
-                            mapUUID.put(randomUUID, System.currentTimeMillis());
-                        }else{
-                            String strUUID = jsonObject.getString("uuid");
-                            Assert.isTrue(StringUtils.isNotEmpty(strUUID),"The input uuid is invalid");
-                            if(System.currentTimeMillis()-mapUUID.get(strUUID)<MAX_TIMEOUT){
-
-                                String captureId = jsonObject.getString("captureId");
-                                String amount = jsonObject.getString("amount");
-                                String md5 = jsonObject.getString("md5");
-
-
-                                if(MD5Util.verify(strUUID + captureId + amount,md5 )){
-
-                                    refund = paypalService.refund(jsonObject.getString("captureId"), jsonObject.getDouble("amount"));
-                                }else{
-                                    //md5校验不通过
-                                    refund=CommonResult.failed("md5 verify false");
-                                }
-                            }else{
-                                //二次请求超时
-                                refund=CommonResult.failed("step 2 is timeout");
-                            }
-                            mapUUID.remove(strUUID);
-                        }
-                        response = JSONObject.toJSONString(refund);
+                        res = processRefund(delivery);
                     }catch(Exception re){
-                        response = JSONObject.toJSONString(CommonResult.failed(re.getMessage()));
+                        res = JSONObject.toJSONString(CommonResult.failed(re.getMessage()));
                     }
                 } finally {
-                    channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, response.getBytes("UTF-8"));
+                    channel.basicPublish("", delivery.getProperties().getReplyTo(), replyProps, res.getBytes("UTF-8"));
                     channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
                     synchronized (monitor) {
                         monitor.notify();
@@ -126,6 +91,71 @@ public class RPCServer implements Runnable {
         } catch (IOException e) {
             log.error("IOException", e);
         }
+    }
+
+    /**
+     * paypal amount refund
+     * sample:
+     * "{'step':1}")
+     * "{'step':2,'uuid':'xxxxxxx','captureId':'74Y59251KF272460A','amount':2.0,'md5':xxxxxx}")
+     * @param delivery
+     * @return
+     * @throws IOException
+     */
+    private String processRefund(Delivery delivery) throws IOException {
+        String json = new String(delivery.getBody(), "UTF-8");
+        log.info("input :[{}]",json);
+        JSONObject jsonObject = JSONObject.parseObject(json);
+
+        int intStep = checkJson(jsonObject);
+        CommonResult refund;
+        if(intStep==1){
+            String strUUID = paypalService.getRandomUUID();
+            refund=CommonResult.success(strUUID);
+            mapUUID.put(strUUID, System.currentTimeMillis());
+        }else{
+            String uuid = jsonObject.getString("uuid");
+            if(System.currentTimeMillis()-mapUUID.get(uuid)<MAX_TIMEOUT){
+                String sale = jsonObject.getString("saleid");
+                String amount = jsonObject.getString("amount");
+                String md5 = jsonObject.getString("md5");
+                if(MD5Util.verify(uuid + sale + amount,md5 )){
+                    refund = paypalService.refund(jsonObject.getString("sale"), jsonObject.getDouble("amount"));
+                }else{
+                    //md5校验不通过
+                    refund=CommonResult.failed("md5 verify false");
+                }
+            }else{
+                //二次请求超时
+                refund=CommonResult.failed("from step 1 to 2 is timeout");
+            }
+            mapUUID.remove(uuid);
+        }
+        return JSONObject.toJSONString(refund);
+    }
+
+    /**
+     * check input json
+     * @param jsonObject
+     * @return
+     */
+    private int checkJson(JSONObject jsonObject) {
+        int intStep = jsonObject.getIntValue("step");
+
+        Assert.isTrue(intStep ==1 || intStep ==2,"The input step is invalid");
+
+        if(intStep==2){
+            String uuid = jsonObject.getString("uuid");
+            String saleid = jsonObject.getString("saleid");
+            String amount = jsonObject.getString("amount");
+            String md5 = jsonObject.getString("md5");
+
+            Assert.isTrue(StringUtils.isNotEmpty(uuid),"The input uuid is empty");
+            Assert.isTrue(StringUtils.isNotEmpty(saleid),"The input saleid is empty");
+            Assert.isTrue(StringUtils.isNotEmpty(amount),"The input amount is empty");
+            Assert.isTrue(StringUtils.isNotEmpty(md5),"The input md5 is empty");
+        }
+        return intStep;
     }
 
     /**

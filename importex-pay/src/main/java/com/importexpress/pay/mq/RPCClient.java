@@ -74,17 +74,17 @@ public class RPCClient implements AutoCloseable {
     public static void main(String[] argv) {
         try (RPCClient rpcClient = new RPCClient()) {
 
-            String step1 = rpcClient.call("{'step':1}");
-            JSONObject jsonStep1 = JSONObject.parseObject(step1);
+            String step1Json = rpcClient.call("{'step':1}");
+            JSONObject jsonStep1 = JSONObject.parseObject(step1Json);
 
             String uuid = jsonStep1.getString("data");
-            String captureId = "74Y59251KF272460A";
+            String saleid = "038691045K308163A";
             String amount = "2.0";
-            String md5 = MD5Util.generate(uuid + captureId + amount);
+            String md5 = MD5Util.generate(uuid + saleid + amount);
 
-            String json = String.format("{'step':2,'uuid':'%s','captureId':'%s','amount':%s,'md5':'%s'}"
-                    ,uuid,captureId,amount,md5);
-            System.out.println(rpcClient.call(json));
+            String step2Json = String.format("{'step':2,'uuid':'%s','saleid':'%s','amount':%s,'md5':'%s'}"
+                    ,uuid,saleid,amount,md5);
+            System.out.println(rpcClient.call(step2Json));
 
         } catch (IOException | TimeoutException | InterruptedException e) {
             log.error("main",e);
