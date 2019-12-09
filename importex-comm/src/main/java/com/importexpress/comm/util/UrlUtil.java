@@ -235,5 +235,27 @@ public class UrlUtil {
                 JSON.parseObject(response.body().string()) : null;
     }
 
+    /**
+     * 调用URL（Get）
+     *
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    public boolean isAccessURL(String url)  {
+
+        Request request = new Request.Builder().url(url).build();
+        try {
+            if (client.newCall(request).execute().isSuccessful()) {
+                return true;
+            }else{
+                return false;
+            }
+        } catch (IOException e) {
+            return false;
+        }
+
+    }
+
 
 }

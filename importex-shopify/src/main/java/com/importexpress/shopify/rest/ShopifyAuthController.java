@@ -1,6 +1,8 @@
 package com.importexpress.shopify.rest;
 
+import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.domain.CommonResult;
+import com.importexpress.comm.util.UrlUtil;
 import com.importexpress.shopify.service.ShopifyAuthService;
 import com.importexpress.shopify.service.UserService;
 import com.importexpress.shopify.util.Config;
@@ -9,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -94,18 +97,27 @@ public class ShopifyAuthController {
     @GetMapping(value = "/authuri")
     @ApiOperation("请求授权接口")
     public CommonResult authUri(
-            @ApiParam(name="shop",value="shopify店铺名称",required=true) @PathVariable(value = "shop")String shop){
+            @ApiParam(name="shop",value="shopify店铺名称",required=true) String shop){
         try {
             //请求授权
-            shop = shop.replace(SHOPIFY_COM, "");
-            String authUri  = "https://"+shop+".myshopify.com/admin/oauth/authorize?client_id="
-                    + config.SHOPIFY_CLIENT_ID + "&scope="+config.SHOPIFY_SCOPE+"&redirect_uri="
-                    +config.SHOPIFY_REDIRECT_URI;
-            return  CommonResult.success("Successed",authUri);
+            String shopUrl = shop;
+            if(!StringUtils.startsWithIgnoreCase(shop,"https://")
+                    && !StringUtils.startsWithIgnoreCase(shop,"http://")){
+                shopUrl = "https://" + shop + ".myshopify.com";
+            }
+            if(UrlUtil.getInstance().isAccessURL(shopUrl)){
+                String authUri = shopUrl + "/admin/oauth/authorize?client_id="
+                        + config.SHOPIFY_CLIENT_ID + "&scope=" + config.SHOPIFY_SCOPE + "&redirect_uri="
+                        + config.SHOPIFY_REDIRECT_URI;
+                return CommonResult.success( authUri);
+            }else{
+                return CommonResult.failed("The shop name is invalid");
+            }
+
+
         } catch (Exception e) {
             log.error("auth", e);
-            e.printStackTrace();
-            return CommonResult.failed("");
+            return CommonResult.failed(e.getMessage());
         }
     }
 }
