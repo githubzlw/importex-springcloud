@@ -172,6 +172,10 @@ public class PaypalServiceImpl implements PaypalService {
         return strId;
     }
 
+    @Override
+    public String getRandomUUID(){
+        return UUID.randomUUID().toString();
+    }
 
     @Override
     public CommonResult refund(String captureId, Double amount) throws SerializeException {

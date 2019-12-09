@@ -64,6 +64,8 @@ public interface PaypalService {
      */
     Payment executePayment(String paymentId, String payerId) throws PayPalRESTException;
 
+    String getRandomUUID();
+
     /**
      * 退款处理
      * @param captureId

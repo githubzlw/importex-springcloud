@@ -1,6 +1,8 @@
 package com.importexpress.pay.mq;
 
+import com.alibaba.fastjson.JSONObject;
 import com.importexpress.pay.util.Config;
+import com.importexpress.utils.util.MD5Util;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -71,9 +73,19 @@ public class RPCClient implements AutoCloseable {
 
     public static void main(String[] argv) {
         try (RPCClient rpcClient = new RPCClient()) {
-            System.out.println(rpcClient.call("{'captureId':'aaaa','amount':1.1}"));
-            System.out.println(rpcClient.call("{'captureId':'0G915709VH258105T','amount':1.1}"));
-            System.out.println(rpcClient.call("abc"));
+
+            String step1 = rpcClient.call("{'step':1}");
+            JSONObject jsonStep1 = JSONObject.parseObject(step1);
+
+            String uuid = jsonStep1.getString("data");
+            String captureId = "74Y59251KF272460A";
+            String amount = "2.0";
+            String md5 = MD5Util.generate(uuid + captureId + amount);
+
+            String json = String.format("{'step':2,'uuid':'%s','captureId':'%s','amount':%s,'md5':'%s'}"
+                    ,uuid,captureId,amount,md5);
+            System.out.println(rpcClient.call(json));
+
         } catch (IOException | TimeoutException | InterruptedException e) {
             log.error("main",e);
         }
