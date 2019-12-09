@@ -101,7 +101,7 @@ public class ShopifyAuthController {
             String authUri  = "https://"+shop+".myshopify.com/admin/oauth/authorize?client_id="
                     + config.SHOPIFY_CLIENT_ID + "&scope="+config.SHOPIFY_SCOPE+"&redirect_uri="
                     +config.SHOPIFY_REDIRECT_URI;
-            return  CommonResult.success(authUri);
+            return  CommonResult.success("Successed",authUri);
         } catch (Exception e) {
             log.error("auth", e);
             e.printStackTrace();
