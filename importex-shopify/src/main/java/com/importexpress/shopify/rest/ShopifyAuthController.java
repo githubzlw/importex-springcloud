@@ -46,7 +46,7 @@ public class ShopifyAuthController {
     public CommonResult auth(
             @ApiParam(name="code",value="shopify返回的code",required=true)String code,
             @ApiParam(name="shop",value="shopify店铺名",required=true)String shop,
-            @ApiParam(name="userid",value="用户ID",required=true)String userId) {
+            @ApiParam(name="userid",value="用户ID",required=true)String userid) {
 
         log.info("code:{},shop:{}", code, shop);
         try {
@@ -55,7 +55,7 @@ public class ShopifyAuthController {
             String scope = result.get("scope");
             int auth = shopifyAuthService.saveShopifyAuth(shop, accessToken, scope);
             if(auth > 0){
-                userService.updateUserShopifyFlag(Integer.parseInt(userId), shop);
+                userService.updateUserShopifyFlag(Integer.parseInt(userid), shop);
                 return CommonResult.success("SAVE SHOPIFY AUTH SUCCESSED",shop);
             }
             return CommonResult.failed("SAVE SHOPIFY AUTH ERROR");
