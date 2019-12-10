@@ -80,7 +80,7 @@ public class ShopifyAuthController {
                         + config.SHOPIFY_CLIENT_ID + "&scope=" + config.SHOPIFY_SCOPE + "&redirect_uri="
                         + config.SHOPIFY_REDIRECT_URI;
                 Map<String,String>  data = Maps.newHashMap();
-                data.put("id",config.SHOPIFY_CLIENT_ID);
+                data.put("id",config.SHOPIFY_CLIENT_SECRET);
                 data.put("uri",authUri);
                 return CommonResult.success("AUTH URI",new Gson().toJson(data));
             }else{
