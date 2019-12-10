@@ -1,5 +1,6 @@
 package com.importexpress.shopify.rest;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.importexpress.comm.domain.CommonResult;
@@ -79,10 +80,9 @@ public class ShopifyAuthController {
                 String authUri = shopUrl + "/admin/oauth/authorize?client_id="
                         + config.SHOPIFY_CLIENT_ID + "&scope=" + config.SHOPIFY_SCOPE + "&redirect_uri="
                         + config.SHOPIFY_REDIRECT_URI;
-                Map<String,String>  data = Maps.newHashMap();
-                data.put("id",config.SHOPIFY_CLIENT_SECRET);
-                data.put("uri",authUri);
-                return CommonResult.success("AUTH URI",new Gson().toJson(data));
+
+                return CommonResult.success("AUTH URI",new Gson().toJson(
+                        ImmutableMap.of("id", config.SHOPIFY_CLIENT_SECRET, "uri", authUri)));
             }else{
                 return CommonResult.failed("The shop name is invalid");
             }
