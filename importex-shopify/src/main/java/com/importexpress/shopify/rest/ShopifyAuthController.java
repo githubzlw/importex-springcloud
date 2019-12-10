@@ -1,6 +1,7 @@
 package com.importexpress.shopify.rest;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.util.UrlUtil;
 import com.importexpress.shopify.service.ShopifyAuthService;
@@ -10,19 +11,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * @author luohao
@@ -48,47 +47,21 @@ public class ShopifyAuthController {
     @ApiOperation("授权回调")
     public CommonResult auth(
             @ApiParam(name="code",value="shopify返回的code",required=true)String code,
-            @ApiParam(name="hmac",value="shopify返回的hmac",required=true)String hmac,
-            @ApiParam(name="state",value="shopify返回的state")String state,
             @ApiParam(name="shop",value="shopify店铺名",required=true)String shop,
             @ApiParam(name="userid",value="用户ID",required=true)String userId,
                              HttpServletRequest request, HttpServletResponse response) {
 
-        log.info("code:{},hmac:{},state:{},shop:{}", code, hmac, state, shop);
-
-        Map<String, String[]> parameters = request.getParameterMap();
-        String data = null;
-        SortedSet<String> keys = new TreeSet<String>(parameters.keySet());
-        for (String key : keys) {
-            if (!key.equals("hmac") && !key.equals("signature")) {
-                if (data == null) {
-                    data = key + "=" + request.getParameter(key);
-                } else {
-                    data = data + "&" + key + "=" + request.getParameter(key);
-                }
-            }
-        }
-        SecretKeySpec keySpec = new SecretKeySpec(config.SHOPIFY_CLIENT_ID.getBytes(), HMAC_ALGORITHM);
+        log.info("code:{},shop:{}", code, shop);
         try {
-            Mac mac = Mac.getInstance(HMAC_ALGORITHM);
-            mac.init(keySpec);
-            byte[] rawHmac = mac.doFinal(data.getBytes());
-            if (Hex.encodeHexString(rawHmac).equals(request.getParameter("hmac"))) {
-                log.info("HMAC IS VERIFIED");
-                HashMap<String, String> result = shopifyAuthService.getAccessToken(shop, code);
-                String accessToken = result.get("access_token");
-                String scope = result.get("scope");
-                int auth = shopifyAuthService.saveShopifyAuth(shop, accessToken, scope);
-                if(auth > 0){
-                    userService.updateUserShopifyFlag(Integer.parseInt(userId), shop);
-                    return CommonResult.success("SAVE SHOPIFY AUTH SUCCESSED");
-                }
-                return CommonResult.failed("SAVE SHOPIFY AUTH ERROR");
-            } else {
-                log.warn("HMAC IS NOT VERIFIED");
-                return CommonResult.failed("HMAC IS NOT VERIFIED");
+            HashMap<String, String> result = shopifyAuthService.getAccessToken(shop, code);
+            String accessToken = result.get("access_token");
+            String scope = result.get("scope");
+            int auth = shopifyAuthService.saveShopifyAuth(shop, accessToken, scope);
+            if(auth > 0){
+                userService.updateUserShopifyFlag(Integer.parseInt(userId), shop);
+                return CommonResult.success("SAVE SHOPIFY AUTH SUCCESSED",shop);
             }
-
+            return CommonResult.failed("SAVE SHOPIFY AUTH ERROR");
         } catch (Exception e) {
             log.error("auth", e);
             return CommonResult.failed(e.getMessage());
@@ -109,7 +82,10 @@ public class ShopifyAuthController {
                 String authUri = shopUrl + "/admin/oauth/authorize?client_id="
                         + config.SHOPIFY_CLIENT_ID + "&scope=" + config.SHOPIFY_SCOPE + "&redirect_uri="
                         + config.SHOPIFY_REDIRECT_URI;
-                return CommonResult.success( authUri);
+                Map<String,String>  data = Maps.newHashMap();
+                data.put("id",config.SHOPIFY_CLIENT_ID);
+                data.put("uri",authUri);
+                return CommonResult.success("AUTH URI",new Gson().toJson(data));
             }else{
                 return CommonResult.failed("The shop name is invalid");
             }
