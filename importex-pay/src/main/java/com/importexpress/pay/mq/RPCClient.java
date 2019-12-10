@@ -1,8 +1,7 @@
 package com.importexpress.pay.mq;
 
 import com.alibaba.fastjson.JSONObject;
-import com.importexpress.pay.util.Config;
-import com.importexpress.utils.util.MD5Util;
+import com.importexpress.comm.util.MD5Util;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

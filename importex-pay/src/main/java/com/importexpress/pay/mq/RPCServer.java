@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.pay.service.PaypalService;
 import com.importexpress.pay.util.Config;
-import com.importexpress.utils.util.MD5Util;
+import com.importexpress.comm.util.MD5Util;
 import com.rabbitmq.client.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

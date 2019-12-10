@@ -1,4 +1,4 @@
-package com.importexpress.utils.util;
+package com.importexpress.comm.util;
 
 /**
  * @author lhao
