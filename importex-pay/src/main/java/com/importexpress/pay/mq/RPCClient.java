@@ -78,8 +78,8 @@ public class RPCClient implements AutoCloseable {
             JSONObject jsonStep1 = JSONObject.parseObject(step1Json);
 
             String uuid = jsonStep1.getString("data");
-            String saleid = "038691045K308163A";
-            String amount = "2.0";
+            String saleid = "6VH619619D161003M";
+            String amount = "25";
             String md5 = MD5Util.generate(uuid + saleid + amount);
 
             String step2Json = String.format("{'step':2,'uuid':'%s','saleid':'%s','amount':%s,'md5':'%s'}"

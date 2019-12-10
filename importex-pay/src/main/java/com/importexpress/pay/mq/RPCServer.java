@@ -97,7 +97,7 @@ public class RPCServer implements Runnable {
      * paypal amount refund
      * sample:
      * "{'step':1}")
-     * "{'step':2,'uuid':'xxxxxxx','captureId':'74Y59251KF272460A','amount':2.0,'md5':xxxxxx}")
+     * "{'step':2,'uuid':'xxxxxxx','saleid':'74Y59251KF272460A','amount':2.0,'md5':xxxxxx}")
      * @param delivery
      * @return
      * @throws IOException
