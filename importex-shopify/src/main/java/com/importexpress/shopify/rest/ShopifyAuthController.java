@@ -31,8 +31,6 @@ import java.util.Map;
 @RequestMapping("/shopify")
 @Api(tags = "shopify授权调用接口")
 public class ShopifyAuthController {
-    private static final String SHOPIFY_COM = ".myshopify.com";
-    private static final String HMAC_ALGORITHM = "HmacSHA256";
     private final Config config;
     private final ShopifyAuthService shopifyAuthService;
     @Autowired
@@ -48,8 +46,7 @@ public class ShopifyAuthController {
     public CommonResult auth(
             @ApiParam(name="code",value="shopify返回的code",required=true)String code,
             @ApiParam(name="shop",value="shopify店铺名",required=true)String shop,
-            @ApiParam(name="userid",value="用户ID",required=true)String userId,
-                             HttpServletRequest request, HttpServletResponse response) {
+            @ApiParam(name="userid",value="用户ID",required=true)String userId) {
 
         log.info("code:{},shop:{}", code, shop);
         try {
