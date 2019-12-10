@@ -120,7 +120,7 @@ public class RPCServer implements Runnable {
                 String amount = jsonObject.getString("amount");
                 String md5 = jsonObject.getString("md5");
                 if(MD5Util.verify(uuid + sale + amount,md5 )){
-                    refund = paypalService.refund(jsonObject.getString("sale"), jsonObject.getDouble("amount"));
+                    refund = paypalService.refund(jsonObject.getString("saleid"), jsonObject.getDouble("amount"));
                 }else{
                     //md5校验不通过
                     refund=CommonResult.failed("md5 verify false");
