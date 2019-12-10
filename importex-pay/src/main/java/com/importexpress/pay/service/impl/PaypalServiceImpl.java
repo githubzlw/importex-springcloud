@@ -215,7 +215,7 @@ public class PaypalServiceImpl implements PaypalService {
         log.info("response: [{}]",strRes);
         if (response.statusCode() == 201) {
             if(amount.equals(Double.parseDouble(response.result().amount().value()))){
-                return CommonResult.success();
+                return CommonResult.success(response.result());
             }else{
                 log.error("The refund amount is wrong");
                 return CommonResult.failed("The amount is wrong");
