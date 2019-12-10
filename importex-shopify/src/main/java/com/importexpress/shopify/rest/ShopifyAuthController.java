@@ -47,11 +47,11 @@ public class ShopifyAuthController {
     @PostMapping(value = "/auth")
     @ApiOperation("授权回调")
     public CommonResult auth(
-            @ApiParam(name="code",value="shopify返回的code",required=true) @PathVariable(value = "code")String code,
-            @ApiParam(name="hmac",value="shopify返回的hmac",required=true) @PathVariable(value = "hmac")String hmac,
-            @ApiParam(name="state",value="shopify返回的state",required=true) @PathVariable(value = "state")String state,
-            @ApiParam(name="shop",value="shopify店铺名",required=true) @PathVariable(value = "shop")String shop,
-            @ApiParam(name="userId",value="用户ID",required=true) @PathVariable(value = "userId")int userId,
+            @ApiParam(name="code",value="shopify返回的code",required=true)String code,
+            @ApiParam(name="hmac",value="shopify返回的hmac",required=true)String hmac,
+            @ApiParam(name="state",value="shopify返回的state")String state,
+            @ApiParam(name="shop",value="shopify店铺名",required=true)String shop,
+            @ApiParam(name="userid",value="用户ID",required=true)String userId,
                              HttpServletRequest request, HttpServletResponse response) {
 
         log.info("code:{},hmac:{},state:{},shop:{}", code, hmac, state, shop);
@@ -80,7 +80,7 @@ public class ShopifyAuthController {
                 String scope = result.get("scope");
                 int auth = shopifyAuthService.saveShopifyAuth(shop, accessToken, scope);
                 if(auth > 0){
-                    userService.updateUserShopifyFlag(userId, shop);
+                    userService.updateUserShopifyFlag(Integer.parseInt(userId), shop);
                     return CommonResult.success("SAVE SHOPIFY AUTH SUCCESSED");
                 }
                 return CommonResult.failed("SAVE SHOPIFY AUTH ERROR");
