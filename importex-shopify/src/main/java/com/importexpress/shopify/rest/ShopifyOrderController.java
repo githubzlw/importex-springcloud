@@ -57,7 +57,7 @@ public class ShopifyOrderController {
             jsonObject.put("code", 200);
         } catch (Exception e) {
             log.error("shopifyName:" + shopifyName + "error:", e);
-            jsonObject.put("message", "shopifyName:" + shopifyName + "error:" + e.getMessage());
+            jsonObject.put("message", "shopifyName:" + shopifyName + " error:" + e.getMessage());
             jsonObject.put("code", 500);
             jsonObject.put("total", 0);
             jsonObject.put("rows", new ArrayList<>());
