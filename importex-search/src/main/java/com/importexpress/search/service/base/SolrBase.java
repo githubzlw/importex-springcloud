@@ -79,6 +79,13 @@ public abstract class SolrBase {
 	public void setFQ(String fq,ModifiableSolrParams solrParams){
 		solrParams.set("fq",fq);
 	}
+	/**设置qt
+	 * @param qt
+	 * @param solrParams
+	 */
+	public void setQT(String qt,ModifiableSolrParams solrParams){
+		solrParams.set("qt",qt);
+	}
 	/**设置sort
 	 * @param sort
 	 * @param solrParams

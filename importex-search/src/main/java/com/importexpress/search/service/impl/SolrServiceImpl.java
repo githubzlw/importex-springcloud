@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.KeywordCorrect;
 import com.importexpress.search.common.SolrOperationUtils;
+import com.importexpress.search.common.SwitchDomainUtil;
 import com.importexpress.search.pojo.KeyToCategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.pojo.SolrFacet;
@@ -13,8 +14,10 @@ import com.importexpress.search.util.Config;
 import com.importexpress.search.util.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,6 +204,24 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         }
         return response;
     }
+
+    @Override
+    public QueryResponse searPriceRangeByKeyWord(SearchParam param) {
+        return null;
+    }
+
+    @Override
+    public SpellCheckResponse searchAutocomplete(String keyWord,int site) {
+        ModifiableSolrParams solrParams =new ModifiableSolrParams();
+        setQT("/suggest",solrParams);
+        setQ(SwitchDomainUtil.switchAutoKey(keyWord.toLowerCase(),site),solrParams);
+        QueryResponse response = sendRequest(solrParams,httpSolrClient);
+        if(response == null){
+            return null;
+        }
+        return response.getSpellCheckResponse();
+    }
+
     /**基础请求参数
      * Q、FQ、SORT、ROW、DF、FL
      * @param param

@@ -51,5 +51,48 @@ public class SwitchDomainUtil {
         }
         return tempStr;
     }
+    /**
+     * 对应网站提示词结果处理
+     *
+     * @param keyword
+     * @return
+     */
+    public static String correctAutoResult(String keyword,int site) {
+        switch (site) {
+            case 2:
+                keyword = keyword.substring(5);
+                break;
+            case 4:
+                keyword = keyword.substring(4);
+                break;
+            default:
+                keyword = keyword.replace("import-","");
+        }
+        keyword = keyword.replaceAll("(\\-+)"," ");
+        return keyword;
+    }
+    /**
+     * 对应网站提示词处理
+     *
+     * @param keyword
+     * @return
+     */
+    public static String switchAutoKey(String keyword,int site) {
+        if(StringUtils.isBlank(keyword)){
+            return keyword;
+        }
+        keyword = keyword.replaceAll("(\\s+)","-");
+        switch (site) {
+            case 2:
+                keyword = "kids-"+keyword;
+                break;
+            case 4:
+                keyword = "pets-"+keyword;
+                break;
+            default:
+                keyword = "import-"+keyword;
+        }
+        return keyword;
+    }
 
 }

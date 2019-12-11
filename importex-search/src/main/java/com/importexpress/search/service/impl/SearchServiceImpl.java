@@ -16,6 +16,7 @@ import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
@@ -188,6 +189,35 @@ public class SearchServiceImpl implements SearchService {
         return solrResult.getRecordCount();
     }
 
+    @Override
+    public GoodsPriceRange searPriceRangeByKeyWord(SearchParam param) {
+        QueryResponse response = solrService.searPriceRangeByKeyWord(param);
+        if(response != null){
+
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> searchAutocomplete(String keyWord,int site) {
+        SpellCheckResponse response = solrService.searchAutocomplete(keyWord,site);
+        if(response == null){
+            return Lists.newArrayList();
+        }
+        List<String> suggest = Lists.newArrayList();
+        List<SpellCheckResponse.Suggestion> suggestionList = response.getSuggestions();
+        for (int i=0,length=suggestionList.size();i<length;i++) {
+            List<String> suggestedWordList = suggestionList.get(i).getAlternatives();
+            for (int j=0,size=suggestedWordList.size();j<size && suggest.size()<11;j++) {
+                String word = suggestedWordList.get(j);
+                word = SwitchDomainUtil.correctAutoResult(word,site);
+                if(!suggest.contains(word)){
+                    suggest.add(word);
+                }
+            }
+        }
+        return suggest;
+    }
 
     /**
      * 请求执行结果

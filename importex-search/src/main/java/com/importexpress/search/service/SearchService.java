@@ -1,5 +1,6 @@
 package com.importexpress.search.service;
 
+import com.importexpress.search.pojo.GoodsPriceRange;
 import com.importexpress.search.pojo.Product;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.pojo.SearchResultWrap;
@@ -79,6 +80,21 @@ public interface SearchService {
      * @return
      */
     List<Product> hotProductForCatid(SearchParam param);
+    /**
+     * 对搜索数据进行分区间统计 -- yyl
+     * @throws Exception
+     */
+    GoodsPriceRange searPriceRangeByKeyWord(SearchParam param);
+    /**
+     * 自动补全搜索词
+     * @Title searchAutocomplete
+     * @Description TODO
+     * @param keyWord 搜索词
+     * @return  10个补全的搜索词
+     * @return List<String>
+     * 王宏杰  2018-04-26
+     */
+    List<String> searchAutocomplete(String keyWord,int site);
 
 
 

@@ -2,6 +2,7 @@ package com.importexpress.search.service;
 
 import com.importexpress.search.pojo.SearchParam;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.SpellCheckResponse;
 
 /**
  * @author luohao
@@ -57,6 +58,18 @@ public interface SolrService {
      * @return
      */
     QueryResponse hotProductForCatid(SearchParam param);
+    /**
+     * 价格区间统计分组
+     * @param param
+     * @return
+     */
+    QueryResponse searPriceRangeByKeyWord(SearchParam param);
+    /**
+     * 提示词
+     * @param keyWord
+     * @return
+     */
+    SpellCheckResponse searchAutocomplete(String keyWord,int site);
 
 
 

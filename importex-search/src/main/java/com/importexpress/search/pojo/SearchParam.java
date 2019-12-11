@@ -12,6 +12,7 @@ import java.io.Serializable;
  */
 @Data
 public class SearchParam implements Serializable {
+	private static final long serialVersionUID = 986818736352041314L;
 
 	@ApiModelProperty(value = "关键词")
 	private String keyword;
