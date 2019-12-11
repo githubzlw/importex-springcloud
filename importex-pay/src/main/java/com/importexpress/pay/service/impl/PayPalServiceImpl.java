@@ -174,7 +174,7 @@ public class PayPalServiceImpl implements PaypalService {
         refund.setAmount(amount);
         try {
             if(amountMoney>=300.00){
-                return CommonResult.failed("The refund amount must not less then 300$ ");
+                return CommonResult.failed("The refund amount must not more then 300$ ");
             }
             DetailedRefund detailedRefund = sale.refund(getApiContext(), refund);
             try{
