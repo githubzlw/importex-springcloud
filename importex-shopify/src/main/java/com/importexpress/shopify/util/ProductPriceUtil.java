@@ -44,7 +44,7 @@ public class ProductPriceUtil {
      *
      * @param product
      */
-    public static void setOverSeaPrice(ImportProductBean product) {
+    public static ImportProductBean processOverSeaPrice(ImportProductBean product) {
 
         try {
             String firstPrice;
@@ -83,9 +83,10 @@ public class ProductPriceUtil {
             }
             String overSeaPrice = getOverseasWarehouseProeuctPrice(firstPrice, Double.parseDouble(product.getFinal_weight()));
             product.setOverSeaPrice(overSeaPrice);
+            return product;
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("pid:" + product.getPid() + "setOverSeaPrice error", e);
+            return product;
         }
 
     }
