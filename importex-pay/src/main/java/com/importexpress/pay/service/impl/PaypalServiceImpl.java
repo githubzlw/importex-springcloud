@@ -18,7 +18,6 @@ import com.paypal.core.PayPalHttpClient;
 import com.paypal.payments.CapturesRefundRequest;
 import com.paypal.payments.Money;
 import com.paypal.payments.Refund;
-import com.paypal.payments.RefundRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONObject;
 import org.springframework.stereotype.Service;
@@ -185,43 +184,22 @@ public class PaypalServiceImpl implements PaypalService {
      * @throws SerializeException
      */
     @Override
-    public CommonResult refund(String captureId, Double amount) throws SerializeException {
+    public CommonResult refund(String saleId, Double amountMoney) {
 
-        CapturesRefundRequest request = new CapturesRefundRequest(captureId);
-        request.prefer("return=representation");
+        Sale sale = new Sale();
+        sale.setId(saleId);
 
-        Money money = new Money();
-        money.currencyCode("USD");
-        money.value(amount.toString());
-        RefundRequest refundRequest = new RefundRequest();
-        refundRequest.amount(money);
-        request.requestBody(refundRequest);
+        com.paypal.api.payments.RefundRequest refund = new RefundRequest();
 
-        HttpResponse<Refund> response;
+        Amount amount = new Amount();
+        amount.setCurrency("USD");
+        amount.setTotal(String.valueOf(amountMoney));
+        refund.setAmount(amount);
         try {
-            response = this.getPayPalHttpClient().execute(request);
-        } catch(IOException ioe){
-            log.error("IOException",ioe);
-            return CommonResult.failed(ioe.getClass().getName()+":"+ ioe.getMessage());
-        }
-        log.info(new JSONObject(new Json()
-                .serialize(response.result())).toString(4));
-        String strRes = MoreObjects.toStringHelper(response)
-                .add("StatusCode", response.statusCode())
-                .add("Status", response.result().status())
-                .add("currency", response.result().amount().currencyCode())
-                .add("amount", response.result().amount().value())
-                .add("RefundId", response.result().id()).toString();
-        log.info("response: [{}]",strRes);
-        if (response.statusCode() == 201) {
-            if(amount.equals(Double.parseDouble(response.result().amount().value()))){
-                return CommonResult.success(response.result());
-            }else{
-                log.error("The refund amount is wrong");
-                return CommonResult.failed("The amount is wrong");
-            }
-        } else {
-            return CommonResult.failed(strRes);
+            DetailedRefund detailedRefund = sale.refund(getApiContext(), refund);
+            return CommonResult.success(detailedRefund.toJSON());
+        } catch (PayPalRESTException e) {
+            return CommonResult.failed(e.getMessage());
         }
     }
 
