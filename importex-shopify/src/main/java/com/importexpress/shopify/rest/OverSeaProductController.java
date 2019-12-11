@@ -2,6 +2,7 @@ package com.importexpress.shopify.rest;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.shopify.pojo.ImportProductBean;
 import com.importexpress.shopify.service.OverSeaProductService;
 import io.swagger.annotations.Api;
@@ -38,30 +39,15 @@ public class OverSeaProductController {
 
     @GetMapping("/list")
     @ApiOperation("获取全部海外仓产品")
-    public JSONObject queryForList() {
+    public CommonResult queryForList() {
 
-        JSONObject jsonObject = new JSONObject();
         try {
-
             List<ImportProductBean> productBeans = overSeaProductService.queryOverSeaProductList();
-            if (CollectionUtils.isNotEmpty(productBeans)) {
-                jsonObject.put("total", productBeans.size());
-                jsonObject.put("rows", JSONArray.toJSON(productBeans));
-            } else {
-                jsonObject.put("total", 0);
-                jsonObject.put("rows", JSONArray.toJSON(new ArrayList<>()));
-            }
-            jsonObject.put("code", 200);
+            return CommonResult.success(productBeans);
         } catch (Exception e) {
-            e.printStackTrace();
             log.error("queryForList error:", e);
-            jsonObject.put("message", "queryForList error:" + e.getMessage());
-            jsonObject.put("code", 500);
-            jsonObject.put("total", 0);
-            jsonObject.put("rows", new ArrayList<>());
+            return CommonResult.failed(e.getMessage());
         }
-
-        return jsonObject;
     }
 
 
