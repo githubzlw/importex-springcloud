@@ -37,7 +37,7 @@ public class Ali1688Controller {
     private Config config;
 
     @Autowired
-    public Ali1688Controller(Ali1688Service ali1688Service,Config config) {
+    public Ali1688Controller(Ali1688Service ali1688Service, Config config) {
 
         this.ali1688Service = ali1688Service;
         this.config = config;
@@ -52,7 +52,7 @@ public class Ali1688Controller {
     @GetMapping("/pids/{pids}")
     public List<JSONObject> pid(@PathVariable("pids") Long[] pids, @RequestParam(value = "isCache", required = false, defaultValue = "true") boolean isCache) {
 
-        if(!isRunnable(false)){
+        if (!isRunnable(false)) {
             return null;
         }
 
@@ -70,7 +70,7 @@ public class Ali1688Controller {
     @GetMapping("/shop/{shopid}")
     public CommonResult getItemsInShop(@PathVariable("shopid") String shopid) {
 
-        if(!isRunnable(true)){
+        if (!isRunnable(true)) {
             return CommonResult.failed("非运行期间");
         }
 
@@ -163,41 +163,42 @@ public class Ali1688Controller {
     }
 
     @PutMapping("/queue/{pid}")
-    public int putPidIntoQueue(@PathVariable("pid") int pid,@RequestParam(value = "shopId", required = false) String shopId) {
+    public int putPidIntoQueue(@PathVariable("pid") int pid, @RequestParam(value = "shopId", required = false) String shopId) {
         return ali1688Service.pushPid(shopId, pid);
     }
 
     /**
      * 是否是可以运行的日期
+     *
      * @param isShop
      * @return
      */
-    private boolean isRunnable(boolean isShop){
+    private boolean isRunnable(boolean isShop) {
         String[] splitPid = StringUtils.split(config.datesPid, ',');
         String[] splitShop = StringUtils.split(config.datesShop, ',');
-        Assert.notNull(splitPid,"config.datesPid is null");
-        Assert.notNull(splitShop,"config.datesShop is null");
-        Assert.isTrue(splitPid.length>0,"config.datesPid is empty");
-        Assert.isTrue(splitShop.length>0,"config.splitShop is empty");
+        Assert.notNull(splitPid, "config.datesPid is null");
+        Assert.notNull(splitShop, "config.datesShop is null");
+        Assert.isTrue(splitPid.length > 0, "config.datesPid is empty");
+        Assert.isTrue(splitShop.length > 0, "config.splitShop is empty");
 
         boolean isRunPid = Arrays.asList(splitPid).contains(Integer.toString(LocalDate.now().getDayOfWeek().getValue()));
         boolean isRunShop = Arrays.asList(splitShop).contains(Integer.toString(LocalDate.now().getDayOfWeek().getValue()));
 
-        if(isShop){
+        if (isShop) {
             //控制店铺抓取
             if (isRunShop
-                    && !(LocalDateTime.now().getHour()==23 && LocalDateTime.now().getMinute()>30)) {
+                    && !(LocalDateTime.now().getHour() == 23 && LocalDateTime.now().getMinute() > 30)) {
                 return true;
-            }else{
+            } else {
                 //23:30开始不执行程序
                 return false;
             }
-        }else{
+        } else {
             //控制PID抓取
             if (isRunPid
-                    && !(LocalDateTime.now().getHour()==23 && LocalDateTime.now().getMinute()>30)) {
+                    && !(LocalDateTime.now().getHour() == 23 && LocalDateTime.now().getMinute() > 30)) {
                 return true;
-            }else{
+            } else {
                 //23:30开始不执行程序
                 return false;
             }
