@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LogAspect {
 
-    @Pointcut("execution(* com.importexpress.search.control..*.*(..))")
+    @Pointcut("execution(* com.importexpress.search.rest..*.*(..))")
     public void controlLog() {
     }
 
