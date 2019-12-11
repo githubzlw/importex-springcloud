@@ -5,16 +5,14 @@ import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.InitApplicationParameter;
 import com.importexpress.search.common.VerifySearchParameter;
-import com.importexpress.search.pojo.CategoryWrap;
-import com.importexpress.search.pojo.Product;
-import com.importexpress.search.pojo.SearchParam;
-import com.importexpress.search.pojo.SearchResultWrap;
+import com.importexpress.search.pojo.*;
 import com.importexpress.search.service.CategoryService;
 import com.importexpress.search.service.SearchService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,7 +77,7 @@ public class SearchController {
     @PostMapping("/shop")
     @ApiOperation("店铺")
     public CommonResult getShop(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                 HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -107,7 +105,7 @@ public class SearchController {
     @PostMapping("/count")
     @ApiOperation("统计产品数量")
     public CommonResult count(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                               HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -132,7 +130,7 @@ public class SearchController {
     @ApiOperation("统计类别列表")
     @PostMapping("/category")
     public CommonResult categoryStatistics(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                            HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -165,7 +163,7 @@ public class SearchController {
     @PostMapping("/similar")
     @ApiOperation("相似搜索")
     public CommonResult similarProduct(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                        HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -188,7 +186,7 @@ public class SearchController {
     @PostMapping("/like")
     @ApiOperation("猜测客户喜欢")
     public CommonResult guessYouLike(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                      HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -211,7 +209,7 @@ public class SearchController {
     @PostMapping("/bought")
     @ApiOperation("根据已买过的产品推荐产品")
     public CommonResult boughtAndBought(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                         HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -229,7 +227,7 @@ public class SearchController {
     @PostMapping("/catIdForGoods")
     @ApiOperation("")
     public CommonResult catIdForGoods(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                       HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -253,7 +251,7 @@ public class SearchController {
     @PostMapping("/recommend")
     @ApiOperation("发生错误时候推荐给用户产品")
     public CommonResult errorRecommend(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                        HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -271,7 +269,7 @@ public class SearchController {
     @PostMapping("/hot")
     @ApiOperation("推荐热销产品")
     public CommonResult hotProduct(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                    HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -289,7 +287,7 @@ public class SearchController {
     @PostMapping("/hotbycatid")
     @ApiOperation("根据类别推荐热销产品")
     public CommonResult hotProductForCatid(
-            @ApiParam(name="SearchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                            HttpServletRequest request) {
         if(param == null){
             return CommonResult.failed(" SearchParam IS NULL!");
@@ -301,6 +299,74 @@ public class SearchController {
             List<Product> products = service.hotProductForCatid(param);
             return CommonResult.success("GET PRODUCT SUCCESSED!",JSONObject.toJSONString(products));
         }catch (Exception e){
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+    @PostMapping("/auto")
+    @ApiOperation("获取搜索词提示词列表")
+    public CommonResult searchAutocomplete(
+            @ApiParam(name="keyWord",value="搜索词",required=true) String keyWord,
+            @ApiParam(name="site",value="网站",required=true) String site,
+                                           HttpServletRequest request) {
+        if(StringUtils.isBlank(keyWord)){
+            return CommonResult.failed(" Keyword IS NULL!");
+        }
+        site = StrUtils.isNum(site) ? site : "1";
+        int _site = Integer.parseInt(site);
+        if((_site & -_site) != _site){
+            return CommonResult.failed(" SITE IS WRONG!");
+        }
+        try {
+            List<String> lstAuto = service.searchAutocomplete(keyWord, _site);
+            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!",JSONObject.toJSONString(lstAuto));
+        }catch (Exception e){
+            log.error("搜索提示词错误",e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+    @PostMapping("/range")
+    @ApiOperation("统计价格区间分布")
+    public CommonResult loadRangePrice(
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name="selectedInterval",value="",required=true) String selectedInterval,
+            @ApiParam(name="range",value="是否update",required=true) String range,
+                                           HttpServletRequest request) {
+
+        try {
+            GoodsPriceRangeWrap wrap = new GoodsPriceRangeWrap();
+            param = verifySearchParameter.verification(request,param);
+            String minprice = param.getMinPrice();
+            String maxprice = param.getMaxPrice();
+            wrap.setMinPrice(minprice);
+            wrap.setMaxPrice(maxprice);
+            if ("true".equals(range)) {
+                wrap.setMinPrice("min".equals(minprice) || StringUtils.isBlank(minprice) ? "" : minprice);
+                wrap.setMaxPrice("max".equals(maxprice) || StringUtils.isBlank(maxprice) ? "" : maxprice);
+                wrap.setMinPrice(selectedInterval);
+            }
+            param.setMinPrice("");
+            param.setMaxPrice("");
+            if (StringUtils.isBlank(param.getKeyword()) ||
+                    ("*".equals(param.getKeyword()) && !"0".equals(param.getCatid()))) {
+                //当根据关键字来的,但是被屏蔽了
+                param.setKeyword("*");
+            }
+
+            GoodsPriceRange goodsPriceRange = service.searPriceRangeByKeyWord(param);
+            wrap.setParam(param);
+            wrap.setRange(goodsPriceRange);
+            if (goodsPriceRange != null) {
+               int totalNumber = goodsPriceRange.getSectionOneCount()
+                        + goodsPriceRange.getSectionTwoCount()
+                        + goodsPriceRange.getSectionThreeCount()
+                        + goodsPriceRange.getSectionFourCount();
+                wrap.setTotal(totalNumber);
+            } else {
+                wrap.setTotal(0);
+            }
+            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!",JSONObject.toJSONString(wrap));
+        }catch (Exception e){
+            log.error("搜索页异步加载区间价错误",e);
             return CommonResult.failed(e.getMessage());
         }
     }
