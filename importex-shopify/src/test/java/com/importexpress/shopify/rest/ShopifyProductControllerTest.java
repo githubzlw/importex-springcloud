@@ -37,6 +37,15 @@ public class ShopifyProductControllerTest {
     }
 
     @Test
+    public void addProducts() throws Exception {
+        mockMvc.perform(post("/shopify/products")
+                .param("ids","526283881632,529001573566")
+                .param("site","2")
+                .param("shopName","importxtest")
+                ).andExpect(status().isOk()).andDo(print());
+
+    }
+    @Test
     public void addProduct() throws Exception {
         ShopifyRequestWrap wrap = new ShopifyRequestWrap();
         wrap.setData(data());
