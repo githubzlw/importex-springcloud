@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/5/15
  */
 @Slf4j
-public class AopLogUtil {
+public class AOPLog {
 
     /**
      * 超过此时间显示警告

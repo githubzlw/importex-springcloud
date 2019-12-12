@@ -1,6 +1,6 @@
 package com.importexpress.ali1688.aop;
 
-import com.importexpress.comm.util.AopLogUtil;
+import com.importexpress.comm.util.AOPLog;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -22,7 +22,7 @@ public class LogAspect {
     @Around("controlLog()")
     public Object controlAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        return AopLogUtil.watchMethod(joinPoint);
+        return AOPLog.watchMethod(joinPoint);
     }
 
     @Pointcut("execution(* com.importexpress.ali1688.service..*.*(..))")
@@ -33,6 +33,6 @@ public class LogAspect {
     @Around("serviceLog()")
     public Object serviceAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        return AopLogUtil.watchMethod(joinPoint);
+        return AOPLog.watchMethod(joinPoint);
     }
 }
