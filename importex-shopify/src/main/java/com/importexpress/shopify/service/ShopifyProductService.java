@@ -6,6 +6,8 @@ import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.ProductWraper;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
 
+import java.util.List;
+
 public interface ShopifyProductService {
 
     ProductWraper addProduct(String shopname, ProductWraper productWraper);
@@ -29,6 +31,13 @@ public interface ShopifyProductService {
      * @return
      */
     ProductWraper onlineProduct(String shopname, ShopifyData goods) throws ShopifyException;
+    /**铺货
+     * @param shopname
+     * @param ids
+     * @param site
+     * @return
+     */
+    List<ProductWraper> onlineProducts(String shopname, String[] ids, int site) throws ShopifyException;
 
 
 }

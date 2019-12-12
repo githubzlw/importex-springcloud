@@ -8,6 +8,7 @@ import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -172,7 +173,15 @@ public class PayPalServiceImpl implements PaypalService {
         amount.setTotal(String.valueOf(amountMoney));
         refund.setAmount(amount);
         try {
+            if(amountMoney>=300.00){
+                return CommonResult.failed("The refund amount must not more then 300$ ");
+            }
             DetailedRefund detailedRefund = sale.refund(getApiContext(), refund);
+            try{
+                Assert.isTrue(Objects.equals(String.valueOf(amountMoney),detailedRefund.getAmount().getTotal()),"The refund amount is not same to require");
+            }catch(IllegalArgumentException iae){
+                log.error("refund",iae);
+            }
             return CommonResult.success(detailedRefund.toJSON());
         } catch (PayPalRESTException e) {
             return CommonResult.failed(e.getMessage());

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @Slf4j
-public class Ali1688CacheService {
+public final class Ali1688CacheService {
 
     private static final String REDIS_PID_PRE = "ali:pid:";
     private static final String REDIS_SHOP_PRE = "ali:shopid:";
@@ -35,6 +36,7 @@ public class Ali1688CacheService {
     }
 
     public JSONObject getItem(Long pid) {
+        Objects.requireNonNull(pid);
         String value = this.redisTemplate.opsForValue().get(REDIS_PID_PRE + pid);
         if (StringUtils.isNotEmpty(value)) {
             return JSONObject.parseObject(value);
@@ -44,10 +46,13 @@ public class Ali1688CacheService {
     }
 
     public void saveItemIntoRedis(Long pid, JSONObject value) {
+        Objects.requireNonNull(pid);
+        Objects.requireNonNull(value);
         this.redisTemplate.opsForValue().set(REDIS_PID_PRE + pid, JSONObject.toJSONString(value), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
     public List<Ali1688Item> getShop(String shopId) {
+        Objects.requireNonNull(shopId);
         String value = this.redisTemplate.opsForValue().get(REDIS_SHOP_PRE + shopId);
         if (StringUtils.isNotEmpty(value)) {
             Ali1688Item[] arr = JSONObject.parseObject(value, Ali1688Item[].class);
@@ -58,6 +63,8 @@ public class Ali1688CacheService {
     }
 
     public void setShop(String shopId, List<Ali1688Item> value) {
+        Objects.requireNonNull(shopId);
+        Objects.requireNonNull(value);
         this.redisTemplate.opsForValue().set(REDIS_SHOP_PRE + shopId, JSONObject.toJSONString(value), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
@@ -87,6 +94,7 @@ public class Ali1688CacheService {
 
     /**
      * 清除所有pid的缓存
+     *
      * @return
      */
     public int clearAllPidInCache() {
@@ -96,13 +104,14 @@ public class Ali1688CacheService {
             for (String key : keys) {
                 this.redisTemplate.delete(key);
                 count++;
-                }
             }
+        }
         return count;
     }
 
     /**
      * 清除所有店铺的缓存
+     *
      * @return
      */
     public int clearAllShopInCache() {
@@ -112,8 +121,8 @@ public class Ali1688CacheService {
             for (String key : keys) {
                 this.redisTemplate.delete(key);
                 count++;
-                }
             }
+        }
         return count;
     }
 

@@ -2,14 +2,20 @@ package com.importexpress.shopify.service.impl;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.importexpress.shopify.component.MongoProductUtil;
 import com.importexpress.shopify.component.ShopifyProduct;
 import com.importexpress.shopify.exception.ShopifyException;
 import com.importexpress.shopify.mapper.ShopifyProductMapper;
+import com.importexpress.shopify.pojo.MongoProduct;
 import com.importexpress.shopify.pojo.ShopifyData;
+import com.importexpress.shopify.pojo.TypeBean;
 import com.importexpress.shopify.pojo.product.Product;
 import com.importexpress.shopify.service.ShopifyAuthService;
 import com.importexpress.shopify.service.ShopifyProductService;
+import com.importexpress.shopify.util.MongoUtil;
 import com.importexpress.shopify.util.ShopifyUtil;
 import com.importexpress.shopify.mapper.ShopifyAuthMapper;
 import com.importexpress.shopify.pojo.ShopifyAuth;
@@ -18,14 +24,14 @@ import com.importexpress.shopify.pojo.product.ProductWraper;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
 import com.importexpress.shopify.util.Config;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author luohao
@@ -43,6 +49,8 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
     private ShopifyProduct shopifyProduct;
     @Autowired
     private ShopifyAuthService shopifyAuthService;
+    @Autowired
+    private MongoUtil mongoUtil;
 
     public ShopifyProductServiceImpl(ShopifyProductMapper shopifyProductMapper, Config config, ShopifyUtil shopifyUtil) {
         this.shopifyProductMapper = shopifyProductMapper;
@@ -118,5 +126,22 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
             insertShopifyIdWithPid(shopifyBean);
         }
         return productWraper;
+    }
+    @Override
+    public List<ProductWraper> onlineProducts(String shopname, String[] ids,int site) throws ShopifyException{
+        List<ProductWraper> wraps = Lists.newArrayList();
+        List<Long> pids = Lists.newArrayList();
+        for(String id: ids){
+            pids.add(Long.parseLong(id));
+        }
+        List<MongoProduct> mongoProducts = mongoUtil.queryProductList(pids, 1);
+        for(MongoProduct product : mongoProducts){
+            ShopifyData goods = MongoProductUtil.composeShopifyData(product,site);
+            ProductWraper wraper = onlineProduct(shopname,goods);
+            if(wraper != null){
+                wraps.add(wraper);
+            }
+        }
+        return wraps;
     }
 }

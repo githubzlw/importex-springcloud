@@ -27,6 +27,8 @@ public class TypeBean implements Serializable, Comparable<TypeBean>,Cloneable{
 	private String img;
 	@ApiModelProperty("规格ID")
 	private String id;
+	private String lableType;
+	private String sell;
 	public void setValue(String value) {
 		if(value!=null){
 			value = value.replaceAll("\"", "").replaceAll("'", "");

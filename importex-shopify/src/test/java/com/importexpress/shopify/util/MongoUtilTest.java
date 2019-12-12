@@ -1,5 +1,6 @@
 package com.importexpress.shopify.util;
 
+import com.google.gson.Gson;
 import com.importexpress.shopify.mapper.OverSeaProductMapper;
 import com.importexpress.shopify.pojo.MongoProduct;
 import org.junit.Test;
@@ -42,5 +43,11 @@ public class MongoUtilTest {
         List<Long> pidList = overSeaProductMapper.queryOverSeaProductList();
         List<MongoProduct> tempList = mongoUtil.queryProductList(pidList, 1);
         System.err.println(tempList.size());
+    }
+    @Test
+    public void test(){
+        String str = "[1003015602/493664063_1751210702.60x60.jpg]";
+        List<String> list = new Gson().fromJson(str, List.class);
+        System.out.println(list.toString());
     }
 }

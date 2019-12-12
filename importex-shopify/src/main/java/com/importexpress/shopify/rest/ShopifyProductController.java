@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/shopify")
@@ -56,6 +58,37 @@ public class ShopifyProductController {
             return CommonResult.failed(e.getMessage());
         }
         return CommonResult.success(new Gson().toJson(productWraper));
+    }
+    /**
+     * shopify铺货
+     *
+     * @param ids
+     * @param site
+     * @param shopName
+     */
+    @PostMapping("/products")
+    @ApiOperation("铺货")
+    public CommonResult addProductByIds(
+            @ApiParam(name="ids",value="产品id数组",required=true) String[] ids,
+            @ApiParam(name="site",value="网站",required=true) int site,
+            @ApiParam(name="shopName",value="shopify店铺",required=true) String shopName
+    ) {
+        if (ids == null || ids.length < 1) {
+            return CommonResult.failed("ids is empty");
+        }
+        if (StringUtils.isBlank(shopName)) {
+            return CommonResult.failed("shopname is null");
+        }
+        try {
+            List<ProductWraper> productWrapers = shopifyProductService.onlineProducts(shopName,ids,site);
+            if(productWrapers == null || productWrapers.isEmpty()){
+                return CommonResult.failed("add shopify product failed");
+            }
+            return CommonResult.success(new Gson().toJson(productWrapers));
+        } catch (Exception e) {
+            log.error("add product", e);
+            return CommonResult.failed(e.getMessage());
+        }
     }
 
 }
