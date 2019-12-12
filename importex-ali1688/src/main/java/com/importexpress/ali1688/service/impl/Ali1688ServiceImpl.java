@@ -71,7 +71,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
 
     private JSONObject getItemByPid(Long pid, boolean isCache) {
-
+        Objects.requireNonNull(pid);
         if (isCache) {
             JSONObject itemFromRedis = this.ali1688CacheService.getItem(pid);
             if (itemFromRedis != null) {
@@ -83,7 +83,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         try {
             JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
             String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
-            this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "pid_"+strYmd, 1);
+            this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "pid_" + strYmd, 1);
             String error = jsonObject.getString("error");
             //if(1==1) throw new IllegalStateException("testtesttest");
             if (StringUtils.isNotEmpty(error)) {
@@ -116,6 +116,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      */
     @Override
     public JSONObject getItem(Long pid, boolean isCache) {
+        Objects.requireNonNull(pid);
 
         Callable<JSONObject> callable = new Callable<JSONObject>() {
 
@@ -147,7 +148,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      */
     @Override
     public List<JSONObject> getItems(Long[] pids, boolean isCache) {
-
+        Objects.requireNonNull(pids);
         List<JSONObject> lstResult = new CopyOnWriteArrayList<JSONObject>();
         ExecutorService executorService = Executors.newFixedThreadPool(2);
         for (long pid : pids) {
@@ -184,7 +185,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      */
     @Override
     public List<Ali1688Item> getItemsInShop(String shopid) {
-
+        Objects.requireNonNull(shopid);
         List<Ali1688Item> itemFromRedis = this.ali1688CacheService.getShop(shopid);
         if (itemFromRedis != null) {
             return itemFromRedis;
@@ -316,7 +317,6 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
-
     /**
      * fillItems
      *
@@ -328,6 +328,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      */
     private Map<String, Integer> fillItems(List<Ali1688Item> lstAllItems, String shopid, int page) throws IOException {
 
+        Objects.requireNonNull(lstAllItems);
+        Objects.requireNonNull(shopid);
         log.info("begin fillItems: shopid:[{}] page:[{}]", shopid, page);
 
         Map<String, Integer> result = new HashMap<>(3);
@@ -335,7 +337,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_HOST, config.API_KEY, config.API_SECRET, shopid, page));
 
         String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
-        this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "shop_"+strYmd, 1);
+        this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "shop_" + strYmd, 1);
 
         checkReturnJson(jsonObject);
 
@@ -358,7 +360,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @return
      */
     private void checkReturnJson(JSONObject jsonObject) {
-
+        Objects.requireNonNull(jsonObject);
         String error = jsonObject.getString("error");
         if (!StringUtils.isEmpty(error)) {
             throw new BizException(BizErrorCodeEnum.FAIL, error);
@@ -367,6 +369,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
 
     private void checkItem(Long pid, JSONObject jsonObject) {
+        Objects.requireNonNull(pid);
+        Objects.requireNonNull(jsonObject);
         JSONObject item = jsonObject.getJSONObject("item");
         if (item != null) {
             if (StringUtils.isEmpty(item.getString("desc"))) {
