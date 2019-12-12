@@ -1,6 +1,8 @@
 package com.importexpress.shopify.rest;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.ShopifyRequestWrap;
 import com.importexpress.shopify.pojo.TypeBean;
@@ -38,22 +40,29 @@ public class ShopifyProductControllerTest {
 
     @Test
     public void addProducts() throws Exception {
-        mockMvc.perform(post("/shopify/products")
-                .param("ids","526283881632,529001573566")
-                .param("site","2")
-                .param("shopName","importxtest")
-                ).andExpect(status().isOk()).andDo(print());
+        String contentAsString = mockMvc.perform(post("/shopify/products")
+                .param("ids", "526283881632,529001573566")
+                .param("site", "2")
+                .param("shopName", "importxtest")
+        ).andExpect(status().isOk()).andDo(print()).andReturn()
+                .getResponse().getContentAsString();
+        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
+        Assert.assertEquals(200,result.getCode());
 
     }
     @Test
     public void addProduct() throws Exception {
         ShopifyRequestWrap wrap = new ShopifyRequestWrap();
         wrap.setData(data());
-        wrap.setShopname("importxtest");
+        wrap.setShopname("importglove");
         String requestJson = JSONObject.toJSONString(wrap);
-        mockMvc.perform(post("/shopify/product")
+        String contentAsString = mockMvc.perform(post("/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(requestJson)).andExpect(status().isOk()).andDo(print());
+                .content(requestJson)).andExpect(status().isOk()).andDo(print())
+                .andReturn()
+                .getResponse().getContentAsString();
+        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
+        Assert.assertEquals(200,result.getCode());
 
     }
     @Test(expected =NullPointerException.class)
