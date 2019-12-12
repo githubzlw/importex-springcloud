@@ -3,6 +3,7 @@ package com.importexpress.shopify.rest;
 
 import com.google.gson.Gson;
 import com.importexpress.comm.domain.CommonResult;
+import com.importexpress.comm.util.StrUtils;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.ShopifyRequestWrap;
 import com.importexpress.shopify.pojo.product.ProductWraper;
@@ -69,18 +70,23 @@ public class ShopifyProductController {
     @PostMapping("/products")
     @ApiOperation("铺货")
     public CommonResult addProductByIds(
-            @ApiParam(name="ids",value="产品id数组",required=true) String[] ids,
-            @ApiParam(name="site",value="网站",required=true) int site,
-            @ApiParam(name="shopName",value="shopify店铺",required=true) String shopName
-    ) {
-        if (ids == null || ids.length < 1) {
+            @ApiParam(name="ids",value="产品id数组",required=true) String ids,
+            @ApiParam(name="site",value="网站",required=true) String site,
+            @ApiParam(name="shopName",value="shopify店铺",required=true) String shopName) {
+        if (ids == null) {
+            return CommonResult.failed("ids is empty");
+        }
+        String[] idArray = ids.split(",");
+        if (idArray.length < 1) {
             return CommonResult.failed("ids is empty");
         }
         if (StringUtils.isBlank(shopName)) {
             return CommonResult.failed("shopname is null");
         }
+        int intSite = StrUtils.isNum(site) ? Integer.parseInt(site) : 1;
         try {
-            List<ProductWraper> productWrapers = shopifyProductService.onlineProducts(shopName,ids,site);
+            List<ProductWraper> productWrapers =
+                    shopifyProductService.onlineProducts(shopName,idArray,intSite);
             if(productWrapers == null || productWrapers.isEmpty()){
                 return CommonResult.failed("add shopify product failed");
             }
