@@ -18,6 +18,7 @@
         <module>importex-utils</module>
         <module>importex-search</module>
         <module>importex-shopify</module>
+        <module>importex-product</module>
     </modules>
 
     <properties>
