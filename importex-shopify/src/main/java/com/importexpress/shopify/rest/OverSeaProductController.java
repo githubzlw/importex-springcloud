@@ -37,7 +37,7 @@ public class OverSeaProductController {
     }
 
 
-    @GetMapping("/list")
+    @GetMapping("/productList.json")
     @ApiOperation("获取全部海外仓产品")
     public CommonResult queryForList() {
 

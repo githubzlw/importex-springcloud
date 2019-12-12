@@ -49,15 +49,15 @@ public class OverSeaProductControllerTest {
     @Test
     public void queryForListTest() throws Exception {
         MvcResult mvcResult = mockMvc
-                .perform(get("/overSea/list"))
+                .perform(get("/overSea/productList.json"))
                 .andExpect(status().isOk()).andDo(print())
                 .andExpect(jsonPath("$.code").value("200")).andReturn();
         String rsStr = mvcResult.getResponse().getContentAsString();
         System.out.println(rsStr);
         JSONObject rsJson = JSON.parseObject(rsStr);
 
-        Assert.assertNotNull("无查询结果", rsJson.getJSONArray("rows"));
-        List<ImportProductBean> productList = JSONArray.parseArray(rsJson.getString("rows"), ImportProductBean.class);
+        Assert.assertNotNull("无查询结果", rsJson.getJSONArray("data"));
+        List<ImportProductBean> productList = JSONArray.parseArray(rsJson.getString("data"), ImportProductBean.class);
         Assert.assertTrue("查询结果空list", CollectionUtils.isNotEmpty(productList));
         int count = 0;
         for (ImportProductBean product : productList) {

@@ -72,7 +72,7 @@
 
     function initTable() {
         $('#tb_list').bootstrapTable({
-            url: '/overSea/list',         //请求后台的 URL（*）
+            url: '/overSea/productList.json',         //请求后台的 URL（*）
             method: 'get',                      //请求方式（*）
             // data: data,                      //当不使用上面的后台请求时，使用data来接收数据
             toolbar: '#toolbar',                //工具按钮用哪个容器
@@ -128,7 +128,7 @@
                 field: 'goodsUrl', title: 'Details'
             }],
             responseHandler: function (res) {
-                return {"rows": res.rows, "total": res.total};
+                return {"rows": res.data, "total": res.total};
             }
         });
     }
