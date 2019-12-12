@@ -42,7 +42,7 @@ public class AopLogUtil {
         long diffTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         // 打印耗时的信息
         if (diffTime > MAX_TIME ) {
-            log.warn("end exec[{}],spend:{}ms", joinPoint.getSignature(),diffTime);
+            log.warn("end exec[{}],spend:{}ms,return:{}", joinPoint.getSignature(),diffTime,obj);
         }else{
             log.info("end exec[{}],spend:{}ms,return:{}", joinPoint.getSignature(),diffTime,obj);
         }
