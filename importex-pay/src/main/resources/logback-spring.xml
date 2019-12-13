@@ -12,7 +12,7 @@
     <appender name="debugAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 文件路径 ，注意LOG_PATH是默认值，
             它的配置对应application.properties里的logging.path值-->
-        <file>${LOG_PATH}/debug/debug.log</file>
+        <file>${LOG_PATH}/debug.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 文件名称 -->
             <fileNamePattern>debug/debug-%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -32,7 +32,7 @@
     <!-- INFO -->
     <appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
 
-        <file>${LOG_PATH}/info/info.log</file>
+        <file>${LOG_PATH}/info.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 文件名称 -->
             <fileNamePattern>info/info-%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -53,7 +53,7 @@
     <appender name="warnAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 文件路径 ，注意LOG_PATH是默认值，
             它的配置对应application.properties里的logging.path值-->
-        <file>${LOG_PATH}/warn/warn.log</file>
+        <file>${LOG_PATH}/warn.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 文件名称 -->
             <fileNamePattern>warn/warn-%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -74,7 +74,7 @@
     <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 文件路径 ，注意LOG_PATH是默认值，
             它的配置对应application.properties里的logging.path值-->
-        <file>${LOG_PATH}/error/error.log</file>
+        <file>${LOG_PATH}/error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 文件名称 -->
             <fileNamePattern>error/error-%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -128,17 +128,15 @@
     <springProfile name="dev">
         <root level="DEBUG">
             <appender-ref ref="STDOUT"/>
-            <appender-ref ref="infoAppender"/>
             <appender-ref ref="debugAppender"/>
+            <appender-ref ref="infoAppender"/>
             <appender-ref ref="warnAppender"/>
             <appender-ref ref="errorAppender"/>
         </root>
     </springProfile>
     <springProfile name="online">
         <root level="info">
-            <appender-ref ref="STDOUT"/>
             <appender-ref ref="infoAppender"/>
-            <appender-ref ref="debugAppender"/>
             <appender-ref ref="warnAppender"/>
             <appender-ref ref="errorAppender"/>
         </root>
