@@ -178,10 +178,9 @@ public class PaypalServiceImpl implements PaypalService {
 
     /**
      * refund
-     * @param captureId  sale = captureId
-     * @param amount
+     * @param saleId
+     * @param amountMoney
      * @return
-     * @throws SerializeException
      */
     @Override
     public CommonResult refund(String saleId, Double amountMoney) {

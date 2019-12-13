@@ -15,15 +15,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class LogAspect {
 
-    @Pointcut("execution(* com.importexpress.pay.mq..*.*(..))")
-    public void controlLog() {
-    }
-
-    @Around("controlLog()")
-    public Object controlAround(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        return AopLogUtil.watchMethod(joinPoint);
-    }
 
     @Pointcut("execution(* com.importexpress.pay.service..*.*(..))")
     public void serviceLog() {

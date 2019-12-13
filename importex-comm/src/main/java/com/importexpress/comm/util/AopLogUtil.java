@@ -44,11 +44,7 @@ public class AopLogUtil {
         if (diffTime > MAX_TIME ) {
             log.warn("end exec[{}],spend:{}ms", joinPoint.getSignature(),diffTime);
         }else{
-            if(log.isDebugEnabled()){
-                log.debug("end exec[{}],spend:{}ms,return:{}", joinPoint.getSignature(),diffTime,obj);
-            }else{
-                log.info("end exec[{}],spend:{}ms", joinPoint.getSignature(),diffTime);
-            }
+            log.info("end exec[{}],spend:{}ms,return:{}", joinPoint.getSignature(),diffTime,obj);
         }
 
         return obj;
