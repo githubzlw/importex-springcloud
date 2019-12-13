@@ -60,3 +60,5 @@ importex-pay/src/test/
 importex-registry/src/test/
 importex-zuul/src/test/
 importex-zuul/target/
+error/
+importex-product/target/
