@@ -1,28 +1,14 @@
 package com.importexpress.pay.service.impl;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.braintreepayments.http.HttpResponse;
-import com.braintreepayments.http.exceptions.HttpException;
-import com.braintreepayments.http.exceptions.SerializeException;
-import com.braintreepayments.http.serializer.Json;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.pay.service.PaypalService;
 import com.importexpress.pay.util.Config;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
 import com.paypal.base.rest.PayPalRESTException;
-import com.paypal.core.PayPalEnvironment;
-import com.paypal.core.PayPalHttpClient;
-import com.paypal.payments.CapturesRefundRequest;
-import com.paypal.payments.Money;
-import com.paypal.payments.Refund;
 import lombok.extern.slf4j.Slf4j;
-import org.json.JSONObject;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.*;
 
 
@@ -31,11 +17,11 @@ import java.util.*;
  */
 @Service
 @Slf4j
-public class PaypalServiceImpl implements PaypalService {
+public class PayPalServiceImpl implements PaypalService {
 
     private final Config config;
 
-    public PaypalServiceImpl(Config config) {
+    public PayPalServiceImpl(Config config) {
         this.config = config;
     }
 
@@ -144,6 +130,10 @@ public class PaypalServiceImpl implements PaypalService {
 
     }
 
+    /**
+     * getApiContext
+     * @return
+     */
     private APIContext getApiContext() {
 
         log.info("getApiContext()");
@@ -154,23 +144,10 @@ public class PaypalServiceImpl implements PaypalService {
     }
 
 
-    private synchronized static String getWebProfile(APIContext apiContext) throws PayPalRESTException {
-
-        if(strId==null) {
-            WebProfile webProfile = new WebProfile();
-            InputFields inputField = new InputFields();
-            inputField.setNoShipping(1);
-            webProfile.setInputFields(inputField);
-            String name="WebProfile"+ UUID.randomUUID();
-            log.info("getWebProfile name="+name);
-            webProfile.setName(name);
-            strId= webProfile.create(apiContext).getId();
-        }
-
-        log.debug("webProfile ID:"+strId);
-        return strId;
-    }
-
+    /**
+     * getRandomUUID
+     * @return
+     */
     @Override
     public String getRandomUUID(){
         return UUID.randomUUID().toString();
@@ -200,19 +177,6 @@ public class PaypalServiceImpl implements PaypalService {
         } catch (PayPalRESTException e) {
             return CommonResult.failed(e.getMessage());
         }
-    }
-
-    private PayPalHttpClient getPayPalHttpClient() {
-
-        PayPalEnvironment env;
-        if (config.isPaypalSandbox) {
-            env = new PayPalEnvironment.Sandbox(
-                    config.PaypalClientId, config.PaypalClientSecret);
-        } else {
-            env = new PayPalEnvironment.Live(
-                    config.PaypalClientId, config.PaypalClientSecret);
-        }
-        return new PayPalHttpClient(env);
     }
 
 }

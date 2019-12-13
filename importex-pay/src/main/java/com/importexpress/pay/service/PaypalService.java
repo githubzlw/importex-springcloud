@@ -68,10 +68,10 @@ public interface PaypalService {
 
     /**
      * 退款处理
-     * @param captureId
+     * @param saleId
      * @param amount
      * @return
      * @throws IOException
      */
-    CommonResult refund(String captureId, Double amount) throws IOException;
+    CommonResult refund(String saleId, Double amount) throws IOException;
 }
