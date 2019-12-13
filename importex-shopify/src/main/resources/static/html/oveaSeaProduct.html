@@ -11,7 +11,17 @@
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.15.3/dist/bootstrap-table.min.css">
 </head>
 <body>
-
+<div class="container-fluid" style="width: 100%;height: 6%;">
+    <div class="row">
+        <div class="col-md-12">
+            <p style="margin-top: 10px;">
+                <span>网站:<select id="web_site_id">
+                    <option value="1">Import</option>
+                </select></span>
+                <button onclick="batchAddGoodsToShopify()">铺货</button></p>
+        </div>
+    </div>
+</div>
 <table id="tb_list" data-filter-control="true" data-show-columns="true">
     <thead>
     <tr>
@@ -131,6 +141,45 @@
                 return {"rows": res.data, "total": res.total};
             }
         });
+    }
+    
+    function batchAddGoodsToShopify() {
+        var rows=$("#tb_list").bootstrapTable('getSelections');
+        if(rows && rows.length > 0){
+            var pids = "";
+            for (var i = 0; i <rows.length; i++) {
+                pids += "," + rows[i].pid;
+            }
+            var site = $("#web_site_id").val();
+            var shopName = "importxtest";
+            $.ajax({
+                type: 'POST',
+                dataType: 'text',
+                url: '/shopify/products',
+                data: {
+                    "ids":pids.substring(1),
+                    "site":site,
+                    "shopName":shopName
+                },
+                success: function (data) {
+                    if(data){
+                        var json = eval("(" + data + ")");
+                        if(json.code == 200){
+                            alert("执行成功");
+                        }else{
+                            alert("执行失败," + json.data);
+                        }
+                    }else{
+                        alert("执行异常");
+                    }
+                },
+                error: function () {
+                    alert("执行失败,请联系管理员");
+                }
+            });
+        }else{
+            alert("请选择商品");
+        }
     }
 </script>
 </body>
