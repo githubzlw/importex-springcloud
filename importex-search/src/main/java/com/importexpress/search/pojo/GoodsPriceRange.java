@@ -22,22 +22,22 @@ public class GoodsPriceRange implements Serializable {
     private Double sectionOnePrice;
 
     @ApiModelProperty(value = "第一区段数量")
-    private int sectionOneCount;
+    private int sectionOneCount=0;
 
     @ApiModelProperty(value = "第二区段最高价格")
     private Double sectionTwoPrice;
 
     @ApiModelProperty(value = "第二区段数量")
-    private int sectionTwoCount;
+    private int sectionTwoCount=0;
 
     @ApiModelProperty(value = "第三区段最高价格")
     private Double sectionThreePrice;
 
     @ApiModelProperty(value = "第三区段数量")
-    private int sectionThreeCount;
+    private int sectionThreeCount=0;
 
     @ApiModelProperty(value = "第四区段数量")
-    private int sectionFourCount;
+    private int sectionFourCount=0;
 
     @ApiModelProperty(value = "创建时间")
     private Date datetime;

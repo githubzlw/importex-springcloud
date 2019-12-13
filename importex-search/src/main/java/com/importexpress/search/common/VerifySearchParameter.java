@@ -35,7 +35,7 @@ public class VerifySearchParameter {
         freeShipping(param);
         page(param);
         sort(param);
-        VexKeyWord(param);
+        vexKeyWord(param);
         //店铺id
         storeId(param);
         setRequestUri(param);
@@ -57,7 +57,7 @@ public class VerifySearchParameter {
             //2019-10-11-精品区商品
             boutique(param);
             //价格参数
-            priceCurrency(param);
+//            priceCurrency(param);
         }catch (Exception e){
             log.error("verificate search parameter error",e);
         }
@@ -99,12 +99,13 @@ public class VerifySearchParameter {
      * @date 2016年5月10日
      * @author abc
      */
-    public void VexKeyWord( SearchParam param) {
+    public void vexKeyWord( SearchParam param) {
         //获取页面传过来的反关键词
-        //search whithin;
         String filterKey = param.getFKey();
         filterKey = KeywordCorrect.getKeyWord(filterKey);
         param.setFKey(filterKey);
+
+        //search whithin;
 
         String keyword = param.getKeyword();
         keyword = KeywordCorrect.getKeyWord(keyword);

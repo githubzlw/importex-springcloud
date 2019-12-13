@@ -14,11 +14,6 @@ public class Price implements Serializable{
 	private int moq;//最小定量
 
 
-	public Price(String price, String quantity) {
-		super();
-		this.price = price;
-		this.quantity = quantity;
-	}
 	public Price(String price,String factoryPrice, String quantity) {
 		super();
 		this.price = price;

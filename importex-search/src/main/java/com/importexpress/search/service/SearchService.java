@@ -63,7 +63,7 @@ public interface SearchService {
      * @param param
      * @return
      */
-    List<Product> catIdForGoods(SearchParam param);
+    List<Product> catidForGoods(SearchParam param);
 
     List<Product> errorRecommend(SearchParam param);
     /**

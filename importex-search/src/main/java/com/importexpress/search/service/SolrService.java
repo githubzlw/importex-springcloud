@@ -4,6 +4,8 @@ import com.importexpress.search.pojo.SearchParam;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 
+import java.util.Map;
+
 /**
  * @author luohao
  * @date 2019/11/22
@@ -41,7 +43,7 @@ public interface SolrService {
      * @param param
      * @return
      */
-    QueryResponse catIdForGoods(SearchParam param);
+    QueryResponse catidForGoods(SearchParam param);
 
     QueryResponse errorRecommend(SearchParam param);
     /**
@@ -63,7 +65,7 @@ public interface SolrService {
      * @param param
      * @return
      */
-    QueryResponse searPriceRangeByKeyWord(SearchParam param);
+    Map<String,Object> searPriceRangeByKeyWord(SearchParam param);
     /**
      * 提示词
      * @param keyWord

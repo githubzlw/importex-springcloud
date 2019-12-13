@@ -104,4 +104,10 @@ public class SearchParam implements Serializable {
 	@ApiModelProperty(value = "限制的产品id")
 	private String pid;
 
+	@ApiModelProperty(value = "价格区间统计-第几区间")
+	private int selectedInterval;
+
+	@ApiModelProperty(value = "价格区间统计-是否从区间图点击过来")
+	private boolean isRange;
+
 }

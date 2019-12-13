@@ -127,10 +127,6 @@ public class SearchControllerTest {
         System.out.println("类别列表;"+result.getData().toString());
     }
 
-    /*@Test
-    public void similarProduct() throws  Exception{
-    }*/
-
     @Test
     public void guessYouLike() throws  Exception{
         SearchParam param = new SearchParam();
@@ -164,20 +160,20 @@ public class SearchControllerTest {
     }
 
     @Test
-    public void catIdForGoods() throws  Exception{
+    public void productsByCatid() throws  Exception{
         SearchParam param = new SearchParam();
-        param.setKeyword("*");
+        param.setPid("528638604453");
         param.setCatid("1042841");
         param.setSite(2);
         param.setPage(1);
         param.setUserType(1);
         String requestJson = JSONObject.toJSONString(param);
-        String contentAsString = mockMvc.perform(post("/search/catIdForGoods")
+        String contentAsString = mockMvc.perform(post("/search/bycatid")
                 .contentType(MediaType.APPLICATION_JSON).content(requestJson))
                 .andReturn().getResponse().getContentAsString();
         CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
         Assert.assertEquals(200,result.getCode());
-        System.out.println("catIdForGoods:"+result.getData().toString());
+        System.out.println("productsByCatid:"+result.getData().toString());
     }
 
     @Test
@@ -229,4 +225,33 @@ public class SearchControllerTest {
         Assert.assertEquals(200,result.getCode());
         System.out.println("hotProductForCatid:"+result.getData().toString());
     }
+    @Test
+    public void loadRangePrice() throws  Exception{
+        SearchParam param = new SearchParam();
+        param.setKeyword("*");
+        param.setCatid("1038378");
+        param.setSite(2);
+        param.setPage(1);
+        param.setUserType(1);
+        param.setSelectedInterval(0);
+        param.setRange(false);
+        String requestJson = JSONObject.toJSONString(param);
+        String contentAsString = mockMvc.perform(post("/search/range")
+                .contentType(MediaType.APPLICATION_JSON).content(requestJson)
+        ) .andReturn().getResponse().getContentAsString();
+        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
+        Assert.assertEquals(200,result.getCode());
+        System.out.println("loadRangePrice:"+result.getData().toString());
+    }
+    @Test
+    public void searchAutocomplete() throws  Exception{
+        String contentAsString = mockMvc.perform(post("/search/auto")
+                .param("keyWord","dress")
+                .param("site","2")
+        ).andReturn().getResponse().getContentAsString();
+        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
+        Assert.assertEquals(200,result.getCode());
+        System.out.println("loadRangePrice:"+result.getData().toString());
+    }
+
 }

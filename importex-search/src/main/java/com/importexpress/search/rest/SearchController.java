@@ -45,7 +45,7 @@ public class SearchController {
      * @param param
      * @return
      */
-    @PostMapping("/product")
+    @PostMapping("/products")
     @ApiOperation("搜索")
     public CommonResult getSearch(
             @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
@@ -224,9 +224,15 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
-    @PostMapping("/catIdForGoods")
-    @ApiOperation("")
-    public CommonResult catIdForGoods(
+
+    /**展示该商品类别下的产品
+     * @param param
+     * @param request
+     * @return
+     */
+    @PostMapping("/bycatid")
+    @ApiOperation("展示该产品类别下的其他产品")
+    public CommonResult productsByCatid(
             @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                       HttpServletRequest request) {
         if(param == null){
@@ -236,7 +242,7 @@ public class SearchController {
             //参数处理
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
-            List<Product> products = service.catIdForGoods(param);
+            List<Product> products = service.catidForGoods(param);
             return CommonResult.success("GET PRODUCT SUCCESSED!",JSONObject.toJSONString(products));
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
@@ -328,9 +334,7 @@ public class SearchController {
     @ApiOperation("统计价格区间分布")
     public CommonResult loadRangePrice(
             @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-            @ApiParam(name="selectedInterval",value="",required=true) String selectedInterval,
-            @ApiParam(name="range",value="是否update",required=true) String range,
-                                           HttpServletRequest request) {
+            HttpServletRequest request) {
 
         try {
             GoodsPriceRangeWrap wrap = new GoodsPriceRangeWrap();
@@ -339,10 +343,10 @@ public class SearchController {
             String maxprice = param.getMaxPrice();
             wrap.setMinPrice(minprice);
             wrap.setMaxPrice(maxprice);
-            if ("true".equals(range)) {
+            if (param.isRange()) {
                 wrap.setMinPrice("min".equals(minprice) || StringUtils.isBlank(minprice) ? "" : minprice);
                 wrap.setMaxPrice("max".equals(maxprice) || StringUtils.isBlank(maxprice) ? "" : maxprice);
-                wrap.setMinPrice(selectedInterval);
+                wrap.setBackDiv(param.getSelectedInterval());
             }
             param.setMinPrice("");
             param.setMaxPrice("");
@@ -356,6 +360,7 @@ public class SearchController {
             wrap.setParam(param);
             wrap.setRange(goodsPriceRange);
             if (goodsPriceRange != null) {
+                goodsPriceRange.setKeyword(param.getKeyword());
                int totalNumber = goodsPriceRange.getSectionOneCount()
                         + goodsPriceRange.getSectionTwoCount()
                         + goodsPriceRange.getSectionThreeCount()

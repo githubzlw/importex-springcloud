@@ -11,6 +11,6 @@ public class GoodsPriceRangeWrap implements Serializable {
     private int total;
     private String minPrice;
     private String maxPrice;
-    private String backDiv;
+    private int backDiv;
 
 }

@@ -2,6 +2,7 @@ package com.importexpress.search.common;
 
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.pojo.Currency;
+import com.importexpress.search.pojo.GoodsPriceRange;
 import com.importexpress.search.pojo.Price;
 import com.importexpress.search.pojo.Product;
 import org.springframework.stereotype.Component;
@@ -33,20 +34,20 @@ public class ChangeCurrency {
     }
     /**搜索结果数据切换货币
      * @param goodsPriceRange
-     * @param exchangeRate
+     * @param currency
      * @return
      */
-   /* public static GoodsPriceRange chang(GoodsPriceRange goodsPriceRange,double exchangeRate){
+   public static GoodsPriceRange chang(GoodsPriceRange goodsPriceRange, Currency currency){
         Assert.notNull(goodsPriceRange,"goodsPriceRange is null");
-        CurrencyEnum currencyEnum = ExchangeRateUtil.getInstance().getCurrencyValueByName(currency);
-        goodsPriceRange.setSection1_price(
-                Double.parseDouble(rangePrice(String.valueOf(goodsPriceRange.getSection1_price()),currencyEnum)));
-        goodsPriceRange.setSection2_price(
-                Double.parseDouble(rangePrice(String.valueOf(goodsPriceRange.getSection2_price()),currencyEnum)));
-        goodsPriceRange.setSection3_price(
-                Double.parseDouble(rangePrice(String.valueOf(goodsPriceRange.getSection3_price()),currencyEnum)));
+       double exchangeRate = currency.getExchangeRate();
+        goodsPriceRange.setSectionOnePrice(
+                Double.parseDouble(rangePrice(String.valueOf(goodsPriceRange.getSectionOnePrice()),exchangeRate)));
+        goodsPriceRange.setSectionTwoPrice(
+                Double.parseDouble(rangePrice(String.valueOf(goodsPriceRange.getSectionTwoPrice()),exchangeRate)));
+        goodsPriceRange.setSectionThreePrice(
+                Double.parseDouble(rangePrice(String.valueOf(goodsPriceRange.getSectionThreePrice()),exchangeRate)));
         return goodsPriceRange;
-    }*/
+    }
 
     /**区间价格汇率
      * @param price

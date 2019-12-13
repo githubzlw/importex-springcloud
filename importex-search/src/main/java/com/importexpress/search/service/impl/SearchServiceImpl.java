@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletContext;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -84,9 +85,9 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<Product> catIdForGoods(SearchParam param) {
+    public List<Product> catidForGoods(SearchParam param) {
         List<Product> list = Lists.newArrayList();
-        QueryResponse response = solrService.catIdForGoods(param);
+        QueryResponse response = solrService.catidForGoods(param);
         if (response != null) {
             list = docToProduct(response.getResults(), param);
             list = list.stream().filter(e -> StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
@@ -191,11 +192,32 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public GoodsPriceRange searPriceRangeByKeyWord(SearchParam param) {
-        QueryResponse response = solrService.searPriceRangeByKeyWord(param);
-        if(response != null){
-
+        GoodsPriceRange range = new GoodsPriceRange();
+        range.setCatid(param.getCatid());
+        Map<String,Object> response = solrService.searPriceRangeByKeyWord(param);
+        if(response == null){
+            return range;
         }
-        return null;
+        double midPrice = (Double) response.get("midPrice");
+        Map<String, Integer> solrMap = (Map<String, Integer>)response.get("solrMap");
+        boolean isChangeCurrency = !"USD".equals(param.getCurrency());
+        DecimalFormat df  = new DecimalFormat("0.00");  //保留两位小数
+        range.setKeyword(null);
+        range.setOtherkeyword(null);
+        range.setSectionOnePrice(Double.valueOf(df.format(midPrice/2)));
+        range.setSectionOneCount(solrMap.get("custom_max_price:[* TO "+Double.parseDouble(df.format(midPrice/2))+"]"));
+        range.setSectionTwoPrice(Double.parseDouble(df.format(midPrice)));
+        range.setSectionTwoCount(solrMap.get("custom_max_price:["+(Double.parseDouble(df.format(midPrice/2)+1))+" TO "+midPrice+"]"));
+        range.setSectionThreePrice(2*Double.parseDouble(df.format(midPrice)));
+        range.setSectionThreeCount(solrMap.get("custom_max_price:["+(midPrice+0.001)+" TO "+2*midPrice+"]"));
+        range.setSectionFourCount(solrMap.get("custom_max_price:["+(Double.parseDouble((2*midPrice+""+1)))+" TO *]"));
+        range.setState(0);
+        range.setDatetime(new Date());
+        //存放到数据库中
+        if(isChangeCurrency){
+            ChangeCurrency.chang(range,param.getCurrency());
+        }
+        return range;
     }
 
     @Override
