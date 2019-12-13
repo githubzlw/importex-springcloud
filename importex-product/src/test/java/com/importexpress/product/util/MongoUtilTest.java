@@ -1,14 +1,16 @@
-package com.importexpress.shopify.util;
+package com.importexpress.product.util;
 
 import com.google.gson.Gson;
-import com.importexpress.shopify.mapper.OverSeaProductMapper;
-import com.importexpress.shopify.pojo.MongoProduct;
+import com.importexpress.comm.pojo.MongoProduct;
+import org.apache.commons.collections.CollectionUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,9 +26,6 @@ public class MongoUtilTest {
     @Autowired
     private MongoUtil mongoUtil;
 
-    @Autowired
-    private OverSeaProductMapper overSeaProductMapper;
-
 
     @Test
     public void testQuery() {
@@ -34,14 +33,18 @@ public class MongoUtilTest {
         Long pid = 556860707964L;
         MongoProduct product = mongoUtil.querySingleProductByPid(pid);
         System.err.println(product);
+        Assert.assertNotNull("获取异常",product);
     }
 
 
     @Test
     public void testQueryList(){
 
-        List<Long> pidList = overSeaProductMapper.queryOverSeaProductList();
+        List<Long> pidList = new ArrayList<>();
+        pidList.add(556860707964L);
+        pidList.add(544049586548L);
         List<MongoProduct> tempList = mongoUtil.queryProductList(pidList, 1);
+        Assert.assertTrue("获取异常", CollectionUtils.isNotEmpty(tempList));
         System.err.println(tempList.size());
     }
     @Test

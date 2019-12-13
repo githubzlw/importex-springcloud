@@ -1,4 +1,4 @@
-package com.importexpress.shopify.pojo;
+package com.importexpress.comm.pojo;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;

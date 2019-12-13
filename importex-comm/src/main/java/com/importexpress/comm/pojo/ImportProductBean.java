@@ -1,4 +1,4 @@
-package com.importexpress.shopify.pojo;
+package com.importexpress.comm.pojo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

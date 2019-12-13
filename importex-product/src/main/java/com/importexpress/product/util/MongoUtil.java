@@ -1,6 +1,6 @@
-package com.importexpress.shopify.util;
+package com.importexpress.product.util;
 
-import com.importexpress.shopify.pojo.MongoProduct;
+import com.importexpress.comm.pojo.MongoProduct;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;

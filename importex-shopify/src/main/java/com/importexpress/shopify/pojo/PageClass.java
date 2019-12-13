@@ -1,6 +1,7 @@
 package com.importexpress.shopify.pojo;
 
 import com.github.pagehelper.PageInfo;
+import com.importexpress.comm.pojo.ImportProductBean;
 import lombok.Data;
 
 import java.util.List;

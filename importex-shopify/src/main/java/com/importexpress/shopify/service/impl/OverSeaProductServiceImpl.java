@@ -2,11 +2,11 @@ package com.importexpress.shopify.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.importexpress.comm.pojo.ImportProductBean;
+import com.importexpress.comm.pojo.MongoProduct;
+import com.importexpress.product.util.MongoUtil;
 import com.importexpress.shopify.mapper.OverSeaProductMapper;
-import com.importexpress.shopify.pojo.ImportProductBean;
-import com.importexpress.shopify.pojo.MongoProduct;
 import com.importexpress.shopify.service.OverSeaProductService;
-import com.importexpress.shopify.util.MongoUtil;
 import com.importexpress.shopify.util.ProductPriceUtil;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
