@@ -56,7 +56,6 @@ importex-email/src/test/
 importex-utils/target/
 importex-search/target/
 importex-shopify/target/
-importex-pay/src/test/
 importex-registry/src/test/
 importex-zuul/src/test/
 importex-zuul/target/
