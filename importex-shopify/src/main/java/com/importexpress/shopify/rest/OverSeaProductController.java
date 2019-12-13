@@ -36,6 +36,12 @@ public class OverSeaProductController {
         return CommonResult.success(productServiceFeign.hello());
     }
 
+    @GetMapping("/findProductFeign")
+    @ApiOperation("feign test(findProduct)")
+    public CommonResult findProduct(long pid) {
+        return CommonResult.success(productServiceFeign.findProduct(pid));
+    }
+
 
     public OverSeaProductController(OverSeaProductService overSeaProductService, ProductServiceFeign productServiceFeign) {
         this.overSeaProductService = overSeaProductService;
