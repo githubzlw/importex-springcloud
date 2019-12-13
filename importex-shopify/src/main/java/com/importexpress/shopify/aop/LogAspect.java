@@ -29,9 +29,18 @@ public class LogAspect {
     public void serviceLog() {
     }
 
-
     @Around("serviceLog()")
     public Object serviceAround(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        return AOPLog.watchMethod(joinPoint);
+    }
+
+    @Pointcut("execution(* com.importexpress.shopify.feign..*.*(..))")
+    public void feignLog() {
+    }
+
+    @Around("feignLog()")
+    public Object feignAround(ProceedingJoinPoint joinPoint) throws Throwable {
 
         return AOPLog.watchMethod(joinPoint);
     }

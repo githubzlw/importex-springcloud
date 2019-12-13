@@ -1,6 +1,5 @@
 package com.importexpress.shopify.feign;
 
-import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.pojo.MongoProduct;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
