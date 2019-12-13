@@ -1,13 +1,20 @@
 package com.importexpress.product.service.impl;
 
+import com.google.common.collect.Lists;
 import com.importexpress.comm.pojo.MongoProduct;
 import com.importexpress.product.service.ProductService;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 /**
  * @author: JiangXW
@@ -34,11 +41,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<MongoProduct> findProducts(long[] pids, int valid) {
+
+        List<Long> lstPid = new ArrayList<>();
+        LongStream.of(pids).forEach(lstPid::add);
         Query query;
         if (valid > -1) {
-            query = new Query(Criteria.where(PID).in(pids).and("valid").is(String.valueOf(valid)));
+            query = new Query(Criteria.where(PID).in(lstPid).and("valid").is(String.valueOf(valid)));
         } else {
-            query = new Query(Criteria.where(PID).in(pids));
+            query = new Query(Criteria.where(PID).in(lstPid));
         }
         return mongoTemplate.find(query, MongoProduct.class);
     }

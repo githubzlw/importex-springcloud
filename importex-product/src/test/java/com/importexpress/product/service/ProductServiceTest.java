@@ -1,8 +1,7 @@
-package com.importexpress.product.util;
+package com.importexpress.product.service;
 
 import com.google.gson.Gson;
 import com.importexpress.comm.pojo.MongoProduct;
-import com.importexpress.product.service.ProductService;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,7 +20,7 @@ import java.util.List;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MongoUtilTest {
+public class ProductServiceTest {
 
     @Autowired
     private ProductService productService;
