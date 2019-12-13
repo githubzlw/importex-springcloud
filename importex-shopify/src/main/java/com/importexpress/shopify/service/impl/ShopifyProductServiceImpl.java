@@ -3,12 +3,13 @@ package com.importexpress.shopify.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Longs;
 import com.google.gson.Gson;
 import com.importexpress.comm.pojo.MongoProduct;
-import com.importexpress.product.util.MongoUtil;
 import com.importexpress.shopify.component.MongoProductUtil;
 import com.importexpress.shopify.component.ShopifyProduct;
 import com.importexpress.shopify.exception.ShopifyException;
+import com.importexpress.shopify.feign.ProductServiceFeign;
 import com.importexpress.shopify.mapper.ShopifyProductMapper;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.Product;
@@ -42,7 +43,8 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
     @Autowired
     private ShopifyAuthService shopifyAuthService;
     @Autowired
-    private MongoUtil mongoUtil;
+    private ProductServiceFeign productServiceFeign;
+
 
     public ShopifyProductServiceImpl(ShopifyProductMapper shopifyProductMapper, Config config, ShopifyUtil shopifyUtil) {
         this.shopifyProductMapper = shopifyProductMapper;
@@ -132,7 +134,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         for (String id : ids) {
             pids.add(Long.parseLong(id));
         }
-        List<MongoProduct> mongoProducts = mongoUtil.queryProductList(pids, 1);
+        List<MongoProduct> mongoProducts = productServiceFeign.findProducts(Longs.toArray(pids), 1);
         for (MongoProduct product : mongoProducts) {
             ShopifyData goods = MongoProductUtil.composeShopifyData(product, site);
             ProductWraper wraper = onlineProduct(shopname, goods);

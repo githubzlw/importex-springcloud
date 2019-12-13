@@ -68,9 +68,9 @@
         </filter>
     </appender>
     <logger name="org.springframework" additivity="false">
-        <level value="ERROR" />
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="errorAppender" />
+        <level value="ERROR"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="errorAppender"/>
     </logger>
 
     <!-- 屏蔽一些系统的包的输出-->
