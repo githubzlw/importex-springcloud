@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.pojo.ImportProductBean;
+import com.importexpress.shopify.feign.ProductServiceFeign;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -26,17 +27,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
- * @author: JiangXW
- * @version: v1.0
- * @description: com.importexpress.shopify.rest
- * @date:2019/12/11
+ * @author luohao
+ * @date 2019/12/13
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class OverSeaProductControllerTest {
+public class FeignTest {
 
     @Autowired
     private WebApplicationContext wac;
+
 
     private MockMvc mockMvc;
 
@@ -47,26 +47,20 @@ public class OverSeaProductControllerTest {
 
 
     @Test
-    public void queryForListTest() throws Exception {
-        MvcResult mvcResult = mockMvc
-                .perform(get("/overSea/productList.json"))
-                .andExpect(status().isOk()).andDo(print())
-                .andExpect(jsonPath("$.code").value("200")).andReturn();
-        String rsStr = mvcResult.getResponse().getContentAsString();
-        System.out.println(rsStr);
-        JSONObject rsJson = JSON.parseObject(rsStr);
-
-        Assert.assertNotNull("无查询结果", rsJson.getJSONArray("data"));
-        List<ImportProductBean> productList = JSONArray.parseArray(rsJson.getString("data"), ImportProductBean.class);
-        Assert.assertTrue("查询结果空list", CollectionUtils.isNotEmpty(productList));
-        int count = 0;
-        for (ImportProductBean product : productList) {
-            if (StringUtils.isNotBlank(product.getPid())) {
-                count++;
-            }
-        }
-        Assert.assertEquals("pid不是全部存在", productList.size(), count);
-
+    public void feign1() throws Exception {
+        mockMvc.perform(get("/overSea/helloFeign"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andDo(print());
     }
+
+    @Test
+    public void feign2() throws Exception {
+        mockMvc.perform(get("/overSea/findProductFeign").param("pid", "556860707964"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andDo(print());
+    }
+
 
 }

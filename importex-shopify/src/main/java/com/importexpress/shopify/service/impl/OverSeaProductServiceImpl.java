@@ -2,17 +2,19 @@ package com.importexpress.shopify.service.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.primitives.Longs;
+import com.importexpress.comm.pojo.ImportProductBean;
+import com.importexpress.comm.pojo.MongoProduct;
+import com.importexpress.shopify.feign.ProductServiceFeign;
 import com.importexpress.shopify.mapper.OverSeaProductMapper;
-import com.importexpress.shopify.pojo.ImportProductBean;
-import com.importexpress.shopify.pojo.MongoProduct;
 import com.importexpress.shopify.service.OverSeaProductService;
-import com.importexpress.shopify.util.MongoUtil;
 import com.importexpress.shopify.util.ProductPriceUtil;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,18 +29,20 @@ public class OverSeaProductServiceImpl implements OverSeaProductService {
 
     private final OverSeaProductMapper overSeaProductMapper;
 
-    private final MongoUtil mongoUtil;
+    private ProductServiceFeign productServiceFeign;
 
-    public OverSeaProductServiceImpl(OverSeaProductMapper overSeaProductMapper, MongoUtil mongoUtil) {
+    public OverSeaProductServiceImpl(OverSeaProductMapper overSeaProductMapper, ProductServiceFeign productServiceFeign) {
         this.overSeaProductMapper = overSeaProductMapper;
-        this.mongoUtil = mongoUtil;
+        this.productServiceFeign = productServiceFeign;
     }
 
     @Override
     public List<ImportProductBean> queryOverSeaProductList() {
 
+        List<Long> longs = overSeaProductMapper.queryOverSeaProductList();
+
         @NonNull ImmutableList<MongoProduct> tempList =
-                ImmutableList.copyOf(mongoUtil.queryProductList(overSeaProductMapper.queryOverSeaProductList(), 1));
+                ImmutableList.copyOf(productServiceFeign.findProducts(Longs.toArray(longs), 1));
 
         List<ImportProductBean> resultList = Lists.newArrayList();
         tempList.forEach(e -> {

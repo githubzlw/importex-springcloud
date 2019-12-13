@@ -1,6 +1,7 @@
 package com.importexpress.shopify.service;
 
-import com.importexpress.shopify.pojo.ImportProductBean;
+
+import com.importexpress.comm.pojo.ImportProductBean;
 
 import java.util.List;
 

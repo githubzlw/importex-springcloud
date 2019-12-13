@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/5/15
  */
 @Slf4j
-public class AopLogUtil {
+public class AOPLog {
 
     /**
      * 超过此时间显示警告
@@ -42,7 +42,7 @@ public class AopLogUtil {
         long diffTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
         // 打印耗时的信息
         if (diffTime > MAX_TIME ) {
-            log.warn("end exec[{}],spend:{}ms", joinPoint.getSignature(),diffTime);
+            log.warn("end exec[{}],spend:{}ms,return:{}", joinPoint.getSignature(),diffTime,obj);
         }else{
             log.info("end exec[{}],spend:{}ms,return:{}", joinPoint.getSignature(),diffTime,obj);
         }

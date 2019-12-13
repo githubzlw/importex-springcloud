@@ -1,7 +1,7 @@
 package com.importexpress.shopify.util;
 
+import com.importexpress.comm.pojo.ImportProductBean;
 import com.importexpress.comm.util.StrUtils;
-import com.importexpress.shopify.pojo.ImportProductBean;
 import com.importexpress.shopify.pojo.PriceBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;

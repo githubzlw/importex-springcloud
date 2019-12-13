@@ -18,7 +18,6 @@ import java.util.concurrent.TimeoutException;
 
 
 @Slf4j
-@Service
 public class RPCClient implements AutoCloseable {
 
 

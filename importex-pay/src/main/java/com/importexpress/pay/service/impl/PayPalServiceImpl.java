@@ -178,7 +178,8 @@ public class PayPalServiceImpl implements PaypalService {
             }
             DetailedRefund detailedRefund = sale.refund(getApiContext(), refund);
             try{
-                Assert.isTrue(Objects.equals(String.valueOf(amountMoney),detailedRefund.getAmount().getTotal()),"The refund amount is not same to require");
+                Assert.isTrue(
+                        amountMoney==Double.parseDouble(detailedRefund.getAmount().getTotal()),"The refund amount is not same to require");
             }catch(IllegalArgumentException iae){
                 log.error("refund",iae);
             }

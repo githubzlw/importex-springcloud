@@ -1,8 +1,9 @@
-package com.importexpress.shopify.util;
+package com.importexpress.product.service;
 
 import com.google.gson.Gson;
-import com.importexpress.shopify.mapper.OverSeaProductMapper;
-import com.importexpress.shopify.pojo.MongoProduct;
+import com.importexpress.comm.pojo.MongoProduct;
+import org.apache.commons.collections.CollectionUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,33 +20,33 @@ import java.util.List;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class MongoUtilTest {
+public class ProductServiceTest {
 
     @Autowired
-    private MongoUtil mongoUtil;
-
-    @Autowired
-    private OverSeaProductMapper overSeaProductMapper;
+    private ProductService productService;
 
 
     @Test
     public void testQuery() {
 
         Long pid = 556860707964L;
-        MongoProduct product = mongoUtil.querySingleProductByPid(pid);
+        MongoProduct product = productService.findProduct(pid);
         System.err.println(product);
+        Assert.assertNotNull("获取异常", product);
     }
 
 
     @Test
-    public void testQueryList(){
+    public void testQueryList() {
 
-        List<Long> pidList = overSeaProductMapper.queryOverSeaProductList();
-        List<MongoProduct> tempList = mongoUtil.queryProductList(pidList, 1);
+        long[] pidList = new long[]{556860707964L, 544049586548L};
+        List<MongoProduct> tempList = productService.findProducts(pidList, 1);
+        Assert.assertTrue("获取异常", CollectionUtils.isNotEmpty(tempList));
         System.err.println(tempList.size());
     }
+
     @Test
-    public void test(){
+    public void test() {
         String str = "[1003015602/493664063_1751210702.60x60.jpg]";
         List<String> list = new Gson().fromJson(str, List.class);
         System.out.println(list.toString());
