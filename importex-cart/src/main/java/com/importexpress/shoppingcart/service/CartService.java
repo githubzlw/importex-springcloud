@@ -13,7 +13,7 @@ public interface CartService {
      * @param num
      * @return
      */
-    int addCart(long userId, long itemId, int num);
+    int addCart(char site,long userId, long itemId, int num);
 
     /**
      * 获取
@@ -21,7 +21,7 @@ public interface CartService {
      * @param userId
      * @return
      */
-    List<CartProduct> getCartList(long userId);
+    List<CartProduct> getCartList(char site,long userId);
 
     /**
      * 更新
@@ -32,7 +32,7 @@ public interface CartService {
      * @param checked
      * @return
      */
-    int updateCartNum(long userId, long itemId, int num, String checked);
+    int updateCartNum(char site,long userId, long itemId, int num, String checked);
 
     /**
      * 删除单个
@@ -41,7 +41,7 @@ public interface CartService {
      * @param itemId
      * @return
      */
-    int deleteCartItem(long userId, long itemId);
+    int deleteCartItem(char site,long userId, long itemId);
 
     /**
      * 全选反选
@@ -50,7 +50,7 @@ public interface CartService {
      * @param checked
      * @return
      */
-    int checkAll(long userId, String checked);
+    int checkAll(char site,long userId, String checked);
 
     /**
      * 删除全部勾选的
@@ -58,6 +58,6 @@ public interface CartService {
      * @param userId
      * @return
      */
-    int delChecked(long userId);
+    int delChecked(char site,long userId);
 
 }
