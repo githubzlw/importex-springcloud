@@ -1,15 +1,20 @@
-package com.importexpress.comm.pojo;
+package com.importexpress.product.mongo;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * @author luohao
  * @String 2018/11/28
  */
 @Data
+@Document(collection = "product")
 public class MongoProduct {
 
+    @Id
     private String _id;
+
     private String catid1;
     private String path_catid;
     private long pid;

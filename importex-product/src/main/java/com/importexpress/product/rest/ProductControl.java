@@ -1,6 +1,6 @@
 package com.importexpress.product.rest;
 
-import com.importexpress.comm.pojo.MongoProduct;
+import com.importexpress.product.mongo.MongoProduct;
 import com.importexpress.product.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,8 @@
 package com.importexpress.product.service;
 
-import com.importexpress.comm.pojo.MongoProduct;
+
+
+import com.importexpress.product.mongo.MongoProduct;
 
 import java.util.List;
 

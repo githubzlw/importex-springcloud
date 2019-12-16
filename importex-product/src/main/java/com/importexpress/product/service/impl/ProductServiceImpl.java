@@ -1,7 +1,7 @@
 package com.importexpress.product.service.impl;
 
 import com.google.common.collect.Lists;
-import com.importexpress.comm.pojo.MongoProduct;
+import com.importexpress.product.mongo.MongoProduct;
 import com.importexpress.product.service.ProductService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;

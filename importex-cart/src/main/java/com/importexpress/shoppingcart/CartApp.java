@@ -15,10 +15,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @EnableScheduling
 @SpringBootApplication
-public class ShoppingCartApp {
+public class CartApp {
 
     public static void main(String[] args) {
 
-        SpringApplication.run(ShoppingCartApp.class, args);
+        SpringApplication.run(CartApp.class, args);
     }
 }

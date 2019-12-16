@@ -1,7 +1,7 @@
 package com.importexpress.product.service;
 
 import com.google.gson.Gson;
-import com.importexpress.comm.pojo.MongoProduct;
+import com.importexpress.product.mongo.MongoProduct;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Test;
