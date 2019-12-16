@@ -183,7 +183,7 @@ public class PayPalServiceImpl implements PaypalService {
             }catch(IllegalArgumentException iae){
                 log.error("refund",iae);
             }
-            return CommonResult.success(detailedRefund);
+            return CommonResult.success(detailedRefund.getId()+","+detailedRefund.getAmount().getTotal());
         } catch (PayPalRESTException e) {
             return CommonResult.failed(e.getMessage());
         }
