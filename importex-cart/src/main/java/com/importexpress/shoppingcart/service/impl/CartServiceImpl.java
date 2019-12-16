@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Service
-public class CartImpl implements CartService {
+public class CartServiceImpl implements CartService {
 
     @Override
     public int addCart(long userId, long itemId, int num) {
