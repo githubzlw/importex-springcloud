@@ -19,6 +19,7 @@
         <module>importex-search</module>
         <module>importex-shopify</module>
         <module>importex-product</module>
+        <module>importex-shoppingcart</module>
     </modules>
 
     <properties>
