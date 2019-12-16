@@ -6,7 +6,7 @@ import java.io.Serializable;
  * @author luohao
  * @date 2019/12/16
  */
-public class ShoppingCartItem implements Serializable {
+public class CartItem implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -59,7 +59,7 @@ public class ShoppingCartItem implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ShoppingCartItem other = (ShoppingCartItem) obj;
+        CartItem other = (CartItem) obj;
         if (sku == null) {
             if (other.sku != null)
                 return false;

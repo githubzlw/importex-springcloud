@@ -30,7 +30,7 @@ public class Shop {
     /**
      * 产品list
      */
-    private List<ShoppingCartItem> item;
+    private List<CartItem> item;
     /**
      * 是否需要店铺费
      * 1: 需要 2: 本来需要 但是满足15了 就不用了,要划掉

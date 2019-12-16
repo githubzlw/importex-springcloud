@@ -1,14 +1,10 @@
 package com.importexpress.shoppingcart.rest;
 
-import com.importexpress.shoppingcart.service.ShoppingCartService;
+import com.importexpress.shoppingcart.service.CartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 
 /**
@@ -17,13 +13,13 @@ import java.util.List;
  */
 @RestController
 @Slf4j
-public class ShoppingCartControl {
+public class CartControl {
 
 
-    private ShoppingCartService shoppingCartService;
+    private CartService shoppingCartService;
 
     @Autowired
-    public ShoppingCartControl(ShoppingCartService shoppingCartService) {
+    public CartControl(CartService shoppingCartService) {
 
         this.shoppingCartService = shoppingCartService;
     }

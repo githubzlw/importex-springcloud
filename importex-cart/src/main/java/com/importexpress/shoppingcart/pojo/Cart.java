@@ -10,7 +10,7 @@ import java.util.List;
  * @author luohao
  * @date 2019/12/16
  */
-public class ShoppingCartCart implements Serializable {
+public class Cart implements Serializable {
 
 
     private static final long serialVersionUID = 1L;
@@ -18,17 +18,17 @@ public class ShoppingCartCart implements Serializable {
     /**
      * 商品结果集
      */
-    private List<ShoppingCartItem> items = new ArrayList<>();
+    private List<CartItem> items = new ArrayList<>();
 
     /**
      * 添加购物项到购物车
      * @param item
      */
-    public void addItem(ShoppingCartItem item){
+    public void addItem(CartItem item){
         //判断是否包含同款
         if (items.contains(item)) {
             //追加数量
-            for (ShoppingCartItem buyerItem : items) {
+            for (CartItem buyerItem : items) {
                 if (buyerItem.equals(item)) {
                     buyerItem.setAmount(item.getAmount() + buyerItem.getAmount());
                 }
@@ -39,11 +39,11 @@ public class ShoppingCartCart implements Serializable {
 
     }
 
-    public List<ShoppingCartItem> getItems() {
+    public List<CartItem> getItems() {
         return items;
     }
 
-    public void setItems(List<ShoppingCartItem> items) {
+    public void setItems(List<CartItem> items) {
         this.items = items;
     }
 
@@ -56,7 +56,7 @@ public class ShoppingCartCart implements Serializable {
     public Integer getProductAmount(){
         Integer result = 0;
         //计算
-        for (ShoppingCartItem buyerItem : items) {
+        for (CartItem buyerItem : items) {
             result += buyerItem.getAmount();
         }
         return result;
@@ -70,7 +70,7 @@ public class ShoppingCartCart implements Serializable {
     public Float getProductPrice(){
         float result = 0f;
         //计算
-        for (ShoppingCartItem buyerItem : items) {
+        for (CartItem buyerItem : items) {
             result += buyerItem.getAmount()*buyerItem.getSku().getPrice();
         }
         return result;
