@@ -1,11 +1,12 @@
 package com.importexpress.cart.service.impl;
 
 import com.google.gson.Gson;
+import com.importexpress.cart.feign.ProductServiceFeign;
 import com.importexpress.cart.pojo.CartProduct;
-import com.importexpress.cart.pojo.TbItem;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.cart.util.Config;
-import com.importexpress.cart.util.DtoUtil;
+import com.importexpress.comm.pojo.Product;
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * @author jack.luo
+ */
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -20,9 +24,12 @@ public class CartServiceImpl implements CartService {
 
     private final Config config;
 
-    public CartServiceImpl(StringRedisTemplate redisTemplate, Config config) {
+    private final ProductServiceFeign productServiceFeign;
+
+    public CartServiceImpl(StringRedisTemplate redisTemplate, Config config, ProductServiceFeign productServiceFeign) {
         this.redisTemplate = redisTemplate;
         this.config = config;
+        this.productServiceFeign = productServiceFeign;
     }
 
     @Override
@@ -49,16 +56,24 @@ public class CartServiceImpl implements CartService {
 
 
         //如果不存在，根据商品id取商品信息
-        TbItem item = null;
-        //itemMapper.selectByPrimaryKey(itemId);
-        if(item==null){
-            return 0;
-        }
-        CartProduct cartProduct= DtoUtil.TbItem2CartProduct(item);
-        cartProduct.setProductNum((long) num);
+        Product product = productServiceFeign.findProduct(itemId);
+        CartProduct cartProduct= product2CartProduct(product);
+        cartProduct.setProductNum(num);
         cartProduct.setChecked("1");
         redisTemplate.opsForHash().put(userCartKey, hashKey, new Gson().toJson(cartProduct));
         return 1;
+    }
+
+    private CartProduct product2CartProduct(Product product){
+
+        CartProduct cartProduct =new CartProduct();
+
+        cartProduct.setProductId(product.getPid());
+        cartProduct.setProductName(product.getEnname());
+        cartProduct.setWeight(NumberUtils.toFloat(product.getWeight()));
+        cartProduct.setWprice(product.getWprice());
+
+        return cartProduct;
     }
 
     @Override
@@ -83,7 +98,7 @@ public class CartServiceImpl implements CartService {
             return 0;
         }
         CartProduct cartProduct = new Gson().fromJson(json,CartProduct.class);
-        cartProduct.setProductNum((long) num);
+        cartProduct.setProductNum(num);
         cartProduct.setChecked(checked);
         redisTemplate.opsForHash().put(userCartKey, itemId + "", new Gson().toJson(cartProduct));
         return 1;
