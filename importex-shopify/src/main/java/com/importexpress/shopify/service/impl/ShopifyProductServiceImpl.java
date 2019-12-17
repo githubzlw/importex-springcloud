@@ -5,14 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Longs;
 import com.google.gson.Gson;
-import com.importexpress.comm.pojo.MongoProduct;
+import com.importexpress.comm.pojo.Product;
 import com.importexpress.shopify.component.MongoProductUtil;
 import com.importexpress.shopify.component.ShopifyProduct;
 import com.importexpress.shopify.exception.ShopifyException;
 import com.importexpress.shopify.feign.ProductServiceFeign;
 import com.importexpress.shopify.mapper.ShopifyProductMapper;
 import com.importexpress.shopify.pojo.ShopifyData;
-import com.importexpress.shopify.pojo.product.Product;
 import com.importexpress.shopify.pojo.product.ProductWraper;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
 import com.importexpress.shopify.service.ShopifyAuthService;
@@ -105,7 +104,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
 
     @Override
     public ProductWraper onlineProduct(String shopname, ShopifyData goods) throws ShopifyException {
-        Product product = shopifyProduct.toProduct(goods);
+        com.importexpress.shopify.pojo.product.Product product = shopifyProduct.toProduct(goods);
 
         ShopifyBean shopifyBean = new ShopifyBean();
         shopifyBean.setShopifyName(shopname);
@@ -134,8 +133,8 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         for (String id : ids) {
             pids.add(Long.parseLong(id));
         }
-        List<MongoProduct> mongoProducts = productServiceFeign.findProducts(Longs.toArray(pids), 1);
-        for (MongoProduct product : mongoProducts) {
+        List<Product> mongoProducts = productServiceFeign.findProducts(Longs.toArray(pids), 1);
+        for (Product product : mongoProducts) {
             ShopifyData goods = MongoProductUtil.composeShopifyData(product, site);
             ProductWraper wraper = onlineProduct(shopname, goods);
             if (wraper != null) {

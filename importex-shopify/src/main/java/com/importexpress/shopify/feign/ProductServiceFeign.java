@@ -1,6 +1,6 @@
 package com.importexpress.shopify.feign;
 
-import com.importexpress.comm.pojo.MongoProduct;
+import com.importexpress.comm.pojo.Product;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +19,8 @@ public interface ProductServiceFeign {
     String hello();
 
     @GetMapping(value = "/pid/{pid}")
-    MongoProduct findProduct(@PathVariable("pid") long pid);
+    Product findProduct(@PathVariable("pid") long pid);
 
     @GetMapping(value = "/pids/{pids}")
-    List<MongoProduct> findProducts(@PathVariable("pids") long[] pids, @RequestParam(value = "valid", required = false, defaultValue = "-1") int valid);
+    List<Product> findProducts(@PathVariable("pids") long[] pids, @RequestParam(value = "valid", required = false, defaultValue = "-1") int valid);
 }

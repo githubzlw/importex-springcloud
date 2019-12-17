@@ -3,7 +3,7 @@ package com.importexpress.shopify.component;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.importexpress.comm.pojo.MongoProduct;
+import com.importexpress.comm.pojo.Product;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.TypeBean;
@@ -39,7 +39,7 @@ public class MongoProductUtil {
      * @param site
      * @return
      */
-    public static ShopifyData composeShopifyData(MongoProduct goods, int site) {
+    public static ShopifyData composeShopifyData(Product goods, int site) {
         String remotPath = checkIsNullAndReplace(goods.getRemotpath(), site);
         ShopifyData data = new ShopifyData();
         data.setPid(String.valueOf(goods.getPid()));
@@ -63,7 +63,7 @@ public class MongoProductUtil {
         return data;
     }
 
-    private static String price(MongoProduct goods) {
+    private static String price(Product goods) {
         String range_price = goods.getRange_price();
         if (StringUtils.isBlank(range_price)) {
             String wprice = goods.getWprice();
@@ -84,7 +84,7 @@ public class MongoProductUtil {
         }
     }
 
-    private static List<String> image(MongoProduct goods, String remotPath) {
+    private static List<String> image(Product goods, String remotPath) {
         List<String> imgList = Lists.newArrayList();
         String img = goods.getImg();
         if (StringUtils.isNotBlank(img)) {
@@ -104,7 +104,7 @@ public class MongoProductUtil {
     }
 
 
-    private static List<String> detail(MongoProduct goods) {
+    private static List<String> detail(Product goods) {
         String detail = goods.getEndetail();
         List<String> list = Lists.newArrayList();
         if (StringUtils.isNotBlank(detail) && detail.length() > 2) {
@@ -131,7 +131,7 @@ public class MongoProductUtil {
         return list;
     }
 
-    private static String info(MongoProduct goods, String remotPath) {
+    private static String info(Product goods, String remotPath) {
         String info = goods.getEninfo();
         String isShowDetImgFlag = goods.getIs_show_det_img_flag();
         if (StringUtils.isBlank(info) || !"1".equals(isShowDetImgFlag)) {
@@ -159,7 +159,7 @@ public class MongoProductUtil {
         return info;
     }
 
-    private static List<TypeBean> type(MongoProduct goods, String remotPath) {
+    private static List<TypeBean> type(Product goods, String remotPath) {
         String entypeStr = goods.getEntype_new();
         List<TypeBean> entypeNew = Lists.newArrayList();
         if (StringUtils.isBlank(entypeStr)) {

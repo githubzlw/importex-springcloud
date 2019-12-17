@@ -7,9 +7,9 @@ import lombok.Data;
  * @String 2018/11/28
  */
 @Data
-public class MongoProduct {
+public class Product {
 
-    private String _id;
+//    private String _id;
     private String catid1;
     private String path_catid;
     private long pid;
