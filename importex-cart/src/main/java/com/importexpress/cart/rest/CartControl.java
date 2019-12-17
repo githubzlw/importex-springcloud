@@ -1,6 +1,6 @@
-package com.importexpress.shoppingcart.rest;
+package com.importexpress.cart.rest;
 
-import com.importexpress.shoppingcart.service.CartService;
+import com.importexpress.cart.service.CartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

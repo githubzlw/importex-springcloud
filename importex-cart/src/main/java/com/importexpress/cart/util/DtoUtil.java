@@ -1,7 +1,7 @@
-package com.importexpress.shoppingcart.util;
+package com.importexpress.cart.util;
 
-import com.importexpress.shoppingcart.pojo.CartProduct;
-import com.importexpress.shoppingcart.pojo.TbItem;
+import com.importexpress.cart.pojo.CartProduct;
+import com.importexpress.cart.pojo.TbItem;
 
 
 /**

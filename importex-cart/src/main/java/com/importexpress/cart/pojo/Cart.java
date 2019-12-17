@@ -1,4 +1,4 @@
-package com.importexpress.shoppingcart.pojo;
+package com.importexpress.cart.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

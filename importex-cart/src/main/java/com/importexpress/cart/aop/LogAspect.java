@@ -1,4 +1,4 @@
-package com.importexpress.shoppingcart.aop;
+package com.importexpress.cart.aop;
 
 import com.importexpress.comm.util.AOPLog;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class LogAspect {
 
-    @Pointcut("execution(* com.importexpress.shoppingcart.rest..*.*(..))")
+    @Pointcut("execution(* com.importexpress.cart.rest..*.*(..))")
     public void controlLog() {
     }
 
@@ -25,7 +25,7 @@ public class LogAspect {
         return AOPLog.watchMethod(joinPoint);
     }
 
-    @Pointcut("execution(* com.importexpress.shoppingcart.service..*.*(..))")
+    @Pointcut("execution(* com.importexpress.cart.service..*.*(..))")
     public void serviceLog() {
     }
 

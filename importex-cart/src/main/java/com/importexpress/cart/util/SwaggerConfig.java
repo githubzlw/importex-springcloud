@@ -1,4 +1,4 @@
-package com.importexpress.shoppingcart.util;
+package com.importexpress.cart.util;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

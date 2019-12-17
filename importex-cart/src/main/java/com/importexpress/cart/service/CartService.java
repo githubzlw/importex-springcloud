@@ -1,6 +1,6 @@
-package com.importexpress.shoppingcart.service;
+package com.importexpress.cart.service;
 
-import com.importexpress.shoppingcart.pojo.CartProduct;
+import com.importexpress.cart.pojo.CartProduct;
 
 import java.util.List;
 

@@ -1,11 +1,11 @@
-package com.importexpress.shoppingcart.service.impl;
+package com.importexpress.cart.service.impl;
 
 import com.google.gson.Gson;
-import com.importexpress.shoppingcart.pojo.CartProduct;
-import com.importexpress.shoppingcart.pojo.TbItem;
-import com.importexpress.shoppingcart.service.CartService;
-import com.importexpress.shoppingcart.util.Config;
-import com.importexpress.shoppingcart.util.DtoUtil;
+import com.importexpress.cart.pojo.CartProduct;
+import com.importexpress.cart.pojo.TbItem;
+import com.importexpress.cart.service.CartService;
+import com.importexpress.cart.util.Config;
+import com.importexpress.cart.util.DtoUtil;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
