@@ -17,7 +17,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/6
  */
 @Service

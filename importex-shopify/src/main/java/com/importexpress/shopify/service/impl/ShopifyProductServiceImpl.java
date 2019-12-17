@@ -26,7 +26,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 
 /**
- * @author luohao
+ * @author jack.luo
  */
 @Slf4j
 @Service

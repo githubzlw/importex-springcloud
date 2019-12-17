@@ -3,7 +3,7 @@ package com.importexpress.comm.exception;
 import lombok.Data;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/12
  */
 @Data

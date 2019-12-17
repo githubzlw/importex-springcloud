@@ -7,7 +7,7 @@ import java.util.List;
 public interface CartService {
     /**
      * 添加
-     *
+     * @param site
      * @param userId
      * @param itemId
      * @param num
@@ -17,7 +17,7 @@ public interface CartService {
 
     /**
      * 获取
-     *
+     * @param site
      * @param userId
      * @return
      */
@@ -25,7 +25,7 @@ public interface CartService {
 
     /**
      * 更新
-     *
+     * @param site
      * @param userId
      * @param itemId
      * @param num
@@ -36,7 +36,7 @@ public interface CartService {
 
     /**
      * 删除单个
-     *
+     * @param site
      * @param userId
      * @param itemId
      * @return
@@ -45,7 +45,7 @@ public interface CartService {
 
     /**
      * 全选反选
-     *
+     * @param site
      * @param userId
      * @param checked
      * @return
@@ -54,7 +54,7 @@ public interface CartService {
 
     /**
      * 删除全部勾选的
-     *
+     * @param site
      * @param userId
      * @return
      */

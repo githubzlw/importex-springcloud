@@ -9,7 +9,7 @@ import org.apache.solr.client.solrj.response.FacetField;
 import java.util.List;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/22
  */
 public interface SearchService {

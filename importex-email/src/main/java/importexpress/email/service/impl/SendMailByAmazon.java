@@ -15,7 +15,7 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2018/10/23
  * https://docs.aws.amazon.com/zh_cn/ses/latest/DeveloperGuide/send-using-smtp-java.html
  */

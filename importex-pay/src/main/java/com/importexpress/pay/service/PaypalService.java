@@ -9,7 +9,7 @@ import com.paypal.base.rest.PayPalRESTException;
 import java.io.IOException;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/12/6
  */
 public interface PaypalService {

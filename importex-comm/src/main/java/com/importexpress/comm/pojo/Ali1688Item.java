@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/5
  */
 @Data

@@ -7,7 +7,7 @@ import com.importexpress.comm.pojo.Ali1688Item;
 import java.util.List;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/6
  */
 public interface Ali1688Service {

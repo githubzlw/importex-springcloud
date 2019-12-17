@@ -2,7 +2,7 @@ package com.importexpress.comm.exception;
 
 /**
  * 错误码接口
- * @author luohao
+ * @author jack.luo
  */
 public interface ErrorCode {
 

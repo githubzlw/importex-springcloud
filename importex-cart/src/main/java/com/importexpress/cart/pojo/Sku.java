@@ -3,7 +3,7 @@ package com.importexpress.cart.pojo;
 import lombok.Data;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/12/16
  */
 @Data

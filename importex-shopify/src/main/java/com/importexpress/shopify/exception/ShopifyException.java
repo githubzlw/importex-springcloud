@@ -1,7 +1,7 @@
 package com.importexpress.shopify.exception;
 
 /**
- * @author luohao
+ * @author jack.luo
  */
 public class ShopifyException extends RuntimeException {
 

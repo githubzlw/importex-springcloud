@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/22
  */
 @ControllerAdvice

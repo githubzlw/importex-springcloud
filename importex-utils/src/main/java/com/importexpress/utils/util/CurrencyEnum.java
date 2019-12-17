@@ -1,7 +1,7 @@
 package com.importexpress.utils.util;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/18
  */
 public enum CurrencyEnum {

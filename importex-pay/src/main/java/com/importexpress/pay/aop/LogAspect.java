@@ -8,7 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Service;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/22
  */
 @Aspect

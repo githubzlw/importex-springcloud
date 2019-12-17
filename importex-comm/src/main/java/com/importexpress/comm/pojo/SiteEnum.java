@@ -1,7 +1,7 @@
 package com.importexpress.comm.pojo;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/6/25
  */
 public enum SiteEnum {

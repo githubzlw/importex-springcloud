@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/12/13
  */
 @RunWith(SpringRunner.class)

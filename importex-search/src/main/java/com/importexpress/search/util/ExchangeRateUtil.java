@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Map;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2018/7/26
  */
 public class ExchangeRateUtil {

@@ -6,7 +6,7 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 
 /**
- * @author luohao
+ * @author jack.luo
  */
 @SpringBootApplication
 @EnableEurekaServer

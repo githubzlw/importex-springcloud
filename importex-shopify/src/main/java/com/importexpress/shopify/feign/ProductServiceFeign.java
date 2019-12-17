@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/12/13
  */
 @FeignClient(value = "product-service")

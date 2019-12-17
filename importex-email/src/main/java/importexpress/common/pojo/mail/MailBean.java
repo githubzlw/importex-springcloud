@@ -5,7 +5,7 @@ import com.importexpress.comm.pojo.SiteEnum;
 import java.util.Map;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/9/5
  */
 public class MailBean {

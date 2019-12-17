@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/12/6
  */
 @Component

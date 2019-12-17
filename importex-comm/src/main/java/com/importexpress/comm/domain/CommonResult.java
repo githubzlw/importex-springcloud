@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * 通用返回对象
- * @author luohao
+ * @author jack.luo
  */
 @Data
 @ApiModel(value = "统一返回接口")

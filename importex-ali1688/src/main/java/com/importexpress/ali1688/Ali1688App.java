@@ -8,7 +8,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 
 
 /**
- * @author luohao
+ * @author jack.luo
  */
 @EnableDiscoveryClient
 @EnableFeignClients

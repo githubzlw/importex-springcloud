@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author luohao
+ * @author jack.luo
  */
 @RestController
 @Slf4j

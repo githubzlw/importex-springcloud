@@ -7,7 +7,7 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 
 /**
- * @author luohao
+ * @author jack.luo
  */
 
 

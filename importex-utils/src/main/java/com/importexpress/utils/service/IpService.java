@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import java.io.IOException;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/18
  */
 public interface IpService {

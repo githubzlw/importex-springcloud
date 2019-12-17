@@ -2,7 +2,7 @@ package com.importexpress.comm.exception;
 
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/12
  */
 public enum BizErrorCodeEnum implements ErrorCode {

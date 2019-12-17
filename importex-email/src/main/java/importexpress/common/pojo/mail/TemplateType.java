@@ -1,7 +1,7 @@
 package importexpress.common.pojo.mail;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2018/10/23
  */
 public enum TemplateType {

@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/12/16
  */
 public class Cart implements Serializable {

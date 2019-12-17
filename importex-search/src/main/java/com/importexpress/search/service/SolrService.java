@@ -7,7 +7,7 @@ import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import java.util.Map;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/22
  */
 public interface SolrService {

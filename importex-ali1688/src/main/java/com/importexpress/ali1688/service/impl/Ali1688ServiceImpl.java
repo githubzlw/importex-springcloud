@@ -31,7 +31,7 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/6
  */
 @Slf4j

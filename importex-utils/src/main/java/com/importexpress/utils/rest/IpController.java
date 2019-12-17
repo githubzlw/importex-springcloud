@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.IOException;
 
 /**
- * @author luohao
+ * @author jack.luo
  */
 @RestController
 @Slf4j

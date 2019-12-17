@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @String 2018/11/28
  */
 

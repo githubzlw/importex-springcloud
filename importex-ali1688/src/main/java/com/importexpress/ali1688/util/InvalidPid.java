@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/13
  */
 public final class InvalidPid {

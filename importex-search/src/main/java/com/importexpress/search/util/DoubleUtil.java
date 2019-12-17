@@ -8,7 +8,7 @@ import java.math.RoundingMode;
  * double的计算不精确，会有类似0.0000000000000002的误差，正确的方法是使用BigDecimal或者用整型
  * 整型地方法适合于货币精度已知的情况，比如12.11+1.10转成1211+110计算，最后再/100即可
  *
- *  @author luohao
+ *  @author jack.luo
  *  @date 2018/8/22
  */
 public class DoubleUtil implements Serializable {

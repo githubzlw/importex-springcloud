@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/4
  */
 @Slf4j

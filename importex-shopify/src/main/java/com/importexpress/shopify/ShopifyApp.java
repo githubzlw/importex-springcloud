@@ -9,7 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 /**
- * @author luohao
+ * @author jack.luo
  * @date 2019/11/27
  */
 @EnableDiscoveryClient
