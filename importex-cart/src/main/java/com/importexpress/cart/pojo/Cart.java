@@ -141,7 +141,7 @@ public class Cart implements Serializable {
     /**
      * 根据数量和区间价格计算实际的价格
      */
-    public void fillPrice() {
+    public void fillCartItemsPrice() {
 
         Map<Long, LongSummaryStatistics> collect = this.items.stream().collect(Collectors.groupingBy(CartItem::getPid, Collectors.summarizingLong(CartItem::getNum)));
 

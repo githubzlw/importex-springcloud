@@ -26,7 +26,7 @@ public interface CartService {
      * @param userId
      * @return
      */
-    Cart getCartList(char site, long userId);
+    Cart getCart(char site, long userId);
 
     /**
      * 更新

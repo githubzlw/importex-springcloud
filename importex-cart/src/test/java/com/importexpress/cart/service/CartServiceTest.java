@@ -49,7 +49,7 @@ public class CartServiceTest {
      */
     @Test
     public void cart2() {
-        Cart cart = cartService.getCartList(SITE, USER_ID);
+        Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
         Assert.assertEquals(new BigDecimal("3.68"), cart.getItems().get(0).getPri());
         Assert.assertEquals("greybeard 80cm(31 inch | age 9-12M)", cart.getItems().get(0).getTn());
@@ -67,7 +67,7 @@ public class CartServiceTest {
 
         Assert.assertEquals
                 (1, cartService.updateCartNum(SITE, USER_ID, ITEM_ID1, 99, 1));
-        Cart cart =  cartService.getCartList(SITE, USER_ID);
+        Cart cart =  cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
         Assert.assertEquals(new BigDecimal("3.35"), cart.getItems().get(0).getPri());
 
@@ -80,7 +80,7 @@ public class CartServiceTest {
     public void cart4() {
         Assert.assertEquals
                 (1, cartService.addCart(SITE, USER_ID, ITEM_ID1, 1));
-        Cart cart =  cartService.getCartList(SITE, USER_ID);
+        Cart cart =  cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
         Assert.assertEquals(new BigDecimal("3.14"), cart.getItems().get(0).getPri());
     }
@@ -103,7 +103,7 @@ public class CartServiceTest {
                 (1, cartService.addCart(SITE, USER_ID, ITEM_ID1, 1));
         Assert.assertEquals
                 (1, cartService.addCart(SITE, USER_ID, ITEM_ID2, 2));
-        Cart cart =  cartService.getCartList(SITE, USER_ID);
+        Cart cart =  cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(3, cart.getTotalAmount());
         Assert.assertEquals(BigDecimal.valueOf(3.35d * 3), cart.getTotalPrice());
         Assert.assertEquals(0.11f*3, cart.getTotalWeight(),0.0001f);
@@ -112,7 +112,7 @@ public class CartServiceTest {
 
         Assert.assertEquals
                 (1, cartService.checkAll(SITE, USER_ID, 0));
-        cart = cartService.getCartList(SITE, USER_ID);
+        cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(2, cart.getItems().size());
         Assert.assertEquals(0, cart.getItems().get(0).getChk());
         Assert.assertEquals(0, cart.getItems().get(1).getChk());
@@ -127,7 +127,7 @@ public class CartServiceTest {
                 (1, cartService.checkAll(SITE, USER_ID, 1));
         Assert.assertEquals
                 (1, cartService.delChecked(SITE, USER_ID));
-        Cart cart =  cartService.getCartList(SITE, USER_ID);
+        Cart cart =  cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(0, cart.getItems().size());
     }
 
@@ -147,7 +147,7 @@ public class CartServiceTest {
                 (1, cartService.addCart(SITE, USER_ID, ITEM_ID4, 4));
 
 
-        Cart cart =  cartService.getCartList(SITE, USER_ID);
+        Cart cart =  cartService.getCart(SITE, USER_ID);
 
         Assert.assertEquals(10, cart.getTotalAmount());
         Assert.assertEquals(4, cart.getItems().size());
