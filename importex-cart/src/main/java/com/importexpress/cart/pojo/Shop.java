@@ -15,10 +15,7 @@ public class Shop {
      * 店铺id
      */
     private String shoipId;
-    /**
-     * 店铺中文名字
-     */
-    private String shopNameCn;
+
     /**
      * 店铺英文文名字
      */

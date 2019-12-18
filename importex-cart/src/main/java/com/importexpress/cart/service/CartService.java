@@ -1,6 +1,7 @@
 package com.importexpress.cart.service;
 
-import com.importexpress.cart.pojo.CartProduct;
+import com.importexpress.cart.pojo.Cart;
+import com.importexpress.cart.pojo.CartItem;
 
 import java.util.List;
 
@@ -8,6 +9,7 @@ import java.util.List;
  * @author jack.luo
  */
 public interface CartService {
+
     /**
      * 添加
      * @param site
@@ -16,7 +18,7 @@ public interface CartService {
      * @param num
      * @return
      */
-    int addCart(char site,long userId, long itemId, int num);
+    int addCart(char site,long userId, String itemId, long num);
 
     /**
      * 获取
@@ -24,7 +26,7 @@ public interface CartService {
      * @param userId
      * @return
      */
-    List<CartProduct> getCartList(char site,long userId);
+    Cart getCartList(char site, long userId);
 
     /**
      * 更新
@@ -35,7 +37,7 @@ public interface CartService {
      * @param checked
      * @return
      */
-    int updateCartNum(char site,long userId, long itemId, int num, String checked);
+    int updateCartNum(char site,long userId, String itemId, int num, int checked);
 
     /**
      * 删除单个
@@ -44,7 +46,7 @@ public interface CartService {
      * @param itemId
      * @return
      */
-    int deleteCartItem(char site,long userId, long itemId);
+    int deleteCartItem(char site,long userId, String itemId);
 
     /**
      * 全选反选
@@ -53,7 +55,7 @@ public interface CartService {
      * @param checked
      * @return
      */
-    int checkAll(char site,long userId, String checked);
+    int checkAll(char site,long userId, int checked);
 
     /**
      * 删除全部勾选的
