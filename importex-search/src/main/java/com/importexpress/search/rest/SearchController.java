@@ -3,7 +3,6 @@ package com.importexpress.search.rest;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.util.StrUtils;
-import com.importexpress.search.common.InitApplicationParameter;
 import com.importexpress.search.common.VerifySearchParameter;
 import com.importexpress.search.pojo.*;
 import com.importexpress.search.service.CategoryService;
@@ -14,12 +13,13 @@ import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -335,7 +335,6 @@ public class SearchController {
     public CommonResult loadRangePrice(
             @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
             HttpServletRequest request) {
-
         try {
             GoodsPriceRangeWrap wrap = new GoodsPriceRangeWrap();
             param = verifySearchParameter.verification(request,param);
@@ -372,6 +371,29 @@ public class SearchController {
             return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!",JSONObject.toJSONString(wrap));
         }catch (Exception e){
             log.error("搜索页异步加载区间价错误",e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+    @PostMapping("/associate")
+    @ApiOperation("获取搜索词其他组合推荐")
+    public CommonResult associateKey(
+            @ApiParam(name="keyWord",value="搜索词",required=true) String keyWord,
+            @ApiParam(name="site",value="网站",required=true) String site,
+            HttpServletRequest request) {
+        if(StringUtils.isBlank(keyWord)){
+            return CommonResult.failed(" Keyword IS NULL!");
+        }
+        site = StrUtils.isNum(site) ? site : "1";
+        int _site = Integer.parseInt(site);
+        if((_site & -_site) != _site){
+            return CommonResult.failed(" SITE IS WRONG!");
+        }
+        try {
+            verifySearchParameter.initApplication(request);
+            List<AssociateWrap> associate = service.associate(keyWord, _site);
+            return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",JSONObject.toJSONString(associate));
+        }catch (Exception e){
+            log.error("获取搜索词其他组合推荐错误",e);
             return CommonResult.failed(e.getMessage());
         }
     }

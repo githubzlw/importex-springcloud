@@ -45,6 +45,10 @@ public interface SolrService {
      */
     QueryResponse catidForGoods(SearchParam param);
 
+    /**404页面推荐商品查询
+     * @param param
+     * @return
+     */
     QueryResponse errorRecommend(SearchParam param);
     /**
      * 当搜索词没有搜索结果且也没有搜索词热卖商品时，取搜索词频次高的搜索词结果当做热销商品展示

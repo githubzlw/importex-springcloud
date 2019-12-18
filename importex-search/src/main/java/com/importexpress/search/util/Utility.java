@@ -202,17 +202,24 @@ public class Utility {
 						}
 					}
 				}else {
-					if(k < arrayNum) {
-						newArray[k] = keys[i]+" "+keys[j];
-						k++;
-					}
-
+					newArray[k] = getArrayStr(keys,k,arrayNum,new int[]{i,j});
+					k++;
 				}
 			}
 		}
 		return newArray;
 	}
 
+	private static String getArrayStr(String[] arr,int k,int arrayNum,int[] index){
+		if(k < arrayNum) {
+			StringBuilder sb = new StringBuilder();
+			for(int i=0;i<index.length;i++){
+				sb.append(arr[index[i]]).append(" ");
+			}
+			return sb.toString().trim();
+		}
+		return "";
+	}
 
 	/**C(n,m)从长度为n的数组中取m个值排列组合的组合个数
 	 * @param n 数组个数

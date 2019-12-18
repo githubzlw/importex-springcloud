@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.KeywordCorrect;
-import com.importexpress.search.common.SolrOperationUtils;
+import com.importexpress.search.common.SplicingSyntax;
 import com.importexpress.search.common.SwitchDomainUtil;
 import com.importexpress.search.pojo.KeyToCategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
@@ -15,8 +15,6 @@ import com.importexpress.search.util.Config;
 import com.importexpress.search.util.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -37,7 +35,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private HttpSolrClient httpSolrClient;
     @Autowired
-    private SolrOperationUtils solrOperationUtils;
+    private SplicingSyntax splicingSyntax;
 
     @Autowired
     public SolrServiceImpl(Config config){
@@ -90,7 +88,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         setSort("custom_is_stock_flag desc", solrParams);
 
         //指定过滤条件
-        String specialCatidSearch = solrOperationUtils.specialCatidSearch(param);
+        String specialCatidSearch = splicingSyntax.specialCatidSearch(param);
         StringBuilder filterQueries = new StringBuilder(specialCatidSearch);
         filterQueries.append("custom_valid:1").append(" AND custom_shop_id:" + param.getStoried());
         //权限版搜索,只展示可搜索的产品
@@ -119,7 +117,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         setQ(q.toString().length() > 0 ? q.toString() : "*", solrParams);
 
         //搜索限定类别
-        String specialCatidSearch = solrOperationUtils.specialCatidSearch(param);
+        String specialCatidSearch = splicingSyntax.specialCatidSearch(param);
         setFQ(specialCatidSearch + " custom_valid:1 AND custom_price:[10 TO *] ", solrParams);
 
         setRows(0, 12, solrParams);
@@ -152,7 +150,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         q.append(" custom_valid:1");
         setQ(q.toString(), solrParams);
 
-        StringBuilder fq = new StringBuilder(solrOperationUtils.specialCatidSearch(param));
+        StringBuilder fq = new StringBuilder(splicingSyntax.specialCatidSearch(param));
         fq.append(" custom_price:[2 TO *] AND custom_valid:1");
         setFQ(fq.toString(), solrParams);
         return sendRequest(solrParams, httpSolrClient);
@@ -168,7 +166,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
 
         setQ("custom_valid:1", solrParams);
 
-        StringBuilder fq = new StringBuilder(solrOperationUtils.specialCatidSearch(param));
+        StringBuilder fq = new StringBuilder(splicingSyntax.specialCatidSearch(param));
         fq.append(" custom_price:[10 TO *] ");
         if (StringUtils.isNotBlank(param.getCatid())) {
             fq.append(" AND custom_path_catid:" + param.getCatid());
@@ -199,7 +197,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         setQ("custom_valid:1 AND custom_path_catid:" + param.getCatid() + "", solrParams);
         setSort("custom_is_sold_flag  desc,custom_ali_sold desc,custom_sold desc", solrParams);
         setRows(0, 200, solrParams);
-        String specialCatidSearch = solrOperationUtils.specialCatidSearch(param);
+        String specialCatidSearch = splicingSyntax.specialCatidSearch(param);
         setFQ(specialCatidSearch + " custom_price:[10 TO *]", solrParams);
         QueryResponse response = sendRequest(solrParams, httpSolrClient);
         if (response != null && response.getResults().size() <= 4) {
@@ -289,18 +287,18 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     private ModifiableSolrParams getSolrQuery(SearchParam param){
         ModifiableSolrParams solrParams = new ModifiableSolrParams();
         //搜索词过长处理一下
-        String queryString = solrOperationUtils.queryString(param.getKeyword());
+        String queryString = splicingSyntax.queryString(param.getKeyword());
         boolean isValidQueryString = StringUtils.equals(queryString, "*");
         String fq = null;
         //搜索词替换掉类别
         if(param.getSite() == 1){
-            KeyToCategoryWrap keyToCategoryWrap = solrOperationUtils.queryStrToCategory(queryString);
+            KeyToCategoryWrap keyToCategoryWrap = splicingSyntax.queryStrToCategory(queryString);
             if(keyToCategoryWrap != null){
                 List<String> lstCatid = keyToCategoryWrap.getLstCatid();
                 if(lstCatid== null || lstCatid.isEmpty()){
                     return null;
                 }else{
-                    queryString = solrOperationUtils.queryString(keyToCategoryWrap.getKeyword());
+                    queryString = splicingSyntax.queryString(keyToCategoryWrap.getKeyword());
                     isValidQueryString = StringUtils.equals(queryString, "*");
                     //fq限制类别
                     fq = categoryFQ(lstCatid);
@@ -334,7 +332,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      */
     private String qStr(String queryString,int site){
         StringBuilder q_str = new StringBuilder();
-        String filterName = solrOperationUtils.queryKey(queryString);
+        String filterName = splicingSyntax.queryKey(queryString);
         if(StringUtils.isNotBlank(filterName)){
             q_str.append(" (");
             q_str.append("(").append(filterName.replace("nameQuery:", "custom_enname:"))
@@ -388,10 +386,10 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if(param.getSort().contains("bbPrice")){
             sorts.append("bbPrice-desc".equals(param.getSort())?"custom_price desc":"custom_price asc");
         }else if(param.getSort().equals("order-desc")){
-            solrOperationUtils.priorityCategorySort(param.getKeyword(), sorts);
+            splicingSyntax.priorityCategorySort(param.getKeyword(), sorts);
             sorts.append("sum(custom_sold,custom_ali_sold) desc");
         }else{
-            solrOperationUtils.priorityCategorySort(param.getKeyword(), sorts);
+            splicingSyntax.priorityCategorySort(param.getKeyword(), sorts);
             sorts.append("product(custom_price,custom_morder")
                     .append(",map(custom_best_match,-1,2,1,0.7)")
                     .append(",map(custom_sold_flag,1,1,0.6,1)")
@@ -421,7 +419,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     private String fqStr(SearchParam param){
         StringBuilder fq_condition = new StringBuilder();
         //搜索限定类别
-        fq_condition.append(solrOperationUtils.specialCatidSearch(param));
+        fq_condition.append(splicingSyntax.specialCatidSearch(param));
 
         //反关键词
         autiKeyword(param, fq_condition);
@@ -502,7 +500,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     private void priceFQ(SearchParam param, StringBuilder fq_condition) {
         String minPrice = param.getMinPrice();
         String maxPrice = param.getMaxPrice();
-        String minPrices = solrOperationUtils.categoryPrice(param.getKeyword());
+        String minPrices = splicingSyntax.categoryPrice(param.getKeyword());
         if(StringUtils.isNotBlank(minPrices)){
             fq_condition.append(" AND custom_price:["+minPrices+" TO *]");
             param.setPrices(minPrices);
@@ -525,7 +523,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     private void autiKeyword(SearchParam param, StringBuilder fq_condition) {
         //判断是否有反关键词查询
         String auti_key = param.getReverseKeywords() ;
-        auti_key = solrOperationUtils.reverseKeywords(auti_key,param.getKeyword());
+        auti_key = splicingSyntax.reverseKeywords(auti_key,param.getKeyword());
         param.setReverseKeywords(auti_key);
 
         //有多个反关键词

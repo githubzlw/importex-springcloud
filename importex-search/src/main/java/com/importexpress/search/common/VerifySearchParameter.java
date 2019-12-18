@@ -22,7 +22,7 @@ public class VerifySearchParameter {
     @Autowired
     private InitApplicationParameter applicationParameter;
 
-    private void initApplication(HttpServletRequest request){
+    public void initApplication(HttpServletRequest request){
         if(!initApplication){
             applicationParameter.init(request.getServletContext());
             initApplication = true;
@@ -222,7 +222,7 @@ public class VerifySearchParameter {
         if(!isMoreCatid) {
             catid =  StrUtils.isMatch(catid, "(\\d{1,21})") ?  catid : null;
         }
-        param.setCatid(catid);
+        param.setCatid("0".equals(catid) ? null:catid);
         //多类别搜索，不做类别、属性统计
         param.setFactCategory( !isMoreCatid);
         param.setFactPvid(!isMoreCatid);

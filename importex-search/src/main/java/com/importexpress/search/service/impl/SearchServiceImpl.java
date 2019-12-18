@@ -5,30 +5,24 @@ import com.google.common.collect.Lists;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.*;
 import com.importexpress.search.pojo.*;
+import com.importexpress.search.pojo.Currency;
 import com.importexpress.search.service.*;
-import com.importexpress.search.service.base.SolrBase;
-import com.importexpress.search.util.Config;
 import com.importexpress.search.util.DoubleUtil;
+import com.importexpress.search.util.ExhaustUtils;
 import com.importexpress.search.util.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.solr.client.solrj.SolrRequest;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.params.ModifiableSolrParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.ServletContext;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,7 +37,7 @@ public class SearchServiceImpl implements SearchService {
     @Autowired
     private ModefilePrice modefilePrice;
     @Autowired
-    private SolrOperationUtils solrOperationUtils;
+    private SplicingSyntax splicingSyntax;
     @Autowired
     private PageService pageService;
     @Autowired
@@ -52,7 +46,6 @@ public class SearchServiceImpl implements SearchService {
     private AttributeService attributeService;
     @Autowired
     private SolrService solrService;
-
 
     @Override
     public List<Product> similarProduct(SearchParam param) {
@@ -103,8 +96,21 @@ public class SearchServiceImpl implements SearchService {
         QueryResponse response = solrService.errorRecommend(param);
         if (response != null) {
             list = docToProduct(response.getResults(), param);
+            list = list.stream().filter(e -> !StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
+                    .collect(Collectors.toList());
+        }
+        return list;
+    }
+
+    @Override
+    public List<Product> hotProductForCatid(SearchParam param) {
+        List<Product> list = Lists.newArrayList();
+        QueryResponse response = solrService.hotProductForCatid(param);
+        if (response != null) {
+            list = docToProduct(response.getResults(), param);
             list = list.stream().filter(e -> StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
                     .collect(Collectors.toList());
+            list = Utility.getRandomNumList(list, 12);
         }
         return list;
     }
@@ -120,19 +126,6 @@ public class SearchServiceImpl implements SearchService {
         QueryResponse response = solrService.hotProduct(param);
         if (response != null) {
             list = docToProduct(response.getResults(), param);
-        }
-        return list;
-    }
-
-    @Override
-    public List<Product> hotProductForCatid(SearchParam param) {
-        List<Product> list = Lists.newArrayList();
-        QueryResponse response = solrService.hotProductForCatid(param);
-        if (response != null) {
-            list = docToProduct(response.getResults(), param);
-            list = list.stream().filter(e -> StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
-                    .collect(Collectors.toList());
-            list = Utility.getRandomNumList(list, 12);
         }
         return list;
     }
@@ -154,23 +147,18 @@ public class SearchServiceImpl implements SearchService {
         if (StringUtils.isBlank(queryString)) {
             return wrap;
         }
-        QueryResponse response = solrService.serach(param);
-        //拼接参数
-        if (response == null) {
-            return wrap;
+        //solr结果
+        wrap = productsFromSolr(param);
+
+        //是否需要推荐联想词
+        long recordCount = wrap.getPage().getRecordCount();
+        boolean suggestKey = isDefault(param);
+        suggestKey = suggestKey && recordCount < 40 && param.getKeyword().split("(\\s+)").length > 2;
+        if(suggestKey){
+            List<AssociateWrap> associate = associate(param.getKeyword(), param.getSite());
+            wrap.setAssociates(associate);
         }
-        //执行查询
-        SolrResult solrResult = searchItem(param,response);
-
-        //分组数据,第二次查询取得类别分组统计数据--类别统计
-        if (param.isFactCategory() && solrResult.getRecordCount() > 0) {
-            List<FacetField> searchGroup = groupCategory(param);
-            solrResult.setCategoryFacet(searchGroup);
-        }
-
-        //结果解析
-        wrap = compose(solrResult, param);
-
+        wrap.setSuggest(suggestKey);
         return wrap;
     }
 
@@ -185,6 +173,8 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public long serachCount(SearchParam param) {
+        param.setFactCategory(false);
+        param.setFactPvid(false);
         QueryResponse response = solrService.serach(param);
         SolrResult solrResult = searchItem(param,response);
         return solrResult.getRecordCount();
@@ -239,6 +229,38 @@ public class SearchServiceImpl implements SearchService {
             }
         }
         return suggest;
+    }
+
+    @Override
+    public List<AssociateWrap> associate(String keyWord, int site) {
+        String[] exhaust = Utility.combination(keyWord);
+        if(exhaust == null) {
+            return Lists.newArrayList();
+        }
+        List<AssociateWrap> result = Lists.newArrayList();
+        AssociateWrap wrap = null;
+        SearchParam param = new SearchParam();
+        param.setPageSize(1);
+        param.setPage(1);
+        param.setFreeShipping(1);
+        param.setMobile(false);
+        param.setFactPvid(false);
+        param.setFactPvid(false);
+        param.setSite(site);
+        param.setCurrency(new Currency());
+        param.setUserType(1);
+        for(int i=0,length=exhaust.length;i<length&&result.size() <4;i++) {
+            param.setKeyword(KeywordCorrect.getKeyWord(exhaust[i]));
+            param.setFreeShipping(1);
+            long countResult = serachCount(param);
+            if(countResult > 4 && result.size() < 5) {
+                wrap = new AssociateWrap();
+                wrap.setCount(countResult);
+                wrap.setKey(exhaust[i]);
+                result.add(wrap);
+            }
+        }
+        return result;
     }
 
     /**
@@ -319,7 +341,7 @@ public class SearchServiceImpl implements SearchService {
             }
 
             //拼接类别名称
-            title = solrOperationUtils.categoryNameToTitle(title, catid);
+            title = splicingSyntax.categoryNameToTitle(title, catid);
             product.setName(title);
 
             //后台人为确定过得标题翻译，直接使用，不在使用自动翻译的标题
@@ -466,6 +488,30 @@ public class SearchServiceImpl implements SearchService {
         return price1;
     }
 
+    /**请求solr解析产品列表
+     * @param param
+     * @return
+     */
+    private  SearchResultWrap productsFromSolr(SearchParam param){
+        SearchResultWrap wrap = new SearchResultWrap();
+        //请求solr获取产品列表
+        QueryResponse response = solrService.serach(param);
+        //拼接参数
+        if (response == null) {
+            return wrap;
+        }
+        //执行查询
+        SolrResult solrResult = searchItem(param,response);
+
+        //分组数据,第二次查询取得类别分组统计数据--类别统计
+        if (param.isFactCategory() && solrResult.getRecordCount() > 0) {
+            List<FacetField> searchGroup = groupCategory(param);
+            solrResult.setCategoryFacet(searchGroup);
+        }
+        //结果解析
+        return compose(solrResult, param);
+    }
+
     /**
      * 结果集重新分组
      *
@@ -499,6 +545,14 @@ public class SearchServiceImpl implements SearchService {
         Page paging = pageService.paging(param, recordCount);
         wrap.setPage(paging);
         return wrap;
+    }
+    private boolean isDefault(SearchParam param){
+        boolean isDefault =  "default".equals(param.getSort());
+        isDefault = isDefault && (StringUtils.isBlank(param.getCatid()));
+        isDefault = isDefault && param.getPage() < 2;
+        isDefault = isDefault && StringUtils.isBlank(param.getMinPrice()) && StringUtils.isBlank(param.getMaxPrice());
+        isDefault = isDefault && StringUtils.isBlank(param.getAttrId());
+        return isDefault;
     }
 
 }

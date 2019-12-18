@@ -3,6 +3,7 @@ package com.importexpress.search.service.base;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.pojo.SolrFacet;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -100,6 +101,9 @@ public abstract class SolrBase {
 	 * @return
 	 */
 	public QueryResponse sendRequest(ModifiableSolrParams solrParams,HttpSolrClient httpSolrClient) {
+		if(solrParams == null || StringUtils.isBlank(solrParams.get("q"))) {
+			return null;
+		}
 		QueryResponse response = null;
 		try {
 			response = httpSolrClient.query(solrParams,SolrRequest.METHOD.POST);

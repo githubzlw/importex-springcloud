@@ -251,7 +251,17 @@ public class SearchControllerTest {
         ).andReturn().getResponse().getContentAsString();
         CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
         Assert.assertEquals(200,result.getCode());
-        System.out.println("loadRangePrice:"+result.getData().toString());
+        System.out.println("searchAutocomplete:"+result.getData().toString());
+    }
+    @Test
+    public void associateKey() throws  Exception{
+        String contentAsString = mockMvc.perform(post("/search/associate")
+                .param("keyWord","kid wash towel")
+                .param("site","2")
+        ).andReturn().getResponse().getContentAsString();
+        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
+        Assert.assertEquals(200,result.getCode());
+        System.out.println("associateKey:"+result.getData().toString());
     }
 
 }

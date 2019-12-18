@@ -1,9 +1,6 @@
 package com.importexpress.search.service;
 
-import com.importexpress.search.pojo.GoodsPriceRange;
-import com.importexpress.search.pojo.Product;
-import com.importexpress.search.pojo.SearchParam;
-import com.importexpress.search.pojo.SearchResultWrap;
+import com.importexpress.search.pojo.*;
 import org.apache.solr.client.solrj.response.FacetField;
 
 import java.util.List;
@@ -65,6 +62,10 @@ public interface SearchService {
      */
     List<Product> catidForGoods(SearchParam param);
 
+    /**404页面推荐商品查询
+     * @param param
+     * @return
+     */
     List<Product> errorRecommend(SearchParam param);
     /**
      * 当搜索词没有搜索结果且也没有搜索词热卖商品时，取搜索词频次高的搜索词结果当做热销商品展示
@@ -97,6 +98,13 @@ public interface SearchService {
     List<String> searchAutocomplete(String keyWord,int site);
 
 
-
+    /**搜索词联想推荐
+     * 若搜索商品数量不足10个，推荐AB//ABCD及以上 减少一个单词-》 ABC//搜索ABC三个词没有结果，
+     * 就要推荐AB或者AC或者BC(直接显示或者推荐都行)
+     * @param keyWord
+     * @param site
+     * @return
+     */
+    List<AssociateWrap> associate(String keyWord,int site);
 
 }
