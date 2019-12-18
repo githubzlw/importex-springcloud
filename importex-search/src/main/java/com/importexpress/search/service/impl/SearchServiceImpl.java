@@ -5,10 +5,8 @@ import com.google.common.collect.Lists;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.*;
 import com.importexpress.search.pojo.*;
-import com.importexpress.search.pojo.Currency;
 import com.importexpress.search.service.*;
 import com.importexpress.search.util.DoubleUtil;
-import com.importexpress.search.util.ExhaustUtils;
 import com.importexpress.search.util.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +21,9 @@ import org.springframework.stereotype.Service;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -140,7 +140,7 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public SearchResultWrap productSerach(SearchParam param) {
         SearchResultWrap wrap = new SearchResultWrap();
-        Page page = new Page();
+        PageWrap page = new PageWrap();
         page.setRecordCount(0L);
         wrap.setPage(page);
         String queryString = param.getKeyword();
@@ -542,7 +542,7 @@ public class SearchServiceImpl implements SearchService {
 
         //分页
         long recordCount = solrResult.getRecordCount();
-        Page paging = pageService.paging(param, recordCount);
+        PageWrap paging = pageService.paging(param, recordCount);
         wrap.setPage(paging);
         return wrap;
     }

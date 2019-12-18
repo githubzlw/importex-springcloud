@@ -1,10 +1,9 @@
 package com.importexpress.search.service.impl;
 
-import com.importexpress.search.pojo.Page;
+import com.importexpress.search.pojo.PageWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.service.PageService;
 import com.importexpress.search.service.base.UriService;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,11 +14,11 @@ public class PageServiceImpl extends UriService implements PageService {
 	private String omit = "<span>....</span>&nbsp;&nbsp;";
 
 	@Override
-	public Page paging(SearchParam param, long recordCount) {
+	public PageWrap paging(SearchParam param, long recordCount) {
 		long rows = param.getPageSize();
 		long pageCount = recordCount % rows > 0 ? recordCount / rows + 1 : recordCount / rows;
 
-		Page page = new Page();
+		PageWrap page = new PageWrap();
 		page.setRecordCount(recordCount);
 		page.setAmount(pageCount);
 		page.setCurrent(param.getPage());

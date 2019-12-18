@@ -1,6 +1,6 @@
 package com.importexpress.search.service;
 
-import com.importexpress.search.pojo.Page;
+import com.importexpress.search.pojo.PageWrap;
 import com.importexpress.search.pojo.SearchParam;
 import org.junit.Assert;
 import org.junit.Test;
@@ -8,8 +8,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class PageServiceTest {
@@ -26,7 +24,7 @@ public class PageServiceTest {
         param.setUserType(1);
         param.setFreeShipping(2);
         param.setPage(1);
-        Page paging = pageService.paging(param, 432);
+        PageWrap paging = pageService.paging(param, 432);
         Assert.assertEquals(432,paging.getRecordCount());
         System.out.println(paging.getPaging());
     }

@@ -19,7 +19,7 @@ public class SearchResultWrap {
 	private List<CategoryWrap> categorys;
 
 	@ApiModelProperty(value="页码")
-	private Page page;
+	private PageWrap page;
 
 	@ApiModelProperty(value="属性集合")
 	private List<AttributeWrap> attributeWraps;

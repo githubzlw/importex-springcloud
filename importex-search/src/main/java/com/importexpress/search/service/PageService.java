@@ -1,6 +1,6 @@
 package com.importexpress.search.service;
 
-import com.importexpress.search.pojo.Page;
+import com.importexpress.search.pojo.PageWrap;
 import com.importexpress.search.pojo.SearchParam;
 
 /**数据分页
@@ -15,5 +15,5 @@ public interface PageService {
 	 * @param recordCount 搜索结果数量
 	 * @return
 	 */
-	Page paging(SearchParam param, long recordCount);
+	 PageWrap paging(SearchParam param, long recordCount);
 }

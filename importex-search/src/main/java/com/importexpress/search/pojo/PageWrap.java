@@ -8,7 +8,7 @@ import lombok.Data;
  *
  */
 @Data
-public class Page {
+public class PageWrap {
 
 	/**
 	 * 总数量

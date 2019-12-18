@@ -334,13 +334,12 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         StringBuilder q_str = new StringBuilder();
         String filterName = splicingSyntax.queryKey(queryString);
         if(StringUtils.isNotBlank(filterName)){
-            q_str.append(" (");
             q_str.append("(").append(filterName.replace("nameQuery:", "custom_enname:"))
                     .append(")^0.9");
             if(site == 1){
                 q_str.append(" OR (")
                         .append(filterName.replace("nameQuery:", "custom_type_txt:"))
-                        .append(")^1.3)");
+                        .append(")^1.3");
             }else{
                 q_str.append(" OR (")
                         .append(filterName.replace("nameQuery:", "custom_rw_keyword:"))
@@ -350,7 +349,6 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
                 q_str.append(" OR (")
                         .append(filterName.replace("nameQuery:", "custom_keyword:")).append(")^0.9");
             }
-            q_str.append(")");
         }
         //产品id搜索
         if(StrUtils.isMatch(queryString, "(\\d+)") && queryString.length() > 5) {
