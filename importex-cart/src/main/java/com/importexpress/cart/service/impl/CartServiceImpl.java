@@ -17,6 +17,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -27,15 +29,15 @@ import java.util.List;
 @Service
 public class CartServiceImpl implements CartService {
 
-    private final StringRedisTemplate redisTemplate;
-
     private final Config config;
+
+    private final StringRedisTemplate redisTemplate;
 
     private final ProductServiceFeign productServiceFeign;
 
     public CartServiceImpl(StringRedisTemplate redisTemplate, Config config, ProductServiceFeign productServiceFeign) {
-        this.redisTemplate = redisTemplate;
         this.config = config;
+        this.redisTemplate = redisTemplate;
         this.productServiceFeign = productServiceFeign;
     }
 
@@ -47,7 +49,6 @@ public class CartServiceImpl implements CartService {
         String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
         Boolean hexists =
                 redisTemplate.opsForHash().hasKey(userCartKey, itemId);
-
         //如果存在数量相加itemId
         if (hexists) {
             String json = (String)redisTemplate.opsForHash().get(userCartKey, itemId + "");
@@ -74,6 +75,7 @@ public class CartServiceImpl implements CartService {
      * @param itemId
      */
     private void checkItemId(String itemId) {
+
         if(StringUtils.isEmpty(itemId)){
             throw new IllegalArgumentException("itemId is empty");
         }
@@ -91,22 +93,24 @@ public class CartServiceImpl implements CartService {
      */
     private CartItem product2CartItem(Product product, long num, String[] split){
 
-        CartItem cartProduct =new CartItem();
-
-        cartProduct.setPid(product.getPid());
-        cartProduct.setShoipId(product.getShop_id());
-        cartProduct.setName(product.getEnname());
-        cartProduct.setWei(NumberUtils.toFloat(product.getWeight()));
-        cartProduct.setWPrice(product.getWprice());
-        cartProduct.setNum(num);
-        cartProduct.setSubId1(NumberUtils.toLong(split[1]));
+        CartItem cartItem =new CartItem();
+        cartItem.setPid(product.getPid());
+        cartItem.setSi(product.getShop_id());
+        cartItem.setSn(product.getShop_enname());
+        cartItem.setName(product.getEnname());
+        cartItem.setWei(NumberUtils.toFloat(product.getWeight()));
+        cartItem.setWpri(product.getWprice());
+        cartItem.setNum(num);
+        cartItem.setSid1(NumberUtils.toLong(split[1]));
         if(split.length>=3){
-            cartProduct.setSubId2(NumberUtils.toLong(split[2]));
+            cartItem.setSid2(NumberUtils.toLong(split[2]));
         }
-        cartProduct.setChecked(1);
-        fillOtherInfo(product,cartProduct);
-
-        return cartProduct;
+        cartItem.setChk(1);
+        long now = Instant.now().toEpochMilli();
+        cartItem.setCt(now);
+        cartItem.setUt(now);
+        fillOtherInfo(product,cartItem);
+        return cartItem;
     }
 
     /**
@@ -123,22 +127,20 @@ public class CartServiceImpl implements CartService {
         ImmutableList<String> lst = ImmutableList.copyOf(Splitter.on("],").split(entype));
         for(String item:lst){
             String cleanStr = CharMatcher.anyOf("[]").removeFrom(item).trim();
-            if(StringUtils.contains(cleanStr,"id="+cartItem.getSubId1())
-            || StringUtils.contains(cleanStr,"id="+cartItem.getSubId2())){
+            if(StringUtils.contains(cleanStr,"id="+cartItem.getSid1())
+            || StringUtils.contains(cleanStr,"id="+cartItem.getSid2())){
                 //img=
                 int beginIndex = cleanStr.indexOf(str2);
                 String tmp = cleanStr.substring(beginIndex + str2.length());
                 if(StringUtils.isNotEmpty(tmp)){
                     cartItem.setImg(tmp);
                 }
-
                 //type
                 beginIndex = cleanStr.indexOf(str1);
                 sb.append(cleanStr, beginIndex+str1.length(), cleanStr.indexOf(',', beginIndex)).append(" ");
             }
         }
-        cartItem.setTypeName(sb.toString().trim());
-
+        cartItem.setTn(sb.toString().trim());
     }
 
 
@@ -169,7 +171,8 @@ public class CartServiceImpl implements CartService {
         }
         CartItem cartItem = new Gson().fromJson(json, CartItem.class);
         cartItem.setNum(num);
-        cartItem.setChecked(checked);
+        cartItem.setChk(checked);
+        cartItem.setUt(Instant.now().toEpochMilli());
         redisTemplate.opsForHash().put(userCartKey, itemId , new Gson().toJson(cartItem));
         return 1;
     }
@@ -183,7 +186,7 @@ public class CartServiceImpl implements CartService {
 
         for (Object json : jsonList) {
             CartItem cartItem = new Gson().fromJson(json.toString(), CartItem.class);
-            cartItem.setChecked(checked);
+            cartItem.setChk(checked);
             redisTemplate.opsForHash().put(userCartKey, cartItem.getItemId(), new Gson().toJson(cartItem));
         }
 
@@ -207,7 +210,7 @@ public class CartServiceImpl implements CartService {
         List<Object> jsonList = redisTemplate.opsForHash().values(userCartKey);
         for (Object json : jsonList) {
             CartItem cartItem = new Gson().fromJson(json.toString(), CartItem.class);
-            if(cartItem.getChecked()==1) {
+            if(cartItem.getChk()==1) {
                 redisTemplate.opsForHash().delete(userCartKey, cartItem.getItemId());
             }
         }

@@ -11,10 +11,12 @@ import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author jack.luo
@@ -45,13 +47,30 @@ public class Cart implements Serializable {
                 }
             }
         }else {
-            items.add(item);
+            //找同pid
+            boolean isFind=false;
+            for (int i = 0; i < items.size(); i++) {
+                if(item.getPid()==items.get(i).getPid()){
+                    items.add(i,item);
+                    isFind = true;
+                    break;
+                }
+            }
+            if(!isFind){
+                items.add(item);
+            }
         }
     }
 
     public List<CartItem> getItems() {
-        return items;
+//        List<CartItem> collect = this.items.stream().sorted(
+//                Comparator.comparingLong(CartItem::getUt).
+//                        thenComparing(CartItem::getSi)).collect(Collectors.toList());
+//        return collect;
+        return this.items;
     }
+
+
 
     public void setItems(List<CartItem> items) {
         this.items = items;
@@ -81,7 +100,7 @@ public class Cart implements Serializable {
         BigDecimal result = new BigDecimal("0");
         //计算
         for (CartItem cartItem : items) {
-            result = result.add(cartItem.getPrice().multiply(BigDecimal.valueOf(cartItem.getNum())));
+            result = result.add(cartItem.getPri().multiply(BigDecimal.valueOf(cartItem.getNum())));
         }
         return result;
     }
@@ -128,7 +147,7 @@ public class Cart implements Serializable {
 
         this.items.forEach( i ->{
             if(collect.containsKey(i.getPid())){
-                i.setPrice(calculatePrice(i.getWPrice(),collect.get(i.getPid()).getSum()));
+                i.setPri(calculatePrice(i.getWpri(),collect.get(i.getPid()).getSum()));
             }
         });
 

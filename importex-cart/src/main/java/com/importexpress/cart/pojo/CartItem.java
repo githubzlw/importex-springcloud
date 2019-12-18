@@ -1,12 +1,7 @@
 package com.importexpress.cart.pojo;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,35 +18,40 @@ public class CartItem implements Serializable {
 
     private long pid;
 
-    private long subId1;
+    private long sid1;
 
-    private long subId2;
+    private long sid2;
 
     /**
      * 店铺id
      */
-    private String shoipId;
+    private String si;
+
+    /**
+     * 店铺英文名字
+     */
+    private String sn;
 
     /**重量 */
     private float wei;
 
-    /**是否有货 */
-    private Boolean isHave = true;
+    /**状态 上架:1 下架:0 */
+    private int st =1;
 
     /**价格 */
-    private BigDecimal price;
+    private BigDecimal pri;
 
     /**区间价格 */
-    private String wPrice;
+    private String wpri;
 
     /**规格 */
-    private String typeName;
+    private String tn;
 
     /**数量 */
     private long num;
 
     /**是否勾选 1：勾选 0：未勾选 -1：无效 */
-    private int checked;
+    private int chk;
 
     /**名称 */
     private String name;
@@ -59,12 +59,18 @@ public class CartItem implements Serializable {
     /**图片路径 */
     private String img;
 
+    /**create timestamp */
+    private long ct;
+
+    /**update timestamp */
+    private long ut;
+
     public String getItemId(){
         StringBuilder sb = new StringBuilder();
         sb.append(this.pid).append(":");
-        sb.append(this.subId1);
-        if(this.subId2 > 0){
-            sb.append(":").append(this.subId2);
+        sb.append(this.sid1);
+        if(this.sid2 > 0){
+            sb.append(":").append(this.sid2);
         }
         return sb.toString();
     }

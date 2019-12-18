@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 
 
 /**
@@ -27,6 +28,9 @@ public class CartServiceTest {
     public static final long USER_ID = 100001L;
     public static final String ITEM_ID1 = "560676334685:32162:324514";
     public static final String ITEM_ID2 = "560676334685:32161:324513";
+    public static final String ITEM_ID3 = "530333452003:32164:324512";
+    public static final String ITEM_ID4 = "547188149310:32161:324514";
+
     public static final char SITE = 'K';
     @Autowired
     private CartService cartService;
@@ -47,9 +51,12 @@ public class CartServiceTest {
     public void cart2() {
         Cart cart = cartService.getCartList(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
-        Assert.assertEquals(new BigDecimal("3.68"), cart.getItems().get(0).getPrice());
-        Assert.assertEquals("greybeard 80cm(31 inch | age 9-12M)", cart.getItems().get(0).getTypeName());
+        Assert.assertEquals(new BigDecimal("3.68"), cart.getItems().get(0).getPri());
+        Assert.assertEquals("greybeard 80cm(31 inch | age 9-12M)", cart.getItems().get(0).getTn());
         Assert.assertEquals("560676334685/9192394532_2128907802.60x60.jpg", cart.getItems().get(0).getImg());
+        Assert.assertTrue(cart.getItems().get(0).getCt()< Instant.now().toEpochMilli());
+        Assert.assertTrue(cart.getItems().get(0).getUt()< Instant.now().toEpochMilli());
+
     }
 
     /**
@@ -62,7 +69,7 @@ public class CartServiceTest {
                 (1, cartService.updateCartNum(SITE, USER_ID, ITEM_ID1, 99, 1));
         Cart cart =  cartService.getCartList(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
-        Assert.assertEquals(new BigDecimal("3.35"), cart.getItems().get(0).getPrice());
+        Assert.assertEquals(new BigDecimal("3.35"), cart.getItems().get(0).getPri());
 
     }
 
@@ -75,7 +82,7 @@ public class CartServiceTest {
                 (1, cartService.addCart(SITE, USER_ID, ITEM_ID1, 1));
         Cart cart =  cartService.getCartList(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
-        Assert.assertEquals(new BigDecimal("3.14"), cart.getItems().get(0).getPrice());
+        Assert.assertEquals(new BigDecimal("3.14"), cart.getItems().get(0).getPri());
     }
 
     /**
@@ -101,14 +108,14 @@ public class CartServiceTest {
         Assert.assertEquals(BigDecimal.valueOf(3.35d * 3), cart.getTotalPrice());
         Assert.assertEquals(0.11f*3, cart.getTotalWeight(),0.0001f);
         Assert.assertEquals(2, cart.getItems().size());
-        Assert.assertEquals(1, cart.getItems().get(0).getChecked());
+        Assert.assertEquals(1, cart.getItems().get(0).getChk());
 
         Assert.assertEquals
                 (1, cartService.checkAll(SITE, USER_ID, 0));
         cart = cartService.getCartList(SITE, USER_ID);
         Assert.assertEquals(2, cart.getItems().size());
-        Assert.assertEquals(0, cart.getItems().get(0).getChecked());
-        Assert.assertEquals(0, cart.getItems().get(1).getChecked());
+        Assert.assertEquals(0, cart.getItems().get(0).getChk());
+        Assert.assertEquals(0, cart.getItems().get(1).getChk());
     }
 
     /**
@@ -122,6 +129,40 @@ public class CartServiceTest {
                 (1, cartService.delChecked(SITE, USER_ID));
         Cart cart =  cartService.getCartList(SITE, USER_ID);
         Assert.assertEquals(0, cart.getItems().size());
+    }
+
+    /**
+     * sort
+     */
+    @Test
+    public void cart8() {
+
+        Assert.assertEquals
+                (1, cartService.addCart(SITE, USER_ID, ITEM_ID1, 1));
+        Assert.assertEquals
+                (1, cartService.addCart(SITE, USER_ID, ITEM_ID3, 3));
+        Assert.assertEquals
+                (1, cartService.addCart(SITE, USER_ID, ITEM_ID2, 2));
+        Assert.assertEquals
+                (1, cartService.addCart(SITE, USER_ID, ITEM_ID4, 4));
+
+
+        Cart cart =  cartService.getCartList(SITE, USER_ID);
+
+        Assert.assertEquals(10, cart.getTotalAmount());
+        Assert.assertEquals(4, cart.getItems().size());
+
+        Assert.assertEquals(ITEM_ID4, cart.getItems().get(0).getItemId());
+        Assert.assertEquals(ITEM_ID1, cart.getItems().get(1).getItemId());
+        Assert.assertEquals(ITEM_ID2, cart.getItems().get(2).getItemId());
+        Assert.assertEquals(ITEM_ID3, cart.getItems().get(3).getItemId());
+
+
+        Assert.assertEquals
+                (1, cartService.checkAll(SITE, USER_ID, 1));
+        Assert.assertEquals
+                (1, cartService.delChecked(SITE, USER_ID));
+
     }
 
     @Test
