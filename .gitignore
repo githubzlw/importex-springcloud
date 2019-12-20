@@ -52,7 +52,6 @@ importex-pay/target/
 importex-registry/target/
 importex-comm/src/main/resources/
 importex-comm/src/test/
-importex-email/src/test/
 importex-utils/target/
 importex-search/target/
 importex-shopify/target/

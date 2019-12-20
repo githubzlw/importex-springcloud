@@ -15,8 +15,6 @@ public class MultiSiteUtil {
         site = siteEnum.getCode();
     }
 
-
-
     public static char getSiteType(){
 
         switch (siteEnum){
@@ -26,6 +24,10 @@ public class MultiSiteUtil {
                 return 'K';
             case PETS:
                 return 'P';
+            case HOME:
+                return 'H';
+            case MEDIC:
+                return 'M';
             default:
                 throw new IllegalArgumentException("Unsupport siteEnum:"+siteEnum);
         }
@@ -41,7 +43,6 @@ public class MultiSiteUtil {
         System.out.println(checkBit(2, 1));
         System.out.println(checkBit(4, 3));
         System.out.println(checkBit(4, 2));
-
 
     }
 }

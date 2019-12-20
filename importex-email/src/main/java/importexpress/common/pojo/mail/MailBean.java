@@ -13,6 +13,16 @@ public class MailBean {
     private String to;
     private String bcc;
     private String subject;
+    public String body;
+
+    /** 1:线上请求    2:线下请求 */
+    public int type=1;
+
+    /** true:测试模板（不实际发送邮件） */
+    private boolean isTest=false;
+
+    /** 区分网站*/
+    private SiteEnum siteEnum;
 
     public String getTo() {
         return to;
@@ -62,15 +72,7 @@ public class MailBean {
         isTest = test;
     }
 
-    public String body;
 
-    /** 1:线上请求    2:线下请求 */
-    public int type=1;
-
-    /** true:测试模板（不实际发送邮件） */
-    private boolean isTest=false;
-
-    private SiteEnum siteEnum;
 
     public TemplateType getTemplateType() {
         return templateType;

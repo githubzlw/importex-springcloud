@@ -5,6 +5,8 @@ import importexpress.common.pojo.mail.MailBean;
 import importexpress.email.service.SendMail;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -16,47 +18,35 @@ import java.util.Properties;
 
 /**
  * @author jack.luo
- * @date 2018/10/23
+ * @date 2019/12/20
  * https://docs.aws.amazon.com/zh_cn/ses/latest/DeveloperGuide/send-using-smtp-java.html
  */
 @Slf4j
-public class SendMailByAmazon implements SendMail {
-
+public final class SendMailByAmazon implements SendMail {
 
     private static final String HOST = "email-smtp.us-west-2.amazonaws.com";
     private static final String SMTP_USERNAME = "AKIAIO7TWKGGFXB5WY2A";
     private static final String SMTP_PASSWORD = "AuYzbo9jZAUkWX35u5mwPdFeUJVdKI6K2sqTHCXZyiK6";
     private static final int PORT = 587;
 
-    public SendMailByAmazon() {
-    }
-
+    /**
+     * sendMail
+     *
+     * @param mailBean
+     * @throws IllegalStateException
+     */
     @Override
     public void sendMail(MailBean mailBean) throws IllegalStateException {
 
-        Properties props = System.getProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.port", PORT);
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.auth", "true");
-
-        Session session = Session.getDefaultInstance(props);
-
-        MimeMessage msg = new MimeMessage(session);
         Transport transport = null;
         try {
-
-            String from;
-            String fromName;
-            if (mailBean.getSiteEnum() == SiteEnum.IMPORTX) {
-                from = "service@importexpress.com";
-                fromName = "Import-Express.com";
-            } else {
-                from = "service@chinawholesaleinc.com";
-                fromName = "ChinaWholesaleInc.com";
-            }
+            Properties props = getProperties();
+            Session session = Session.getDefaultInstance(props);
+            MimeMessage msg = new MimeMessage(session);
+            Pair<String, String> fromInfo = getFromInfo(mailBean.getSiteEnum());
+            String from = fromInfo.getLeft();
+            String fromName = fromInfo.getRight();
             msg.setFrom(new InternetAddress(from, fromName));
-
             msg.setRecipient(Message.RecipientType.TO, new InternetAddress(mailBean.getTo()));
             if (StringUtils.isNotBlank(mailBean.getBcc())) {
                 msg.setRecipient(Message.RecipientType.BCC, new InternetAddress(mailBean.getBcc()));
@@ -69,7 +59,7 @@ public class SendMailByAmazon implements SendMail {
             transport.sendMessage(msg, msg.getAllRecipients());
             log.info("邮件发送成功..ToMail:[" + mailBean.getTo() + "],Subject:[" + mailBean.getSubject() + "]");
         } catch (Exception e) {
-            log.error("sendMail", e);
+            log.error("邮件发送失败", e);
             throw new IllegalStateException("sendMail error");
         } finally {
             if (transport != null) {
@@ -81,4 +71,41 @@ public class SendMailByAmazon implements SendMail {
             }
         }
     }
+
+    /**
+     * getProperties
+     *
+     * @return
+     */
+    private Properties getProperties() {
+        Properties props = System.getProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.port", PORT);
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.auth", "true");
+        return props;
+    }
+
+    /**
+     * getFromInfo
+     *
+     * @param siteEnum
+     * @return
+     */
+    private Pair<String, String> getFromInfo(SiteEnum siteEnum) {
+
+        String from;
+        String fromName;
+        if (siteEnum == SiteEnum.IMPORTX) {
+            from = "service@importexpress.com";
+            fromName = "Import-Express.com";
+        } else if (siteEnum == SiteEnum.KIDS || siteEnum == SiteEnum.PETS || siteEnum == SiteEnum.HOME) {
+            from = "service@chinawholesaleinc.com";
+            fromName = "ChinaWholesaleInc.com";
+        } else {
+            throw new UnsupportedOperationException("siteEnum value is not support! value=" + siteEnum);
+        }
+        return new ImmutablePair(from, fromName);
+    }
+
 }

@@ -7,4 +7,5 @@ public interface SendMail {
 
 
     void sendMail(MailBean mailBean) throws IllegalStateException;
+
 }
