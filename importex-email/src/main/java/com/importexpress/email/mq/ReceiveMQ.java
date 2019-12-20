@@ -12,12 +12,12 @@ import org.springframework.stereotype.Service;
  * @author lhao
  */
 @Service
-public class Receiver {
+public class ReceiveMQ {
 
     private final SendMailFactory sendMailFactory;
 
 
-    public Receiver(SendMailFactory sendMailFactory) {
+    public ReceiveMQ(SendMailFactory sendMailFactory) {
         this.sendMailFactory = sendMailFactory;
     }
 

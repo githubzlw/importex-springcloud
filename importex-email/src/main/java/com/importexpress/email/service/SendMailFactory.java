@@ -35,7 +35,7 @@ public class SendMailFactory {
 
     private final SpringTemplateEngine thymeleafEngine;
 
-    public SendMailFactory(SpringTemplateEngine thymeleafEngine, Config config, @Qualifier("SendMailByAmazon") SendMail mail) {
+    public SendMailFactory(SpringTemplateEngine thymeleafEngine, Config config, @Qualifier("SendMailAmzImpl") SendMail mail) {
         this.thymeleafEngine = thymeleafEngine;
         this.config = config;
         this.mail = mail;

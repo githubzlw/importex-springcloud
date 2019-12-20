@@ -24,8 +24,8 @@ import java.util.Properties;
  * https://docs.aws.amazon.com/zh_cn/ses/latest/DeveloperGuide/send-using-smtp-java.html
  */
 @Slf4j
-@Service("SendMailByAmazon")
-public final class SendMailAmzImpl implements SendMail {
+@Service("SendMailAmzImpl")
+public class SendMailAmzImpl implements SendMail {
 
 
     private final Config config;

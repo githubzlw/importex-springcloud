@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
  * @author lhao
  */
 @Service
-public class Sender {
+public class SendMQ {
 
     private final AmqpTemplate rabbitTemplate;
 
     private final Config config;
 
-    public Sender(AmqpTemplate rabbitTemplate, Config config) {
+    public SendMQ(AmqpTemplate rabbitTemplate, Config config) {
         this.rabbitTemplate = rabbitTemplate;
         this.config = config;
     }
