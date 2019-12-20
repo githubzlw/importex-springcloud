@@ -1,7 +1,7 @@
 package importexpress.email.service;
 
-import importexpress.common.pojo.mail.MailBean;
-import importexpress.common.pojo.mail.TemplateType;
+import com.importexpress.comm.pojo.MailBean;
+import com.importexpress.comm.pojo.TemplateType;
 import importexpress.email.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -1,7 +1,7 @@
 package importexpress.email.service.impl;
 
+import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.SiteEnum;
-import importexpress.common.pojo.mail.MailBean;
 import importexpress.email.config.Config;
 import importexpress.email.service.SendMail;
 import lombok.extern.slf4j.Slf4j;

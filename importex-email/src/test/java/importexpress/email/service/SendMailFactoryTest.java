@@ -1,8 +1,8 @@
 package importexpress.email.service;
 
 
+import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.SiteEnum;
-import importexpress.common.pojo.mail.MailBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

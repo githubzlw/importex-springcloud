@@ -1,11 +1,11 @@
 package importexpress.email.service.impl;
 
+import com.importexpress.comm.pojo.MailBean;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.multipart.FormDataMultiPart;
-import importexpress.common.pojo.mail.MailBean;
 import importexpress.email.service.SendMail;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

@@ -21,4 +21,6 @@ public class Config {
     @Value("${amazon.mail.port}")
     public String amazonMailPort;
 
+    public final static String QUEUE_MAIL ="mail";
+
 }

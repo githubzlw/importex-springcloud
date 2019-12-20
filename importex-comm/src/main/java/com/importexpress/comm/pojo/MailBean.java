@@ -1,6 +1,5 @@
-package importexpress.common.pojo.mail;
+package com.importexpress.comm.pojo;
 
-import com.importexpress.comm.pojo.SiteEnum;
 import lombok.Data;
 
 import java.util.Map;
