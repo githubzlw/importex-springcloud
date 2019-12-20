@@ -182,7 +182,7 @@ public class Cart implements Serializable {
                     return (long)(Float.parseFloat(lst.get(1))*100);
                 }else{
                     if(Integer.parseInt(priceRange)>=productNum){
-                        return NumberUtils.toLong(priceRange);
+                        return (long)(Float.parseFloat(priceRange)*100);
                     }
                 }
             }else{
