@@ -1,4 +1,4 @@
-package importexpress.email.config;
+package com.importexpress.email.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

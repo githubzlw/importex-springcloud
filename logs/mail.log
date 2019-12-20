@@ -1,0 +1,137 @@
+2019-12-20 13:00:40.137  INFO 22940 --- [main] importexpress.email.MailApp              : The following profiles are active: dev
+2019-12-20 13:00:40.149  INFO 22940 --- [main] ConfigServletWebServerApplicationContext : Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@21129f1f: startup date [Fri Dec 20 13:00:40 CST 2019]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@765d7657
+2019-12-20 13:00:40.757  INFO 22940 --- [main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=df99c0d7-4147-321e-9192-3baae409bc78
+2019-12-20 13:00:40.773  INFO 22940 --- [main] f.a.AutowiredAnnotationBeanPostProcessor : JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2019-12-20 13:00:40.808  INFO 22940 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration' of type [org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration$$EnhancerBySpringCGLIB$$34c766b0] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-12-20 13:00:40.867  INFO 22940 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$8a75ab7f] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-12-20 13:00:41.216  INFO 22940 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 18001 (http)
+2019-12-20 13:00:41.236  INFO 22940 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2019-12-20 13:00:41.237  INFO 22940 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet Engine: Apache Tomcat/8.5.34
+2019-12-20 13:00:41.241  INFO 22940 --- [localhost-startStop-1] o.a.catalina.core.AprLifecycleListener   : The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [C:\Program Files\Java\jdk1.8.0_101\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IDM Computer Solutions\UltraEdit;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Java\jdk1.8.0_101\bin;C:\Users\luohao\scoop\shims;C:\Users\luohao\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Bandizip\;C:\Program Files\Oracle\VirtualBox;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Docker Toolbox;C:\Users\luohao\AppData\Roaming\npm;C:\Users\luohao\AppData\Local\Programs\Fiddler;C:\Users\luohao\AppData\Local\Programs\Python\Python37\;C:\Program Files\nodejs;C:\Users\luohao\AppData\Local\Programs\Python\Python37\Scripts;D:\apache-maven-3.6.2\bin;;.]
+2019-12-20 13:00:41.554  INFO 22940 --- [localhost-startStop-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2019-12-20 13:00:41.555  INFO 22940 --- [localhost-startStop-1] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1405 ms
+2019-12-20 13:00:41.658  INFO 22940 --- [localhost-startStop-1] o.s.b.w.servlet.ServletRegistrationBean  : Servlet dispatcherServlet mapped to [/]
+2019-12-20 13:00:41.662  INFO 22940 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'characterEncodingFilter' to: [/*]
+2019-12-20 13:00:41.663  INFO 22940 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2019-12-20 13:00:41.663  INFO 22940 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2019-12-20 13:00:41.663  INFO 22940 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'requestContextFilter' to: [/*]
+2019-12-20 13:00:41.891  WARN 22940 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2019-12-20 13:00:41.891  INFO 22940 --- [main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-12-20 13:00:41.894  WARN 22940 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2019-12-20 13:00:41.894  INFO 22940 --- [main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-12-20 13:00:41.987  INFO 22940 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-12-20 13:00:42.240  INFO 22940 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@21129f1f: startup date [Fri Dec 20 13:00:40 CST 2019]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@765d7657
+2019-12-20 13:00:42.292  INFO 22940 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/demo],methods=[GET]}" onto public java.lang.String importexpress.email.control.DemoController.demo(java.lang.String)
+2019-12-20 13:00:42.296  INFO 22940 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2019-12-20 13:00:42.297  INFO 22940 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2019-12-20 13:00:42.395  INFO 22940 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-12-20 13:00:42.395  INFO 22940 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-12-20 13:00:43.723  INFO 22940 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2019-12-20 13:00:43.731  INFO 22940 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'rabbitConnectionFactory' has been autodetected for JMX exposure
+2019-12-20 13:00:43.732  INFO 22940 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'refreshScope' has been autodetected for JMX exposure
+2019-12-20 13:00:43.733  INFO 22940 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'configurationPropertiesRebinder' has been autodetected for JMX exposure
+2019-12-20 13:00:43.733  INFO 22940 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'environmentManager' has been autodetected for JMX exposure
+2019-12-20 13:00:43.736  INFO 22940 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located managed bean 'environmentManager': registering with JMX server as MBean [org.springframework.cloud.context.environment:name=environmentManager,type=EnvironmentManager]
+2019-12-20 13:00:43.747  INFO 22940 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located managed bean 'refreshScope': registering with JMX server as MBean [org.springframework.cloud.context.scope.refresh:name=refreshScope,type=RefreshScope]
+2019-12-20 13:00:43.755  INFO 22940 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located managed bean 'configurationPropertiesRebinder': registering with JMX server as MBean [org.springframework.cloud.context.properties:name=configurationPropertiesRebinder,context=21129f1f,type=ConfigurationPropertiesRebinder]
+2019-12-20 13:00:43.762  INFO 22940 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located managed bean 'rabbitConnectionFactory': registering with JMX server as MBean [org.springframework.amqp.rabbit.connection:name=rabbitConnectionFactory,type=CachingConnectionFactory]
+2019-12-20 13:00:43.789  INFO 22940 --- [main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 0
+2019-12-20 13:00:43.802  INFO 22940 --- [main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2019-12-20 13:00:43.836  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2019-12-20 13:00:43.994  INFO 22940 --- [main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2019-12-20 13:00:43.994  INFO 22940 --- [main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2019-12-20 13:00:44.099  INFO 22940 --- [main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2019-12-20 13:00:44.099  INFO 22940 --- [main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2019-12-20 13:00:44.372  INFO 22940 --- [main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2019-12-20 13:00:44.611  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2019-12-20 13:00:44.611  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2019-12-20 13:00:44.611  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2019-12-20 13:00:44.611  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2019-12-20 13:00:44.611  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2019-12-20 13:00:44.611  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2019-12-20 13:00:44.612  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2019-12-20 13:00:44.767  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2019-12-20 13:00:44.769  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2019-12-20 13:00:44.771  INFO 22940 --- [main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2019-12-20 13:00:44.774  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1576818044773 with initial instances count: 2
+2019-12-20 13:00:44.779  INFO 22940 --- [main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application MAIL-SERVICE with eureka with status UP
+2019-12-20 13:00:44.780  INFO 22940 --- [main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1576818044780, current=UP, previous=STARTING]
+2019-12-20 13:00:44.781  INFO 22940 --- [DiscoveryClient-InstanceInfoReplicator-0] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_MAIL-SERVICE/DESKTOP-QQABKP8.mshome.net:mail-service:18001: registering service...
+2019-12-20 13:00:44.787  INFO 22940 --- [main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 2147483647
+2019-12-20 13:00:44.794  INFO 22940 --- [SimpleAsyncTaskExecutor-1] o.s.a.r.c.CachingConnectionFactory       : Attempting to connect to: [192.168.1.98:5672]
+2019-12-20 13:00:44.824  INFO 22940 --- [DiscoveryClient-InstanceInfoReplicator-0] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_MAIL-SERVICE/DESKTOP-QQABKP8.mshome.net:mail-service:18001 - registration status: 204
+2019-12-20 13:00:44.844  INFO 22940 --- [SimpleAsyncTaskExecutor-1] o.s.a.r.c.CachingConnectionFactory       : Created new connection: rabbitConnectionFactory#6a0659ac:0/SimpleConnection@3bacb05c [delegate=amqp://guest@192.168.1.98:5672/, localPort= 62907]
+2019-12-20 13:00:44.982  INFO 22940 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 18001 (http) with context path ''
+2019-12-20 13:00:44.983  INFO 22940 --- [main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 18001
+2019-12-20 13:00:44.986  INFO 22940 --- [main] importexpress.email.MailApp              : Started MailApp in 6.573 seconds (JVM running for 8.624)
+2019-12-20 13:01:25.741  INFO 22940 --- [SimpleAsyncTaskExecutor-1] i.email.service.impl.SendMailAmzImpl     : 邮件发送成功..ToMail:[luohao518@yeah.net],Subject:[This is a test email]
+2019-12-20 13:05:44.613  INFO 22940 --- [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2019-12-20 13:10:44.614  INFO 22940 --- [AsyncResolver-bootstrap-executor-0] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2019-12-20 13:11:39.659  INFO 7520 --- [main] importexpress.email.MailApp              : The following profiles are active: dev
+2019-12-20 13:11:39.671  INFO 7520 --- [main] ConfigServletWebServerApplicationContext : Refreshing org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@6aa61224: startup date [Fri Dec 20 13:11:39 CST 2019]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@4c371370
+2019-12-20 13:11:40.339  INFO 7520 --- [main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=76b024ec-5533-3592-b33f-36e48788ee4f
+2019-12-20 13:11:40.354  INFO 7520 --- [main] f.a.AutowiredAnnotationBeanPostProcessor : JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+2019-12-20 13:11:40.392  INFO 7520 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration' of type [org.springframework.amqp.rabbit.annotation.RabbitBootstrapConfiguration$$EnhancerBySpringCGLIB$$9becf890] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-12-20 13:11:40.470  INFO 7520 --- [main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration' of type [org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration$$EnhancerBySpringCGLIB$$f19b3d5f] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2019-12-20 13:11:40.961  INFO 7520 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 18001 (http)
+2019-12-20 13:11:40.980  INFO 7520 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2019-12-20 13:11:40.981  INFO 7520 --- [main] org.apache.catalina.core.StandardEngine  : Starting Servlet Engine: Apache Tomcat/8.5.34
+2019-12-20 13:11:40.984  INFO 7520 --- [localhost-startStop-1] o.a.catalina.core.AprLifecycleListener   : The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [C:\Program Files\Java\jdk1.8.0_101\bin;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IDM Computer Solutions\UltraEdit;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Java\jdk1.8.0_101\bin;C:\Users\luohao\scoop\shims;C:\Users\luohao\AppData\Local\Microsoft\WindowsApps;C:\Program Files\Bandizip\;C:\Program Files\Oracle\VirtualBox;C:\Program Files\Microsoft VS Code\bin;C:\Program Files\Docker Toolbox;C:\Users\luohao\AppData\Roaming\npm;C:\Users\luohao\AppData\Local\Programs\Fiddler;C:\Users\luohao\AppData\Local\Programs\Python\Python37\;C:\Program Files\nodejs;C:\Users\luohao\AppData\Local\Programs\Python\Python37\Scripts;D:\apache-maven-3.6.2\bin;;.]
+2019-12-20 13:11:41.298  INFO 7520 --- [localhost-startStop-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2019-12-20 13:11:41.298  INFO 7520 --- [localhost-startStop-1] o.s.web.context.ContextLoader            : Root WebApplicationContext: initialization completed in 1627 ms
+2019-12-20 13:11:41.400  INFO 7520 --- [localhost-startStop-1] o.s.b.w.servlet.ServletRegistrationBean  : Servlet dispatcherServlet mapped to [/]
+2019-12-20 13:11:41.405  INFO 7520 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'characterEncodingFilter' to: [/*]
+2019-12-20 13:11:41.405  INFO 7520 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+2019-12-20 13:11:41.405  INFO 7520 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'httpPutFormContentFilter' to: [/*]
+2019-12-20 13:11:41.406  INFO 7520 --- [localhost-startStop-1] o.s.b.w.servlet.FilterRegistrationBean   : Mapping filter: 'requestContextFilter' to: [/*]
+2019-12-20 13:11:41.710  WARN 7520 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2019-12-20 13:11:41.711  INFO 7520 --- [main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-12-20 13:11:41.715  WARN 7520 --- [main] c.n.c.sources.URLConfigurationSource     : No URLs will be polled as dynamic configuration sources.
+2019-12-20 13:11:41.715  INFO 7520 --- [main] c.n.c.sources.URLConfigurationSource     : To enable URLs as dynamic configuration sources, define System property archaius.configurationSource.additionalUrls or make config.properties available on classpath.
+2019-12-20 13:11:41.883  INFO 7520 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-12-20 13:11:42.125  INFO 7520 --- [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : Looking for @ControllerAdvice: org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext@6aa61224: startup date [Fri Dec 20 13:11:39 CST 2019]; parent: org.springframework.context.annotation.AnnotationConfigApplicationContext@4c371370
+2019-12-20 13:11:42.181  INFO 7520 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/demo],methods=[GET]}" onto public java.lang.String importexpress.email.control.DemoController.demo(java.lang.String)
+2019-12-20 13:11:42.184  INFO 7520 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+2019-12-20 13:11:42.184  INFO 7520 --- [main] s.w.s.m.m.a.RequestMappingHandlerMapping : Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+2019-12-20 13:11:42.225  INFO 7520 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-12-20 13:11:42.225  INFO 7520 --- [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+2019-12-20 13:11:42.247  INFO 7520 --- [main] .m.m.a.ExceptionHandlerExceptionResolver : Detected @ExceptionHandler methods in controllerAdviceProcessor
+2019-12-20 13:11:43.629  INFO 7520 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Registering beans for JMX exposure on startup
+2019-12-20 13:11:43.637  INFO 7520 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'rabbitConnectionFactory' has been autodetected for JMX exposure
+2019-12-20 13:11:43.638  INFO 7520 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'refreshScope' has been autodetected for JMX exposure
+2019-12-20 13:11:43.638  INFO 7520 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'configurationPropertiesRebinder' has been autodetected for JMX exposure
+2019-12-20 13:11:43.639  INFO 7520 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Bean with name 'environmentManager' has been autodetected for JMX exposure
+2019-12-20 13:11:43.642  INFO 7520 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located managed bean 'environmentManager': registering with JMX server as MBean [org.springframework.cloud.context.environment:name=environmentManager,type=EnvironmentManager]
+2019-12-20 13:11:43.653  INFO 7520 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located managed bean 'refreshScope': registering with JMX server as MBean [org.springframework.cloud.context.scope.refresh:name=refreshScope,type=RefreshScope]
+2019-12-20 13:11:43.663  INFO 7520 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located managed bean 'configurationPropertiesRebinder': registering with JMX server as MBean [org.springframework.cloud.context.properties:name=configurationPropertiesRebinder,context=6aa61224,type=ConfigurationPropertiesRebinder]
+2019-12-20 13:11:43.668  INFO 7520 --- [main] o.s.j.e.a.AnnotationMBeanExporter        : Located managed bean 'rabbitConnectionFactory': registering with JMX server as MBean [org.springframework.amqp.rabbit.connection:name=rabbitConnectionFactory,type=CachingConnectionFactory]
+2019-12-20 13:11:43.698  INFO 7520 --- [main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 0
+2019-12-20 13:11:43.712  INFO 7520 --- [main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2019-12-20 13:11:43.752  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2019-12-20 13:11:43.914  INFO 7520 --- [main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON encoding codec LegacyJacksonJson
+2019-12-20 13:11:43.914  INFO 7520 --- [main] c.n.d.provider.DiscoveryJerseyProvider   : Using JSON decoding codec LegacyJacksonJson
+2019-12-20 13:11:44.019  INFO 7520 --- [main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML encoding codec XStreamXml
+2019-12-20 13:11:44.019  INFO 7520 --- [main] c.n.d.provider.DiscoveryJerseyProvider   : Using XML decoding codec XStreamXml
+2019-12-20 13:11:44.271  INFO 7520 --- [main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2019-12-20 13:11:44.514  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2019-12-20 13:11:44.515  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2019-12-20 13:11:44.515  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2019-12-20 13:11:44.515  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2019-12-20 13:11:44.515  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2019-12-20 13:11:44.515  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2019-12-20 13:11:44.515  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2019-12-20 13:11:44.660  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2019-12-20 13:11:44.663  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2019-12-20 13:11:44.665  INFO 7520 --- [main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2019-12-20 13:11:44.668  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1576818704667 with initial instances count: 3
+2019-12-20 13:11:44.677  INFO 7520 --- [main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application MAIL-SERVICE with eureka with status UP
+2019-12-20 13:11:44.678  INFO 7520 --- [main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1576818704677, current=UP, previous=STARTING]
+2019-12-20 13:11:44.679  INFO 7520 --- [DiscoveryClient-InstanceInfoReplicator-0] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_MAIL-SERVICE/DESKTOP-QQABKP8.mshome.net:mail-service:18001: registering service...
+2019-12-20 13:11:44.682  INFO 7520 --- [main] o.s.c.support.DefaultLifecycleProcessor  : Starting beans in phase 2147483647
+2019-12-20 13:11:44.690  INFO 7520 --- [SimpleAsyncTaskExecutor-1] o.s.a.r.c.CachingConnectionFactory       : Attempting to connect to: [192.168.1.98:5672]
+2019-12-20 13:11:44.716  INFO 7520 --- [DiscoveryClient-InstanceInfoReplicator-0] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_MAIL-SERVICE/DESKTOP-QQABKP8.mshome.net:mail-service:18001 - registration status: 204
+2019-12-20 13:11:44.725  INFO 7520 --- [SimpleAsyncTaskExecutor-1] o.s.a.r.c.CachingConnectionFactory       : Created new connection: rabbitConnectionFactory#2875b016:0/SimpleConnection@668b2e84 [delegate=amqp://guest@192.168.1.98:5672/, localPort= 63334]
+2019-12-20 13:11:44.819  INFO 7520 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 18001 (http) with context path ''
+2019-12-20 13:11:44.820  INFO 7520 --- [main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 18001
+2019-12-20 13:11:44.822  INFO 7520 --- [main] importexpress.email.MailApp              : Started MailApp in 6.877 seconds (JVM running for 8.855)
+2019-12-20 13:12:11.332  INFO 7520 --- [SimpleAsyncTaskExecutor-1] i.email.service.impl.SendMailAmzImpl     : 邮件发送成功..ToMail:[luohao518@yeah.net],Subject:[This is a test email]

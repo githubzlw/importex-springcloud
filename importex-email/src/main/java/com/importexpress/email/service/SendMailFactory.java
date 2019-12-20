@@ -1,8 +1,8 @@
-package importexpress.email.service;
+package com.importexpress.email.service;
 
 import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.TemplateType;
-import importexpress.email.config.Config;
+import com.importexpress.email.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;

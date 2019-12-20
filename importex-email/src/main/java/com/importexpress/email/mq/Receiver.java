@@ -1,8 +1,8 @@
-package importexpress.email.mq;
+package com.importexpress.email.mq;
 
 import com.importexpress.comm.pojo.MailBean;
-import importexpress.email.config.Config;
-import importexpress.email.service.SendMailFactory;
+import com.importexpress.email.config.Config;
+import com.importexpress.email.service.SendMailFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
-package importexpress.email.mq;
+package com.importexpress.email.mq;
 
-import importexpress.email.config.Config;
+import com.importexpress.email.config.Config;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

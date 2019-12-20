@@ -1,4 +1,4 @@
-package importexpress.email;
+package com.importexpress.email;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

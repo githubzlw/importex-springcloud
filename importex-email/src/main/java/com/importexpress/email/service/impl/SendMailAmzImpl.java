@@ -1,9 +1,9 @@
-package importexpress.email.service.impl;
+package com.importexpress.email.service.impl;
 
 import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.SiteEnum;
-import importexpress.email.config.Config;
-import importexpress.email.service.SendMail;
+import com.importexpress.email.config.Config;
+import com.importexpress.email.service.SendMail;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;

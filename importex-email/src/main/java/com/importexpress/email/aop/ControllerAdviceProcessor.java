@@ -1,4 +1,4 @@
-package importexpress.email.aop;
+package com.importexpress.email.aop;
 
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.exception.BizException;

@@ -1,7 +1,7 @@
-package importexpress.email.mq;
+package com.importexpress.email.mq;
 
 import com.importexpress.comm.pojo.MailBean;
-import importexpress.email.config.Config;
+import com.importexpress.email.config.Config;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.stereotype.Service;
 

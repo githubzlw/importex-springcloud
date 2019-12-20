@@ -1,4 +1,4 @@
-package importexpress.email.mq;
+package com.importexpress.email.mq;
 
 import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.SiteEnum;

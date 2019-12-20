@@ -1,4 +1,4 @@
-package importexpress.email.aop;
+package com.importexpress.email.aop;
 
 import com.importexpress.comm.util.AOPLog;
 import org.aspectj.lang.ProceedingJoinPoint;
