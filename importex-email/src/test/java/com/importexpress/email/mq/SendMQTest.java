@@ -47,7 +47,7 @@ public class SendMQTest {
 
         MailBean mailBean = new MailBean();
         mailBean.setTo("luohao518@yeah.net");
-        mailBean.setSubject("This is a test email");
+        mailBean.setSubject("This is a ACTIVATION email");
         mailBean.setSiteEnum(SiteEnum.KIDS);
         mailBean.setTest(false);
         Map<String, String> model =new HashMap<>();
