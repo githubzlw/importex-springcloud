@@ -32,10 +32,10 @@ public class SendMailFactoryTest {
         );
         MailBean mailBean = new MailBean();
         mailBean.setTo("luohao518@yeah.net");
-        mailBean.setBcc("luohao518@yeah.net");
         mailBean.setSubject("This is a test email");
         mailBean.setSiteEnum(SiteEnum.KIDS);
         mailBean.setBody(body);
+        mailBean.setTest(false);
         sendMailFactory.sendMail(mailBean);
     }
 

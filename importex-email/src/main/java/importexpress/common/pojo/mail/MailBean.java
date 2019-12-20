@@ -1,6 +1,7 @@
 package importexpress.common.pojo.mail;
 
 import com.importexpress.comm.pojo.SiteEnum;
+import lombok.Data;
 
 import java.util.Map;
 
@@ -8,99 +9,34 @@ import java.util.Map;
  * @author jack.luo
  * @date 2019/9/5
  */
+@Data
 public class MailBean {
 
+    /** to*/
     private String to;
+
+    /** bcc*/
     private String bcc;
+
+    /** subject*/
     private String subject;
+
+    /** body*/
     public String body;
+
+    /** 填充键值*/
+    private Map<String, String> model;
+
+    /** 邮件类型 */
+    private TemplateType templateType;
 
     /** 1:线上请求    2:线下请求 */
     public int type=1;
 
     /** true:测试模板（不实际发送邮件） */
-    private boolean isTest=false;
+    private boolean isTest=true;
 
     /** 区分网站*/
     private SiteEnum siteEnum;
 
-    public String getTo() {
-        return to;
-    }
-
-    public void setTo(String to) {
-        this.to = to;
-    }
-
-    public String getBcc() {
-        return bcc;
-    }
-
-    public void setBcc(String bcc) {
-        this.bcc = bcc;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public boolean isTest() {
-        return isTest;
-    }
-
-    public void setTest(boolean test) {
-        isTest = test;
-    }
-
-
-
-    public TemplateType getTemplateType() {
-        return templateType;
-    }
-
-    public void setTemplateType(TemplateType templateType) {
-        this.templateType = templateType;
-    }
-
-    public SiteEnum getSiteEnum() {
-        return siteEnum;
-    }
-
-    public void setSiteEnum(SiteEnum siteEnum) {
-        this.siteEnum = siteEnum;
-    }
-
-    public Map<String, String> getModel() {
-        return model;
-    }
-
-    public void setModel(Map<String, String> model) {
-        this.model = model;
-    }
-
-    /** 填充类型*/
-    private Map<String, String> model;
-
-    /** 邮件类型 */
-    private TemplateType templateType;
 }

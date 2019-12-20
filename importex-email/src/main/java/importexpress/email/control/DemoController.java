@@ -13,5 +13,4 @@ public class DemoController {
         log.info("step into the demo(),input:[{}]",str);
         return "hello " + str;
     }
-
 }

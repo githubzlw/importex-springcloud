@@ -2,11 +2,13 @@ package importexpress.email.service.impl;
 
 import com.importexpress.comm.pojo.SiteEnum;
 import importexpress.common.pojo.mail.MailBean;
+import importexpress.email.config.Config;
 import importexpress.email.service.SendMail;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -22,12 +24,15 @@ import java.util.Properties;
  * https://docs.aws.amazon.com/zh_cn/ses/latest/DeveloperGuide/send-using-smtp-java.html
  */
 @Slf4j
-public final class SendMailByAmazon implements SendMail {
+@Service("SendMailByAmazon")
+public final class SendMailAmzImpl implements SendMail {
 
-    private static final String HOST = "email-smtp.us-west-2.amazonaws.com";
-    private static final String SMTP_USERNAME = "AKIAIO7TWKGGFXB5WY2A";
-    private static final String SMTP_PASSWORD = "AuYzbo9jZAUkWX35u5mwPdFeUJVdKI6K2sqTHCXZyiK6";
-    private static final int PORT = 587;
+
+    private final Config config;
+
+    public SendMailAmzImpl(Config config) {
+        this.config = config;
+    }
 
     /**
      * sendMail
@@ -55,7 +60,7 @@ public final class SendMailByAmazon implements SendMail {
             msg.setContent(mailBean.getBody(), "text/html");
 
             transport = session.getTransport();
-            transport.connect(HOST, SMTP_USERNAME, SMTP_PASSWORD);
+            transport.connect(config.amazonMailHost, config.amazonMailUser, config.amazonMailPass);
             transport.sendMessage(msg, msg.getAllRecipients());
             log.info("邮件发送成功..ToMail:[" + mailBean.getTo() + "],Subject:[" + mailBean.getSubject() + "]");
         } catch (Exception e) {
@@ -80,7 +85,7 @@ public final class SendMailByAmazon implements SendMail {
     private Properties getProperties() {
         Properties props = System.getProperties();
         props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.port", PORT);
+        props.put("mail.smtp.port", config.amazonMailPort);
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.auth", "true");
         return props;

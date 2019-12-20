@@ -9,6 +9,7 @@ import importexpress.common.pojo.mail.MailBean;
 import importexpress.email.service.SendMail;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -22,7 +23,8 @@ import static sun.security.x509.X509CertInfo.SUBJECT;
  */
 @Slf4j
 @Deprecated
-public class SendMailByMailGun implements SendMail {
+@Service
+public class SendMailMailGunImpl implements SendMail {
 
     private final static String MAILGUN_DOMAIN_NAME = "mg.import-express.com";
     private final static String MAILGUN_API_KEY = "key-5af11fc491becf8970b5c8eb45bbf6af";

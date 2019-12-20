@@ -2,9 +2,10 @@ package importexpress.email.service;
 
 import importexpress.common.pojo.mail.MailBean;
 import importexpress.common.pojo.mail.TemplateType;
-import importexpress.email.service.impl.SendMailByAmazon;
+import importexpress.email.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -25,29 +26,42 @@ import java.util.Map;
 @Slf4j
 public class SendMailFactory {
 
-    private static final String SAVE_HTMLS = "saveHtmls";
-    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYMMdd_HHmmss_SSS");
+    private final Config config;
+
+    private final SendMail mail;
+
+    private final static DateTimeFormatter FORMATTER
+            = DateTimeFormatter.ofPattern("YYMMdd_HHmmss_SSS");
 
     private final SpringTemplateEngine thymeleafEngine;
 
-    public SendMailFactory(SpringTemplateEngine thymeleafEngine) {
+    public SendMailFactory(SpringTemplateEngine thymeleafEngine, Config config, @Qualifier("SendMailByAmazon") SendMail mail) {
         this.thymeleafEngine = thymeleafEngine;
+        this.config = config;
+        this.mail = mail;
     }
 
 
     public void sendMail(MailBean mailBean) {
 
         if(StringUtils.isBlank(mailBean.getBody())){
+            //邮件模板填充方式
             mailBean.setBody(getHtmlContent(mailBean.getModel(), mailBean.getTemplateType()));
         }
 
         if(!mailBean.isTest()){
-            SendMail mail = new SendMailByAmazon();
+            //是否实际发送邮件
             mail.sendMail(mailBean);
         }
     }
 
 
+    /**
+     * getHtmlContent
+     * @param model
+     * @param templateType
+     * @return
+     */
     private String getHtmlContent(Map<String, String> model, TemplateType templateType) {
 
         String result = "";
@@ -72,11 +86,10 @@ public class SendMailFactory {
     private void saveHtml(String preFileName, String content) {
 
         try {
-            String strTime = LocalDateTime.now().format(formatter);
+            String strTime = LocalDateTime.now().format(FORMATTER);
             String fileName = preFileName.replace("/", "_").replace("emailTemplate_", "") + "_" + strTime + ".html";
 
-            String dir = System.getProperty("user.dir");
-            Path path = Paths.get(dir, SAVE_HTMLS,fileName);
+            Path path = Paths.get(config.saveHtmlPath,fileName);
             if(!path.toFile().exists()){
                 path.toFile().getParentFile().mkdir();
             }
