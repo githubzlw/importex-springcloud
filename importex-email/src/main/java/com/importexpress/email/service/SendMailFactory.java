@@ -27,13 +27,10 @@ import java.util.Map;
 @Slf4j
 public class SendMailFactory {
 
-    private final Config config;
-
-    private final SendMail mail;
-
     private final static DateTimeFormatter FORMATTER
             = DateTimeFormatter.ofPattern("YYMMdd_HHmmss_SSS");
-
+    private final Config config;
+    private final SendMail mail;
     private final SpringTemplateEngine thymeleafEngine;
 
     public SendMailFactory(SpringTemplateEngine thymeleafEngine, Config config, @Qualifier("SendMailAmzImpl") SendMail mail) {
@@ -45,18 +42,19 @@ public class SendMailFactory {
 
     /**
      * sendMail
+     *
      * @param mailBean
      */
     public void sendMail(MailBean mailBean) {
 
         checkMailBean(mailBean);
 
-        if(StringUtils.isBlank(mailBean.getBody())){
+        if (StringUtils.isBlank(mailBean.getBody())) {
             //邮件模板填充方式
             mailBean.setBody(getHtmlContent(mailBean.getModel(), mailBean.getTemplateType()));
         }
 
-        if(!mailBean.isTest()){
+        if (!mailBean.isTest()) {
             //是否实际发送邮件
             mail.sendMail(mailBean);
         }
@@ -64,21 +62,22 @@ public class SendMailFactory {
 
     /**
      * checkMailBean
+     *
      * @param mailBean
      */
-    private void checkMailBean(MailBean mailBean){
-        Assert.isTrue(mailBean!=null,"mailBean is null");
-        Assert.isTrue(StringUtils.isNotEmpty(mailBean.getTo()),"to is invalid");
-        Assert.isTrue(StringUtils.isNotEmpty(mailBean.getSubject()),"subject is invalid");
-        if(mailBean.getType()!=1 && mailBean.getType()!=2){
+    private void checkMailBean(MailBean mailBean) {
+        Assert.isTrue(mailBean != null, "mailBean is null");
+        Assert.isTrue(StringUtils.isNotEmpty(mailBean.getTo()), "to is invalid");
+        Assert.isTrue(StringUtils.isNotEmpty(mailBean.getSubject()), "subject is invalid");
+        if (mailBean.getType() != 1 && mailBean.getType() != 2) {
             throw new IllegalArgumentException("type is invalid");
         }
-        if(StringUtils.isNotEmpty(mailBean.getBody())){
-            if(mailBean.getModel()!=null && mailBean.getModel().size()>0){
+        if (StringUtils.isNotEmpty(mailBean.getBody())) {
+            if (mailBean.getModel() != null && mailBean.getModel().size() > 0) {
                 throw new IllegalArgumentException("model and body is invalid");
             }
-        }else{
-            if(mailBean.getModel()==null || mailBean.getModel().size()==0){
+        } else {
+            if (mailBean.getModel() == null || mailBean.getModel().size() == 0) {
                 throw new IllegalArgumentException("model and body is invalid");
             }
         }
@@ -87,6 +86,7 @@ public class SendMailFactory {
 
     /**
      * getHtmlContent
+     *
      * @param model
      * @param templateType
      * @return
@@ -118,14 +118,14 @@ public class SendMailFactory {
             String strTime = LocalDateTime.now().format(FORMATTER);
             String fileName = preFileName.replace("/", "_").replace("emailTemplate_", "") + "_" + strTime + ".html";
 
-            Path path = Paths.get(config.saveHtmlPath,fileName);
-            if(!path.toFile().exists()){
+            Path path = Paths.get(config.saveHtmlPath, fileName);
+            if (!path.toFile().exists()) {
                 path.toFile().getParentFile().mkdir();
             }
             Path write = Files.write(path, content.getBytes());
             log.info("save to html,path:[{}]", write);
         } catch (IOException e) {
-            log.error("save html err:[{}]",content, e);
+            log.error("save html err:[{}]", content, e);
         }
     }
 

@@ -18,20 +18,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 public class ReceiveMQ {
 
+    private static AtomicInteger count = new AtomicInteger(0);
     private final SendMailFactory sendMailFactory;
-
 
     public ReceiveMQ(SendMailFactory sendMailFactory) {
         this.sendMailFactory = sendMailFactory;
     }
 
-    private static AtomicInteger count = new AtomicInteger(0);
-
     @RabbitListener(queues = Config.QUEUE_MAIL, containerFactory = "rabbitListenerContainerFactory")
     public void receiveMail(@Payload MailBean mailBean) {
 
         sendMailFactory.sendMail(mailBean);
-        log.info("received mq count:[{}]",count.incrementAndGet());
+        log.info("received mq count:[{}]", count.incrementAndGet());
     }
 
 }

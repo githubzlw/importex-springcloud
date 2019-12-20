@@ -12,10 +12,10 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableDiscoveryClient
 @EnableFeignClients
 @SpringBootApplication
-public class MailApp {
+public class EmailApp {
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) {
 
-        SpringApplication.run(MailApp.class, args);
+        SpringApplication.run(EmailApp.class, args);
     }
 }

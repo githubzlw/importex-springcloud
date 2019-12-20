@@ -1,12 +1,12 @@
 package com.importexpress.email.service.impl;
 
 import com.importexpress.comm.pojo.MailBean;
+import com.importexpress.email.service.SendMail;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
 import com.sun.jersey.multipart.FormDataMultiPart;
-import com.importexpress.email.service.SendMail;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class SendMailMailGunImpl implements SendMail {
         try {
             trustAllHttpsCertificates();
         } catch (Exception e) {
-            log.error("sendMail",e);
+            log.error("sendMail", e);
             throw new IllegalStateException(e.getMessage());
         }
         HttpsURLConnection.setDefaultHostnameVerifier(hv);
