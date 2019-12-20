@@ -39,7 +39,7 @@ public class CartItem implements Serializable {
     private int st =1;
 
     /**价格 */
-    private BigDecimal pri;
+    private long pri;
 
     /**区间价格 */
     private String wpri;

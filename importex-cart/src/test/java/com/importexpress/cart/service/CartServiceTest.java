@@ -51,7 +51,7 @@ public class CartServiceTest {
     public void cart2() {
         Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
-        Assert.assertEquals(new BigDecimal("3.68"), cart.getItems().get(0).getPri());
+        Assert.assertEquals(368, cart.getItems().get(0).getPri());
         Assert.assertEquals("greybeard 80cm(31 inch | age 9-12M)", cart.getItems().get(0).getTn());
         Assert.assertEquals("560676334685/9192394532_2128907802.60x60.jpg", cart.getItems().get(0).getImg());
         Assert.assertTrue(cart.getItems().get(0).getCt()< Instant.now().toEpochMilli());
@@ -69,7 +69,7 @@ public class CartServiceTest {
                 (1, cartService.updateCartNum(SITE, USER_ID, ITEM_ID1, 99, 1));
         Cart cart =  cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
-        Assert.assertEquals(new BigDecimal("3.35"), cart.getItems().get(0).getPri());
+        Assert.assertEquals(335, cart.getItems().get(0).getPri());
 
     }
 
@@ -82,7 +82,7 @@ public class CartServiceTest {
                 (1, cartService.addCart(SITE, USER_ID, ITEM_ID1, 1));
         Cart cart =  cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
-        Assert.assertEquals(new BigDecimal("3.14"), cart.getItems().get(0).getPri());
+        Assert.assertEquals(314, cart.getItems().get(0).getPri());
     }
 
     /**
@@ -105,7 +105,7 @@ public class CartServiceTest {
                 (1, cartService.addCart(SITE, USER_ID, ITEM_ID2, 2));
         Cart cart =  cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(3, cart.getTotalAmount());
-        Assert.assertEquals(BigDecimal.valueOf(3.35d * 3), cart.getTotalPrice());
+        Assert.assertEquals(1005, cart.getTotalPrice());
         Assert.assertEquals(0.11f*3, cart.getTotalWeight(),0.0001f);
         Assert.assertEquals(2, cart.getItems().size());
         Assert.assertEquals(1, cart.getItems().get(0).getChk());

@@ -7,16 +7,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Comparator;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author jack.luo
@@ -96,11 +94,11 @@ public class Cart implements Serializable {
      * @return
      */
     @JsonIgnore
-    public BigDecimal getProductPrice(){
-        BigDecimal result = new BigDecimal("0");
+    public long getProductPrice(){
+        long result =0;
         //计算
         for (CartItem cartItem : items) {
-            result = result.add(cartItem.getPri().multiply(BigDecimal.valueOf(cartItem.getNum())));
+            result += cartItem.getPri()*cartItem.getNum();
         }
         return result;
     }
@@ -124,8 +122,8 @@ public class Cart implements Serializable {
      * @return
      */
     @JsonIgnore
-    public BigDecimal getFee(){
-        return new BigDecimal("0");
+    public long getFee(){
+        return 0L;
     }
 
     /**
@@ -133,9 +131,9 @@ public class Cart implements Serializable {
      * @return
      */
     @JsonIgnore
-    public BigDecimal getTotalPrice(){
+    public long getTotalPrice(){
 
-        return getProductPrice().add(getFee());
+        return getProductPrice()+getFee();
     }
 
     /**
@@ -154,7 +152,13 @@ public class Cart implements Serializable {
 
     }
 
-    private BigDecimal calculatePrice(String wprice, long productNum){
+    /**
+     * calculatePrice
+     * @param wprice
+     * @param productNum
+     * @return
+     */
+    private long calculatePrice(String wprice, long productNum){
 
         Assert.isTrue(StringUtils.isNotEmpty(wprice),"The wprice must not empty");
 
@@ -171,14 +175,14 @@ public class Cart implements Serializable {
                     String[] split1 = priceRange.split("-");
                     Assert.isTrue(split1.length==2,"The array length must be 2");
                     if(Integer.parseInt(split1[1])>=productNum){
-                        return new BigDecimal(lst.get(1));
+                        return (long)(Float.parseFloat(lst.get(1))*100);
                     }
                 }else if(priceRange.indexOf('≥')>-1){
                     //sample:[≥100 $ 3.14]
-                    return new BigDecimal(lst.get(1));
+                    return (long)(Float.parseFloat(lst.get(1))*100);
                 }else{
                     if(Integer.parseInt(priceRange)>=productNum){
-                        return new BigDecimal(priceRange);
+                        return NumberUtils.toLong(priceRange);
                     }
                 }
             }else{
