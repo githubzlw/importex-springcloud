@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author jack.luo
@@ -66,7 +67,7 @@ public class SendMailFactory {
      * @param mailBean
      */
     private void checkMailBean(MailBean mailBean) {
-        Assert.isTrue(mailBean != null, "mailBean is null");
+        Objects.requireNonNull(mailBean);
         Assert.isTrue(StringUtils.isNotEmpty(mailBean.getTo()), "to is invalid");
         Assert.isTrue(StringUtils.isNotEmpty(mailBean.getSubject()), "subject is invalid");
         if (mailBean.getType() != 1 && mailBean.getType() != 2) {
