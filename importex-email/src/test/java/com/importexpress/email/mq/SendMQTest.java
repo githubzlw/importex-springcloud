@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 /**
  * @Author jack.luo
@@ -50,8 +51,8 @@ public class SendMQTest {
         mailBean.setSubject("This is a ACTIVATION email");
         mailBean.setSiteEnum(SiteEnum.KIDS);
         mailBean.setTest(false);
-        Map<String, String> model =new HashMap<>();
-        model.put("logoUrl",SiteEnum.KIDS.getUrl());
+        Map<String, String> model = new HashMap<>();
+        model.put("logoUrl", SiteEnum.KIDS.getUrl());
         model.put("name", "name1");
         model.put("email", "test@gmail.com");
         model.put("pass", "pass1");
@@ -62,4 +63,30 @@ public class SendMQTest {
         sender.sendMQToMail(mailBean);
     }
 
+    @Test
+    public void sendMQToMail3() {
+
+        MailBean mailBean = new MailBean();
+        mailBean.setTo("luohao518@yeah.net");
+        mailBean.setSubject("This is a ACTIVATION email");
+        mailBean.setSiteEnum(SiteEnum.IMPORTX);
+        mailBean.setTest(true);
+        Map<String, String> model = new HashMap<>();
+        model.put("logoUrl", SiteEnum.IMPORTX.getUrl());
+        model.put("name", "name1");
+        model.put("email", "test@gmail.com");
+        model.put("pass", "pass1");
+        model.put("activeLink", "activeLink......");
+        model.put("here", "here");
+        mailBean.setModel(model);
+        mailBean.setTemplateType(TemplateType.ACTIVATION);
+        IntStream.range(1, 100).forEach(i -> {
+            sender.sendMQToMail(mailBean);
+            try {
+                Thread.currentThread().sleep(100);
+            } catch (InterruptedException e) {
+
+            }
+        });
+    }
 }
