@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.pojo.Attribute;
 import com.importexpress.search.pojo.Category;
+import com.importexpress.search.pojo.SearchWordWrap;
 import com.importexpress.search.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,8 @@ public class InitApplicationParameter {
     private AutiKeyService autiKeyService;
     @Autowired
     private KeywordRecordService keywordRecordService;
+    @Autowired
+    private ImportCategoryUtil importCategoryUtil;
 
     public void init(ServletContext application){
         category(application);
@@ -39,6 +42,7 @@ public class InitApplicationParameter {
         priorityCategory(application);
         specialCatid(application);
         categoryPrice(application);
+        recommendedWords(application);
     }
 
     /**全部1688Category的数据导入
@@ -158,6 +162,14 @@ public class InitApplicationParameter {
         log.info("初始化反关键词集合 Time:"+(System.currentTimeMillis()-startTime));
     }
 
-
+    /**获取搜索页面底部推荐词 whj
+     * @param application
+     */
+    public void recommendedWords(ServletContext application){
+        long startTime = System.currentTimeMillis();
+        List<SearchWordWrap> cList = categoryService.getRecommendedWords();
+        application.setAttribute("recommendedWords", cList);
+        log.info("All_category Time:"+(System.currentTimeMillis()-startTime));
+    }
 
 }

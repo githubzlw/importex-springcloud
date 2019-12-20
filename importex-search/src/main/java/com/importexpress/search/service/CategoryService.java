@@ -3,6 +3,7 @@ package com.importexpress.search.service;
 import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.CategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
+import com.importexpress.search.pojo.SearchWordWrap;
 import org.apache.solr.client.solrj.response.FacetField;
 
 import java.util.List;
@@ -27,4 +28,9 @@ public interface CategoryService {
 	 * @return
 	 */
 	List<CategoryWrap> categorys(SearchParam param, List<FacetField> facetFields);
+
+	/**
+	 * @return
+	 */
+	List<SearchWordWrap> getRecommendedWords();
 }

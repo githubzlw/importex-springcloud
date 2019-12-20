@@ -18,9 +18,11 @@ import org.apache.solr.common.SolrDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletContext;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +47,69 @@ public class SearchServiceImpl implements SearchService {
     @Autowired
     private AttributeService attributeService;
     @Autowired
+    private LandingPageTriggerKeyService land;
+    @Autowired
     private SolrService solrService;
+    @Autowired
+    private ServletContext application;
+
+    @Override
+    public SearchResultWrap advertisement(String key, int site, String adgroupid) {
+        LimitKey triggerKey = land.getTriggerKey(key,adgroupid);
+        if(triggerKey == null){
+            return new SearchResultWrap();
+        }
+        SearchParam param = new SearchParam();
+        param.setKeyword(triggerKey.getTriggerKey());
+        param.setCatid(triggerKey.getTriggerCatid());
+        param.setPageSize(16);
+        param.setFactCategory(false);
+        param.setFactPvid(false);
+        param.setMinPrice("2.00");
+        param.setSite(site);
+        param.setUserType(1);
+        SearchResultWrap wrap = productSerach(param);
+        return wrap;
+    }
+
+    @Override
+    public List<SearchWordWrap> searchWord(String keyword, int site) {
+        Object wordList = application.getAttribute("recommendedWords");
+        List<SearchWordWrap> list = Lists.newArrayList();
+        if (wordList == null || StringUtils.isBlank(keyword)) {
+            return list;
+        }
+        List<SearchWordWrap> cList = (List<SearchWordWrap>) wordList;
+        try {
+            FSearchTool tool = new FSearchTool(cList, "key_word", "path");
+            List<Object> listWord = tool.searchTasks(keyword);
+            if (listWord == null || listWord.isEmpty()) {
+                return list;
+            }
+            SearchParam param = new SearchParam();
+            param.setPage(1);
+            param.setFreeShipping(1);
+            param.setMobile(false);
+            param.setFactPvid(false);
+            param.setFactPvid(false);
+            param.setPageSize(1);
+            param.setFreeShipping(1);
+            SearchWordWrap s = (SearchWordWrap) listWord.get(0);
+            List<Object> listq = tool.searchTasks(s.getPath());
+            for (Object o : listq) {
+                SearchWordWrap sw = (SearchWordWrap) o;
+                if (!sw.getKeyWord().equals(keyword)) {
+                    param.setKeyword(KeywordCorrect.getKeyWord(sw.getKeyWord()));
+                    if(serachCount(param) > 0){
+                        list.add(sw);
+                    }
+                }
+            }
+        }catch (Exception e){
+            log.error("FSearchTool",e);
+        }
+        return list;
+    }
 
     @Override
     public List<Product> similarProduct(SearchParam param) {
@@ -143,6 +207,7 @@ public class SearchServiceImpl implements SearchService {
         PageWrap page = new PageWrap();
         page.setRecordCount(0L);
         wrap.setPage(page);
+        wrap.setParam(param);
         String queryString = param.getKeyword();
         if (StringUtils.isBlank(queryString)) {
             return wrap;
@@ -150,15 +215,18 @@ public class SearchServiceImpl implements SearchService {
         //solr结果
         wrap = productsFromSolr(param);
 
-        //是否需要推荐联想词
-        long recordCount = wrap.getPage().getRecordCount();
-        boolean suggestKey = isDefault(param);
-        suggestKey = suggestKey && recordCount < 40 && param.getKeyword().split("(\\s+)").length > 2;
-        if(suggestKey){
-            List<AssociateWrap> associate = associate(param.getKeyword(), param.getSite());
-            wrap.setAssociates(associate);
+        if(wrap != null){
+            PageWrap page1 = wrap.getPage();
+            //是否需要推荐联想词
+            long recordCount = page1 == null ? 0 : page1.getRecordCount();
+            boolean suggestKey = isDefault(param);
+            suggestKey = suggestKey && recordCount < 40 && param.getKeyword().split("(\\s+)").length > 2;
+            if(suggestKey){
+                List<AssociateWrap> associate = associate(param.getKeyword(), param.getSite());
+                wrap.setAssociates(associate);
+            }
+            wrap.setSuggest(suggestKey);
         }
-        wrap.setSuggest(suggestKey);
         return wrap;
     }
 
@@ -175,6 +243,10 @@ public class SearchServiceImpl implements SearchService {
     public long serachCount(SearchParam param) {
         param.setFactCategory(false);
         param.setFactPvid(false);
+        param.setOrder(false);
+        param.setPage(1);
+        param.setPageSize(1);
+        param.setMobile(false);
         QueryResponse response = solrService.serach(param);
         SolrResult solrResult = searchItem(param,response);
         return solrResult.getRecordCount();
@@ -202,7 +274,6 @@ public class SearchServiceImpl implements SearchService {
         range.setSectionThreeCount(solrMap.get("custom_max_price:["+(midPrice+0.001)+" TO "+2*midPrice+"]"));
         range.setSectionFourCount(solrMap.get("custom_max_price:["+(Double.parseDouble((2*midPrice+""+1)))+" TO *]"));
         range.setState(0);
-        range.setDatetime(new Date());
         //存放到数据库中
         if(isChangeCurrency){
             ChangeCurrency.chang(range,param.getCurrency());
@@ -226,6 +297,13 @@ public class SearchServiceImpl implements SearchService {
                 if(!suggest.contains(word)){
                     suggest.add(word);
                 }
+            }
+        }
+        suggest.stream().sorted();
+        if (suggest.size() > 0) {
+            String suggestCatid = splicingSyntax.suggestCatid(suggest.get(0));
+            if(StringUtils.isNotBlank(suggestCatid)){
+                suggest.add(0,suggestCatid);
             }
         }
         return suggest;
@@ -535,7 +613,7 @@ public class SearchServiceImpl implements SearchService {
         //属性
         if (param.isFactPvid()) {
             List<AttributeWrap> attributes = attributeService.attributes(param, solrResult.getAttrFacet());
-            wrap.setAttributeWraps(attributes);
+            wrap.setAttributes(attributes);
             List<Attribute> selectedAttr = attributeService.selectedAttributes(param);
             wrap.setSelectedAttr(selectedAttr);
         }

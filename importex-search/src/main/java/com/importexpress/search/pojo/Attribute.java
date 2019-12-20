@@ -2,21 +2,16 @@ package com.importexpress.search.pojo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 属性
  * @author sj
  *
  */
 @Data
-public class Attribute {
-
-	public Attribute(){}
-
-	public Attribute(String id,String name,String value){
-		this.id = id;
-		this.name = name;
-		this.value = value;
-	}
+public class Attribute implements Serializable {
+	private static final long serialVersionUID = 986818736352041314L;
 	/**
 	 * 属性-值 id
 	 */

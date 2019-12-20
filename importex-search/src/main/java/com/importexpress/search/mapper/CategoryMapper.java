@@ -8,6 +8,7 @@
 package com.importexpress.search.mapper;
 
 import com.importexpress.search.pojo.Category;
+import com.importexpress.search.pojo.SearchWordWrap;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
 import org.apache.ibatis.annotations.Results;
@@ -40,4 +41,11 @@ public interface CategoryMapper {
 			@Result(column = "new_arrivals_flag", property = "newArrivalsFlag"),
 			@Result(column = "new_arrival_date", property = "newArrivalDate")})
 	List<Category> getCategories();
+
+	@Select("SELECT key_word,path FROM search_words WHERE flag=0 AND path !='' ORDER BY path ASC")
+	@Results({
+			@Result(column = "key_word", property = "keyWord"),
+			@Result(column = "path", property = "path")
+			})
+	List<SearchWordWrap> getRecommendedWords();
 }

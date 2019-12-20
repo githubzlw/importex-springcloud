@@ -18,19 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 @Slf4j
 public class VerifySearchParameter {
-    public static boolean initApplication = false;
-    @Autowired
-    private InitApplicationParameter applicationParameter;
-
-    public void initApplication(HttpServletRequest request){
-        if(!initApplication){
-            applicationParameter.init(request.getServletContext());
-            initApplication = true;
-        }
-    }
-
     public SearchParam mustPatameter(HttpServletRequest request,SearchParam param){
-        initApplication(request);
         checkUserInfo(param);
         freeShipping(param);
         page(param);

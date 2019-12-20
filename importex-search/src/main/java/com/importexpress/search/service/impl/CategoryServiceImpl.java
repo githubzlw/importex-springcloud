@@ -6,6 +6,7 @@ import com.importexpress.search.mapper.CategoryMapper;
 import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.CategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
+import com.importexpress.search.pojo.SearchWordWrap;
 import com.importexpress.search.service.CategoryService;
 import com.importexpress.search.service.base.UriService;
 import org.apache.commons.lang.StringUtils;
@@ -151,5 +152,11 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		StringBuffer sb_href = new StringBuffer(uriBase(param));
 		sb_href.append("&catid=");
 		return sb_href.toString();
+	}
+
+
+	@Override
+	public List<SearchWordWrap> getRecommendedWords() {
+		return categoryMapper.getRecommendedWords();
 	}
 }

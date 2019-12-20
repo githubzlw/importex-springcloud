@@ -2,13 +2,16 @@ package com.importexpress.search.pojo;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 页码
  * @author sj
  *
  */
 @Data
-public class PageWrap {
+public class PageWrap implements Serializable {
+	private static final long serialVersionUID = 986818736352041314L;
 
 	/**
 	 * 总数量

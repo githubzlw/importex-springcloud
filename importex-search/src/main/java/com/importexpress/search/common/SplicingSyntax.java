@@ -6,6 +6,7 @@ import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.KeyToCategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.pojo.SynonymsCategoryWrap;
+import com.importexpress.search.util.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -328,5 +329,20 @@ public class SplicingSyntax {
        }
        return setCatid;
    }
+    public String suggestCatid(String auto){
+        Object priorityCategoryList = application.getAttribute("priorityCategoryList");
+        String cid = Utility.getPriorityCategory(priorityCategoryList, auto);
+        Object catidList = application.getAttribute("categorys");
+        Map<String, Category> cMap = (Map<String, Category>) catidList;
+        if (StringUtils.isNotBlank(cid) && cMap.get(cid) != null) {
+            String category = cMap.get(cid).getName();
+            if (StringUtils.isNotBlank(category)) {
+                StringBuilder str = new StringBuilder(auto).append("@")
+                        .append(cid).append("@").append(category);
+                return str.toString();
+            }
+        }
+        return "";
+    }
 
 }

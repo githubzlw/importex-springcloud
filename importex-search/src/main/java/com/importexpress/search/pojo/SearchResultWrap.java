@@ -3,7 +3,9 @@ package com.importexpress.search.pojo;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 搜索结果
@@ -11,7 +13,8 @@ import java.util.List;
  *
  */
 @Data
-public class SearchResultWrap {
+public class SearchResultWrap implements Serializable {
+	private static final long serialVersionUID = 986818736352041314L;
 	@ApiModelProperty(value="商品")
 	private List<Product> products;
 
@@ -22,7 +25,7 @@ public class SearchResultWrap {
 	private PageWrap page;
 
 	@ApiModelProperty(value="属性集合")
-	private List<AttributeWrap> attributeWraps;
+	private List<AttributeWrap> attributes;
 
 	@ApiModelProperty(value="已选择属性集合")
 	private List<Attribute> selectedAttr;
@@ -32,5 +35,11 @@ public class SearchResultWrap {
 
 	@ApiModelProperty(value="推荐联想词")
 	private List<AssociateWrap> associates;
+
+	@ApiModelProperty(value="搜索页增加面包屑导航")
+	private Map<String, String> searchNavigation;
+
+	@ApiModelProperty(value="搜索参数")
+	private SearchParam param;
 
 }

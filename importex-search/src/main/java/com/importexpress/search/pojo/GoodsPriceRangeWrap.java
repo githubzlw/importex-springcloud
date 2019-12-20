@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class GoodsPriceRangeWrap implements Serializable {
+    private static final long serialVersionUID = 986818736352041314L;
     private SearchParam param;
     private GoodsPriceRange range;
     private int total;

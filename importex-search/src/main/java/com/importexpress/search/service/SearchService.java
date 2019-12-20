@@ -107,4 +107,19 @@ public interface SearchService {
      */
     List<AssociateWrap> associate(String keyWord,int site);
 
+    /**异步加载搜索页类别推荐搜索词
+     * @param keyword
+     * @param site
+     * @return
+     */
+    List<SearchWordWrap> searchWord(String keyword,int site);
+
+    /**广告落地页
+     * @param keyword
+     * @param site
+     * @param adgroupid
+     * @return
+     */
+    SearchResultWrap advertisement(String keyword,int site,String adgroupid);
+
 }

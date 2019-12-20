@@ -4,7 +4,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 public class GoodsPriceRange implements Serializable {
@@ -38,9 +37,6 @@ public class GoodsPriceRange implements Serializable {
 
     @ApiModelProperty(value = "第四区段数量")
     private int sectionFourCount=0;
-
-    @ApiModelProperty(value = "创建时间")
-    private Date datetime;
 
     @ApiModelProperty(value = "状态标识 0 正常  1 删除")
     private int state;

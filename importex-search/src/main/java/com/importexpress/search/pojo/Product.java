@@ -2,6 +2,7 @@ package com.importexpress.search.pojo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -10,7 +11,8 @@ import java.util.List;
  *
  */
 @Data
-public class Product {
+public class Product implements Serializable {
+	private static final long serialVersionUID = 986818736352041314L;
 
 	/**
 	 * 商品id

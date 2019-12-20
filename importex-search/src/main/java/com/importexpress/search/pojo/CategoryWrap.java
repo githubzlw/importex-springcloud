@@ -2,10 +2,12 @@ package com.importexpress.search.pojo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-public class CategoryWrap {
+public class CategoryWrap implements Serializable {
+	private static final long serialVersionUID = 986818736352041314L;
 	/**
 	 * id
 	 */

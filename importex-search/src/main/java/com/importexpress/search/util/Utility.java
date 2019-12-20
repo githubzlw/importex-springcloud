@@ -2,11 +2,11 @@ package com.importexpress.search.util;
 
 import com.google.common.collect.Lists;
 import com.importexpress.comm.util.StrUtils;
+import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.Product;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.*;
@@ -237,8 +237,34 @@ public class Utility {
 	public static int factorial(int n) {
 		return n > 8 ? 40320 : n > 1 ? n * factorial(n-1) : 1;
 	}
+	/**获取优先类别
+	 * @param priorityCategoryList
+	 * @param keyWord
+	 * @return
+	 */
+	public static String getPriorityCategory(Object priorityCategoryList,String keyWord){
+		if(StringUtils.isBlank(keyWord) || priorityCategoryList == null){
+			return "";
+		}
+		Map<String, String> priorityCategory_map = (HashMap<String,String>)priorityCategoryList;
 
-
+		String priorityCategory = priorityCategory_map.get(keyWord);
+		//通过整词没有获取到相应的优先别类
+		if(StringUtils.isNotBlank(priorityCategory) || !keyWord.contains(" ")){
+			return priorityCategory;
+		}
+		/*(?=.*?第1个词)(?=.*?第2个词)*/
+		String nkeyWord = "(?=.*?\\b"+keyWord.replaceAll("(\\s+)", "\\\\b)(?=.*?\\\\b")+"\\b)";
+		Iterator<String> iterator = priorityCategory_map.keySet().iterator();
+		while (iterator.hasNext()) {
+			String key = (String) iterator.next();
+			if(StrUtils.isFind(key, nkeyWord)) {
+				priorityCategory = priorityCategory_map.get(key);
+				break;
+			}
+		}
+		return priorityCategory;
+	}
 
 }
 

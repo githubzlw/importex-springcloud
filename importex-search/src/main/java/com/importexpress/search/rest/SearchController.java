@@ -3,6 +3,7 @@ package com.importexpress.search.rest;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.util.StrUtils;
+import com.importexpress.search.common.ProductSearch;
 import com.importexpress.search.common.VerifySearchParameter;
 import com.importexpress.search.pojo.*;
 import com.importexpress.search.service.CategoryService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +41,8 @@ public class SearchController {
     private SearchService service;
     @Autowired
     private CategoryService categoryService;
+    @Autowired
+    private ProductSearch productSearch;
 
     /**产品搜索
      * @param request
@@ -58,9 +62,14 @@ public class SearchController {
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
             SearchResultWrap wrap = service.productSerach(param);
+
             if(wrap == null){
                 return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
             }else{
+                Map<String, String> searchNavigation =
+                        productSearch.searchNavigation(param);
+                wrap.setSearchNavigation(searchNavigation);
+                wrap.setParam(param);
                 return CommonResult.success("GET SOLR RESULT SUCCESSED!",JSONObject.toJSONString(wrap));
             }
         }catch (Exception e){
@@ -389,7 +398,6 @@ public class SearchController {
             return CommonResult.failed(" SITE IS WRONG!");
         }
         try {
-            verifySearchParameter.initApplication(request);
             List<AssociateWrap> associate = service.associate(keyWord, _site);
             return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",JSONObject.toJSONString(associate));
         }catch (Exception e){
@@ -397,4 +405,51 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
+    @PostMapping("/catid/suggest")
+    @ApiOperation("异步加载搜索页类别推荐搜索词")
+    public CommonResult catidSuggest(
+            @ApiParam(name="keyWord",value="搜索词",required=true) String keyWord,
+            @ApiParam(name="site",value="网站",required=true) String site,
+            HttpServletRequest request) {
+        if(StringUtils.isBlank(keyWord)){
+            return CommonResult.failed(" Keyword IS NULL!");
+        }
+        site = StrUtils.isNum(site) ? site : "1";
+        int _site = Integer.parseInt(site);
+        if((_site & -_site) != _site){
+            return CommonResult.failed(" SITE IS WRONG!");
+        }
+        try {
+            List<SearchWordWrap> list = service.searchWord(keyWord, _site);
+            return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",JSONObject.toJSONString(list));
+        }catch (Exception e){
+            log.error("异步加载搜索页类别推荐搜索词",e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+
+    @PostMapping("advertisement")
+    @ApiOperation("广告落地页")
+    public CommonResult advertisement(
+            @ApiParam(name="keyWord",value="搜索词",required=true) String keyWord,
+            @ApiParam(name="site",value="网站",required=true) String site,
+            @ApiParam(name="adgroupid",value="广告词",required=true) String adgroupid,
+            HttpServletRequest request) {
+        if(StringUtils.isBlank(keyWord)){
+            return CommonResult.failed(" Keyword IS NULL!");
+        }
+        site = StrUtils.isNum(site) ? site : "1";
+        int _site = Integer.parseInt(site);
+        if((_site & -_site) != _site){
+            return CommonResult.failed(" SITE IS WRONG!");
+        }
+        try {
+            SearchResultWrap advertisement = service.advertisement(keyWord, _site, adgroupid);
+            return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",JSONObject.toJSONString(advertisement));
+        }catch (Exception e){
+            log.error("广告落地页",e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+
 }
