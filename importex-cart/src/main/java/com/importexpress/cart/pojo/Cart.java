@@ -175,14 +175,14 @@ public class Cart implements Serializable {
                     String[] split1 = priceRange.split("-");
                     Assert.isTrue(split1.length==2,"The array length must be 2");
                     if(Integer.parseInt(split1[1])>=productNum){
-                        return (long)(Float.parseFloat(lst.get(1))*100);
+                        return Math.round(Double.parseDouble(lst.get(1))*100);
                     }
                 }else if(priceRange.indexOf('≥')>-1){
                     //sample:[≥100 $ 3.14]
-                    return (long)(Float.parseFloat(lst.get(1))*100);
+                    return Math.round(Double.parseDouble(lst.get(1))*100);
                 }else{
                     if(Integer.parseInt(priceRange)>=productNum){
-                        return (long)(Float.parseFloat(priceRange)*100);
+                        return Math.round(Double.parseDouble(priceRange)*100);
                     }
                 }
             }else{
