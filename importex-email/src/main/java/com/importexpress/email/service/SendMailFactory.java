@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
@@ -42,7 +43,13 @@ public class SendMailFactory {
     }
 
 
+    /**
+     * sendMail
+     * @param mailBean
+     */
     public void sendMail(MailBean mailBean) {
+
+        checkMailBean(mailBean);
 
         if(StringUtils.isBlank(mailBean.getBody())){
             //邮件模板填充方式
@@ -52,6 +59,28 @@ public class SendMailFactory {
         if(!mailBean.isTest()){
             //是否实际发送邮件
             mail.sendMail(mailBean);
+        }
+    }
+
+    /**
+     * checkMailBean
+     * @param mailBean
+     */
+    private void checkMailBean(MailBean mailBean){
+        Assert.isTrue(mailBean!=null,"mailBean is null");
+        Assert.isTrue(StringUtils.isNotEmpty(mailBean.getTo()),"to is invalid");
+        Assert.isTrue(StringUtils.isNotEmpty(mailBean.getSubject()),"subject is invalid");
+        if(mailBean.getType()!=1 && mailBean.getType()!=2){
+            throw new IllegalArgumentException("type is invalid");
+        }
+        if(StringUtils.isNotEmpty(mailBean.getBody())){
+            if(mailBean.getModel()!=null && mailBean.getModel().size()>0){
+                throw new IllegalArgumentException("model and body is invalid");
+            }
+        }else{
+            if(mailBean.getModel()==null || mailBean.getModel().size()==0){
+                throw new IllegalArgumentException("model and body is invalid");
+            }
         }
     }
 
