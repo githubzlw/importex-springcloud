@@ -151,7 +151,7 @@ public class CartServiceImpl implements CartService {
             CartItem cartItem = new Gson().fromJson(json.toString(), CartItem.class);
             cart.addItem(cartItem);
         }
-        cart.fillCartItemsPrice();
+        cart.new calculatePrice().fillCartItemsPrice();
         return cart;
     }
 
