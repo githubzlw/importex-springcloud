@@ -36,15 +36,7 @@ public class Cart implements Serializable {
      * @param item
      */
     public void addItem(CartItem item){
-        //判断是否包含同款
-        if (items.contains(item)) {
-            //追加数量
-            for (CartItem cartItem : items) {
-                if (cartItem.equals(item)) {
-                    cartItem.setNum(item.getNum() + cartItem.getNum());
-                }
-            }
-        }else {
+
             //找同pid
             boolean isFind=false;
             for (int i = 0; i < items.size(); i++) {
@@ -57,7 +49,6 @@ public class Cart implements Serializable {
             if(!isFind){
                 items.add(item);
             }
-        }
     }
 
     public List<CartItem> getItems() {
