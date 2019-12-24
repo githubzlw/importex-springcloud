@@ -51,7 +51,7 @@ public class SendMQTest {
         mailBean.setSubject("This is a ACTIVATION email");
         mailBean.setSiteEnum(SiteEnum.KIDS);
         mailBean.setTest(false);
-        Map<String, String> model = new HashMap<>();
+        Map<String, Object> model = new HashMap<>();
         model.put("logoUrl", SiteEnum.KIDS.getUrl());
         model.put("name", "name1");
         model.put("email", "test@gmail.com");
@@ -71,7 +71,7 @@ public class SendMQTest {
         mailBean.setSubject("This is a ACTIVATION email");
         mailBean.setSiteEnum(SiteEnum.IMPORTX);
         mailBean.setTest(true);
-        Map<String, String> model = new HashMap<>();
+        Map<String, Object> model = new HashMap<>();
         model.put("logoUrl", SiteEnum.IMPORTX.getUrl());
         model.put("name", "name1");
         model.put("email", "test@gmail.com");

@@ -166,7 +166,7 @@
               <a >
                 <img th:case ="'1'" src="https://www.kidsproductwholesale.com/newindex/img/logo.png" >
                 <img th:case ="'2'" style="width:230px;padding: 1% 0;" src="https://img.kidsproductwholesale.com/importcsvimg/webpic/newindex/img/kids_logo.png" >
-                <img th:case ="'4'" style="width:230px;padding: 1% 0;" src="https://img.kidsproductwholesale.com/importcsvimg/webpic/img/wh89/pet/pet_logo.png" >
+                <img th:case ="'4'" style="width:230px;padding: 1% 0;" src="https://img.kidsproductwholesale.com/importcsvimg/webpic/img/wh89/pet/pet_logo.png?v=1" >
               </a>
             </span>
           </div>
@@ -186,10 +186,10 @@
                     <tr>
                       <td class="soapbox-title" th:case ="'1'" >Welcome to ImportExpress</td>
                         <td class="soapbox-title" th:case ="'2'" >Welcome to KidsProductWholesale</td>
-                      <td class="soapbox-title" th:case ="'4'" >Welcome to LovelyPetSupply</td>
+                      <td class="soapbox-title" th:case ="'4'" >Welcome to PetStoreInc</td>
                     </tr>
                   </table>
-                  
+
                   <table class="body">
                     <tr>
                       <td class="body-padding"></td>
@@ -215,8 +215,8 @@
                           <a href="/user/loginNew" class="activate_account" th:href="${activeLink}">Activate Account!</a>
                         <p class="account_if">If the above button doesn't work, please click the link below to activate your email,which will be expired in 24 Hours:</p>
                         <a href="/userController/upUserState?code=7F15C268EC0C32DF021712F2485E26B8&&email=zhouxueyun66@gmail.com" class="account_email" th:href="${activeLink}" th:text="${activeLink}">/userController/upUserState?code=7F15C268EC0C32DF021712F2485E26B8&&email=zhouxueyun66@gmail.com </a>
-                        
-                       
+
+
 
                         </div>
                         <table class="body-signature-block">
@@ -225,7 +225,7 @@
                               <p class="thanks_so">Thanks so much,</p>
                               <p th:case ="'1'" >ImportExpress</p>
                                 <p th:case ="'2'" >KidsProductWholesale</p>
-                              <p th:case ="'4'" >LovelyPetSupply</p>
+                              <p th:case ="'4'" >PetStoreInc</p>
                               <div class="please_note">
                                 <h3>PLEASE NOTE:</h3>
                                 <p>This email message was sent from a notification-only address that cannot accept incoming email. PLEASE DO NOT REPLY to this message. If you have any question or concern, access your account <a href="/user/loginNew" th:href="${here}">here</a>.</p>

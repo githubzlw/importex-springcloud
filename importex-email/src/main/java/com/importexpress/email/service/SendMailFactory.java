@@ -62,12 +62,12 @@ public class SendMailFactory {
      * @param templateType
      * @return
      */
-    private String getHtmlContent(Map<String, String> model, TemplateType templateType) {
+    private String getHtmlContent(Map<String, Object> model, TemplateType templateType) {
 
         String result = "";
         if (model != null) {
             Context context = new Context();
-            for (Map.Entry<String, String> param : model.entrySet()) {
+            for (Map.Entry<String, Object> param : model.entrySet()) {
                 context.setVariable(param.getKey(), param.getValue());
             }
             result = thymeleafEngine.process(templateType.toString(), context);
