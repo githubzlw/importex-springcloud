@@ -5,9 +5,9 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
@@ -21,50 +21,13 @@ import java.util.stream.Collectors;
  * @date 2019/12/16
  */
 @Slf4j
+@Data
 public class Cart implements Serializable {
-
-
-    private static final long serialVersionUID = 1L;
 
     /**
      * 商品结果集
      */
-    private List<CartItem> items = Lists.newArrayList();
-
-    /**
-     * 添加购物项到购物车
-     * @param item
-     */
-    public void addItem(CartItem item){
-
-            //找同pid
-            boolean isFind=false;
-            for (int i = 0; i < items.size(); i++) {
-                if(item.getPid()==items.get(i).getPid()){
-                    items.add(i,item);
-                    isFind = true;
-                    break;
-                }
-            }
-            if(!isFind){
-                items.add(item);
-            }
-    }
-
-    public List<CartItem> getItems() {
-//        List<CartItem> collect = this.items.stream().sorted(
-//                Comparator.comparingLong(CartItem::getUt).
-//                        thenComparing(CartItem::getSi)).collect(Collectors.toList());
-//        return collect;
-        return this.items;
-    }
-
-
-
-    public void setItems(List<CartItem> items) {
-        this.items = items;
-    }
-
+    private List<CartItem> items =  Lists.newArrayList();
 
     /**
      * 商品数量
@@ -128,7 +91,10 @@ public class Cart implements Serializable {
     }
 
 
-    public class calculatePrice{
+    /**
+     * 计算购物车商品实际价格（数量，同pid）
+     */
+    public class CalculatePrice {
 
         /**
          * 根据数量和区间价格计算实际的价格
