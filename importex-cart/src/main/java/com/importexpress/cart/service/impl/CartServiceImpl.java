@@ -18,7 +18,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 
 /**
@@ -52,6 +57,7 @@ public class CartServiceImpl implements CartService {
             if(StringUtils.isNotEmpty(json)){
                 CartItem cartItem = new Gson().fromJson(json, CartItem.class);
                 cartItem.setNum(cartItem.getNum() + num);
+                cartItem.setUt(Instant.now().toEpochMilli());
                 redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
             }else {
                 return 0;
@@ -63,6 +69,14 @@ public class CartServiceImpl implements CartService {
         Assert.isTrue(split.length>=2,"The itemId invalid:"+itemId);
         Product product = productServiceFeign.findProduct(Long.parseLong(split[0]));
         CartItem cartItem= product2CartItem(product,num,split);
+        //查找同pid商品做排序处理
+        List<CartItem> lstCartItem = getCartItems(site, userId);
+        for (CartItem item : lstCartItem) {
+            if (item.getPid() == cartItem.getPid()) {
+                cartItem.setCt(item.getCt());
+                break;
+            }
+        }
         redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
         return 1;
     }
@@ -140,19 +154,28 @@ public class CartServiceImpl implements CartService {
         cartItem.setTn(sb.toString().trim());
     }
 
-
     @Override
     public Cart getCart(char site, long userId) {
+        List<CartItem> lstCartItem = getCartItems(site, userId);
+
+        List<CartItem> collect = lstCartItem.stream().sorted(Comparator.comparingLong(CartItem::getCt).thenComparingLong(CartItem::getUt)).collect(Collectors.toList());
+        Cart cart = new Cart();
+        cart.setItems(ImmutableList.copyOf(collect));
+        lstCartItem.clear();
+        collect.clear();
+        cart.new CalculatePrice().fillCartItemsPrice();
+        return cart;
+    }
+
+    private List<CartItem> getCartItems(char site, long userId) {
         String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
 
         List<Object> jsonList = redisTemplate.opsForHash().values(userCartKey);
-        Cart cart = new Cart();
+        List<CartItem> lstCartItem = new ArrayList<>(jsonList.size());
         for (Object json : jsonList) {
-            CartItem cartItem = new Gson().fromJson(json.toString(), CartItem.class);
-            cart.addItem(cartItem);
+            lstCartItem.add(new Gson().fromJson(json.toString(), CartItem.class));
         }
-        cart.fillCartItemsPrice();
-        return cart;
+        return lstCartItem;
     }
 
     @Override
