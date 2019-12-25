@@ -108,7 +108,7 @@ public class Cart {
 
             items.forEach(i -> {
                 if (collect.containsKey(i.getPid())) {
-                    i.setPri(calculatePrice(i.getWpri(), collect.get(i.getPid()).getSum()));
+                    i.setPri(calculatePrice(i, collect.get(i.getPid()).getSum()));
                 }
             });
         }
@@ -116,16 +116,21 @@ public class Cart {
         /**
          * calculatePrice
          *
-         * @param wprice
+         * @param cartItem
          * @param productNum
          * @return
          */
-        private long calculatePrice(String wprice, long productNum) {
+        private long calculatePrice(CartItem cartItem, long productNum) {
 
-            Assert.isTrue(StringUtils.isNotEmpty(wprice), "The wprice must not empty");
+            Assert.isTrue(StringUtils.isNotEmpty(cartItem.getWpri()), "The wprice must not empty");
+
+            if("[]".equals(cartItem.getWpri())){
+                //价格信息在sku字段中的情形
+                return cartItem.getPri();
+            }
 
             //sample:[1-2 $ 3.68, 3-99 $ 3.35, ≥100 $ 3.14]
-            String cleanStr = CharMatcher.anyOf("[]").removeFrom(wprice);
+            String cleanStr = CharMatcher.anyOf("[]").removeFrom(cartItem.getWpri());
             Iterable<String> split = Splitter.on(',').trimResults().omitEmptyStrings().split(cleanStr);
             for (String i : split) {
                 Iterable<String> item = Splitter.on('$').trimResults().omitEmptyStrings().split(i);
@@ -148,10 +153,11 @@ public class Cart {
                         }
                     }
                 } else {
-                    log.error("wprice is rong,wprice:{}", wprice);
+                    log.error("wprice is rong,wprice:{}", cartItem.getWpri());
                     throw new NumberFormatException("wprice error");
                 }
             }
+            log.error("wprice is rong,wprice:{},pid:{}", cartItem.getWpri(),cartItem.getPid());
             throw new NumberFormatException("wprice error");
         }
     }

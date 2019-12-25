@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.importexpress.cart.feign.ProductServiceFeign;
 import com.importexpress.cart.pojo.Cart;
 import com.importexpress.cart.pojo.CartItem;
@@ -13,14 +14,14 @@ import com.importexpress.comm.pojo.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.Type;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -124,10 +125,16 @@ public class CartServiceImpl implements CartService {
         long now = Instant.now().toEpochMilli();
         cartItem.setCt(now);
         cartItem.setUt(now);
-        fillImgAndTn(product, cartItem);
+        fillOthersInfoToProduct(product, cartItem);
         return cartItem;
     }
 
+    /**
+     * getCartItems
+     * @param site
+     * @param userId
+     * @return
+     */
     private List<CartItem> getCartItems(char site, long userId) {
         String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
 
@@ -140,34 +147,74 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
-     * fillImgAndTn
+     * fillOthers
      *
      * @param product
      * @param cartItem
      */
-    private void fillImgAndTn(Product product, CartItem cartItem) {
+    private void fillOthersInfoToProduct(Product product, CartItem cartItem) {
         //Entype:[[id=32161, type=Color, value=White beard, img=560676334685/9168867283_2128907802.60x60.jpg], [id=32162, type=Color, value=greybeard, img=560676334685/9192394532_2128907802.60x60.jpg], [id=32163, type=Color, value=Blue wave point, img=560676334685/9210989827_2128907802.60x60.jpg], [id=32164, type=Color, value=Powder point, img=560676334685/9210995840_2128907802.60x60.jpg], [id=324511, type=Spec, value=59cm(23 inch | age 0-3M), img=], [id=324512, type=Spec, value=66cm(26 inch | age 3-6M), img=], [id=324513, type=Spec, value=73cm(29 inch | age 6-9M), img=], [id=324514, type=Spec, value=80cm(31 inch | age 9-12M), img=], [id=324515, type=Spec, value=85cm(33 inch | age 9-12M), img=], [id=324516, type=Spec, value=90cm(35 inch | age 1-2T), img=], [id=324517, type=Spec, value=95cm(37 inch | age 1-2T), img=]]
         final String str1 = "value=";
         final String str2 = "img=";
+        final String str3 = "[]";
+        final String str4 = "id=";
         String enType = product.getEntype();
         StringBuilder sb = new StringBuilder();
         ImmutableList<String> lst = ImmutableList.copyOf(Splitter.on("],").split(enType));
         for (String item : lst) {
-            String cleanStr = CharMatcher.anyOf("[]").removeFrom(item).trim();
-            if (StringUtils.contains(cleanStr, "id=" + cartItem.getSid1())
-                    || StringUtils.contains(cleanStr, "id=" + cartItem.getSid2())) {
-                //img
+            String cleanStr = CharMatcher.anyOf(str3).removeFrom(item).trim();
+            if (StringUtils.contains(cleanStr, str4 + cartItem.getSid1() + ",")
+                    || StringUtils.contains(cleanStr, str4 + cartItem.getSid2() + ",")) {
+                //parse img path
                 int beginIndex = cleanStr.indexOf(str2);
                 String strImg = cleanStr.substring(beginIndex + str2.length());
                 if (StringUtils.isNotEmpty(strImg)) {
+                    //fill img path
                     cartItem.setImg(strImg);
                 }
-                //type
+                //fill type
                 beginIndex = cleanStr.indexOf(str1);
                 sb.append(cleanStr, beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex)).append(" ");
             }
         }
         cartItem.setTn(sb.toString().trim());
+
+        if(str3.equals(product.getWprice())){
+            ImmutablePair<Float, Long> weiAndPri = getWeiAndPri(product.getSku(), cartItem);
+            Assert.isTrue(weiAndPri!=null,"weiAndPri is null.pid="+product.getPid());
+            cartItem.setWei(weiAndPri.getLeft());
+            cartItem.setPri(weiAndPri.getRight());
+        }
+    }
+
+    /**
+     * 不同规格价格不一样情况,需要从sku字段中解析出价格信息
+     * @param sku
+     * @param cartItem
+     * @return
+     */
+    private ImmutablePair<Float,Long> getWeiAndPri(String sku, CartItem cartItem) {
+        //sample: [{"skuAttr":"3216:32168", "skuPropIds":"32168", "specId":"3757601142926", "skuId":"3757601142926", "fianlWeight":"0.12","volumeWeight":"0.12", "wholesalePrice":"[≥1 $ 7.0-14.0]", "skuVal":{"actSkuCalPrice":"2.76", "actSkuMultiCurrencyCalPrice":"2.76", "actSkuMultiCurrencyDisplayPrice":"2.76", "availQuantity":0, "inventory":0, "isActivity":true, "skuCalPrice":"2.76", "skuMultiCurrencyCalPrice":"2.76", "skuMultiCurrencyDisplayPrice":"2.76", "costPrice":"14.0", "freeSkuPrice":"3.96"}]
+        Type type = new TypeToken<Map<String, String>>(){}.getType();
+        Map<String, String>[] mapsType = new Map[0];
+        Map<String, String>[] maps = new Gson().fromJson(sku, mapsType.getClass());
+        for (Map<String, String> map: maps) {
+            for(String key: map.keySet()){
+                if("skuPropIds".equals(key)){
+                    if(cartItem.getItemId().equals(cartItem.getPid()+":"+map.get(key))){
+                        //找到规格
+
+                        //重新设置重量
+                        Float wei=NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
+                        //重新设置价格
+                        Map<String, String> skuVal = new Gson().fromJson(String.valueOf(map.get("skuVal")), type);
+                        Long price=Math.round(NumberUtils.toDouble(String.valueOf(skuVal.get("skuCalPrice"))) * 100);
+                        return ImmutablePair.of(wei, price);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override

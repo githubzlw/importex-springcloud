@@ -53,6 +53,12 @@ public class CartItem {
     private String tn;
 
     /**
+     * sku
+     */
+    private String sku;
+
+
+    /**
      * 数量
      */
     private long num;
