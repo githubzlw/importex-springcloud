@@ -37,7 +37,7 @@ public class CategoryWrap implements Serializable {
 	/**
 	 * 选中
 	 */
-	private boolean isSelected;
+	private int selected;
 
 	/**
 	 * 数量

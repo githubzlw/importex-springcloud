@@ -2,6 +2,8 @@ package com.importexpress.search.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.importexpress.search.common.MulitSite;
+import com.importexpress.search.common.SiteEnum;
 import com.importexpress.search.mapper.CategoryMapper;
 import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.CategoryWrap;
@@ -41,6 +43,9 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		//所有类别列表全局变量
 		Map<String, Category> catidList = (Map<String, Category>)application.getAttribute("categorys");
 
+		//新品日期
+		Map<String, List<CategoryWrap>> dateMap =	MulitSite.getSiteEnum(param.getSite()).dateMap(application);
+
 		//已选择类别
 		List<String> selectedList = selectedCatid(param, catidList);
 
@@ -50,6 +55,25 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		//子类类别集合
 		List<CategoryWrap> dealCategoryChildren = dealCategoryChildren(categorys,selectedList);
 
+		if(selectedList.isEmpty()){
+			return dealCategoryChildren;
+		}
+		//日期
+		CategoryWrap categoryWrap = dealCategoryChildren.get(0);
+		if(categoryWrap.getLevel() != 1){
+			return dealCategoryChildren;
+		}
+		List<CategoryWrap> lstDate = dateMap.get(categoryWrap.getId());
+		if(lstDate != null && !lstDate.isEmpty()){
+			CategoryWrap wrap = new CategoryWrap();
+			wrap.setName("New Arrivals");
+			wrap.setUrl("keyword=&srt=default&collection=8&catid="+categoryWrap.getId());
+			wrap.setChilden(lstDate);
+			List<CategoryWrap> newChilden = Lists.newArrayList();
+			newChilden.add(wrap);
+			newChilden.addAll(categoryWrap.getChilden());
+			categoryWrap.setChilden(newChilden);
+		}
 		return dealCategoryChildren;
 	}
 
@@ -79,7 +103,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		Map<String,List<CategoryWrap>> category_map = Maps.newHashMap();
 		List<CategoryWrap> firstLevelCategory  = Lists.newArrayList();
 		for(CategoryWrap c : categorys) {
-			c.setSelected(selectedCatid.contains(c.getId()));
+			c.setSelected(selectedCatid.contains(c.getId()) ? 1 :0);
 			String parentCategory = c.getParentCategory();
 			List<CategoryWrap> childrenList = category_map.get(parentCategory);
 			childrenList = childrenList == null ? Lists.newArrayList() : childrenList;

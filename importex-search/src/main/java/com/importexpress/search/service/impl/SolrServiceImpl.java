@@ -291,7 +291,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         boolean isValidQueryString = StringUtils.equals(queryString, "*");
         String fq = null;
         //搜索词替换掉类别
-        if(param.getSite() == 1){
+        if(param.getSite() == 1 && param.isSynonym() && !isValidQueryString){
             KeyToCategoryWrap keyToCategoryWrap = splicingSyntax.queryStrToCategory(queryString);
             if(keyToCategoryWrap != null){
                 List<String> lstCatid = keyToCategoryWrap.getLstCatid();
@@ -468,27 +468,29 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     }
 
     /**权限版搜索,只展示可搜索的产品
+     * kids & pets展示可搜索的产品
      * @param param
      * @param fq_condition
      */
     private void importType(SearchParam param,StringBuilder fq_condition){
-        if(param.getSite() == 1){
-            fq_condition.append(" AND (");
-            //0 默认全部可搜 1-描述很精彩   2-卖过的   3-精选店铺
-            if(param.getImportType() == 1){
-                fq_condition.append("custom_describe_good_flag:1");
-            }else if(param.getImportType() == 2){
-                fq_condition.append("custom_sold_flag:1");
-            }else if(param.getImportType() == 3){
-                fq_condition.append("custom_shop_type:1");
-            }else{
-                fq_condition.append("custom_searchable:1")
-                        .append(" OR ").append("custom_describe_good_flag:1")
-                        .append(" OR ").append("custom_sold_flag:1")
-                        .append(" OR ").append("custom_shop_type:1");
-            }
-            fq_condition.append(" )");
+        if(param.getSite() != 1){
+            return ;
         }
+        fq_condition.append(" AND (");
+        //0 默认全部可搜 1-描述很精彩   2-卖过的   3-精选店铺
+        if(param.getImportType() == 1){
+            fq_condition.append("custom_describe_good_flag:1");
+        }else if(param.getImportType() == 2){
+            fq_condition.append("custom_sold_flag:1");
+        }else if(param.getImportType() == 3){
+            fq_condition.append("custom_shop_type:1");
+        }else{
+            fq_condition.append("custom_searchable:1")
+                    .append(" OR ").append("custom_describe_good_flag:1")
+                    .append(" OR ").append("custom_sold_flag:1")
+                    .append(" OR ").append("custom_shop_type:1");
+        }
+        fq_condition.append(" )");
     }
 
     /**价格区间设置
@@ -601,7 +603,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     }
 
     /**
-     * 规格属性统计
+     * 设置规格属性统计
      *
      * @param solrParams
      * @param param
@@ -615,10 +617,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     }
     /**
      * 传入查询条件,查询分组数据对应的数量  中位价和对应的solrFlag
-     * @throws SolrServerException
      */
-
-
     public  Map<String, Integer> searchFaced(double midPrice,ModifiableSolrParams solrParams){
         DecimalFormat df  = new DecimalFormat("0.00");  //保留两位小数
         //获取四个区间的范围

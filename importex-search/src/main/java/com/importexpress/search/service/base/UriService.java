@@ -17,10 +17,10 @@ public abstract class UriService {
 	 */
 	public String uriBase(SearchParam param) {
 		StringBuffer sb_href = new StringBuffer();
-		if(StringUtils.isBlank(param.getUriRequest())){
+		/*if(StringUtils.isBlank(param.getUriRequest())){
 			param.setUriRequest("");
-		}
-		sb_href.append(param.getUriRequest()).append("?keyword=")
+		}*/
+		sb_href.append("keyword=")
 				.append(KeywordCorrect.getKeyWord(param.getKeyword()))
 				.append("&srt=")
 				.append(StringUtils.isNotBlank(param.getSort()) ? param.getSort() : "default");

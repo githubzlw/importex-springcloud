@@ -122,6 +122,7 @@ public class SearchServiceImpl implements SearchService {
         if (StringUtils.isBlank(param.getKeyword())) {
             return list;
         }
+        param.setSynonym(false);
         QueryResponse response = solrService.serach(param);
         if (response != null) {
             list = docToProduct(response.getResults(), param);
@@ -208,15 +209,18 @@ public class SearchServiceImpl implements SearchService {
         page.setRecordCount(0L);
         wrap.setPage(page);
         wrap.setParam(param);
+        wrap.setProducts(Lists.newArrayList());
+        wrap.setCategorys(Lists.newArrayList());
+        wrap.setAttributes(Lists.newArrayList());
         String queryString = param.getKeyword();
         if (StringUtils.isBlank(queryString)) {
             return wrap;
         }
         //solr结果
-        wrap = productsFromSolr(param);
+        SearchResultWrap wrapTemp = productsFromSolr(param);
 
-        if(wrap != null){
-            PageWrap page1 = wrap.getPage();
+        if(wrapTemp != null){
+            PageWrap page1 = wrapTemp.getPage();
             //是否需要推荐联想词
             long recordCount = page1 == null ? 0 : page1.getRecordCount();
             boolean suggestKey = isDefault(param);
@@ -225,7 +229,8 @@ public class SearchServiceImpl implements SearchService {
                 List<AssociateWrap> associate = associate(param.getKeyword(), param.getSite());
                 wrap.setAssociates(associate);
             }
-            wrap.setSuggest(suggestKey);
+            wrapTemp.setSuggest(suggestKey);
+            return wrapTemp;
         }
         return wrap;
     }
@@ -247,6 +252,7 @@ public class SearchServiceImpl implements SearchService {
         param.setPage(1);
         param.setPageSize(1);
         param.setMobile(false);
+        param.setSynonym(true);
         QueryResponse response = solrService.serach(param);
         SolrResult solrResult = searchItem(param,response);
         return solrResult.getRecordCount();
@@ -573,6 +579,7 @@ public class SearchServiceImpl implements SearchService {
     private  SearchResultWrap productsFromSolr(SearchParam param){
         SearchResultWrap wrap = new SearchResultWrap();
         //请求solr获取产品列表
+        param.setSynonym(true);
         QueryResponse response = solrService.serach(param);
         //拼接参数
         if (response == null) {

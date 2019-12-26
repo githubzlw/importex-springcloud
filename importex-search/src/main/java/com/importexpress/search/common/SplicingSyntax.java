@@ -225,9 +225,6 @@ public class SplicingSyntax {
      * @return
      */
    public KeyToCategoryWrap queryStrToCategory(String  queryString){
-       if(StringUtils.isBlank(queryString) || "*".equals(queryString)){
-           return null;
-       }
        long start = System.currentTimeMillis();
        int queryLength = queryString.length();
        Object lstCategory = application.getAttribute("synonymsCategory");

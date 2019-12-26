@@ -1,10 +1,9 @@
 package com.importexpress.search.common;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.importexpress.comm.util.StrUtils;
-import com.importexpress.search.pojo.Attribute;
-import com.importexpress.search.pojo.Category;
-import com.importexpress.search.pojo.SearchWordWrap;
+import com.importexpress.search.pojo.*;
 import com.importexpress.search.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +30,7 @@ public class InitApplicationParameter {
     @Autowired
     private KeywordRecordService keywordRecordService;
     @Autowired
-    private ImportCategoryUtil importCategoryUtil;
+    private SearchService search;
 
     public void init(ServletContext application){
         category(application);
@@ -50,16 +49,53 @@ public class InitApplicationParameter {
      */
     public void category(ServletContext application){
         long startTime = System.currentTimeMillis();
+        Map<String,List<CategoryWrap>> importMap = Maps.newHashMap();
+        Map<String,List<CategoryWrap>> kidsMap = Maps.newHashMap();
+        Map<String,List<CategoryWrap>> petsMap = Maps.newHashMap();
         List<Category> allCategory = categoryService.getCategories();
         Map<String,Category> catidListResult = Maps.newHashMap();
+        SearchParam param = new SearchParam();
+        param.setCurrency(new Currency());
         for(Category categoryBean : allCategory){
             String[] categoryParent = categoryBean.getPath().split(",");
             categoryBean.setParentCategory(categoryParent.length > 1 ?
                     categoryParent[categoryParent.length-2] : "0");
             catidListResult.put(categoryBean.getCatid(), categoryBean);
+            if(categoryBean.getLevel() == 1){
+                param.setKeyword("*");
+                param.setCatid(categoryBean.getId());
+                String newArrivalDate = categoryBean.getNewArrivalDate();
+                if(StringUtils.isBlank(newArrivalDate)){
+                    continue;
+                }
+                String[] newArrivalDates = newArrivalDate.split(",");
+                for(String d : newArrivalDates){
+                    param.setNewArrivalDate(d);
+                    initDate(param,1,importMap,categoryBean.getId(),d);
+                    initDate(param,2,kidsMap,categoryBean.getId(),d);
+                    initDate(param,4,petsMap,categoryBean.getId(),d);
+                }
+            }
         }
         application.setAttribute("categorys", catidListResult);
+        application.setAttribute("importDate", importMap);
+        application.setAttribute("kidsDate", kidsMap);
+        application.setAttribute("petsDate", petsMap);
         log.info("全部1688Category的数据导入 Time:"+(System.currentTimeMillis()-startTime));
+    }
+
+    private void initDate(SearchParam param, int site, Map<String,List<CategoryWrap>> map, String catid, String d){
+        param.setSite(1);
+        param.setCollection(8);
+        if(search.serachCount(param) > 0){
+            List<CategoryWrap> lst = map.get(catid);
+            lst = lst == null ? Lists.newArrayList() : lst;
+            CategoryWrap category = new CategoryWrap();
+            category.setName(d);
+            category.setUrl("collection=8&catid="+catid+"&newArrivalDate="+d);
+            lst.add(category);
+            map.put(catid,lst);
+        }
     }
 
 
