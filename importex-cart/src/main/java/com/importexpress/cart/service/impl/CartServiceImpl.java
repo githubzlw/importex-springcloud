@@ -21,7 +21,10 @@ import org.springframework.util.Assert;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -31,10 +34,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class CartServiceImpl implements CartService {
-
-    private static final int OK = 1;
-
-    private static final int NG = 0;
 
     private final Config config;
 
@@ -51,37 +50,42 @@ public class CartServiceImpl implements CartService {
     @Override
     public int addCartItem(char site, long userId, String itemId, long num) {
 
-        checkItemId(itemId);
+        try {
+            checkItemId(itemId);
 
-        String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
-        //如果存在数量相加itemId
-        if (redisTemplate.opsForHash().hasKey(userCartKey, itemId)) {
-            String json = (String) redisTemplate.opsForHash().get(userCartKey, itemId);
-            if (StringUtils.isNotEmpty(json)) {
-                CartItem cartItem = new Gson().fromJson(json, CartItem.class);
-                cartItem.setNum(cartItem.getNum() + num);
-                cartItem.setUt(Instant.now().toEpochMilli());
-                redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
-            } else {
-                return NG;
+            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+            //如果存在数量相加itemId
+            if (redisTemplate.opsForHash().hasKey(userCartKey, itemId)) {
+                String json = (String) redisTemplate.opsForHash().get(userCartKey, itemId);
+                if (StringUtils.isNotEmpty(json)) {
+                    CartItem cartItem = new Gson().fromJson(json, CartItem.class);
+                    cartItem.setNum(cartItem.getNum() + num);
+                    cartItem.setUt(Instant.now().toEpochMilli());
+                    redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
+                } else {
+                    return FAILUT;
+                }
+                return SUCCESS;
             }
-            return OK;
-        }
-        //如果不存在，根据商品id取商品信息
-        String[] split = itemId.split(":");
-        Assert.isTrue(split.length >= 2, "The itemId invalid:" + itemId);
-        Product product = productServiceFeign.findProduct(Long.parseLong(split[0]));
-        CartItem cartItem = product2CartItem(product, num, split);
-        //查找同pid商品做排序处理
-        List<CartItem> lstCartItem = getCartItems(site, userId);
-        for (CartItem item : lstCartItem) {
-            if (item.getPid() == cartItem.getPid()) {
-                cartItem.setCt(item.getCt());
-                break;
+            //如果不存在，根据商品id取商品信息
+            String[] split = itemId.split(":");
+            Assert.isTrue(split.length >= 2, "The itemId invalid:" + itemId);
+            Product product = productServiceFeign.findProduct(Long.parseLong(split[0]));
+            CartItem cartItem = product2CartItem(product, num, split);
+            //查找同pid商品做排序处理
+            List<CartItem> lstCartItem = getCartItems(site, userId);
+            for (CartItem item : lstCartItem) {
+                if (item.getPid() == cartItem.getPid()) {
+                    cartItem.setCt(item.getCt());
+                    break;
+                }
             }
+            redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
+            return SUCCESS;
+        } catch (Exception e) {
+            log.error("addCartItem", e);
+            return FAILUT;
         }
-        redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
-        return OK;
     }
 
     /**
@@ -131,6 +135,7 @@ public class CartServiceImpl implements CartService {
 
     /**
      * getCartItems
+     *
      * @param site
      * @param userId
      * @return
@@ -179,9 +184,9 @@ public class CartServiceImpl implements CartService {
         }
         cartItem.setTn(sb.toString().trim());
 
-        if(str3.equals(product.getWprice())){
+        if (str3.equals(product.getWprice())) {
             ImmutablePair<Float, Long> weiAndPri = getWeiAndPri(product.getSku(), cartItem);
-            Assert.isTrue(weiAndPri!=null,"weiAndPri is null.pid="+product.getPid());
+            Assert.isTrue(weiAndPri != null, "weiAndPri is null.pid=" + product.getPid());
             cartItem.setWei(weiAndPri.getLeft());
             cartItem.setPri(weiAndPri.getRight());
         }
@@ -189,26 +194,28 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 不同规格价格不一样情况,需要从sku字段中解析出价格信息
+     *
      * @param sku
      * @param cartItem
      * @return
      */
-    private ImmutablePair<Float,Long> getWeiAndPri(String sku, CartItem cartItem) {
+    private ImmutablePair<Float, Long> getWeiAndPri(String sku, CartItem cartItem) {
         //sample: [{"skuAttr":"3216:32168", "skuPropIds":"32168", "specId":"3757601142926", "skuId":"3757601142926", "fianlWeight":"0.12","volumeWeight":"0.12", "wholesalePrice":"[≥1 $ 7.0-14.0]", "skuVal":{"actSkuCalPrice":"2.76", "actSkuMultiCurrencyCalPrice":"2.76", "actSkuMultiCurrencyDisplayPrice":"2.76", "availQuantity":0, "inventory":0, "isActivity":true, "skuCalPrice":"2.76", "skuMultiCurrencyCalPrice":"2.76", "skuMultiCurrencyDisplayPrice":"2.76", "costPrice":"14.0", "freeSkuPrice":"3.96"}]
-        Type type = new TypeToken<Map<String, String>>(){}.getType();
+        Type type = new TypeToken<Map<String, String>>() {
+        }.getType();
         Map<String, String>[] mapsType = new Map[0];
         Map<String, String>[] maps = new Gson().fromJson(sku, mapsType.getClass());
-        for (Map<String, String> map: maps) {
-            for(String key: map.keySet()){
-                if("skuPropIds".equals(key)){
-                    if(cartItem.getItemId().equals(cartItem.getPid()+":"+map.get(key))){
+        for (Map<String, String> map : maps) {
+            for (String key : map.keySet()) {
+                if ("skuPropIds".equals(key)) {
+                    if (cartItem.getItemId().equals(cartItem.getPid() + ":" + map.get(key))) {
                         //找到规格
 
                         //重新设置重量
-                        Float wei=NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
+                        Float wei = NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
                         //重新设置价格
                         Map<String, String> skuVal = new Gson().fromJson(String.valueOf(map.get("skuVal")), type);
-                        Long price=Math.round(NumberUtils.toDouble(String.valueOf(skuVal.get("skuCalPrice"))) * 100);
+                        Long price = Math.round(NumberUtils.toDouble(String.valueOf(skuVal.get("skuCalPrice"))) * 100);
                         return ImmutablePair.of(wei, price);
                     }
                 }
@@ -219,15 +226,21 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart getCart(char site, long userId) {
-        List<CartItem> lstCartItem = getCartItems(site, userId);
 
-        List<CartItem> collect = lstCartItem.stream().sorted(Comparator.comparingLong(CartItem::getCt).thenComparingLong(CartItem::getUt)).collect(Collectors.toList());
         Cart cart = new Cart();
-        cart.setItems(ImmutableList.copyOf(collect));
-        lstCartItem.clear();
-        collect.clear();
-        cart.new CalculatePrice().fillCartItemsPrice();
-        return cart;
+        try {
+            List<CartItem> lstCartItem = getCartItems(site, userId);
+
+            List<CartItem> collect = lstCartItem.stream().sorted(Comparator.comparingLong(CartItem::getCt).thenComparingLong(CartItem::getUt)).collect(Collectors.toList());
+            cart.setItems(ImmutableList.copyOf(collect));
+            lstCartItem.clear();
+            collect.clear();
+            cart.new CalculatePrice().fillCartItemsPrice();
+            return cart;
+        } catch (Exception e) {
+            log.error("getCart", e);
+            return cart;
+        }
     }
 
     @Override
@@ -238,62 +251,82 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public int updateCartItem(char site, long userId, String itemId, int num, int checked) {
+        try {
+            checkItemId(itemId);
 
-        checkItemId(itemId);
+            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
 
-        String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
-
-        String json = (String) redisTemplate.opsForHash().get(userCartKey, itemId);
-        if (StringUtils.isEmpty(json)) {
-            return NG;
+            String json = (String) redisTemplate.opsForHash().get(userCartKey, itemId);
+            if (StringUtils.isEmpty(json)) {
+                return FAILUT;
+            }
+            CartItem cartItem = new Gson().fromJson(json, CartItem.class);
+            cartItem.setNum(num);
+            if (checked != -1) {
+                cartItem.setChk(checked);
+            }
+            cartItem.setUt(Instant.now().toEpochMilli());
+            redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
+            return SUCCESS;
+        } catch (Exception e) {
+            log.error("updateCartItem", e);
+            return FAILUT;
         }
-        CartItem cartItem = new Gson().fromJson(json, CartItem.class);
-        cartItem.setNum(num);
-        if (checked != -1) {
-            cartItem.setChk(checked);
-        }
-        cartItem.setUt(Instant.now().toEpochMilli());
-        redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
-        return OK;
     }
 
     @Override
     public int delCartItem(char site, long userId, String itemId) {
-        checkItemId(itemId);
+        try {
+            checkItemId(itemId);
 
-        String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
 
-        Long lng = redisTemplate.opsForHash().delete(userCartKey, itemId);
-        return NumberUtils.toInt(lng.toString());
+            Long lng = redisTemplate.opsForHash().delete(userCartKey, itemId);
+            return NumberUtils.toInt(lng.toString());
+        } catch (Exception e) {
+            log.error("delCartItem", e);
+            return FAILUT;
+        }
     }
 
     @Override
     public int checkAll(char site, long userId, int checked) {
 
-        String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+        try {
+            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
 
-        List<Object> jsonList = redisTemplate.opsForHash().values(userCartKey);
+            List<Object> jsonList = redisTemplate.opsForHash().values(userCartKey);
 
-        for (Object json : jsonList) {
-            CartItem cartItem = new Gson().fromJson(json.toString(), CartItem.class);
-            cartItem.setChk(checked);
-            redisTemplate.opsForHash().put(userCartKey, cartItem.getItemId(), new Gson().toJson(cartItem));
+            for (Object json : jsonList) {
+                CartItem cartItem = new Gson().fromJson(json.toString(), CartItem.class);
+                cartItem.setChk(checked);
+                redisTemplate.opsForHash().put(userCartKey, cartItem.getItemId(), new Gson().toJson(cartItem));
+            }
+            return SUCCESS;
+
+        } catch (Exception e) {
+            log.error("checkAll", e);
+            return FAILUT;
         }
-
-        return OK;
     }
 
     @Override
     public int delChecked(char site, long userId) {
-        String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+        try {
+            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
 
-        List<Object> jsonList = redisTemplate.opsForHash().values(userCartKey);
-        for (Object json : jsonList) {
-            CartItem cartItem = new Gson().fromJson(json.toString(), CartItem.class);
-            if (cartItem.getChk() == 1) {
-                redisTemplate.opsForHash().delete(userCartKey, cartItem.getItemId());
+            List<Object> jsonList = redisTemplate.opsForHash().values(userCartKey);
+            for (Object json : jsonList) {
+                CartItem cartItem = new Gson().fromJson(json.toString(), CartItem.class);
+                if (cartItem.getChk() == 1) {
+                    redisTemplate.opsForHash().delete(userCartKey, cartItem.getItemId());
+                }
             }
+            return SUCCESS;
+
+        } catch (Exception e) {
+            log.error("delChecked", e);
+            return FAILUT;
         }
-        return OK;
     }
 }

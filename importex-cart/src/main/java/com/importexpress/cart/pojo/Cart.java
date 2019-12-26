@@ -124,7 +124,7 @@ public class Cart {
 
             Assert.isTrue(StringUtils.isNotEmpty(cartItem.getWpri()), "The wprice must not empty");
 
-            if("[]".equals(cartItem.getWpri())){
+            if ("[]".equals(cartItem.getWpri())) {
                 //价格信息在sku字段中的情形
                 return cartItem.getPri();
             }
@@ -157,7 +157,7 @@ public class Cart {
                     throw new NumberFormatException("wprice error");
                 }
             }
-            log.error("wprice is rong,wprice:{},pid:{}", cartItem.getWpri(),cartItem.getPid());
+            log.error("wprice is rong,wprice:{},pid:{}", cartItem.getWpri(), cartItem.getPid());
             throw new NumberFormatException("wprice error");
         }
     }

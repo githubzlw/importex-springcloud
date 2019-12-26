@@ -7,6 +7,10 @@ import com.importexpress.cart.pojo.Cart;
  */
 public interface CartService {
 
+    public static final int SUCCESS = 1;
+
+    public static final int FAILUT = 0;
+
     /**
      * 添加
      *
