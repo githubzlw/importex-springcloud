@@ -85,12 +85,14 @@ public class InitApplicationParameter {
     }
 
     private void initDate(SearchParam param, int site, Map<String,List<CategoryWrap>> map, String catid, String d){
-        param.setSite(1);
+        param.setSite(site);
         param.setCollection(8);
         if(search.serachCount(param) > 0){
             List<CategoryWrap> lst = map.get(catid);
             lst = lst == null ? Lists.newArrayList() : lst;
             CategoryWrap category = new CategoryWrap();
+            category.setId(catid);
+            category.setLevel(3);
             category.setName(d);
             category.setUrl("collection=8&catid="+catid+"&newArrivalDate="+d);
             lst.add(category);

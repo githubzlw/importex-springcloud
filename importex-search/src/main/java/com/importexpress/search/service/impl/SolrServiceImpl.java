@@ -302,6 +302,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
                     isValidQueryString = StringUtils.equals(queryString, "*");
                     //fq限制类别
                     fq = categoryFQ(lstCatid);
+                    solrParams.set("synon_category",fq);
                 }
             }
         }

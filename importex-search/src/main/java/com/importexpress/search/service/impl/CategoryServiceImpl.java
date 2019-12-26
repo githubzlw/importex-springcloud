@@ -2,8 +2,7 @@ package com.importexpress.search.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.importexpress.search.common.MulitSite;
-import com.importexpress.search.common.SiteEnum;
+import com.importexpress.search.common.SwitchDomainUtil;
 import com.importexpress.search.mapper.CategoryMapper;
 import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.CategoryWrap;
@@ -44,7 +43,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		Map<String, Category> catidList = (Map<String, Category>)application.getAttribute("categorys");
 
 		//新品日期
-		Map<String, List<CategoryWrap>> dateMap =	MulitSite.getSiteEnum(param.getSite()).dateMap(application);
+		Map<String, List<CategoryWrap>> dateMap =	SwitchDomainUtil.getSiteEnum(param.getSite()).dateMap(application);
 
 		//已选择类别
 		List<String> selectedList = selectedCatid(param, catidList);
@@ -102,6 +101,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 	private List<CategoryWrap> dealCategoryChildren(List<CategoryWrap> categorys, List<String> selectedCatid){
 		Map<String,List<CategoryWrap>> category_map = Maps.newHashMap();
 		List<CategoryWrap> firstLevelCategory  = Lists.newArrayList();
+		CategoryWrap selected = null;
 		for(CategoryWrap c : categorys) {
 			c.setSelected(selectedCatid.contains(c.getId()) ? 1 :0);
 			String parentCategory = c.getParentCategory();
@@ -110,8 +110,15 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			childrenList.add(c);
 			category_map.put(parentCategory, childrenList);
 			if("0".equals(parentCategory)) {
-				firstLevelCategory.add(c);
+				if(selectedCatid.contains(c.getId())){
+					selected = c;
+				}else{
+					firstLevelCategory.add(c);
+				}
 			}
+		}
+		if(selected != null){
+			firstLevelCategory.add(0,selected);
 		}
 		List<CategoryWrap> dealCategory = dealCategory(category_map, firstLevelCategory);
 
@@ -127,7 +134,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 	private List<CategoryWrap> dealCategory(Map<String,List<CategoryWrap>> category_map,
 											List<CategoryWrap> categorys){
 		if(categorys == null) {
-			return null;
+			return Lists.newArrayList();
 		}
 		for(CategoryWrap c : categorys) {
 			List<CategoryWrap> childrenList = category_map.get(c.getId());
