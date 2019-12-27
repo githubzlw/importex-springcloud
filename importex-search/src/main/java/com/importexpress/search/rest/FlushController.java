@@ -47,7 +47,7 @@ public class FlushController {
      * @param request
      */
     @ApiOperation("初始化同义词列表")
-    @GetMapping("/synonyms")
+    @GetMapping("/synonyms/key")
     public CommonResult synonyms(HttpServletRequest request){
         init.synonyms(request.getServletContext());
         return CommonResult.success("刷新成功");

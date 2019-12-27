@@ -4,6 +4,7 @@ import com.importexpress.search.pojo.PageWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.service.PageService;
 import com.importexpress.search.service.base.UriService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -210,6 +211,12 @@ public class PageServiceImpl extends UriService implements PageService {
 		if(org.apache.commons.lang.StringUtils.isNotBlank(param.getAttrId())){
 			sb_href.append("&pvid=").append(param.getAttrId());
 		}
+		if(param.getCollection() != 0){
+			sb_href.append("&collection=").append(param.getCollection());
+		}
+        if(StringUtils.isNotBlank(param.getNewArrivalDate())){
+            sb_href.append("&newArrivalDate=").append(param.getNewArrivalDate());
+        }
 		sb_href.append("&page=");
 		return sb_href.toString();
 	}

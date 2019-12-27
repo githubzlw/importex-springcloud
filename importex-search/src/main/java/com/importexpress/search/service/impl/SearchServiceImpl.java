@@ -247,7 +247,7 @@ public class SearchServiceImpl implements SearchService {
         param.setPage(1);
         param.setPageSize(1);
         param.setMobile(false);
-        param.setSynonym(true);
+        param.setSynonym(StringUtils.isBlank(param.getCatid()));
         QueryResponse response = solrService.serach(param);
         SolrResult solrResult = searchItem(param,response);
         return solrResult.getRecordCount();
@@ -257,6 +257,7 @@ public class SearchServiceImpl implements SearchService {
     public GoodsPriceRange searPriceRangeByKeyWord(SearchParam param) {
         GoodsPriceRange range = new GoodsPriceRange();
         range.setCatid(param.getCatid());
+        param.setSynonym(StringUtils.isBlank(param.getCatid()));
         Map<String,Object> response = solrService.searPriceRangeByKeyWord(param);
         if(response == null){
             return range;

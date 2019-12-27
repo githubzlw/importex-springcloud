@@ -27,17 +27,11 @@ public abstract class UriService {
 		if(param.getImportType() != 0){
 			sb_href.append("&filter=").append(param.getImportType());
 		}
-		if(param.getCollection() != 0){
-			sb_href.append("&collection=").append(param.getCollection());
-		}
 		if(StringUtils.isNotBlank(param.getMinPrice())){
 			sb_href.append("&price1=").append(param.getMinPrice());
 		}
 		if(StringUtils.isNotBlank(param.getMaxPrice())){
 			sb_href.append("&price2=").append(param.getMaxPrice());
-		}
-		if(StringUtils.isNotBlank(param.getNewArrivalDate())){
-			sb_href.append("&newArrivalDate=").append(param.getNewArrivalDate());
 		}
 		sb_href.append("&isFreeShip="+param.getFreeShipping());
 		return sb_href.toString();

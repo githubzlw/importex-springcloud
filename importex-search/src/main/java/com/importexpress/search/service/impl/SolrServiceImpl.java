@@ -612,7 +612,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     private void setAttributeFacet(ModifiableSolrParams solrParams, SearchParam param) {
         String pvid = param.getAttrId();
         if (param.isFactPvid() && pvid.split(",").length < 4) {
-            SolrFacet facet = new SolrFacet("custom_pvids", 5000, 4);
+            SolrFacet facet = new SolrFacet("custom_pvids", 4, 5000);
             setFacet(solrParams, facet);
         }
     }

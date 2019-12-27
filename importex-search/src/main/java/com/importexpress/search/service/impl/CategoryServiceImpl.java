@@ -42,9 +42,6 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		//所有类别列表全局变量
 		Map<String, Category> catidList = (Map<String, Category>)application.getAttribute("categorys");
 
-		//新品日期
-		Map<String, List<CategoryWrap>> dateMap =	SwitchDomainUtil.getSiteEnum(param.getSite()).dateMap(application);
-
 		//已选择类别
 		List<String> selectedList = selectedCatid(param, catidList);
 
@@ -57,25 +54,55 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		if(selectedList.isEmpty()){
 			return dealCategoryChildren;
 		}
-		//日期
-		CategoryWrap categoryWrap = dealCategoryChildren.get(0);
-		if(categoryWrap.getLevel() != 1){
-			return dealCategoryChildren;
-		}
-		List<CategoryWrap> lstDate = dateMap.get(categoryWrap.getId());
-		if(lstDate != null && !lstDate.isEmpty()){
-			CategoryWrap wrap = new CategoryWrap();
-			wrap.setName("New Arrivals");
-			wrap.setUrl("keyword=&srt=default&collection=8&catid="+categoryWrap.getId());
-			wrap.setChilden(lstDate);
-			List<CategoryWrap> newChilden = Lists.newArrayList();
-			newChilden.add(wrap);
-			newChilden.addAll(categoryWrap.getChilden());
-			categoryWrap.setChilden(newChilden);
-		}
+
+		//新品日志列表
+		newArrivalDate(param,dealCategoryChildren);
+
 		return dealCategoryChildren;
 	}
 
+	/**设置新品
+	 * @param param
+	 * @param dealCategoryChildren
+	 */
+	private void newArrivalDate(SearchParam param, List<CategoryWrap> dealCategoryChildren){
+		//新品日期
+		Map<String,List<CategoryWrap>> dateMap = SwitchDomainUtil.getSiteEnum(param.getSite()).dateMap(application);
+		//日期
+		for(int i=0;i<dealCategoryChildren.size();i++){
+			if(i != 0 || dealCategoryChildren.get(i).getLevel() != 1){
+				continue;
+			}
+			CategoryWrap categoryWrap = dealCategoryChildren.get(0);
+			List<CategoryWrap> lstDate = dateMap.get(categoryWrap.getId());
+			if(lstDate != null && !lstDate.isEmpty()){
+				CategoryWrap wrap = new CategoryWrap();
+				wrap.setSelected(param.getCollection() == 8 ? 1 : 0);
+				wrap.setName("New Arrivals");
+				wrap.setUrl("keyword=&srt=default&collection=8&catid="+categoryWrap.getId());
+				wrap.setChilden(setDateSelected(param,lstDate));
+				List<CategoryWrap> newChilden = Lists.newArrayList();
+				newChilden.add(wrap);
+				newChilden.addAll(categoryWrap.getChilden());
+				categoryWrap.setChilden(newChilden);
+			}
+		}
+	}
+
+	/**所选日期设置选中模式
+	 * @param param
+	 * @param lstDate
+	 * @return
+	 */
+	private List<CategoryWrap> setDateSelected(SearchParam param,List<CategoryWrap> lstDate){
+		if(StringUtils.isBlank(param.getNewArrivalDate())){
+			return lstDate;
+		}
+		lstDate.stream().forEach(l->{
+			l.setSelected(l.getName().equalsIgnoreCase(param.getNewArrivalDate()) ? 1 : 0);
+		});
+		return lstDate;
+	}
 
 	/**
 	 * 已选择类别的类别树
@@ -184,7 +211,6 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		sb_href.append("&catid=");
 		return sb_href.toString();
 	}
-
 
 	@Override
 	public List<SearchWordWrap> getRecommendedWords() {

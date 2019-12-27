@@ -10,10 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,11 +36,13 @@ public class SynonymServiceImpl implements SynonymService {
                 synonymsListResult.put(k, kSet);
             }
         }
+//        reverSynonyms(synonymsListResult);
         return synonymsListResult;
     }
 
     @Override
     public List<SynonymsCategoryWrap> getSynonymsCategory() {
+        List<String> mul = Lists.newArrayList();
         List<SynonymsCategoryWrap> catidResult = Lists.newArrayList();
         List<Map<String, String>> specialCatidAll = synonymMapper.getSynonymsCategory();
         if(specialCatidAll == null || specialCatidAll.isEmpty()){
@@ -54,7 +53,10 @@ public class SynonymServiceImpl implements SynonymService {
             String category = map.get("category").toLowerCase().trim();
             if(StringUtils.isNotBlank(category)){
                 category = category.replaceAll("(\\s+)"," ");
-
+                if(mul.contains(category+map.get("catid"))){
+                    continue;
+                }
+                mul.add(category+map.get("catid"));
                 wrap = SynonymsCategoryWrap.builder()
                         .category(category).catid(map.get("catid")).length(category.length())
                         .num(category.split("(\\s+)").length).build();
@@ -67,11 +69,11 @@ public class SynonymServiceImpl implements SynonymService {
                 for(String s : synonymsCategories){
                     s = s.toLowerCase().trim();
                     s = s.replaceAll("(\\s+)"," ");
-                    if(StringUtils.isNotBlank(s)){
+                    if(StringUtils.isNotBlank(s)&& !mul.contains(s+map.get("catid"))){
                         wrap = SynonymsCategoryWrap.builder()
                                 .category(s).catid(map.get("catid")).length(s.length())
                                 .num(s.split("(\\s+)").length).build();
-
+                        mul.add(s+map.get("catid"));
                         catidResult.add(wrap);
                     }
                 }
@@ -81,5 +83,36 @@ public class SynonymServiceImpl implements SynonymService {
                 .sorted(Comparator.comparing(SynonymsCategoryWrap::getLength).reversed())
                 .collect(Collectors.toList());
         return result;
+    }
+    private String reverKey(String k){
+        if(k.indexOf(" ")==-1){
+            return "";
+        }
+        String[] split = k.split("(\\s+)");
+        int length = split.length;
+        for(int i=length-1;i>0;i--){
+            k = k+" "+split[i];
+        }
+        return k.trim();
+    }
+    private void reverSynonyms(Map<String,Set<String>> synonymsListResult){
+        Map<String,Set<String>> synonymsListResultRever = Maps.newHashMap();
+        Iterator<Map.Entry<String, Set<String>>> iterator = synonymsListResult.entrySet().iterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, Set<String>> next = iterator.next();
+            String key = next.getKey();
+            String reverKey = reverKey(key);
+            if(StringUtils.isBlank(reverKey)){
+                continue;
+            }
+            Set<String> reverSet = synonymsListResult.get(reverKey);
+            if(reverSet == null || reverSet.isEmpty()){
+                reverSet = next.getValue();
+            }else{
+                reverSet.addAll(next.getValue());
+            }
+            synonymsListResultRever.put(reverKey,reverSet);
+        }
+        synonymsListResult.putAll(synonymsListResultRever);
     }
 }
