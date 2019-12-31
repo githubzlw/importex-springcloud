@@ -6,7 +6,6 @@ import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.*;
 import com.importexpress.search.pojo.*;
 import com.importexpress.search.service.*;
-import com.importexpress.search.util.DoubleUtil;
 import com.importexpress.search.util.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -19,11 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletContext;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +30,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class SearchServiceImpl implements SearchService {
-//    private String chineseChar = "([\\一-\\龥]+)";
     @Autowired
     private ModefilePrice modefilePrice;
     @Autowired
@@ -47,7 +41,7 @@ public class SearchServiceImpl implements SearchService {
     @Autowired
     private AttributeService attributeService;
     @Autowired
-    private LandingPageTriggerKeyService land;
+    private LandingPageTriggerKeyService landService;
     @Autowired
     private SolrService solrService;
     @Autowired
@@ -57,7 +51,7 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public SearchResultWrap advertisement(String key, int site, String adgroupid) {
-        LimitKey triggerKey = land.getTriggerKey(key,adgroupid);
+        LimitKey triggerKey = landService.getTriggerKey(key,adgroupid);
         if(triggerKey == null){
             return new SearchResultWrap();
         }
@@ -71,18 +65,15 @@ public class SearchServiceImpl implements SearchService {
         param.setMinPrice("2.00");
         param.setSite(site);
         param.setUserType(1);
+        param.setCurrency(new Currency());
         SearchResultWrap wrap = productSerach(param);
         return wrap;
     }
 
     @Override
     public List<SearchWordWrap> searchWord(String keyword, int site) {
-        Object wordList = application.getAttribute("recommendedWords");
+        List<SearchWordWrap> cList = (List<SearchWordWrap>) application.getAttribute("recommendedWords");
         List<SearchWordWrap> list = Lists.newArrayList();
-        if (wordList == null || StringUtils.isBlank(keyword)) {
-            return list;
-        }
-        List<SearchWordWrap> cList = (List<SearchWordWrap>) wordList;
         try {
             FSearchTool tool = new FSearchTool(cList, "key_word", "path");
             List<Object> listWord = tool.searchTasks(keyword);
@@ -90,13 +81,7 @@ public class SearchServiceImpl implements SearchService {
                 return list;
             }
             SearchParam param = new SearchParam();
-            param.setPage(1);
-            param.setFreeShipping(1);
-            param.setMobile(false);
-            param.setFactPvid(false);
-            param.setFactPvid(false);
-            param.setPageSize(1);
-            param.setFreeShipping(1);
+            param.setSite(site);
             SearchWordWrap s = (SearchWordWrap) listWord.get(0);
             List<Object> listq = tool.searchTasks(s.getPath());
             for (Object o : listq) {
@@ -122,9 +107,6 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<Product> guessYouLike(SearchParam param) {
         List<Product> list = Lists.newArrayList();
-        if (StringUtils.isBlank(param.getKeyword())) {
-            return list;
-        }
         param.setSynonym(false);
         QueryResponse response = solrService.serach(param);
         if (response != null) {
@@ -186,11 +168,6 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<Product> hotProduct(SearchParam param) {
         List<Product> list = Lists.newArrayList();
-        if (StringUtils.isBlank(param.getKeyword())) {
-            // @author: cjc @date：2019/8/19 11:36:18   Description : 沈静说无需处理,修改日志级别即可
-            log.warn("param.getKeyword() is null ");
-            return list;
-        }
         QueryResponse response = solrService.hotProduct(param);
         if (response != null) {
             list = docToProduct(response.getResults(), param);
@@ -241,12 +218,15 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public long serachCount(SearchParam param) {
+        param.setCurrency(new Currency());
+        param.setMobile(false);
         param.setFactCategory(false);
         param.setFactPvid(false);
         param.setOrder(false);
         param.setPage(1);
         param.setPageSize(1);
-        param.setMobile(false);
+        param.setFreeShipping(2);
+        param.setUserType(1);
         param.setSynonym(StringUtils.isBlank(param.getCatid()));
         QueryResponse response = solrService.serach(param);
         SolrResult solrResult = searchItem(param,response);
@@ -259,12 +239,11 @@ public class SearchServiceImpl implements SearchService {
         range.setCatid(param.getCatid());
         param.setSynonym(StringUtils.isBlank(param.getCatid()));
         Map<String,Object> response = solrService.searPriceRangeByKeyWord(param);
-        if(response == null){
+        if(response.isEmpty()){
             return range;
         }
         double midPrice = (Double) response.get("midPrice");
         Map<String, Integer> solrMap = (Map<String, Integer>)response.get("solrMap");
-        boolean isChangeCurrency = !"USD".equals(param.getCurrency());
         DecimalFormat df  = new DecimalFormat("0.00");  //保留两位小数
         range.setKeyword(null);
         range.setOtherkeyword(null);
@@ -277,7 +256,7 @@ public class SearchServiceImpl implements SearchService {
         range.setSectionFourCount(solrMap.get("custom_max_price:["+(Double.parseDouble((2*midPrice+""+1)))+" TO *]"));
         range.setState(0);
         //存放到数据库中
-        if(isChangeCurrency){
+        if(!"USD".equals(param.getCurrency())){
             ChangeCurrency.chang(range,param.getCurrency());
         }
         return range;
@@ -320,18 +299,9 @@ public class SearchServiceImpl implements SearchService {
         List<AssociateWrap> result = Lists.newArrayList();
         AssociateWrap wrap = null;
         SearchParam param = new SearchParam();
-        param.setPageSize(1);
-        param.setPage(1);
-        param.setFreeShipping(1);
-        param.setMobile(false);
-        param.setFactPvid(false);
-        param.setFactPvid(false);
         param.setSite(site);
-        param.setCurrency(new Currency());
-        param.setUserType(1);
         for(int i=0,length=exhaust.length;i<length&&result.size() <4;i++) {
             param.setKeyword(KeywordCorrect.getKeyWord(exhaust[i]));
-            param.setFreeShipping(1);
             long countResult = serachCount(param);
             if(countResult > 4 && result.size() < 5) {
                 wrap = new AssociateWrap();
@@ -439,8 +409,10 @@ public class SearchServiceImpl implements SearchService {
             product.setUrl(goods_url.replaceAll("\\%", ""));
 
             //价格
-            productPrice(isFree, solrDocument, product);
-
+            if(!productPrice(isFree, solrDocument, product)){
+               continue;
+            }
+            //单位
             String unit = StrUtils.object2Str(solrDocument.get("custom_sellunit"));
             unit = StringUtils.isBlank(unit) ? "piece" : unit;
             String setSellUnits_ = StrUtils.matchStr(unit, "(\\(.*\\))");
@@ -449,7 +421,6 @@ public class SearchServiceImpl implements SearchService {
             product.setMoqUnit(unit);
             String goods_minOrder = StrUtils.object2Str(solrDocument.get("custom_morder"));
             goods_minOrder = StrUtils.isNum(goods_minOrder) ? goods_minOrder : "1";
-            //单位
             product.setMinOrder(goods_minOrder);
             if (StringUtils.isNotBlank(goods_minOrder) && !"1".equals(goods_minOrder) && !"pcs".equals(unit)) {
                 product.setMoqUnit(unit + "s" + setSellUnits_);
@@ -482,83 +453,50 @@ public class SearchServiceImpl implements SearchService {
      * @param solrDocument
      * @param searchGoods
      */
-    private void productPrice(boolean isFree, SolrDocument solrDocument, Product searchGoods) {
-        String custom_is_sold_flag = StrUtils.object2NumStr(solrDocument.get("custom_is_sold_flag"));
-        String finalWeightTem = StrUtils.object2Str(solrDocument.get("custom_final_weight"));
-        String price = StrUtils.object2Str(solrDocument.get("custom_price"));
+    private boolean productPrice(boolean isFree, SolrDocument solrDocument, Product searchGoods) {
         String rangePrice = StrUtils.object2Str(solrDocument.get("custom_range_price"));
-        String rangePriceFree = StrUtils.object2Str(solrDocument.get("custom_range_price_free"));
-        String custom_feeprice = StrUtils.object2Str(solrDocument.get("custom_feeprice"));
-        if (StringUtils.isBlank(rangePrice)) {
-            price = isFree ? custom_feeprice : price;
-            searchGoods.setPrice(price);
-            //批量价格显示
-            String wprice = StrUtils.object2Str(solrDocument.get("custom_wprice"));
-            if (!"0".equals(custom_is_sold_flag) && StringUtils.isNotBlank(custom_feeprice)) {
-                wprice = custom_feeprice;
-            }
-            List<Price> modefideWholesalePrice = modefilePrice.modefideWholesalePrice(wprice);
-            if (modefideWholesalePrice != null && modefideWholesalePrice.size() == 1) {
-                if (isFree) {
-                    getFreePrice(finalWeightTem, modefideWholesalePrice);
-                }
-                searchGoods.setPrice(modefideWholesalePrice.get(0).getPrice());
-                searchGoods.setMinOrder(searchGoods.getMinOrder());
-            } else if (modefideWholesalePrice != null && modefideWholesalePrice.size() > 1) {
-                searchGoods.setWholesaleMiddlePrice(modefideWholesalePrice.size() > 1 ? modefideWholesalePrice.get(1).getPrice() : null);
-                if (isFree) {
-                    getFreePrice(finalWeightTem, modefideWholesalePrice);
-                }
-                searchGoods.setWholesalePrice(modefideWholesalePrice);
-                price = modefideWholesalePrice.get(modefideWholesalePrice.size() - 1).getPrice();
-                price = price + "-" + modefideWholesalePrice.get(0).getPrice();
-                searchGoods.setPrice(price);
-                searchGoods.setMinOrder(searchGoods.getMinOrder());
-            } else {
-                searchGoods.setMinOrder(searchGoods.getMinOrder());
-            }
-        } else {
+        if(StringUtils.isNotBlank(rangePrice)){
             if (isFree) {
+                String rangePriceFree = StrUtils.object2Str(solrDocument.get("custom_range_price_free"));
                 if (StringUtils.isNotBlank(rangePriceFree)) {
                     rangePrice = rangePriceFree;
                 } else {
+                    String finalWeightTem = StrUtils.object2Str(solrDocument.get("custom_final_weight"));
                     rangePrice = modefilePrice.getRangePrice(rangePrice, 0, finalWeightTem, rangePrice);
                 }
             }
             searchGoods.setPrice(rangePrice);
-            searchGoods.setMinOrder(searchGoods.getMinOrder());
+            return true;
         }
-    }
+        String price = StrUtils.object2Str(solrDocument.get("custom_price"));
+        searchGoods.setPrice(price);
 
-    public void getFreePrice(String finalWeightTem, List<Price> modefideWholesalePrice) {
-        modefideWholesalePrice.stream().forEach(priceBean -> {
-            try {
-                String price1 = priceBean.getPrice();
-                price1 = getShippingCostByWeight(finalWeightTem, price1);
-                // @author: cjc @date：2019/8/27 9:39:44   Description :	 取精度
-                price1 = new BigDecimal(price1).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-                priceBean.setPrice(price1);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                log.error("e", e);
-            }
-
-        });
-    }
-
-    @NotNull
-    public static String getShippingCostByWeight(String finalWeightTem, String price1) {
-        try {
-            String s3 = finalWeightTem.replaceAll("[^(\\d+\\.\\d+)]", "");
-            Double divide = DoubleUtil.divide(DoubleUtil.mul(Double.parseDouble(s3) * 1000, Utility.PERGRAMUSA), Utility.EXCHANGE_RATE, 2);
-            price1 = String.valueOf(Double.parseDouble(price1) + divide);
-            price1 = new BigDecimal(price1).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            log.error("error", e);
+        //批量价格显示
+        String wprice = StrUtils.object2Str(solrDocument.get("custom_wprice"));
+        List<Price> modefideWholesalePrice = modefilePrice.modefideWholesalePrice(wprice);
+        //非免邮第二个价格
+        if(modefideWholesalePrice.size() > 1){
+            searchGoods.setWholesaleMiddlePrice(modefideWholesalePrice.get(1).getPrice());
         }
-        return price1;
+        if(isFree){
+            String custom_feeprice = StrUtils.object2Str(solrDocument.get("custom_feeprice"));
+            modefideWholesalePrice = modefilePrice.modefideWholesalePrice(custom_feeprice) ;
+        }
+        if(modefideWholesalePrice.isEmpty()){
+            return false;
+        }
+        price = modefideWholesalePrice.get(0).getPrice();
+        if(modefideWholesalePrice.size() == 1){
+            searchGoods.setWholesaleMiddlePrice(null);
+        }else{
+            searchGoods.setWholesalePrice(modefideWholesalePrice);
+        }
+//        price = modefideWholesalePrice.get(modefideWholesalePrice.size() - 1).getPrice();
+//        price = price + "-" + modefideWholesalePrice.get(0).getPrice();
+        searchGoods.setPrice(price);
+        return true;
     }
+
 
     /**请求solr解析产品列表
      * @param param
@@ -619,11 +557,9 @@ public class SearchServiceImpl implements SearchService {
         return wrap;
     }
     private boolean isDefault(SearchParam param){
-        boolean isDefault =  "default".equals(param.getSort());
-        isDefault = isDefault && (StringUtils.isBlank(param.getCatid()));
-        isDefault = isDefault && param.getPage() < 2;
+        boolean isDefault = "default".equals(param.getSort()) && StringUtils.isBlank(param.getAttrId());
+        isDefault = isDefault && (StringUtils.isBlank(param.getCatid())) && param.getPage() < 2;
         isDefault = isDefault && StringUtils.isBlank(param.getMinPrice()) && StringUtils.isBlank(param.getMaxPrice());
-        isDefault = isDefault && StringUtils.isBlank(param.getAttrId());
         return isDefault;
     }
 

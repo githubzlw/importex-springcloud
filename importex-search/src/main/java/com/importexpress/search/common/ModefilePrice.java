@@ -22,12 +22,12 @@ public class ModefilePrice {
      */
 
     public List<Price> modefideWholesalePrice(String wprice) {
-        if(wprice == null){
-            return null;
+        if(wprice == null || "[]".equals(wprice)){
+            return Lists.newArrayList();
         }
         wprice = wprice.replaceAll("[\\[\\]]", "").trim();
         if(StringUtils.isBlank(wprice)){
-            return null;
+            return Lists.newArrayList();
         }
 
         List<Price> priceList = Lists.newArrayList();
@@ -57,7 +57,8 @@ public class ModefilePrice {
             if(!StrUtils.isFind(quantity, "(\\d+)") || !StrUtils.isMatch(wholePrices[1].trim(), "(\\d+(\\.\\d+){0,1})")){
                 continue;
             }
-            /*如果后一个区间定量与前一个区间定量值一样 或者  前一区间的价格与后一个去加的价格一样，说明多区间价格不合理，不使用多区间价格，直接使用单一价格*/
+            /*如果后一个区间定量与前一个区间定量值一样 或者  前一区间的价格与后一个去加的价格一样，
+            说明多区间价格不合理，不使用多区间价格，直接使用单一价格*/
             if(preQuantity.equals(quantity) || prePrice.equals(wholePrices[1].trim())){
                 continue;
             }
@@ -127,7 +128,7 @@ public class ModefilePrice {
                 return priceList;
             }
         }
-        return null;
+        return Lists.newArrayList();
     }
     public static String getRangePrice(String range_price, int isFreeShipProduct, String weight, String priceTem) {
         if(0 != isFreeShipProduct){

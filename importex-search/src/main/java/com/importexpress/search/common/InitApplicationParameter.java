@@ -62,23 +62,24 @@ public class InitApplicationParameter {
             categoryBean.setParentCategory(categoryParent.length > 1 ?
                     categoryParent[categoryParent.length-2] : "0");
             catidListResult.put(categoryBean.getCatid(), categoryBean);
-            if(categoryBean.getLevel() == 1){
-                param.setKeyword("*");
-                param.setCatid(categoryBean.getCatid());
-                String newArrivalDate = categoryBean.getNewArrivalDate();
-                if(StringUtils.isBlank(newArrivalDate)){
-                    continue;
+            if(categoryBean.getLevel() != 1){
+                continue;
+            }
+            param.setKeyword("*");
+            param.setCatid(categoryBean.getCatid());
+            String newArrivalDate = categoryBean.getNewArrivalDate();
+            if(StringUtils.isBlank(newArrivalDate)){
+                continue;
+            }
+            String[] newArrivalDates = newArrivalDate.split(",");
+            for(String d : newArrivalDates){
+                param.setNewArrivalDate(d);
+                initDate(param,1,importMap,categoryBean.getCatid(),d);
+                if(lstPets.contains(categoryBean.getCatid())){
+                    initDate(param,4,petsMap,categoryBean.getCatid(),d);
                 }
-                String[] newArrivalDates = newArrivalDate.split(",");
-                for(String d : newArrivalDates){
-                    param.setNewArrivalDate(d);
-                    initDate(param,1,importMap,categoryBean.getCatid(),d);
-                    if(lstPets.contains(categoryBean.getCatid())){
-                        initDate(param,4,petsMap,categoryBean.getCatid(),d);
-                    }
-                    if(lstKids.contains(categoryBean.getCatid())){
-                        initDate(param,2,kidsMap,categoryBean.getCatid(),d);
-                    }
+                if(lstKids.contains(categoryBean.getCatid())){
+                    initDate(param,2,kidsMap,categoryBean.getCatid(),d);
                 }
             }
         }

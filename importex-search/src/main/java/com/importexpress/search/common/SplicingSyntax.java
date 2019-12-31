@@ -99,7 +99,7 @@ public class SplicingSyntax {
      * @return
      */
     public static String getPriorityCategory(Object priorityCategoryList,String keyWord){
-        if(org.apache.commons.lang.StringUtils.isBlank(keyWord) || priorityCategoryList == null){
+        if(StringUtils.isBlank(keyWord) || priorityCategoryList == null){
             return "";
         }
         Map<String, String> priorityCategory_map = (HashMap<String,String>)priorityCategoryList;
@@ -329,20 +329,25 @@ public class SplicingSyntax {
        }
        return setCatid;
    }
+
+    /**提示词是否匹配到类别
+     * @param auto
+     * @return
+     */
     public String suggestCatid(String auto){
         Object priorityCategoryList = application.getAttribute("priorityCategoryList");
-        String cid = Utility.getPriorityCategory(priorityCategoryList, auto);
-        Object catidList = application.getAttribute("categorys");
-        Map<String, Category> cMap = (Map<String, Category>) catidList;
-        if (StringUtils.isNotBlank(cid) && cMap.get(cid) != null) {
-            String category = cMap.get(cid).getName();
-            if (StringUtils.isNotBlank(category)) {
-                StringBuilder str = new StringBuilder(auto).append("@")
-                        .append(cid).append("@").append(category);
-                return str.toString();
-            }
+        String cid = getPriorityCategory(priorityCategoryList, auto);
+        Map<String, Category> cMap = (Map<String, Category>) application.getAttribute("categorys");
+        if (StringUtils.isBlank(cid) || cMap.get(cid) == null) {
+            return "";
         }
-        return "";
+        String category = cMap.get(cid).getName();
+        if (StringUtils.isBlank(category)) {
+            return "";
+        }
+        StringBuilder str = new StringBuilder(auto).append("@")
+                .append(cid).append("@").append(category);
+        return str.toString();
     }
 
 }

@@ -81,6 +81,7 @@ public class VerifySearchParameter {
         param.setFactPvid(false);
         param.setBoutique(false);
         param.setOrder(false);
+        param.setSynonym(false);
     }
 
     /**预处理关键词+类别

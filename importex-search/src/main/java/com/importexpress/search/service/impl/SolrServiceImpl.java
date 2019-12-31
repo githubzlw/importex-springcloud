@@ -12,22 +12,23 @@ import com.importexpress.search.pojo.SolrFacet;
 import com.importexpress.search.service.SolrService;
 import com.importexpress.search.service.base.SolrBase;
 import com.importexpress.search.util.Config;
-import com.importexpress.search.util.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.SolrParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -49,6 +50,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
             return null;
         }
         param.setOrder(false);
+        param.setFactPvid(false);
         ModifiableSolrParams solrParams = getSolrQuery(param);
         if(solrParams == null){
             return null;
@@ -56,7 +58,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         SolrFacet facet = new SolrFacet("custom_path_catid",1,5000);
         setFacet(solrParams,facet);
 
-        setFQ(removeFQ(param,solrParams.get("fq")),solrParams);
+        setFQ(removeFQ(solrParams,param),solrParams);
         setFL("custom_enname,custom_pid",solrParams);
         setRows(0,1,solrParams);
 
@@ -90,7 +92,8 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         //指定过滤条件
         String specialCatidSearch = splicingSyntax.specialCatidSearch(param);
         StringBuilder filterQueries = new StringBuilder(specialCatidSearch);
-        filterQueries.append("custom_valid:1").append(" AND custom_shop_id:" + param.getStoried());
+        filterQueries.append(" custom_valid:1").append(" AND custom_shop_id:" + param.getStoried());
+
         //权限版搜索,只展示可搜索的产品
         importType(param, filterQueries);
 
@@ -136,22 +139,16 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         int num = (int) (Math.random() * 100000);
         setSort("custom_sold desc,rand_" + num + " desc,custom_ali_sold desc", solrParams);
 
-        StringBuilder q = new StringBuilder();
-        if (StringUtils.isNotBlank(param.getCatid()) && StringUtils.isNotBlank(param.getPid())) {
-            q.append("custom_path_catid:" + param.getCatid() + " AND -custom_pid:\"" + param.getPid() + "\"");
-            if (Utility.homeCatid.length > 0) {
-                q.append(" AND ");
-            }
-        }
-        for (int i = 0; i < Utility.homeCatid.length; i++) {
-            q.append("-custom_path_catid:\"").append(Utility.homeCatid[i]).append("\" ");
-            q.append(" AND ");
-        }
-        q.append(" custom_valid:1");
-        setQ(q.toString(), solrParams);
+        setQ("*", solrParams);
 
         StringBuilder fq = new StringBuilder(splicingSyntax.specialCatidSearch(param));
         fq.append(" custom_price:[2 TO *] AND custom_valid:1");
+        if (StringUtils.isNotBlank(param.getCatid())) {
+            fq.append(" AND custom_path_catid:\"" + param.getCatid() + "\"");
+        }
+        if(StringUtils.isNotBlank(param.getPid())){
+            fq.append(" AND -custom_pid:\"" + param.getPid() + "\"");
+        }
         setFQ(fq.toString(), solrParams);
         return sendRequest(solrParams, httpSolrClient);
     }
@@ -164,28 +161,29 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         int num = (int) (Math.random() * 100000);
         setSort("rand_" + num + " desc,custom_ali_sold desc,custom_sold desc", solrParams);
 
-        setQ("custom_valid:1", solrParams);
+        setQ("*", solrParams);
 
         StringBuilder fq = new StringBuilder(splicingSyntax.specialCatidSearch(param));
         fq.append(" custom_price:[10 TO *] ");
         if (StringUtils.isNotBlank(param.getCatid())) {
             fq.append(" AND custom_path_catid:" + param.getCatid());
         }
+        fq.append(" AND custom_valid:1 ");
         setFQ(fq.toString(), solrParams);
         return requestSolr(solrParams);
     }
 
     @Override
     public QueryResponse hotProduct(SearchParam param) {
+        param.setSynonym(false);
         ModifiableSolrParams solrParams = getSolrQuery(param);
-
         if (solrParams == null) {
             return null;
         }
         QueryResponse response = sendRequest(solrParams,httpSolrClient);
         //取商品列表
         if (response != null && response.getResults().size() <= 4) {
-            setFQ("custom_price:[1 TO *]", solrParams);
+            setFQ("custom_price:[1 TO *] AND custom_valid:1", solrParams);
             response = sendRequest(solrParams, httpSolrClient);
         }
         return response;
@@ -194,14 +192,14 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     @Override
     public QueryResponse hotProductForCatid(SearchParam param) {
         ModifiableSolrParams solrParams = new ModifiableSolrParams();
-        setQ("custom_valid:1 AND custom_path_catid:" + param.getCatid() + "", solrParams);
+        setQ("custom_path_catid:\"" + param.getCatid() + "\"", solrParams);
         setSort("custom_is_sold_flag  desc,custom_ali_sold desc,custom_sold desc", solrParams);
         setRows(0, 200, solrParams);
         String specialCatidSearch = splicingSyntax.specialCatidSearch(param);
-        setFQ(specialCatidSearch + " custom_price:[10 TO *]", solrParams);
+        setFQ(specialCatidSearch + " custom_price:[10 TO *] AND custom_valid:1", solrParams);
         QueryResponse response = sendRequest(solrParams, httpSolrClient);
         if (response != null && response.getResults().size() <= 4) {
-            setFQ("custom_price:[1 TO *]", solrParams);
+            setFQ(specialCatidSearch+" custom_price:[1 TO *] AND custom_valid:1", solrParams);
             response = sendRequest(solrParams, httpSolrClient);
         }
         return response;
@@ -209,14 +207,14 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
 
     @Override
     public Map<String,Object> searPriceRangeByKeyWord(SearchParam param) {
-
+        Map<String,Object> aliMap = Maps.newHashMap();
         if(StringUtils.isBlank(param.getKeyword())){
             log.error("param.getKeyword() is null ");
-            return null;
+            return aliMap;
         }
         ModifiableSolrParams solrParams = getSolrQuery(param);
         if(solrParams == null){
-            return null;
+            return aliMap;
         }
         solrParams.set("fields", "custom_max_price");
         solrParams.set("sort", "custom_max_price asc");
@@ -224,12 +222,12 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         double midPrice = 0;//中位价
         QueryResponse response = sendRequest(solrParams,httpSolrClient);
         if(response == null){
-            return null;
+            return aliMap;
         }
         Long totalNum = response.getResults().getNumFound();
         if(totalNum < 1){
             log.info("searPriceRangeByKeyWord`s totalNum is  less than 1");
-            return null;
+            return aliMap;
         }
         //计算出中位价
         //计算出中位价
@@ -239,10 +237,13 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
             QueryResponse res = sendRequest(solrParams,httpSolrClient);
             if(res != null){
                 SolrDocumentList results = res.getResults();
-                Double price1 =Double.parseDouble(results.get(0).get("custom_max_price") == null ?
+                Double price1 = StrUtils.object2Double(results.get(0).get("custom_max_price"));
+                Double price2 = StrUtils.object2Double(results.get(1).get("custom_max_price"));
+
+               /* Double price1 =Double.parseDouble(results.get(0).get("custom_max_price") == null ?
                         "0.00" : String.valueOf(results.get(0).get("custom_max_price")));
                 Double price2 =Double.parseDouble(results.get(1).get("custom_max_price") == null ?
-                        "0.00" : String.valueOf(results.get(1).get("custom_max_price")));
+                        "0.00" : String.valueOf(results.get(1).get("custom_max_price")));*/
                 midPrice = (price1 + price2) / 2;
             }
         }else{
@@ -251,17 +252,18 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
             QueryResponse res = sendRequest(solrParams,httpSolrClient);
             if(res != null){
                 SolrDocumentList results = res.getResults();
-                midPrice = Double.valueOf(results.get(0).get("custom_max_price") == null ?
-                        "0.00" : String.valueOf(results.get(0).get("custom_max_price")));
+               /* midPrice = Double.valueOf(results.get(0).get("custom_max_price") == null ?
+                        "0.00" : String.valueOf(results.get(0).get("custom_max_price")));*/
+                midPrice = StrUtils.object2Double(results.get(0).get("custom_max_price"));
             }
         }
 
         //根据中位价 查出对应的空间
         Map<String, Integer> solrMap = searchFaced(midPrice,solrParams);
-        if(solrMap == null || solrMap.isEmpty()){
-            return null;
+        if(solrMap.isEmpty()){
+            return aliMap;
         }
-        Map<String,Object> aliMap = Maps.newHashMap();
+
         aliMap.put("midPrice",midPrice);
         aliMap.put("solrMap",solrMap);
         return aliMap;
@@ -431,13 +433,13 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
             String result = formatter.format(LocalDateTime.now().minusDays(60l));
             fq_condition.append(" AND (custom_source_pro_flag:8 OR createtime:[\""+result+"\" TO *])");
         }
-        if(StringUtils.isNotBlank(param.getNewArrivalDate()) && !"null".equals(param.getNewArrivalDate())){
-            fq_condition.append(" AND custom_new_arrival_date:"+param.getNewArrivalDate()+"");
+        if(StringUtils.isNotBlank(param.getNewArrivalDate())){
+            fq_condition.append(" AND custom_new_arrival_date:"+param.getNewArrivalDate());
         }
 
         //精品区商品
         if(param.isBoutique()){
-            fq_condition.append(" AND custom_describe_good_flag:1");
+            fq_condition.append(" AND custom_describe_good_flag:1 ");
         }
 
         //价格区间限制
@@ -474,9 +476,9 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      * @param fq_condition
      */
     private void importType(SearchParam param,StringBuilder fq_condition){
-        if(param.getSite() != 1){
+        /*if(param.getSite() != 1){
             return ;
-        }
+        }*/
         fq_condition.append(" AND (");
         //0 默认全部可搜 1-描述很精彩   2-卖过的   3-精选店铺
         if(param.getImportType() == 1){
@@ -499,14 +501,14 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      * @param fq_condition
      */
     private void priceFQ(SearchParam param, StringBuilder fq_condition) {
-        String minPrice = param.getMinPrice();
-        String maxPrice = param.getMaxPrice();
         String minPrices = splicingSyntax.categoryPrice(param.getKeyword());
         if(StringUtils.isNotBlank(minPrices)){
             fq_condition.append(" AND custom_price:["+minPrices+" TO *]");
             param.setPrices(minPrices);
         }
 
+        String minPrice = param.getMinPrice();
+        String maxPrice = param.getMaxPrice();
         //价格区间设置
         if((StrUtils.isMatch(minPrice, "(\\d+(\\.\\d+){0,1})") && !"0".equals(minPrice) ) ||
                 (StrUtils.isMatch(maxPrice, "(\\d+(\\.\\d+){0,1})") && !"0".equals(maxPrice))){
@@ -558,9 +560,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      * @return
      */
     private QueryResponse requestAgain(ModifiableSolrParams solrParams){
-        String fq = solrParams.get("fq");
-        fq = fq.replace("AND custom_price:[10 TO *]","");
-        solrParams.set("fq",fq);
+        solrParams.set("fq",solrParams.get("fq").replace("AND custom_price:[10 TO *]",""));
         QueryResponse response = sendRequest(solrParams,httpSolrClient);
         return response;
     }
@@ -574,22 +574,27 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
             return null;
         }
         //取商品列表
-        SolrDocumentList documentList = response.getResults();
-        String fq = solrParams.get("fq");
-        if(StringUtils.isNotBlank(fq) && fq.indexOf("AND custom_price:[10 TO *]") > -1
-                && documentList.size() <= 4){
+        if(response.getResults().size() < 5 &&
+                StringUtils.indexOf(solrParams.get("fq"),"AND custom_price:[10 TO *]") > -1){
             response = requestAgain(solrParams);
         }
         return response;
     }
     /**擦除FQ
      * @param param
-     * @param fq
+     * @param solrParams
      * @return
      */
-    private String removeFQ(SearchParam param, String fq) {
-        if(StringUtils.isNotBlank(param.getCatid()) && !"0".equals(param.getCatid())) {
-            fq = fq.replaceAll("( AND \\( custom_path_catid:.* \\))", "");
+    private String removeFQ(SolrParams solrParams, SearchParam param) {
+        String fq = solrParams.get("fq");
+        if(StringUtils.isBlank(fq)){
+            return "";
+        }
+        if (StringUtils.isNotBlank(param.getCatid()) && !"0".equals(param.getCatid())) {
+            fq = fq.replace("AND ( custom_path_catid:\""+param.getCatid()+"\" )", "");
+        }
+        if(StringUtils.isNotBlank(solrParams.get("synon_category"))){
+            fq = fq.replace(solrParams.get("synon_category")+" AND ","");
         }
         if(!param.isMobile()) {
             if(param.getCollection() == 8){
@@ -619,7 +624,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     /**
      * 传入查询条件,查询分组数据对应的数量  中位价和对应的solrFlag
      */
-    public  Map<String, Integer> searchFaced(double midPrice,ModifiableSolrParams solrParams){
+    private  Map<String, Integer> searchFaced(double midPrice,ModifiableSolrParams solrParams){
         DecimalFormat df  = new DecimalFormat("0.00");  //保留两位小数
         //获取四个区间的范围
         String firstRange = "custom_max_price:[* TO "+Double.parseDouble(df.format(midPrice / 2)) + "]";
@@ -632,7 +637,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         solrParams.add("facet.query", threeRange);
         solrParams.add("facet.query", fourRange);
         QueryResponse response = sendRequest(solrParams,httpSolrClient);
-        Map<String, Integer> map = response == null ? null : response.getFacetQuery();
+        Map<String, Integer> map = response == null ? Maps.newHashMap() : response.getFacetQuery();
         return map;
     }
 }

@@ -146,6 +146,9 @@ public class AttributeServiceImpl extends UriService implements AttributeService
 		if(StringUtils.isNotBlank(param.getCatid())) {
 			sb_href.append("&catid=").append(param.getCatid());
 		}
+		if(param.getCollection() != 0){
+			sb_href.append("&collection=").append(param.getCollection());
+		}
 		sb_href.append("&pvid=");
 		if(StringUtils.isNotBlank(param.getAttrId())){
 			sb_href.append(param.getAttrId()).append(",");

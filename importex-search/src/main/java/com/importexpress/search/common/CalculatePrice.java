@@ -32,17 +32,21 @@ public class CalculatePrice {
 //                if(site == 1 && ("2".equals(sessionMoqFlag) || StringUtils.isBlank(sessionMoqFlag))){
                 if(StringUtils.isBlank(StrUtils.object2Str(solrDocument.get("custom_range_price")))){
                     if(site == 1){
-                        solrDocument.setField("custom_wprice",LimitHighMOQ(StrUtils.object2Str(solrDocument.get("custom_wprice")),StrUtils.object2Str(solrDocument.get("custom_wholesale_price"))));
-                        solrDocument.setField("custom_feeprice",LimitHighMOQ(StrUtils.object2Str(solrDocument.get("custom_feeprice")),StrUtils.object2Str(solrDocument.get("custom_wholesale_price"))));
+                        solrDocument.setField("custom_wprice",
+                                LimitHighMOQ(StrUtils.object2Str(solrDocument.get("custom_wprice")),StrUtils.object2Str(solrDocument.get("custom_wholesale_price"))));
+                        solrDocument.setField("custom_feeprice",
+                                LimitHighMOQ(StrUtils.object2Str(solrDocument.get("custom_feeprice")),StrUtils.object2Str(solrDocument.get("custom_wholesale_price"))));
                     }
-                    solrDocument.setField("custom_morder",String.valueOf(StrUtils.matchStr(Arrays.asList(StrUtils.object2Str(solrDocument.get("custom_wprice")).split(",")).get(0).split("\\$")[0].trim(), "(\\d+)")));
+                    solrDocument.setField("custom_morder",
+                            String.valueOf(StrUtils.matchStr(Arrays.asList(StrUtils.object2Str(solrDocument.get("custom_wprice")).split(",")).get(0).split("\\$")[0].trim(), "(\\d+)")));
                     //免邮价计算
                     solrDocument.setField("custom_feeprice",freePricePrc(StrUtils.object2Str(solrDocument.get("custom_final_weight")),StrUtils.object2Str(solrDocument.get("custom_morder")),StrUtils.object2Str(solrDocument.get("custom_wholesale_price"))
                             ,StrUtils.object2Str(solrDocument.get("custom_feeprice")),StrUtils.object2Str(solrDocument.get("custom_range_price")),site));
 
                 }else{
                     if(site == 1){
-                        solrDocument.setField("custom_morder",String.valueOf(getMinMoq(StrUtils.object2Str(solrDocument.get("custom_wholesale_price")))));
+                        solrDocument.setField("custom_morder",
+                                String.valueOf(getMinMoq(StrUtils.object2Str(solrDocument.get("custom_wholesale_price")))));
                     }
                 }
             }
@@ -91,10 +95,12 @@ public class CalculatePrice {
         }
         double exchangerate = 6.6;
         //basePrice：首重运费, ratioPrice：续重运费, baseWeight：续重重量, weight：需要计算的重量
-        BigDecimal jcexPostFreight = FreightUtility.getShippingFormula( new BigDecimal(basePrice),new BigDecimal(ratioPrice),new BigDecimal(baseWeight),new BigDecimal(weight*moq));
+        BigDecimal jcexPostFreight = FreightUtility.getShippingFormula( new BigDecimal(basePrice),
+                new BigDecimal(ratioPrice),new BigDecimal(baseWeight),new BigDecimal(weight*moq));
         //初始邮费 = (JCEX运费（MOQ*单件重量）-$3)/ MOQ  这3美元是我们本来就给的首重减免
         initialFreight = (jcexPostFreight.doubleValue()/exchangerate -3) /moq;
-        //免邮价 = 工厂价*加价率+初始邮费    （这里的加价率 比现在的少 10%， 这里的工厂价 取 MOQ数量对应的工厂价，或者各个价格区间 对应的工厂价）
+        //免邮价 = 工厂价*加价率+初始邮费    （这里的加价率 比现在的少 10%，
+        // 这里的工厂价 取 MOQ数量对应的工厂价，或者各个价格区间 对应的工厂价）
         //加价率
         double addPriceLv=1.32;
 
@@ -112,7 +118,8 @@ public class CalculatePrice {
 
     }
     //新的免邮价
-    public static String setNewFreePrice(double addPriceLv,double initialFreight,String price,String wholsePrice,String rangePrice,double basePrice
+    public static String setNewFreePrice(double addPriceLv,double initialFreight,String price,
+                                         String wholsePrice,String rangePrice,double basePrice
             ,double ratioPrice,double baseWeight,double weight,double exchangerate,int moqX,int site){
 
         DecimalFormat priceFormat = new DecimalFormat("#0.00");
@@ -145,7 +152,7 @@ public class CalculatePrice {
             //1688第一区间 moq+price
             String[] wholsePrice1 = wholsePricelist.get(0).split("\\$");
             String[] wholseQuantity0 = wholsePrice1[0].trim().split("-");
-            int wholseQuantity0_0 = Integer.valueOf(wholseQuantity0[0].replace("≥", ""));
+//            int wholseQuantity0_0 = Integer.valueOf(wholseQuantity0[0].replace("≥", ""));
 
 
             //只有一个区间价格 [≥3 $ 15.0]
@@ -176,11 +183,13 @@ public class CalculatePrice {
                 if(site == 2){
                     quantity1_0 = Math.max(moqX,quantity1_0);
                 }
-                BigDecimal jcexPostFreight = FreightUtility.getShippingFormula( new BigDecimal(basePrice),new BigDecimal(ratioPrice),new BigDecimal(baseWeight),new BigDecimal(weight*quantity1_0));
+                BigDecimal jcexPostFreight = FreightUtility.getShippingFormula( new BigDecimal(basePrice),
+                        new BigDecimal(ratioPrice),new BigDecimal(baseWeight),new BigDecimal(weight*quantity1_0));
                 //初始邮费 = (JCEX运费（MOQ*单件重量）-$3)/ MOQ  这3美元是我们本来就给的首重减免
                 double initialFreight2 = (jcexPostFreight.doubleValue()/exchangerate -3) /quantity1_0;
 
-                //免邮价P2 = 工厂价*加价率+初始邮费    （这里的加价率 比现在的少 10%， 这里的工厂价 取 MOQ数量对应的工厂价，或者各个价格区间 对应的工厂价）
+                //免邮价P2 = 工厂价*加价率+初始邮费    （这里的加价率 比现在的少 10%，
+                // 这里的工厂价 取 MOQ数量对应的工厂价，或者各个价格区间 对应的工厂价）
                 double factoryPrice1 = Double.valueOf(wholsePrice1[1].trim());
                 double freePrice1 = 0;
                 freePrice1 = factoryPrice1/exchangerate * addPriceLv +initialFreight;
@@ -213,7 +222,8 @@ public class CalculatePrice {
                 String[] wholsePrice2 = wholsePricelist.get(1).split("\\$");
                 String[] wholsePrice3 = wholsePricelist.get(2).split("\\$");
 
-                //免邮价 = 工厂价*加价率+初始邮费    （这里的加价率 比现在的少 10%， 这里的工厂价 取 MOQ数量对应的工厂价，或者各个价格区间 对应的工厂价）
+                //免邮价 = 工厂价*加价率+初始邮费    （这里的加价率 比现在的少 10%，
+                // 这里的工厂价 取 MOQ数量对应的工厂价，或者各个价格区间 对应的工厂价）
                 double factoryPrice1 = Double.valueOf(wholsePrice1[1].trim());
                 double freePrice1 = 0;
                 freePrice1 = factoryPrice1/exchangerate * addPriceLv +initialFreight;
@@ -231,7 +241,8 @@ public class CalculatePrice {
                 if(site == 2){
                     quantity1_0 = Math.max(moqX,quantity1_0);
                 }
-                BigDecimal jcexPostFreight = FreightUtility.getShippingFormula( new BigDecimal(basePrice),new BigDecimal(ratioPrice),new BigDecimal(baseWeight),new BigDecimal(weight*quantity1_0));
+                BigDecimal jcexPostFreight = FreightUtility.getShippingFormula( new BigDecimal(basePrice),
+                        new BigDecimal(ratioPrice),new BigDecimal(baseWeight),new BigDecimal(weight*quantity1_0));
                 //初始邮费 = (JCEX运费（MOQ*单件重量）-$3)/ MOQ  这3美元是我们本来就给的首重减免
                 double initialFreight2 = (jcexPostFreight.doubleValue()/exchangerate - 3) /quantity1_0;
                 freePrice2 = factoryPrice2/exchangerate * addPriceLv2 +initialFreight2;
@@ -243,7 +254,8 @@ public class CalculatePrice {
                 if(site == 2){
                     quantity2_0 = Math.max(moqX,quantity2_0);
                 }
-                BigDecimal jcexPostFreight3 = FreightUtility.getShippingFormula( new BigDecimal(basePrice),new BigDecimal(ratioPrice),new BigDecimal(baseWeight),new BigDecimal(weight*quantity2_0));
+                BigDecimal jcexPostFreight3 = FreightUtility.getShippingFormula( new BigDecimal(basePrice),
+                        new BigDecimal(ratioPrice),new BigDecimal(baseWeight),new BigDecimal(weight*quantity2_0));
                 //初始邮费 = (JCEX运费（MOQ*单件重量）-$3)/ MOQ  这3美元是我们本来就给的首重减免
                 double initialFreight3 = (jcexPostFreight.doubleValue()/exchangerate - 3) /quantity2_0;
                 freePrice3 = factoryPrice3/exchangerate * addPriceLv3 +initialFreight3;

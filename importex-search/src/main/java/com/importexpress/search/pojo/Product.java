@@ -87,5 +87,4 @@ public class Product implements Serializable {
 	 * 1-有视频  0-无视频
 	 */
 	private int isVideo;//是否有视频
-
 }
