@@ -33,10 +33,13 @@ public class SearchControllerTest {
     @Autowired
     private WebApplicationContext wac;
     private MockMvc mockMvc;
+    @Autowired
+    private InitApplicationParameter init;
 
     @Before
     public void setup() {
         this.mockMvc = webAppContextSetup(this.wac).build();
+        init.init(wac.getServletContext());
     }
     @Test
     public void getSearch() throws  Exception{
@@ -46,8 +49,9 @@ public class SearchControllerTest {
         param.setPage(1);
         param.setUserType(1);
         String requestJson = JSONObject.toJSONString(param);
-        String contentAsString = mockMvc.perform(post("/search/product")
-                .contentType(MediaType.APPLICATION_JSON).content(requestJson)).andReturn().getResponse().getContentAsString();
+        String contentAsString = mockMvc.perform(post("/search/products")
+                .contentType(MediaType.APPLICATION_JSON).content(requestJson))
+                .andReturn().getResponse().getContentAsString();
 
         CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
         Assert.assertEquals(200,result.getCode());
@@ -89,7 +93,6 @@ public class SearchControllerTest {
         CommonResult result = gson.fromJson(contentAsString,CommonResult.class);
         Assert.assertEquals(200,result.getCode());
         SearchResultWrap wrap = gson.fromJson(result.getData().toString(),SearchResultWrap.class);
-        List<Product> products = wrap.getProducts();
         Assert.assertEquals(42,wrap.getPage().getRecordCount());
         System.out.println("店铺产品数量:"+wrap.getPage().getRecordCount());
     }

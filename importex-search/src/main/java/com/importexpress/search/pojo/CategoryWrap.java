@@ -1,5 +1,6 @@
 package com.importexpress.search.pojo;
 
+import com.google.common.collect.Lists;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -23,7 +24,7 @@ public class CategoryWrap implements Serializable {
 	/**
 	 * 子类
 	 */
-	private List<CategoryWrap> childen;
+	private List<CategoryWrap> childen = Lists.newArrayList();
 	/**
 	 * 级
 	 */

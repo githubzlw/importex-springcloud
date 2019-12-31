@@ -231,9 +231,6 @@ public class VerifySearchParameter {
      */
     private void page( SearchParam param){
         param.setPage(Math.max(param.getPage(),1));
-        if(param.isMobile()){
-            param.setPageSize(30);
-        }
     }
 
     /**检查用户是否有权限搜索

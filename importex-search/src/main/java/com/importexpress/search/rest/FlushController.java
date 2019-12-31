@@ -99,6 +99,7 @@ public class FlushController {
     @GetMapping("/priority/category")
     public CommonResult priorityCategory(HttpServletRequest request){
         init.priorityCategory(request.getServletContext());
+        init.autiKey(request.getServletContext());
         return CommonResult.success("刷新成功");
     }
 
