@@ -33,11 +33,7 @@ public class SendMailFactoryTest {
                 "<a href='https://github.com/javaee/javamail'>Javamail Package</a>",
                 " for <a href='https://www.java.com'>Java</a>."
         );
-        MailBean mailBean = new MailBean();
-        mailBean.setSubject("This is a test email");
-        mailBean.setSiteEnum(SiteEnum.KIDS);
-        mailBean.setBody(body);
-        mailBean.setTest(true);
+        MailBean mailBean = MailBean.builder().subject("This is a test email").siteEnum(SiteEnum.KIDS).body(body).isTest(true).build();
         sendMailFactory.sendMail(mailBean);
     }
 
@@ -50,21 +46,13 @@ public class SendMailFactoryTest {
                 "<a href='https://github.com/javaee/javamail'>Javamail Package</a>",
                 " for <a href='https://www.java.com'>Java</a>."
         );
-        MailBean mailBean = new MailBean();
-        mailBean.setTo("luohao518@yeah.net");
-        mailBean.setSiteEnum(SiteEnum.KIDS);
-        mailBean.setBody(body);
-        mailBean.setTest(true);
+        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").siteEnum(SiteEnum.KIDS).body(body).isTest(true).build();
         sendMailFactory.sendMail(mailBean);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void sendMail3() {
-        MailBean mailBean = new MailBean();
-        mailBean.setTo("luohao518@yeah.net");
-        mailBean.setSubject("This is a test email");
-        mailBean.setSiteEnum(SiteEnum.KIDS);
-        mailBean.setTest(true);
+        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a test email").siteEnum(SiteEnum.KIDS).isTest(true).build();
         sendMailFactory.sendMail(mailBean);
     }
 
@@ -78,24 +66,14 @@ public class SendMailFactoryTest {
                 "<a href='https://github.com/javaee/javamail'>Javamail Package</a>",
                 " for <a href='https://www.java.com'>Java</a>."
         );
-        MailBean mailBean = new MailBean();
-        mailBean.setTo("luohao518@yeah.net");
-        mailBean.setSubject("This is a test email");
-        mailBean.setSiteEnum(SiteEnum.KIDS);
-        mailBean.setBody(body);
-        mailBean.setModel(ImmutableMap.of("key1", "value1"));
-        mailBean.setTest(true);
+        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a test email").siteEnum(SiteEnum.KIDS).body(body).model(ImmutableMap.of("key1", "value1")).isTest(true).build();
         sendMailFactory.sendMail(mailBean);
     }
 
 
     @Test(expected = IllegalArgumentException.class)
     public void sendMail5() {
-        MailBean mailBean = new MailBean();
-        mailBean.setTo("luohao518@yeah.net");
-        mailBean.setSubject("This is a test email");
-        mailBean.setSiteEnum(SiteEnum.KIDS);
-        mailBean.setTest(true);
+        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a test email").siteEnum(SiteEnum.KIDS).isTest(true).build();
         sendMailFactory.sendMail(mailBean);
     }
 
@@ -108,12 +86,7 @@ public class SendMailFactoryTest {
                 "<a href='https://github.com/javaee/javamail'>Javamail Package</a>",
                 " for <a href='https://www.java.com'>Java</a>."
         );
-        MailBean mailBean = new MailBean();
-        mailBean.setTo("luohao518@yeah.net");
-        mailBean.setSubject("This is a test email");
-        mailBean.setSiteEnum(SiteEnum.KIDS);
-        mailBean.setBody(body);
-        mailBean.setTest(false);
+        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a test email").siteEnum(SiteEnum.KIDS).body(body).isTest(false).build();
         sendMailFactory.sendMail(mailBean);
     }
 

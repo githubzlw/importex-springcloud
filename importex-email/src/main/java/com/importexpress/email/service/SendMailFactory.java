@@ -53,6 +53,8 @@ public class SendMailFactory {
         if (StringUtils.isBlank(mailBean.getBody())) {
             //邮件模板填充方式
             mailBean.setBody(getHtmlContent(mailBean.getModel(), mailBean.getTemplateType()));
+        } else {
+            saveHtml(mailBean.getSubject(), mailBean.getBody());
         }
 
         if (!mailBean.isTest()) {

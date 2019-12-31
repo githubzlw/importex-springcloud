@@ -32,11 +32,6 @@ public class DemoController {
 
     private void sendMQTtest(int count) {
 
-        MailBean mailBean = new MailBean();
-        mailBean.setTo("luohao518@yeah.net");
-        mailBean.setSubject("This is a ACTIVATION email");
-        mailBean.setSiteEnum(SiteEnum.IMPORTX);
-        mailBean.setTest(true);
         Map<String, Object> model = new HashMap<>();
         model.put("logoUrl", SiteEnum.IMPORTX.getUrl());
         model.put("name", "name1");
@@ -44,8 +39,9 @@ public class DemoController {
         model.put("pass", "pass1");
         model.put("activeLink", "activeLink......");
         model.put("here", "here");
-        mailBean.setModel(model);
-        mailBean.setTemplateType(TemplateType.ACTIVATION);
+
+         MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a ACTIVATION email").siteEnum(SiteEnum.IMPORTX)
+                .model(model).templateType(TemplateType.ACTIVATION).isTest(true).build();
         IntStream.range(1, count).forEach(i -> {
             sender.sendMQToMail(mailBean);
 //            try {

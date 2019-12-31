@@ -29,16 +29,15 @@ public class SendEmailController {
     @PostMapping("/mailBean")
     public CommonResult sendEmailByMailBean(@RequestBody MailBean mailBean) {
 
-        Assert.isNull(mailBean.getSiteEnum(), "网站类别异常");
-        if (StringUtils.isBlank(mailBean.getBody()) && mailBean.getTemplateType() == null) {
-            Assert.isTrue(false, "邮件内容异常");
-        }
+        Assert.notNull(mailBean.getTo(), "邮箱异常");
+        Assert.notNull(mailBean.getBody(), "邮件内容异常");
         try {
+            mailBean.setTest(true);
             sendMailFactory.sendMail(mailBean);
             return CommonResult.success("send to " + mailBean.getTo() + " success");
         } catch (Exception e) {
             e.printStackTrace();
-            log.error("sendEmailByTemplateType,send email to[{}],error", mailBean, e);
+            log.error("sendEmailByMailBean,send email to[{}],error", mailBean, e);
             return CommonResult.failed(e.getMessage());
         }
 
