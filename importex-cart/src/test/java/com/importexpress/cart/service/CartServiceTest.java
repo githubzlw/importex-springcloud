@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.importexpress.cart.pojo.Cart;
+import com.importexpress.comm.pojo.SiteEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +31,7 @@ public class CartServiceTest {
     public static final String ITEM_ID3 = "530333452003:32164:324512";
     public static final String ITEM_ID4 = "547188149310:32161:324514";
 
-    public static final char SITE = 'K';
+    private static final SiteEnum SITE = SiteEnum.KIDS;
     @Autowired
     private CartService cartService;
 
@@ -281,5 +282,48 @@ public class CartServiceTest {
                 System.out.println(cleanStr);
             }
         }
+    }
+
+    @Test
+    public void generateTouristId(){
+
+        for(int i=0;i<10;i++){
+            long result = this.cartService.generateTouristId(SiteEnum.KIDS);
+            Assert.assertTrue(result>0);
+        }
+
+        for(int i=0;i<10;i++){
+            long result = this.cartService.generateTouristId(SiteEnum.MEDIC);
+            Assert.assertTrue(result>0);
+        }
+    }
+
+    @Test
+    public void mergeCarts(){
+
+        Assert.assertEquals
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
+        Assert.assertEquals
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2));
+        long touristId = this.cartService.generateTouristId(SITE);
+        Assert.assertEquals
+                (1, cartService.addCartItem(SITE, touristId, ITEM_ID2, 3));
+        Assert.assertEquals
+                (1, cartService.addCartItem(SITE, touristId, ITEM_ID1, 4));
+        Assert.assertEquals
+                (1, cartService.addCartItem(SITE, touristId, ITEM_ID3, 10));
+
+        Assert.assertEquals(2, this.cartService.getCart(SITE, USER_ID).getItems().size());
+        Assert.assertEquals(3, this.cartService.getCart(SITE, touristId).getItems().size());
+
+        Assert.assertEquals(1, this.cartService.mergeCarts(SITE,USER_ID,touristId));
+
+        Assert.assertEquals(0, this.cartService.getCart(SITE, touristId).getItems().size());
+        Cart cart = this.cartService.getCart(SITE, USER_ID);
+        Assert.assertEquals(3, cart.getItems().size());
+        Assert.assertEquals(20, cart.getTotalAmount());
+
+        this.cartService.delAllCartItem(SITE, USER_ID);
+
     }
 }

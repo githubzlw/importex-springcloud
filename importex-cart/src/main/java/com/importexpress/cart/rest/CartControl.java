@@ -3,6 +3,7 @@ package com.importexpress.cart.rest;
 import com.importexpress.cart.pojo.Cart;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.comm.domain.CommonResult;
+import com.importexpress.comm.pojo.SiteEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -31,15 +32,9 @@ public class CartControl {
         this.cartService = shoppingCartService;
     }
 
-    @GetMapping("/hello")
-    public String hello() {
-
-        return "hello world!";
-    }
-
     @PostMapping("/{site}/{userId}/{itemId}")
     @ApiOperation("添加商品到购物车")
-    public CommonResult addCartItem(@PathVariable(value = "site") char site,
+    public CommonResult addCartItem(@PathVariable(value = "site") SiteEnum site,
                                     @PathVariable(value = "userId") long userId,
                                     @PathVariable(value = "itemId") String itemId, int num) {
 
@@ -53,7 +48,7 @@ public class CartControl {
 
     @DeleteMapping("/{site}/{userId}/{itemId}")
     @ApiOperation("从购物车删除指定商品")
-    public CommonResult delCartItem(@PathVariable(value = "site") char site,
+    public CommonResult delCartItem(@PathVariable(value = "site") SiteEnum site,
                                     @PathVariable(value = "userId") long userId,
                                     @PathVariable(value = "itemId") String itemId) {
 
@@ -67,7 +62,7 @@ public class CartControl {
 
     @PutMapping("/{site}/{userId}/{itemId}")
     @ApiOperation("更新购物车中指定商品")
-    public CommonResult updateCartItem(@PathVariable(value = "site") char site,
+    public CommonResult updateCartItem(@PathVariable(value = "site") SiteEnum site,
                                        @PathVariable(value = "userId") long userId,
                                        @PathVariable(value = "itemId") String itemId, int num, int checked) {
 
@@ -81,7 +76,7 @@ public class CartControl {
 
     @GetMapping("/{site}/{userId}")
     @ApiOperation("查询购物车中所有商品")
-    public CommonResult getCart(@PathVariable(value = "site") char site,
+    public CommonResult getCart(@PathVariable(value = "site") SiteEnum site,
                                 @PathVariable(value = "userId") long userId) {
 
         Cart cart = cartService.getCart(site, userId);
@@ -89,9 +84,9 @@ public class CartControl {
 
     }
 
-    @PatchMapping("/{site}/{userId}/checkall")
+    @PatchMapping("/{site}/{userId}/check_all")
     @ApiOperation("勾选/反勾选全部商品")
-    public CommonResult checkAll(@PathVariable(value = "site") char site,
+    public CommonResult checkAll(@PathVariable(value = "site") SiteEnum site,
                                  @PathVariable(value = "userId") long userId, int checked) {
 
         int result = cartService.checkAll(site, userId, checked);
@@ -102,12 +97,49 @@ public class CartControl {
         }
     }
 
-    @PatchMapping("/{site}/{userId}/delchecked")
+    @PatchMapping("/{site}/{userId}/del_checked")
     @ApiOperation("删除勾选的商品")
-    public CommonResult delChecked(@PathVariable(value = "site") char site,
+    public CommonResult delChecked(@PathVariable(value = "site") SiteEnum site,
                                    @PathVariable(value = "userId") long userId) {
 
         int result = cartService.delChecked(site, userId);
+        if (result == SUCCESS) {
+            return CommonResult.success();
+        } else {
+            return CommonResult.failed();
+        }
+    }
+
+    @GetMapping("/{site}/get_tourist_id")
+    @ApiOperation("生成游客的id")
+    public CommonResult generateTouristId(@PathVariable(value = "site") SiteEnum site) {
+
+        long touristId = cartService.generateTouristId(site);
+        if (touristId > 0) {
+            return CommonResult.success(touristId);
+        } else {
+            return CommonResult.failed();
+        }
+    }
+
+    @DeleteMapping("/{site}/{userId}")
+    @ApiOperation("清空购物车")
+    public CommonResult delCart(@PathVariable(value = "site") SiteEnum site,
+                                    @PathVariable(value = "userId") long userId) {
+
+        int result = cartService.delAllCartItem(site,userId);
+        if (result == SUCCESS) {
+            return CommonResult.success();
+        } else {
+            return CommonResult.failed();
+        }
+    }
+
+    @GetMapping("/{site}/merge_carts")
+    @ApiOperation("合并游客购物车到注册用户购物车")
+    public CommonResult mergeCarts(@PathVariable(value = "site") SiteEnum site,long userId, long touristId) {
+
+        int result = cartService.mergeCarts(site,userId,touristId);
         if (result == SUCCESS) {
             return CommonResult.success();
         } else {

@@ -2,6 +2,7 @@ package com.importexpress.cart.service;
 
 import com.google.gson.Gson;
 import com.importexpress.cart.pojo.Cart;
+import com.importexpress.comm.pojo.SiteEnum;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +24,7 @@ public class CartServiceTest2 {
 
     public static final long USER_ID = 100001L;
 
-    public static final char SITE = 'K';
+    private static final SiteEnum SITE = SiteEnum.KIDS;
     @Autowired
     private CartService cartService;
 
