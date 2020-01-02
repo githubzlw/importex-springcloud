@@ -7,11 +7,20 @@ package com.importexpress.comm.pojo;
 public enum SiteEnum {
 
 
-    IMPORTX(1,"https://www.import-express.com"),KIDS(2,"https://www.kidsproductwholesale.com"),PETS(4,"https://www.petstoreinc.com"),HOME(8,"https://www.homeproductimport.com"),MEDIC(16,"https://www.medicaldevicefactory.com");
+    IMPORTX(1,"https://www.import-express.com","ImportExpress"),
+    KIDS(2,"https://www.kidsproductwholesale.com","KidsProductWholesale"),
+    PETS(4,"https://www.petstoreinc.com","PetStoreInc"),
+    HOME(8,"https://www.homeproductimport.com","HomeProductImport"),
+    MEDIC(16,"https://www.medicaldevicefactory.com","MedicalDeviceFactory");
 
     private int code;
 
     private String url;
+
+    /**
+     * 网站名称
+     */
+    private String name;
 
     SiteEnum(int code){
         this.code = code;
@@ -22,12 +31,22 @@ public enum SiteEnum {
         this.code = code;
     }
 
+    SiteEnum(int code, String url,String name){
+        this.url = url;
+        this.code = code;
+        this.name = name;
+    }
+
     public int getCode(){
         return this.code;
     }
 
     public String getUrl() {
         return url;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public static void main(String[] args){

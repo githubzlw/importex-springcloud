@@ -103,6 +103,48 @@ public class MD5Util {
         }
     }
 
+
+    /**
+     * @param source
+     * @return
+     */
+    public static String encoder(String source) {
+        if (source == null || source.equals("")) {
+            return null;
+        }
+        return encoder(source.getBytes());
+    }
+
+    public static String encoder(byte[] source) {
+        if (source == null || source.length == 0) {
+            return null;
+        }
+        byte[] md5Bytes = encoderForBytes(source);
+        if (md5Bytes != null) {
+            StringBuffer hexValue = new StringBuffer();
+            for (int i = 0; i < md5Bytes.length; i++) {
+
+                int val = (md5Bytes[i]) & 0xff;
+                if (val < 16) {
+                    hexValue.append("0");
+                }
+                hexValue.append(Integer.toHexString(val));
+            }
+            return hexValue.toString().toUpperCase();
+        }
+        return null;
+    }
+
+    private static byte[] encoderForBytes(byte[] source) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            return digest.digest(source);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     // 测试主函数
     public static void main(String args[]) {
         // 原文

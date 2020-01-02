@@ -1,9 +1,6 @@
 package com.importexpress.email.service;
 
 import com.importexpress.comm.pojo.SiteEnum;
-import com.importexpress.comm.pojo.TemplateType;
-
-import java.util.List;
 
 /**
  * @author: JiangXW
@@ -13,8 +10,13 @@ import java.util.List;
  */
 public interface SendEmailService {
 
+    void genWelcomeBodyAndSend(String email, String name, String pass, String from, SiteEnum siteEnum);
 
-    List<SiteEnum> getSiteEnumByParam(int siteEnumNum);
+    void genReceivedBodyAndSend(String orderNo, int userId, SiteEnum siteEnum);
 
-    List<TemplateType> getTemplateTypeByParam(String templateTypeName);
+    void genNewPasswordBodyAndSend(String email, String passWord, String businessName, String businessIntroduction, SiteEnum siteEnum);
+
+    void genActivationBodyAndSend(String email, String name, String pass, String fromWhere, SiteEnum siteEnum);
+
+    void genAccountUpdateBodyAndSend(String email, SiteEnum siteEnum);
 }
