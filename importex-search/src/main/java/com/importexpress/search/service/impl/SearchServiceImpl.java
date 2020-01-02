@@ -364,7 +364,7 @@ public class SearchServiceImpl implements SearchService {
             String custom_ali_sold = StrUtils.object2NumStr(solrDocument.get("custom_ali_sold"));
             String custom_sold = StrUtils.object2NumStr(solrDocument.get("custom_sold"));
             String soldObject = String.valueOf(Integer.parseInt(custom_ali_sold) + Integer.parseInt(custom_sold));
-            product.setSolder(soldObject);
+            product.setSold(soldObject);
             //zlw 2018/05/25 update 对标商品销量 Max(速卖通，1688销量) end
 
             String catid = StrUtils.object2Str(solrDocument.get("custom_path_catid"));
@@ -429,10 +429,13 @@ public class SearchServiceImpl implements SearchService {
             }
 
             //添加视频链接判断
-//            String custom_video_url = StrUtils.object2Str(solrDocument.get("custom_video_url"));
-//            if (StringUtils.isNotBlank(custom_video_url)) {
-//                product.setIsVideo(1);
-//            }
+            String custom_video_url = StrUtils.object2Str(solrDocument.get("custom_video_url"));
+            if (StringUtils.isNotBlank(custom_video_url)) {
+                product.setIsVideo(1);
+            }
+            //商品库存标识  0没有库存  1有库存  hot
+            String stock = StrUtils.object2NumStr(solrDocument.get("custom_is_stock_flag"));
+            product.setIsStock(Integer.parseInt(stock));
 
             //其他数据----不是搜索页面必须数据
 

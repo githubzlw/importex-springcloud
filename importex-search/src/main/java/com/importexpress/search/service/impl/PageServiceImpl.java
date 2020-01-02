@@ -13,6 +13,8 @@ public class PageServiceImpl extends UriService implements PageService {
 	private String active = "<span class=\"ui-pagination-active\">";
 	private String spanEnd = "</span>&nbsp;&nbsp;";
 	private String omit = "<span>....</span>&nbsp;&nbsp;";
+	private String pageEnd = "<span class=\"page-end ui-pagination-next ui-pagination-disabled\">next</span>";
+	private String preDisable = "<span class=\"ui-pagination-prev ui-pagination-disabled\">pre</span>&nbsp;&nbsp;";
 
 	@Override
 	public PageWrap paging(SearchParam param, long recordCount) {
@@ -180,10 +182,10 @@ public class PageServiceImpl extends UriService implements PageService {
 	 */
 	private String prePage(String href, long current) {
 		if(current == 1){
-			return "<span class=\"ui-pagination-prev ui-pagination-disabled\">pre</span>&nbsp;&nbsp;";
+			return preDisable;
 		}
-		StringBuffer sb = new StringBuffer();
-		sb.append("<a class=\"ui-pagination-prev\" href=\"").append(href).append(current-1).append("\">pre").append(aEnd);
+		StringBuffer sb = new StringBuffer("<a class=\"ui-pagination-prev\" href=\"");
+		sb.append(href).append(current-1).append("\">pre").append(aEnd);
 		return sb.toString();
 	}
 
@@ -194,17 +196,22 @@ public class PageServiceImpl extends UriService implements PageService {
 	 */
 	private String nextPage(String href, long total, long current) {
 		if(current == total){
-			return "<span class=\"page-end ui-pagination-next ui-pagination-disabled\">next</span>";
+			return pageEnd;
 		}
-		StringBuffer sb = new StringBuffer();
-		sb.append("<a class=\"page-next ui-pagination-next\" href=\"").append(href).append(current+1).append("\">next</a>");
+		StringBuffer sb = new StringBuffer("<a class=\"page-next ui-pagination-next\" href=\"");
+		sb.append(href).append(current+1).append("\">next</a>");
 		return sb.toString();
 	}
 
 
 	@Override
 	public String initUri(SearchParam param) {
-		StringBuffer sb_href = new StringBuffer(uriBase(param));
+		StringBuffer sb_href = new StringBuffer();
+
+		if(StringUtils.isNotBlank(param.getUriRequest())){
+			sb_href.append("/").append(param.getUriRequest()).append("?");
+		}
+		sb_href.append(uriBase(param));
 		if(org.apache.commons.lang.StringUtils.isNotBlank(param.getCatid())){
 			sb_href.append("&catid=").append(param.getCatid());
 		}
