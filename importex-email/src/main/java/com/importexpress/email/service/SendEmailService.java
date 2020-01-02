@@ -19,4 +19,6 @@ public interface SendEmailService {
     void genActivationBodyAndSend(String email, String name, String pass, String fromWhere, SiteEnum siteEnum);
 
     void genAccountUpdateBodyAndSend(String email, SiteEnum siteEnum);
+
+    void justSend(String email, String content, String title, SiteEnum siteEnum);
 }

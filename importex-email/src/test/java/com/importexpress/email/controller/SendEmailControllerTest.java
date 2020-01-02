@@ -155,4 +155,19 @@ public class SendEmailControllerTest {
         Assert.assertTrue("发送异常", rsStr.contains(email));
     }
 
+    @Test
+    public void justSend() throws Exception {
+        String email = "1071083166@qq.com";
+        String content = "content";
+        String title = "title";
+        SiteEnum siteEnum = SiteEnum.KIDS;
+        MvcResult mvcResult = mockMvc.perform(post("/sendMail/justSend")
+                .param("toEmail", email)
+                .param("content", content)
+                .param("title", title)
+                .param("siteEnum", siteEnum.toString()))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.code").value("200")).andReturn();
+        String rsStr = mvcResult.getResponse().getContentAsString();
+        Assert.assertTrue("发送异常", rsStr.contains(email));
+    }
 }

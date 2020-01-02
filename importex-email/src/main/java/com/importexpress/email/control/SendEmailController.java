@@ -145,4 +145,19 @@ public class SendEmailController {
         }
     }
 
+    @PostMapping("/justSend")
+    public CommonResult justSend(@RequestParam(name = "toEmail", required = true) String toEmail,
+                                 @RequestParam(name = "content", required = true) String content,
+                                 @RequestParam(name = "title", required = true) String title,
+                                 @RequestParam(name = "siteEnum", required = true) SiteEnum siteEnum) {
+        try {
+            sendEmailService.justSend(toEmail, content, title, siteEnum);
+            return CommonResult.success("genAccountUpdateBodyAndSend send to " + toEmail + " success");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("justSend,send email[{}],content[{}],title[{}],siteEnum[{}],error", toEmail, content, title, siteEnum, e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+
 }

@@ -267,4 +267,10 @@ public class SendEmailServiceImpl implements SendEmailService {
         }
 
     }
+
+    @Override
+    public void justSend(String email, String content, String title, SiteEnum siteEnum) {
+        MailBean mailBean = MailBean.builder().to(email).type(1).body(content).subject(title).siteEnum(siteEnum).build();
+        sendMailFactory.sendMail(mailBean);
+    }
 }
