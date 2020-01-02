@@ -1,14 +1,21 @@
 package com.importexpress.cart.service;
 
 import com.importexpress.cart.pojo.Cart;
+import com.importexpress.comm.pojo.SiteEnum;
 
 /**
  * @author jack.luo
  */
 public interface CartService {
 
+    /**
+     * 1:成功
+     */
     public static final int SUCCESS = 1;
 
+    /**
+     *  0:失败
+     */
     public static final int FAILUT = 0;
 
     /**
@@ -18,9 +25,9 @@ public interface CartService {
      * @param userId
      * @param itemId
      * @param num
-     * @return
+     * @return 1:成功 0:失败
      */
-    int addCartItem(char site, long userId, String itemId, long num);
+    int addCartItem(SiteEnum site, long userId, String itemId, long num);
 
     /**
      * 获取
@@ -29,7 +36,7 @@ public interface CartService {
      * @param userId
      * @return
      */
-    Cart getCart(char site, long userId);
+    Cart getCart(SiteEnum site, long userId);
 
     /**
      * 更新
@@ -38,9 +45,9 @@ public interface CartService {
      * @param userId
      * @param itemId
      * @param num
-     * @return
+     * @return 1:成功 0:失败
      */
-    int updateCartItem(char site, long userId, String itemId, int num);
+    int updateCartItem(SiteEnum site, long userId, String itemId, int num);
 
     /**
      * 更新
@@ -50,9 +57,9 @@ public interface CartService {
      * @param itemId
      * @param num
      * @param checked
-     * @return
+     * @return 1:成功 0:失败
      */
-    int updateCartItem(char site, long userId, String itemId, int num, int checked);
+    int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked);
 
     /**
      * 删除单个
@@ -60,9 +67,9 @@ public interface CartService {
      * @param site
      * @param userId
      * @param itemId
-     * @return
+     * @return 1:成功 0:失败
      */
-    int delCartItem(char site, long userId, String itemId);
+    int delCartItem(SiteEnum site, long userId, String itemId);
 
     /**
      * 全选反选
@@ -70,17 +77,49 @@ public interface CartService {
      * @param site
      * @param userId
      * @param checked
-     * @return
+     * @return 1:成功 0:失败
      */
-    int checkAll(char site, long userId, int checked);
+    int checkAll(SiteEnum site, long userId, int checked);
 
     /**
      * 删除全部勾选的
      *
      * @param site
      * @param userId
+     * @return 1:成功 0:失败
+     */
+    int delChecked(SiteEnum site, long userId);
+
+    /**
+     * 清空购物车
+     * @param site
+     * @param userId
      * @return
      */
-    int delChecked(char site, long userId);
+    int delAllCartItem(SiteEnum site, long userId);
 
+    /**
+     * 购物车key重命名
+     * @param site
+     * @param oldId
+     * @param newId
+     * @return
+     */
+    int renameCartItem(SiteEnum site, long oldId, long newId);
+
+    /**
+     * 为游客生成ID
+     * @param site
+     * @return
+     */
+    long generateTouristId(SiteEnum site);
+
+    /**
+     * 合并游客购物车到用户购物车
+     * @param site
+     * @param userId  用户id
+     * @param touristId 游客id
+     * @return 1:成功 0:失败
+     */
+    int mergeCarts(SiteEnum site, long userId, long touristId);
 }

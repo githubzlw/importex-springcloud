@@ -1,11 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head><script src="../js/vue.js"></script><link rel="stylesheet" href="../css/commonHeadFoot.css">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width" />
-  <title>Mail Activation</title>
-  <style type="text/css">
+  <title>ImportExpress Mail Cancel Order</title>
+ <style type="text/css">
 
   *{margin:0;padding:0;font-family: Helvetica, Arial, sans-serif;}
   img{max-width: 100%;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;}
@@ -21,21 +21,25 @@
   h5{font-weight:900;font-size: 17px;}
   h6{font-weight:900;font-size: 14px;text-transform: uppercase;}
   .collapse{margin:0!important;}
+  i,em{ font-style: normal;}
   td, div{font-family: Helvetica, Arial, sans-serif;text-align: center;}
   p, ul{margin-bottom: 10px;font-weight: normal;font-size:14px;line-height:1.6;}
   p.lead{font-size:17px;}
   p.last{margin-bottom:0px;}
-  ul li{margin-left:5px;list-style-position: inside;}
+  ul, ol { list-style:none; }
   a{color: #747474;text-decoration: none;}
   a img{border: none;}
+  .clearfix:before,.clearfix:after{content:"";display:table;}
+  .clearfix:after{clear:both;}
+  .clearfix{zoom:1;} 
   .head-wrap{width: 100%;margin: 0 auto;background-color: #f9f8f8;border-bottom: 1px solid #d8d8d8;}
   .head-wrap *{margin: 0;padding: 0;}
-  .header-background{background: repeat-x url(https://www.filepicker.io/api/file/wUGKTIOZTDqV2oJx5NCh) left bottom; height: 60px;}
+  .header-background{background: repeat-x url(https://www.filepicker.io/api/file/wUGKTIOZTDqV2oJx5NCh) left bottom; height: 78px;}
   .header{height: 42px;}
   .header .content{padding: 0;}
   .header .brand{font-size: 16px;line-height: 42px;font-weight: bold;}
   .header .brand a{color: #464646;}
-    .header .brand a img{ padding:3% 0; }
+  .header .brand a img{ padding:2% 0 1%; }
   .body-wrap{width: 505px;margin: 0 auto;background-color: #ffffff;}
   .soapbox .soapbox-title{font-size: 30px;color: #464646;padding-top: 25px; text-align: left; }
   .content .status-container.single .status-padding{width: 80px;}
@@ -54,23 +58,28 @@
   .body-padded, .body-title{text-align: left;}
   .body .body-title{font-weight: bold;font-size: 16px;color: #464646;}
   .body .body-text .body-text-cell{text-align: left;font-size: 14px;line-height: 1.6;padding: 10px 0 10px;}
-  .user_id a{ color:#01a4ef; text-decoration: underline; }
   .user_id_ple span{ color:red; font-weight: bold; font-size: 18px; }
   .user_id_ple{ color:#333; }
   .activate_account{background-color:#41CC00;background-image:url(https://www.filepicker.io/api/file/N8GiNGsmT6mK6ORk00S7);border:1px solid #407429;border-radius:4px;color:#ffffff;display:inline-block;font-family:sans-serif;font-size:17px;font-weight:bold;text-shadow: -1px -1px #47A54B;line-height:38px;text-align:center;text-decoration:none;width:190px;-webkit-text-size-adjust:none;mso-hide:all;}
   .email_button{width: 98%; margin: 0 auto; text-align: left;} 
   .account_if{ margin-top: 15px; }
   .account_email{ color:#01a4ef; font-size: 14px; line-height:20px;word-wrap: break-word;word-break: break-all; }
-  .account_email:hover{text-decoration: underline;}
+  .account_email:hover{text-decoration: underline; }
+  /* cancel order */
+  .cancel_p{border: 1px solid #d8d8d8; padding: 8px; font-size: 13px; margin: 10px 0; color: #333;text-align: left;}
+  .cancel_p p{ margin-bottom: 0; }
+  .cancel_p a{ color:#01a4ef; }
+  .cancel_p a:hover{text-decoration: underline; }
+
   .body .body-signature-block .body-signature-cell{padding: 15px 0;text-align: left;}
   .body .body-signature{font-family: "Comic Sans MS", Textile, cursive;font-weight: bold;}
   .footer-wrap{width: 100%;margin: 0 auto;clear: both !important;background-color: #e5e5e5;border-top: 1px solid #b3b3b3;font-size: 12px;color: #656565;line-height: 30px;}
-  .thanks_so{ margin-bottom: 5px; }
-  .please_note{ width: 96%; padding: 1%; border: 2px solid #dfdfdf; background-color: #f6f6f6; text-align:left; color: #555;}
+  .thanks_so{ margin-bottom: 5px; text-align:left; }
+  .please_note{ width: 96%; padding: 1%; border: 1px solid #dfdfdf; background-color: #f6f6f6; text-align:left; color: #555;box-sizing:border-box;}
   .please_note h3{ font-size: 14px; font-weight:bold; margin-bottom: 5px;}
-  .please_note p{ color: #666; font-size: 13px;margin-bottom:0;}
-  .please_note p a{color:#01a4ef;  }
-  .please_note p a:hover{text-decoration: underline;}
+  .please_note p{ color: #666; font-size: 13px; margin-bottom:0;}
+  .please_note p a{ color: #01a4ef;}
+  .please_note p a:hover{ text-decoration: underline; }
   .footer-wrap .container{padding: 14px 0;}
   .footer-wrap .container .content{padding: 0;}
   .footer-wrap .container .footer-lead{font-size: 14px;}
@@ -135,10 +144,10 @@
     table[class="status"] td[class*="status-cell"].active [class*="status-title"] {
       display: inline !important;
     }
+    .rece_dateil p{ line-height: 14px; }
 
   }
   </style>
-  <link rel="stylesheet" href="../public/online/css/colorStyle.css">
 </head>
 
 <body bgcolor="#ffffff">
@@ -163,12 +172,12 @@
       <tr class="header-background">
         <td class="header container" align="center">
           <div class="content">
-            <span class="brand" th:switch="${logoUrl}">
-               <a href="/">
+            <span class="brand">
+              <a href="/" th:switch="${websiteType}">
                 <img th:case ="'1'" src="https://img.import-express.com/importcsvimg/webpic/newindex/img/logo.png" >
                 <img th:case ="'2'" style="width: 240px;padding:1% 0;" src="https://img.kidsproductwholesale.com/importcsvimg/webpic/newindex/img/kids_logo.png" >
-                <img th:case ="'4'"  src="https://img.kidsproductwholesale.com/importcsvimg/webpic/img/wh89/pet/pet_logo.png?v=1" >
-               </a>
+                <img th:case ="'3'"  src="https://img.kidsproductwholesale.com/importcsvimg/webpic/img/wh89/pet/pet_logo.png?v=1" >
+              </a>
             </span>
           </div>
         </td>
@@ -184,47 +193,42 @@
               <tr>
                 <td>
                   <table class="soapbox">
-                    <tr th:switch="${logoUrl}">
-                      <td class="soapbox-title" th:case ="'1'" >ImportExpress Activate Email</td>
-                        <td class="soapbox-title" th:case ="'2'" >KidsProductWholesale Activate Email</td>
-                      <td class="soapbox-title" th:case ="'4'" >PetStoreInc Activate Email</td>
+                    <tr>
+                      <td class="soapbox-title">Your order was cancelled</td>
                     </tr>
                   </table>
-
+                  
                   <table class="body">
                     <tr>
                       <td class="body-padding"></td>
                       <td class="body-padded">
-                        <div class="body-title">Hi <span th:text="${name}">{{ first_name }}</span>,</div>
+                        <div class="body-title">Hi <i th:text="${name}">name</i>,</div>
                         <table class="body-text">
                           <tr>
                             <td class="body-text-cell">
-                              <p class="user_id">Please click this to verify Email address</p>
+                              <p class="user_id_ple">Order #:<i th:text="${orderNo}">QA18474027512271</i></p>
+                              <div class="cancel_p">
+                                <p>Your order <span th:text="${orderNo}"></span> fails to be approved and it has been cancelled.</p>
+                                <p>The order amount has been returned to your balance. </p>
+                                <p>You can continue to shop with the balance or withdraw it to your PAYPAL account.</p>
+                                <p>And you can search this order in <a th:href="${cancelOrderLink}" href="https://www.import-express.com/orderInfo/getOrders?state=-1"
+                                        target="_blank" style="color:#01a4ef;">Order History</a> in individual center</p>
+                              </div>
                             </td>
                           </tr>
                         </table>
-                        <div class="email_button"><!--[if mso]>
-                          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="/user/loginNew" style="height:38px;v-text-anchor:middle;width:190px;" arcsize="11%" strokecolor="#407429" fill="t" th:href="${activeLink}">
-                            <v:fill type="tile" src="https://www.filepicker.io/api/file/N8GiNGsmT6mK6ORk00S7" color="#41CC00" />
-                            <w:anchorlock/>
-                            <center style="color:#ffffff;font-family:sans-serif;font-size:17px;font-weight:bold;">Activate Account</center>
-                          </v:roundrect>
-                        <![endif]--><a href="/user/loginNew" class="activate_account" th:href="${activeLink}">Activate Account!</a>
-                        <p class="account_if">If the above button doesn't work, please click this link to activate your email</p>
-                          <a href="/userController/upUserState?code=7F15C268EC0C32DF021712F2485E26B8&&email=zhouxueyun66@gmail.com" class="account_email" th:href="${activeLink}" th:text="${activeLink}">https://www.kidsproductwholesale.com/userController/upUserState?code=7F15C268EC0C32DF021712F2485E26B8&&email=z@gmail.com </a>
-                        </div>
+                       
                         <table class="body-signature-block">
                           <tr>
-                            <td class="body-signature-cell" th:switch="${logoUrl}">
-                                <p class="thanks_so">Thanks so much,</p>
-                                <p class="soapbox-title" th:case ="'1'" >ImportExpress Activate Email</p>
-                                <p class="soapbox-title" th:case ="'2'" >KidsProductWholesale Activate Email</p>
-                                <p class="soapbox-title" th:case ="'4'" >PetStoreInc Activate Email</p>
-
-                                <div class="please_note">
-                                <h3>PLEASE NOTE:</h3>
+                            <td class="body-signature-cell" th:switch="${websiteType}">
+                              <p class="thanks_so">Thanks so much,</p>
+                              <p th:case ="'1'" >ImportExpress</p>
+                              <p th:case ="'2'" >KidsProductWholesale</p>
+                              <p th:case ="'3'" >PetStoreInc</p>
+                              <div class="please_note">
+                                <h3 style="font-size: 14px; font-weight:bold; margin-bottom: 5px;">PLEASE NOTE:</h3>
                                 <p>This email message was sent from a notification-only address that cannot accept incoming email. PLEASE DO NOT REPLY to this message. If you have any question or concern
-                                  , access  your account <a href="/user/loginNew" th:href="${here}">here</a>.</p>
+                                  , access your account <a href="https://www.import-express.com/user/loginNew" th:href="${accountLink}">here</a>.</p>
                               </div>
                             </td>
                           </tr>

@@ -88,8 +88,13 @@ public class CartItem {
      */
     private long ut;
 
+    /**
+     * 得到唯一ID标识购物车商品
+     * @return
+     */
     public String getItemId() {
         StringBuilder sb = new StringBuilder();
+
         sb.append(this.pid).append(":");
         sb.append(this.sid1);
         if (this.sid2 > 0) {

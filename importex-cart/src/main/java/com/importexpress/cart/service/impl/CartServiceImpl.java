@@ -11,6 +11,7 @@ import com.importexpress.cart.pojo.CartItem;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.cart.util.Config;
 import com.importexpress.comm.pojo.Product;
+import com.importexpress.comm.pojo.SiteEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,10 +22,7 @@ import org.springframework.util.Assert;
 
 import java.lang.reflect.Type;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -48,12 +46,12 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public int addCartItem(char site, long userId, String itemId, long num) {
+    public int addCartItem(SiteEnum site, long userId, String itemId, long num) {
 
         try {
             checkItemId(itemId);
 
-            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+            String userCartKey = getCartKey(site, userId);
             //如果存在数量相加itemId
             if (redisTemplate.opsForHash().hasKey(userCartKey, itemId)) {
                 String json = (String) redisTemplate.opsForHash().get(userCartKey, itemId);
@@ -104,6 +102,28 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
+     * getCartKey
+     *
+     * @param site
+     * @param id
+     * @return
+     */
+    private String getCartKey(SiteEnum site, long id) {
+        return config.CART_PRE + ':' + site.toString().substring(0, 1).toLowerCase() + ':' + id;
+    }
+
+
+    /**
+     * getTouristKey
+     *
+     * @param site
+     * @return
+     */
+    private String getTouristKey(SiteEnum site) {
+        return config.CART_PRE + ":touristid:" + site.toString().substring(0, 1).toLowerCase();
+    }
+
+    /**
      * product2CartItem
      *
      * @param product
@@ -140,8 +160,8 @@ public class CartServiceImpl implements CartService {
      * @param userId
      * @return
      */
-    private List<CartItem> getCartItems(char site, long userId) {
-        String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+    private List<CartItem> getCartItems(SiteEnum site, long userId) {
+        String userCartKey = getCartKey(site, userId);
 
         List<Object> jsonList = redisTemplate.opsForHash().values(userCartKey);
         List<CartItem> lstCartItem = new ArrayList<>(jsonList.size());
@@ -225,7 +245,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart getCart(char site, long userId) {
+    public Cart getCart(SiteEnum site, long userId) {
 
         Cart cart = new Cart();
         try {
@@ -244,17 +264,17 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public int updateCartItem(char site, long userId, String itemId, int num) {
+    public int updateCartItem(SiteEnum site, long userId, String itemId, int num) {
 
         return updateCartItem(site, userId, itemId, num, -1);
     }
 
     @Override
-    public int updateCartItem(char site, long userId, String itemId, int num, int checked) {
+    public int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked) {
         try {
             checkItemId(itemId);
 
-            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+            String userCartKey = getCartKey(site, userId);
 
             String json = (String) redisTemplate.opsForHash().get(userCartKey, itemId);
             if (StringUtils.isEmpty(json)) {
@@ -275,11 +295,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public int delCartItem(char site, long userId, String itemId) {
+    public int delCartItem(SiteEnum site, long userId, String itemId) {
         try {
             checkItemId(itemId);
 
-            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+            String userCartKey = getCartKey(site, userId);
 
             Long lng = redisTemplate.opsForHash().delete(userCartKey, itemId);
             return NumberUtils.toInt(lng.toString());
@@ -290,10 +310,10 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public int checkAll(char site, long userId, int checked) {
+    public int checkAll(SiteEnum site, long userId, int checked) {
 
         try {
-            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+            String userCartKey = getCartKey(site, userId);
 
             List<Object> jsonList = redisTemplate.opsForHash().values(userCartKey);
 
@@ -311,9 +331,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public int delChecked(char site, long userId) {
+    public int delChecked(SiteEnum site, long userId) {
         try {
-            String userCartKey = config.CART_PRE + ":" + site + ":" + userId;
+            String userCartKey = getCartKey(site, userId);
 
             List<Object> jsonList = redisTemplate.opsForHash().values(userCartKey);
             for (Object json : jsonList) {
@@ -326,6 +346,70 @@ public class CartServiceImpl implements CartService {
 
         } catch (Exception e) {
             log.error("delChecked", e);
+            return FAILUT;
+        }
+    }
+
+    @Override
+    public int delAllCartItem(SiteEnum site, long userId) {
+        try {
+            String userCartKey = getCartKey(site, userId);
+            redisTemplate.opsForHash().delete(userCartKey);
+            return SUCCESS;
+        } catch (Exception e) {
+            log.error("delChecked", e);
+            return FAILUT;
+        }
+    }
+
+    @Override
+    public int renameCartItem(SiteEnum site, long oldId, long newId) {
+        try {
+            String newKey = getCartKey(site, newId);
+            String oldKey = getCartKey(site, oldId);
+            redisTemplate.rename(oldKey,newKey);
+            return SUCCESS;
+        } catch (Exception e) {
+            log.error("delChecked", e);
+            return FAILUT;
+        }
+    }
+
+
+    /**
+     * 为游客生成ID
+     *
+     * Id规则： 一共12位，前1位为9，接着3位为网站code，最后8位为递增位
+     * 例如：
+     *   kids网站 900200000001
+     * @param site
+     * @return
+     */
+    @Override
+    public long generateTouristId(SiteEnum site) {
+        try {
+            long userId = site.getCode() * 100000000 + 900000000000L;
+            Long increment = redisTemplate.opsForValue().increment(getTouristKey(site), 1);
+            Objects.requireNonNull(increment);
+            return userId + increment;
+        } catch (Exception e) {
+            log.error("generateTouristId", e);
+            return FAILUT;
+        }
+    }
+
+    @Override
+    public int mergeCarts(SiteEnum site, long userId, long touristId) {
+        try {
+            List<CartItem> cartItemsTourist = this.getCartItems(site, touristId);
+            for(CartItem item:cartItemsTourist){
+                this.addCartItem(site, userId, item.getItemId(), item.getNum());
+            }
+            //删除游客购物车key
+            redisTemplate.delete(getCartKey(site, touristId));
+            return SUCCESS;
+        } catch (Exception e) {
+            log.error("mergeCarts", e);
             return FAILUT;
         }
     }
