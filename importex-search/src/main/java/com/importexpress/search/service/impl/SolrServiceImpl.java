@@ -164,11 +164,10 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         setQ("*", solrParams);
 
         StringBuilder fq = new StringBuilder(splicingSyntax.specialCatidSearch(param));
-        fq.append(" custom_price:[10 TO *] ");
+        fq.append(" custom_price:[10 TO *] AND custom_valid:1");
         if (StringUtils.isNotBlank(param.getCatid())) {
             fq.append(" AND custom_path_catid:" + param.getCatid());
         }
-        fq.append(" AND custom_valid:1 ");
         setFQ(fq.toString(), solrParams);
         return requestSolr(solrParams);
     }
@@ -231,30 +230,15 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         }
         //计算出中位价
         //计算出中位价
-        if(totalNum % 2 == 0 ){
-            solrParams.set("start", totalNum.intValue() / 2 - 1);
-            solrParams.set("rows",2);
-            QueryResponse res = sendRequest(solrParams,httpSolrClient);
-            if(res != null){
-                SolrDocumentList results = res.getResults();
-                Double price1 = StrUtils.object2Double(results.get(0).get("custom_max_price"));
+        boolean half = totalNum % 2 == 0;
+        setRows((totalNum.intValue() + (half? 0 : 1)) / 2 - 1,half ? 2 : 1,solrParams);
+        QueryResponse res = sendRequest(solrParams,httpSolrClient);
+        if(res != null){
+            SolrDocumentList results = res.getResults();
+            midPrice = StrUtils.object2Double(results.get(0).get("custom_max_price"));
+            if(half ){
                 Double price2 = StrUtils.object2Double(results.get(1).get("custom_max_price"));
-
-               /* Double price1 =Double.parseDouble(results.get(0).get("custom_max_price") == null ?
-                        "0.00" : String.valueOf(results.get(0).get("custom_max_price")));
-                Double price2 =Double.parseDouble(results.get(1).get("custom_max_price") == null ?
-                        "0.00" : String.valueOf(results.get(1).get("custom_max_price")));*/
-                midPrice = (price1 + price2) / 2;
-            }
-        }else{
-            solrParams.set("start", (totalNum.intValue() + 1) / 2 - 1);
-            solrParams.set("rows",1);
-            QueryResponse res = sendRequest(solrParams,httpSolrClient);
-            if(res != null){
-                SolrDocumentList results = res.getResults();
-               /* midPrice = Double.valueOf(results.get(0).get("custom_max_price") == null ?
-                        "0.00" : String.valueOf(results.get(0).get("custom_max_price")));*/
-                midPrice = StrUtils.object2Double(results.get(0).get("custom_max_price"));
+                midPrice = (midPrice + price2) / 2;
             }
         }
 
@@ -263,7 +247,6 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if(solrMap.isEmpty()){
             return aliMap;
         }
-
         aliMap.put("midPrice",midPrice);
         aliMap.put("solrMap",solrMap);
         return aliMap;
@@ -293,6 +276,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         boolean isValidQueryString = StringUtils.equals(queryString, "*");
         String fq = null;
         //搜索词替换掉类别
+        boolean isSynonyCategory = false;
         if(param.getSite() == 1 && param.isSynonym() && !isValidQueryString){
             KeyToCategoryWrap keyToCategoryWrap = splicingSyntax.queryStrToCategory(queryString);
             if(keyToCategoryWrap != null){
@@ -304,12 +288,13 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
                     isValidQueryString = StringUtils.equals(queryString, "*");
                     //fq限制类别
                     fq = categoryFQ(lstCatid);
+                    isSynonyCategory = true;
                     solrParams.set("synon_category",fq);
                 }
             }
         }
         //搜索词
-        String qStr = isValidQueryString ? "*" : qStr(queryString,param.getSite());
+        String qStr = isValidQueryString ? "*" : qStr(queryString,param.getSite(),isSynonyCategory);
         setQ(qStr,solrParams);
 
         //FQ
@@ -333,13 +318,13 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     /**拼接Q参数
      * @return
      */
-    private String qStr(String queryString,int site){
+    private String qStr(String queryString,int site,boolean isSynonyCategory){
         StringBuilder q_str = new StringBuilder();
         String filterName = splicingSyntax.queryKey(queryString);
         if(StringUtils.isNotBlank(filterName)){
             q_str.append("(").append(filterName.replace("nameQuery:", "custom_enname:"))
                     .append(")^0.9");
-            if(site == 1){
+            if(site == 1 && isSynonyCategory){
                 q_str.append(" OR (")
                         .append(filterName.replace("nameQuery:", "custom_type_txt:"))
                         .append(")^1.3");
