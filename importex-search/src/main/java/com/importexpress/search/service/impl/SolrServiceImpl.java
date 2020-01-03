@@ -387,7 +387,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if(param.getSort().contains("bbPrice")){
             sorts.append("bbPrice-desc".equals(param.getSort())?"custom_price desc":"custom_price asc");
         }else if(param.getSort().equals("order-desc")){
-            splicingSyntax.priorityCategorySort(param.getKeyword(), sorts);
+//            splicingSyntax.priorityCategorySort(param.getKeyword(), sorts);
             sorts.append("sum(custom_sold,custom_ali_sold) desc");
         }else{
             splicingSyntax.priorityCategorySort(param.getKeyword(), sorts);
