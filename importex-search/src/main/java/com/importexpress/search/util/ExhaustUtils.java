@@ -74,7 +74,7 @@ public class ExhaustUtils {
     private String intercept(String[] keywords,int removeIndex,int length){
         StringBuilder sb = new StringBuilder();
         for(int i=0;i<length;i++){
-            sb.append(i==removeIndex? "" : keywords[i]).append(" ");
+            sb.append(i==removeIndex? "" : keywords[i]+" ");
         }
         return sb.toString().trim();
     }
