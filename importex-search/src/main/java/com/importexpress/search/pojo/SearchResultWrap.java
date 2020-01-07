@@ -1,5 +1,7 @@
 package com.importexpress.search.pojo;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -14,6 +16,17 @@ import java.util.Map;
  */
 @Data
 public class SearchResultWrap implements Serializable {
+	public SearchResultWrap() {
+		this.page = new PageWrap();
+		this.page.setRecordCount(0L);
+		this.products = Lists.newArrayList();
+		this.categorys = Lists.newArrayList();
+		this.attributes = Lists.newArrayList();
+		this.selectedAttr = Lists.newArrayList();
+		this.associates = Lists.newArrayList();
+		this.searchNavigation = Maps.newHashMap();
+	}
+
 	private static final long serialVersionUID = 986818736352041314L;
 	@ApiModelProperty(value="商品")
 	private List<Product> products;

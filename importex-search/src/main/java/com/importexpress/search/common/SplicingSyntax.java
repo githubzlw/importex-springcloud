@@ -99,7 +99,7 @@ public class SplicingSyntax {
      * @return
      */
     public static String getPriorityCategory(Object priorityCategoryList,String keyWord){
-        if(org.apache.commons.lang.StringUtils.isBlank(keyWord) || priorityCategoryList == null){
+        if(StringUtils.isBlank(keyWord) || priorityCategoryList == null){
             return "";
         }
         Map<String, String> priorityCategory_map = (HashMap<String,String>)priorityCategoryList;
@@ -225,9 +225,6 @@ public class SplicingSyntax {
      * @return
      */
    public KeyToCategoryWrap queryStrToCategory(String  queryString){
-       if(StringUtils.isBlank(queryString) || "*".equals(queryString)){
-           return null;
-       }
        long start = System.currentTimeMillis();
        int queryLength = queryString.length();
        Object lstCategory = application.getAttribute("synonymsCategory");
@@ -286,8 +283,6 @@ public class SplicingSyntax {
             return lstCatid.stream().map(SynonymsCategoryWrap::getCatid)
                     .collect(Collectors.toList());
         }
-       Object catidList = application.getAttribute("1688CatidList");
-       Map<String, Category> secatidList = (Map<String, Category>)catidList;
 
        //先选择出匹配单词最多的
        lstCatid = lstCatid.stream()
@@ -297,52 +292,62 @@ public class SplicingSyntax {
        lstCatid = lstCatid.stream().filter(l->l.getNum()==bestMatch).collect(Collectors.toList());
 
        //找出最小类别
-       List<String> result = surplusMinCatid(lstCatid, secatidList).stream().map(SynonymsCategoryWrap::getCatid)
-               .collect(Collectors.toList());
+       List<String> result = surplusMinCatid(lstCatid);
        return result;
    }
 
     /**获取最小类别
      * @param lstCatid
-     * @param secatidList
      * @return
      */
-   private List<SynonymsCategoryWrap> surplusMinCatid(List<SynonymsCategoryWrap> lstCatid, Map<String, Category> secatidList){
-       List<SynonymsCategoryWrap> setCatid = Lists.newArrayList();
+   private List<String> surplusMinCatid(List<SynonymsCategoryWrap> lstCatid){
+       List<String> setCatid = Lists.newArrayList();
+       if(lstCatid.size() < 2){
+           return lstCatid.size() == 1 ? Lists.newArrayList(lstCatid.get(0).getCatid()) : setCatid;
+       }
+       Object catidList = application.getAttribute("1688CatidList");
+       Map<String, Category> secatidList = (Map<String, Category>)catidList;
+       List<SynonymsCategoryWrap> reCatid = Lists.newArrayList();
        for(SynonymsCategoryWrap c : lstCatid){
-           Category categoryBean = secatidList.get(c);
+           Category categoryBean = secatidList.get(c.getCatid());
            if(categoryBean == null){
                continue;
            }
            String categoryPath = ","+categoryBean.getPath()+",";
            for(SynonymsCategoryWrap l : lstCatid){
-               if(l.equals(c) || setCatid.contains(c)){
+               if(l.getCatid().equals(c.getCatid()) || setCatid.contains(c.getCatid())){
                    continue;
                }
-               if(categoryPath.indexOf(","+l+",") > -1 ){
-                   setCatid.add(c);
+               if(categoryPath.indexOf(","+l.getCatid()+",") > -1 ){
+                   setCatid.add(c.getCatid());
+                   reCatid.add(c);
                }
            }
        }
-       if(setCatid.size() > 1){
-           setCatid = surplusMinCatid(setCatid,secatidList);
+       if(reCatid.size() > 1){
+           setCatid = surplusMinCatid(reCatid);
        }
        return setCatid;
    }
+
+    /**提示词是否匹配到类别
+     * @param auto
+     * @return
+     */
     public String suggestCatid(String auto){
         Object priorityCategoryList = application.getAttribute("priorityCategoryList");
-        String cid = Utility.getPriorityCategory(priorityCategoryList, auto);
-        Object catidList = application.getAttribute("categorys");
-        Map<String, Category> cMap = (Map<String, Category>) catidList;
-        if (StringUtils.isNotBlank(cid) && cMap.get(cid) != null) {
-            String category = cMap.get(cid).getName();
-            if (StringUtils.isNotBlank(category)) {
-                StringBuilder str = new StringBuilder(auto).append("@")
-                        .append(cid).append("@").append(category);
-                return str.toString();
-            }
+        String cid = getPriorityCategory(priorityCategoryList, auto);
+        Map<String, Category> cMap = (Map<String, Category>) application.getAttribute("categorys");
+        if (StringUtils.isBlank(cid) || cMap.get(cid) == null) {
+            return "";
         }
-        return "";
+        String category = cMap.get(cid).getName();
+        if (StringUtils.isBlank(category)) {
+            return "";
+        }
+        StringBuilder str = new StringBuilder(auto).append("@")
+                .append(cid).append("@").append(category);
+        return str.toString();
     }
 
 }

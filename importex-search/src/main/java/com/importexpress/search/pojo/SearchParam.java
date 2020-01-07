@@ -110,4 +110,8 @@ public class SearchParam implements Serializable {
 	@ApiModelProperty(value = "价格区间统计-是否从区间图点击过来")
 	private boolean isRange;
 
+	@ApiModelProperty(value = "是否类别同义词替换")
+	private boolean synonym = false;
+
+
 }

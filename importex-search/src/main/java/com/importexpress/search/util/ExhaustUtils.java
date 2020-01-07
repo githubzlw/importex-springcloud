@@ -51,4 +51,33 @@ public class ExhaustUtils {
         return list;
     }
 
+    /**去掉一个单词重新组成关键词
+     * @param keyword
+     * @return
+     */
+    public String[] combination(String keyword) {
+        String[] keys = keyword.split("(\\s+)");
+        int length = keys.length;
+        if(length < 2){
+            return null;
+        }
+        if(length == 2){
+            return keys;
+        }
+        String[] result = new String[length];
+        for(int i=0;i<length;i++){
+            result[i] = intercept(keys,i,length);
+        }
+        return result;
+    }
+
+    private String intercept(String[] keywords,int removeIndex,int length){
+        StringBuilder sb = new StringBuilder();
+        for(int i=0;i<length;i++){
+            sb.append(i==removeIndex? "" : keywords[i]).append(" ");
+        }
+        return sb.toString().trim();
+    }
+
+
 }

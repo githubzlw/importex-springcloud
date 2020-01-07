@@ -17,27 +17,21 @@ public abstract class UriService {
 	 */
 	public String uriBase(SearchParam param) {
 		StringBuffer sb_href = new StringBuffer();
-		if(StringUtils.isBlank(param.getUriRequest())){
+		/*if(StringUtils.isBlank(param.getUriRequest())){
 			param.setUriRequest("");
-		}
-		sb_href.append(param.getUriRequest()).append("?keyword=")
+		}*/
+		sb_href.append("keyword=")
 				.append(KeywordCorrect.getKeyWord(param.getKeyword()))
 				.append("&srt=")
 				.append(StringUtils.isNotBlank(param.getSort()) ? param.getSort() : "default");
 		if(param.getImportType() != 0){
 			sb_href.append("&filter=").append(param.getImportType());
 		}
-		if(param.getCollection() != 0){
-			sb_href.append("&collection=").append(param.getCollection());
-		}
 		if(StringUtils.isNotBlank(param.getMinPrice())){
 			sb_href.append("&price1=").append(param.getMinPrice());
 		}
 		if(StringUtils.isNotBlank(param.getMaxPrice())){
 			sb_href.append("&price2=").append(param.getMaxPrice());
-		}
-		if(StringUtils.isNotBlank(param.getNewArrivalDate())){
-			sb_href.append("&newArrivalDate=").append(param.getNewArrivalDate());
 		}
 		sb_href.append("&isFreeShip="+param.getFreeShipping());
 		return sb_href.toString();

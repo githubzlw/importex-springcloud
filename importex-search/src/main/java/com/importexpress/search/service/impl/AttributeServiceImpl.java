@@ -110,7 +110,7 @@ public class AttributeServiceImpl extends UriService implements AttributeService
 			attrMap.put(id, wrap);
 		}
 		List<AttributeWrap>  attributeWraps = attrMap.entrySet()
-				.stream().map(m->m.getValue()).collect(Collectors.toList());
+				.stream().filter(m->m.getValue().getAttrs().size()>2).map(m->m.getValue()).collect(Collectors.toList());
 		return attributeWraps;
 	}
 
@@ -145,6 +145,9 @@ public class AttributeServiceImpl extends UriService implements AttributeService
 
 		if(StringUtils.isNotBlank(param.getCatid())) {
 			sb_href.append("&catid=").append(param.getCatid());
+		}
+		if(param.getCollection() != 0){
+			sb_href.append("&collection=").append(param.getCollection());
 		}
 		sb_href.append("&pvid=");
 		if(StringUtils.isNotBlank(param.getAttrId())){
