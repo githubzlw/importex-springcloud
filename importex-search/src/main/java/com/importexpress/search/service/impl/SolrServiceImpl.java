@@ -55,7 +55,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if(solrParams == null){
             return null;
         }
-        SolrFacet facet = new SolrFacet("custom_path_catid",1,5000);
+        SolrFacet facet = new SolrFacet("custom_path_catid",4,5000);
         setFacet(solrParams,facet);
 
         setFQ(removeFQ(solrParams,param),solrParams);
@@ -110,7 +110,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         ModifiableSolrParams solrParams = new ModifiableSolrParams();
         String queryString = param.getKeyword();
         StringBuilder q = new StringBuilder();
-        if (StringUtils.isNotBlank(queryString) && !"null".equals(queryString)) {
+        if (StringUtils.isNotBlank(queryString)) {
             q.append("(custom_enname:" + queryString + " OR custom_rw_keyword:" + queryString + ")");
         }
         if (StringUtils.isNotBlank(param.getPid())) {
@@ -340,7 +340,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         }
         //产品id搜索
         if(StrUtils.isMatch(queryString, "(\\d+)") && queryString.length() > 5) {
-            q_str.append("OR custom_pid:\"").append(queryString).append("\"");
+            q_str.append(" OR custom_pid:\"").append(queryString).append("\"");
         }
         return q_str.toString();
     }
@@ -372,7 +372,6 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if(param.getSort().contains("bbPrice")){
             sorts.append("bbPrice-desc".equals(param.getSort())?"custom_price desc":"custom_price asc");
         }else if(param.getSort().equals("order-desc")){
-//            splicingSyntax.priorityCategorySort(param.getKeyword(), sorts);
             sorts.append("sum(custom_sold,custom_ali_sold) desc");
         }else{
             splicingSyntax.priorityCategorySort(param.getKeyword(), sorts);
@@ -384,7 +383,6 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
             if(queryString.contains(" ")) {
                 sorts.append(",map(termfreq(custom_enname,\""+queryString+"\"),1,10,1,3)");
             }
-//			sorts.append(",map(custom_is_sold_flag,2,2,1,3)")
             sorts.append(",map(custom_bm_flag,1,1,0.7,1)")
                     .append(",map(custom_describe_good_flag,1,1,0.7,1)")
                     .append(",map(custom_shop_type,1,1,0.7,1)")
@@ -392,9 +390,6 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
                     .append(",map(custom_weight_sort_flag,1,1,100,1)")
                     .append(",max(0.3,custom_feight_price_rate)")
                     .append(") asc");
-            //商品评分
-//			sorts.append("custom_score desc,");
-//			sorts.append("score desc");
         }
         return sorts.toString();
     }
@@ -461,9 +456,6 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      * @param fq_condition
      */
     private void importType(SearchParam param,StringBuilder fq_condition){
-        /*if(param.getSite() != 1){
-            return ;
-        }*/
         fq_condition.append(" AND (");
         //0 默认全部可搜 1-描述很精彩   2-卖过的   3-精选店铺
         if(param.getImportType() == 1){

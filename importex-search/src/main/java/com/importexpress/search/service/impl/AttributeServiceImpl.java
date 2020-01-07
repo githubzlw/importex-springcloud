@@ -110,7 +110,7 @@ public class AttributeServiceImpl extends UriService implements AttributeService
 			attrMap.put(id, wrap);
 		}
 		List<AttributeWrap>  attributeWraps = attrMap.entrySet()
-				.stream().map(m->m.getValue()).collect(Collectors.toList());
+				.stream().filter(m->m.getValue().getAttrs().size()>2).map(m->m.getValue()).collect(Collectors.toList());
 		return attributeWraps;
 	}
 

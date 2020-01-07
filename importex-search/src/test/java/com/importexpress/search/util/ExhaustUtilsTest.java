@@ -21,5 +21,14 @@ public class ExhaustUtilsTest {
         Assert.assertEquals(true,exhaust!=null&&!exhaust.isEmpty());
         exhaust.stream().forEach(e->System.out.println(e));
     }
+    @Test
+    public void combination(){
+        String str = "kid wash towel";
+        String[] combination = exhaustUtils.combination(str);
+        Assert.assertEquals(3,combination.length);
+        for (String c : combination){
+            System.out.println(c);
+        }
+    }
 
 }

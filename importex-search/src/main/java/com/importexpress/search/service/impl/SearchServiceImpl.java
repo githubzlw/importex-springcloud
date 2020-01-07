@@ -6,6 +6,7 @@ import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.*;
 import com.importexpress.search.pojo.*;
 import com.importexpress.search.service.*;
+import com.importexpress.search.util.ExhaustUtils;
 import com.importexpress.search.util.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +49,8 @@ public class SearchServiceImpl implements SearchService {
     private ServletContext application;
     @Autowired
     private CalculatePrice calculatePrice;
+    @Autowired
+    private ExhaustUtils exhaustUtils;
 
     @Override
     public SearchResultWrap advertisement(String key, int site, String adgroupid) {
@@ -198,7 +201,7 @@ public class SearchServiceImpl implements SearchService {
         //是否需要推荐联想词
         long recordCount = page1 == null ? 0 : page1.getRecordCount();
         boolean suggestKey = isDefault(param);
-        suggestKey = suggestKey && recordCount < 40 && param.getKeyword().split("(\\s+)").length > 2;
+        suggestKey = suggestKey && recordCount < 40 && param.getKeyword().split("(\\s+)").length > 1;
         if(suggestKey){
             List<AssociateWrap> associate = associate(param.getKeyword(), param.getSite());
             wrap.setAssociates(associate);
@@ -292,7 +295,7 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public List<AssociateWrap> associate(String keyWord, int site) {
-        String[] exhaust = Utility.combination(keyWord);
+        String[] exhaust = exhaustUtils.combination(keyWord);
         if(exhaust == null) {
             return Lists.newArrayList();
         }
