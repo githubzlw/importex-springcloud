@@ -1,15 +1,18 @@
 package com.importexpress.email.service.impl;
 
-import com.importexpress.comm.pojo.SiteEnum;
-import com.importexpress.comm.pojo.TemplateType;
+import com.importexpress.comm.pojo.*;
+import com.importexpress.comm.util.MD5Util;
+import com.importexpress.comm.util.StrUtils;
+import com.importexpress.email.mapper.QueryMapper;
 import com.importexpress.email.service.SendEmailService;
+import com.importexpress.email.service.SendMailFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * @author: JiangXW
@@ -21,32 +24,253 @@ import java.util.stream.Collectors;
 @Service
 public class SendEmailServiceImpl implements SendEmailService {
 
+    @Autowired
+    private QueryMapper queryMapper;
+
+    @Autowired
+    private SendMailFactory sendMailFactory;
+
 
     /**
-     * 根据网站类型ID获取枚举网站数据
+     * WELCOME 模板获取数据并且发送邮件
      *
-     * @param siteEnumNum
-     * @return
+     * @param email
+     * @param name
+     * @param pass
+     * @param from
+     * @param siteEnum
      */
     @Override
-    public List<SiteEnum> getSiteEnumByParam(int siteEnumNum) {
-        return Arrays.stream(SiteEnum.values()).filter(e -> e.getCode() == siteEnumNum).collect(Collectors.toList());
+    public void genWelcomeBodyAndSend(String email, String name, String pass, String from, SiteEnum siteEnum) {
+
+        MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.WELCOME).siteEnum(siteEnum).build();
+        String activationCode = MD5Util.encoder(email + UUID.randomUUID().toString().replaceAll("-", ""));
+        queryMapper.upUserActivationCodeState1(email, activationCode);
+        String activeLink = siteEnum.getUrl() + "/userController/upUserState?code=" + activationCode + "&email=" + email + "&from=" + from;
+        String here = siteEnum.getUrl() + "/individual/getCenter";
+        int site = MultiSiteUtil.site;
+        Map<String, Object> model = new HashMap<>(9);
+        model.put("logoUrl", String.valueOf(site));
+        model.put("name", name);
+        model.put("email", email);
+        model.put("pass", pass);
+        model.put("activeLink", activeLink);
+        model.put("here", here);
+        String title = "You've successfully created an " + siteEnum.getName() + " account. We Welcome You!";
+        mailBean.setSubject(title);
+        mailBean.setModel(model);
+        sendMailFactory.sendMail(mailBean);
     }
 
+
     /**
-     * 根据模板名称获取枚举模板数据
+     * RECEIVED 模板获取数据并且发送邮件
      *
-     * @param templateTypeName
-     * @return
+     * @param orderNo
+     * @param userId
+     * @param siteEnum
      */
     @Override
-    public List<TemplateType> getTemplateTypeByParam(String templateTypeName) {
-        if (StringUtils.isNotBlank(templateTypeName)) {
-            return Arrays.stream(TemplateType.values())
-                    .filter(e -> e.name().equalsIgnoreCase(templateTypeName)).collect(Collectors.toList());
+    public void genReceivedBodyAndSend(String orderNo, int userId, SiteEnum siteEnum) {
+
+        MailBean mailBean = MailBean.builder().type(1).templateType(TemplateType.RECEIVED).siteEnum(siteEnum).build();
+        String[] orderNos;
+        if (orderNo.contains(",")) {
+            orderNos = orderNo.split(",");
         } else {
-            return null;
+            orderNos = new String[]{orderNo};
+        }
+        //获取订单信息，地址，交期--用IN
+        int length = orderNos.length;
+        StringBuffer orderNostr = new StringBuffer();
+        for (int i = 0; i < length; i++) {
+            if (i == (length - 1)) {
+                orderNostr.append("" + orderNos[i] + "");
+            } else {
+                orderNostr.append("" + orderNos[i] + ",");
+            }
+        }
+        //获取订单详情信息，产品名称，总价--用IN
+        List<OrderEmailBean> orderEmailBeans = null;
+        String delivery = null;
+        try {
+            orderEmailBeans = queryMapper.getOrderDetails(orderNostr.toString());
+            delivery = orderEmailBeans.get(0).getDelivery_time();
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("getOrderDetails error!,orderDetails is null!,orderno:" + orderNostr);
+        }
+        int delivery_time = 0;
+        if (StringUtils.isNotBlank(delivery) && StrUtils.isNum(delivery)) {
+            int delivery1 = Integer.parseInt(delivery);
+            if (delivery_time < delivery1) {
+                delivery_time = delivery1;
+            }
+        }
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DAY_OF_MONTH, +7);
+        c.add(Calendar.DAY_OF_MONTH, delivery_time);
+        String format = sf.format(c.getTime());
+        OrderAddressEmailBean orderAddressEmailInfo = queryMapper.getOrderAddressEmailInfo(orderNostr.toString());
+        if (null == orderAddressEmailInfo) {
+            log.error("genReceivedBodyAndSend sendEmail error!,OrderAddressEmailBean is null!,orderno:" + orderNostr);
+            return;
+        }
+        String mode_transport = orderAddressEmailInfo.getMode_transport();
+        String transport = "";
+        String time1 = "";
+        //订单运输方式
+        String shippingMethod = "";
+        if (StringUtils.isNotBlank(mode_transport)) {
+            if (mode_transport.contains("@")) {
+                String[] mode_transports = mode_transport.split("@");
+                transport = mode_transports[1];
+                shippingMethod = mode_transports[0];
+                time1 = mode_transports[1];
+                if (time1.contains("-")) {
+                    time1 = time1.split("-")[1];
+                }
+            }
+        }
+        c.add(Calendar.DAY_OF_MONTH, Integer.parseInt(time1));
+
+        //用户信息
+        UserBean ub = queryMapper.getUserById(userId);
+        mailBean.setTo(ub.getEmail());
+        Map<String, Object> model = new HashMap<>();
+        // 发送邮件
+        if (StringUtils.isNotBlank(ub.getEmail())) {
+            String valueFromResourceFile = siteEnum.getUrl();
+            String here = valueFromResourceFile + "individual/getCenter";
+            model.put("name", StringUtils.isNotBlank(ub.getName()) ? ub.getName() : "Valued Customer");
+            model.put("orderAddressEmailInfo", orderAddressEmailInfo);
+            model.put("orderEmailBeans", orderEmailBeans);
+            model.put("here", here);
+            model.put("transport", transport);
+            model.put("shippingMethod", shippingMethod);
+            model.put("estimatedShipOutDate", format);
+            int site = MultiSiteUtil.site;
+            model.put("logoUrl", site);
+            model.put("showUrl", valueFromResourceFile);
+            model.put("imgLogo", siteEnum.getUrl());
+            String title = "Your order is received!";
+            mailBean.setSubject(title);
+            mailBean.setModel(model);
+            sendMailFactory.sendMail(mailBean);
+        }
+
+    }
+
+
+    /**
+     * NEW_PASSWORD 模板获取数据并且发送邮件
+     *
+     * @param email
+     * @param passWord
+     * @param businessName
+     * @param businessIntroduction
+     * @param siteEnum
+     */
+    @Override
+    public void genNewPasswordBodyAndSend(String email, String passWord, String businessName, String businessIntroduction, SiteEnum siteEnum) {
+        MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.NEW_PASSWORD).siteEnum(siteEnum).build();
+        try {
+            String here = siteEnum.getUrl() + "/individual/getCenter";
+            Map<String, Object> model = new HashMap<>();
+            model.put("businessIntroduction", businessIntroduction);
+            model.put("businessName", businessName);
+            model.put("name", email);
+            model.put("email", email);
+            model.put("pass", passWord);
+            model.put("here", here);
+            model.put("logoUrl", String.valueOf(siteEnum.getCode()));
+            String title = "You've successfully complete your info!";
+            mailBean.setSubject(title);
+            mailBean.setModel(model);
+            sendMailFactory.sendMail(mailBean);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("genNewPasswordBodyAndSend email[{}],businessName[{}]", email, businessName, e);
         }
     }
 
+
+    /**
+     * ACTIVATION 模板获取数据并且发送邮件
+     *
+     * @param email
+     * @param name
+     * @param pass
+     * @param fromWhere
+     * @param siteEnum
+     */
+    @Override
+    public void genActivationBodyAndSend(String email, String name, String pass, String fromWhere, SiteEnum siteEnum) {
+        try {
+            MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.ACTIVATION).siteEnum(siteEnum).build();
+            String activationCode = MD5Util.encoder(mailBean.getTo() + UUID.randomUUID().toString().replaceAll("-", ""));
+            queryMapper.upUserActivationCodeState1(mailBean.getTo(), activationCode);
+            String activeLink = siteEnum.getUrl() + "/userController/upUserState?code=" + activationCode + "&email=" + email + "&from=" + fromWhere;
+            String here = siteEnum.getUrl() + "/individual/getCenter";
+            Map<String, Object> model = new HashMap<>();
+            model.put("logoUrl", String.valueOf(siteEnum.getCode()));
+            model.put("name", name);
+            model.put("email", email);
+            model.put("pass", pass);
+            model.put("activeLink", activeLink);
+            model.put("here", here);
+            String title = "Reset Your Password " + mailBean.getSiteEnum().getName() + " account.";
+            mailBean.setSubject(title);
+            mailBean.setModel(model);
+            sendMailFactory.sendMail(mailBean);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("genActivationBodyAndSend email[{}],fromWhere[{}]", email, fromWhere, e);
+        }
+
+    }
+
+    /**
+     * ACCOUNT_UPDATE 模板获取数据并且发送邮件
+     *
+     * @param email
+     * @param siteEnum
+     */
+    @Override
+    public void genAccountUpdateBodyAndSend(String email, SiteEnum siteEnum) {
+
+
+        String title = "Reset Your Password At " + siteEnum.getName();
+        try {
+            MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.ACCOUNT_UPDATE).siteEnum(siteEnum).build();
+            UserBean userBean = queryMapper.getUserByEmail(mailBean.getTo(), mailBean.getSiteEnum().getCode());
+            String activationPassCode = MD5Util.encoder(mailBean.getTo() + System.currentTimeMillis());
+            queryMapper.upUserActivationCodeState2(mailBean.getTo(), activationPassCode);
+            if (userBean != null) {
+                String activeLink = siteEnum.getUrl() + "/forgotPassword/passActivate?email=" + mailBean.getTo()
+                        + "&validateCode=" + activationPassCode;
+                String here = siteEnum.getUrl() + "/individual/getCenter";
+                Map<String, Object> model = new HashMap<>();
+                model.put("name", mailBean.getTo());
+                model.put("email", mailBean.getTo());
+                model.put("activeLink", activeLink);
+                model.put("here", here);
+                model.put("logoUrl", String.valueOf(siteEnum.getCode()));
+                mailBean.setSubject(title);
+                mailBean.setModel(model);
+                sendMailFactory.sendMail(mailBean);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("genAccountUpdateBodyAndSend email:[{}],title:[{}]", email, title, e);
+        }
+
+    }
+
+    @Override
+    public void justSend(String email, String content, String title, SiteEnum siteEnum) {
+        MailBean mailBean = MailBean.builder().to(email).type(1).body(content).subject(title).siteEnum(siteEnum).build();
+        sendMailFactory.sendMail(mailBean);
+    }
 }

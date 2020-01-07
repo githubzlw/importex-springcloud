@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @Slf4j
-public final class Ali1688CacheService {
+public class Ali1688CacheService {
 
     private static final String REDIS_PID_PRE = "ali:pid:";
     private static final String REDIS_SHOP_PRE = "ali:shopid:";
