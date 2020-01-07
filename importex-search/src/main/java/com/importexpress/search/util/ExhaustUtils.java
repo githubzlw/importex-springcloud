@@ -58,6 +58,9 @@ public class ExhaustUtils {
     public String[] combination(String keyword) {
         String[] keys = keyword.split("(\\s+)");
         int length = keys.length;
+        if(length < 2){
+            return null;
+        }
         if(length == 2){
             return keys;
         }
