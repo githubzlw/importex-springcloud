@@ -33,4 +33,10 @@ public interface CategoryService {
 	 * @return
 	 */
 	List<SearchWordWrap> getRecommendedWords();
+
+	/**See more products in category
+	 * @param rootTree
+	 * @return
+	 */
+	String productsCate(List<CategoryWrap> rootTree);
 }

@@ -204,9 +204,9 @@ public class SearchServiceImpl implements SearchService {
         suggestKey = suggestKey && recordCount < 40 && param.getKeyword().split("(\\s+)").length > 1;
         if(suggestKey){
             List<AssociateWrap> associate = associate(param.getKeyword(), param.getSite());
-            wrap.setAssociates(associate);
+            wrapTemp.setAssociates(associate);
         }
-        wrapTemp.setSuggest(suggestKey);
+        wrapTemp.setSuggest(suggestKey ? 1 : 0);
         return wrapTemp;
 
     }
@@ -546,6 +546,10 @@ public class SearchServiceImpl implements SearchService {
         if (param.isFactCategory()) {
             List<CategoryWrap> categorys = categoryService.categorys(param, solrResult.getCategoryFacet());
             wrap.setCategorys(categorys);
+            //See more products in category
+            String productsCate = categoryService.productsCate(categorys);
+            wrap.setProductsCate(productsCate);
+
         }
 
         //属性
@@ -560,8 +564,10 @@ public class SearchServiceImpl implements SearchService {
         long recordCount = solrResult.getRecordCount();
         PageWrap paging = pageService.paging(param, recordCount);
         wrap.setPage(paging);
+
         return wrap;
     }
+
     private boolean isDefault(SearchParam param){
         boolean isDefault = "default".equals(param.getSort()) && StringUtils.isBlank(param.getAttrId());
         isDefault = isDefault && (StringUtils.isBlank(param.getCatid())) && param.getPage() < 2;

@@ -46,7 +46,7 @@ public class SearchController {
 
     /**产品搜索
      * @param request
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     @PostMapping("/products")
@@ -80,7 +80,7 @@ public class SearchController {
 
     /**店铺搜索
      * @param request
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     @PostMapping("/shop")
@@ -108,7 +108,7 @@ public class SearchController {
 
     /**数量
      * @param request
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     @PostMapping("/count")
@@ -132,7 +132,7 @@ public class SearchController {
         }
     }
     /**类别统计
-     * @param param
+     * @param param 搜索参数
      * @param request
      * @return
      */
@@ -166,7 +166,7 @@ public class SearchController {
     }
     /**相似搜索
      * @param request
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     @PostMapping("/similar")
@@ -189,7 +189,7 @@ public class SearchController {
     }
     /** guess you like
      * @param request
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     @PostMapping("/like")
@@ -212,7 +212,7 @@ public class SearchController {
     }
     /**新版购物车该产品没有购买过则根据名称查询推荐商品
      * @param request
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     @PostMapping("/bought")
@@ -235,7 +235,7 @@ public class SearchController {
     }
 
     /**展示该商品类别下的产品
-     * @param param
+     * @param param 搜索参数
      * @param request
      * @return
      */
@@ -260,7 +260,7 @@ public class SearchController {
 
     /**发生错误时推荐产品
      * @param request
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     @PostMapping("/recommend")
@@ -281,6 +281,12 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
+
+    /**推荐热销产品
+     * @param request
+     * @param param 搜索参数
+     * @return
+     */
     @PostMapping("/hot")
     @ApiOperation("推荐热销产品")
     public CommonResult hotProduct(
@@ -299,6 +305,12 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
+
+    /**根据类别推荐热销产品
+     * @param request
+     * @param param 搜索参数
+     * @return
+     */
     @PostMapping("/hotbycatid")
     @ApiOperation("根据类别推荐热销产品")
     public CommonResult hotProductForCatid(
@@ -317,6 +329,13 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
+
+    /**获取搜索词提示词列表
+     * @param request
+     * @param keyWord 搜索词
+     * @param site 网站
+     * @return
+     */
     @PostMapping("/auto")
     @ApiOperation("获取搜索词提示词列表")
     public CommonResult searchAutocomplete(
@@ -339,6 +358,12 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
+
+    /**统计价格区间分布
+     * @param request
+     * @param param 搜索参数
+     * @return
+     */
     @PostMapping("/range")
     @ApiOperation("统计价格区间分布")
     public CommonResult loadRangePrice(
@@ -383,6 +408,13 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
+
+    /**获取搜索词其他组合推荐
+     * @param keyWord 搜索词
+     * @param site 网站
+     * @param request
+     * @return
+     */
     @PostMapping("/associate")
     @ApiOperation("获取搜索词其他组合推荐")
     public CommonResult associateKey(
@@ -405,6 +437,13 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
+
+    /**异步加载搜索页类别推荐搜索词
+     * @param keyWord 搜索词
+     * @param site 网站
+     * @param request
+     * @return
+     */
     @PostMapping("/catid/suggest")
     @ApiOperation("异步加载搜索页类别推荐搜索词")
     public CommonResult catidSuggest(
@@ -421,13 +460,20 @@ public class SearchController {
         }
         try {
             List<SearchWordWrap> list = service.searchWord(keyWord, _site);
-            return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",JSONObject.toJSONString(list));
+            return CommonResult.success("GET SUGGEST KEY SUCCESSED!",JSONObject.toJSONString(list));
         }catch (Exception e){
             log.error("异步加载搜索页类别推荐搜索词",e);
             return CommonResult.failed(e.getMessage());
         }
     }
 
+    /**广告落地页
+     * @param keyWord 搜索词
+     * @param site 网站
+     * @param adgroupid 广告词
+     * @param request
+     * @return
+     */
     @PostMapping("advertisement")
     @ApiOperation("广告落地页")
     public CommonResult advertisement(
@@ -445,7 +491,7 @@ public class SearchController {
         }
         try {
             SearchResultWrap advertisement = service.advertisement(keyWord, _site, adgroupid);
-            return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",JSONObject.toJSONString(advertisement));
+            return CommonResult.success("GET ADVERTISEMENT KEY SUCCESSED!",JSONObject.toJSONString(advertisement));
         }catch (Exception e){
             log.error("广告落地页",e);
             return CommonResult.failed(e.getMessage());

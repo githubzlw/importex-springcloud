@@ -17,10 +17,12 @@ public interface KeywordRecordService {
 	 * @return
 	 */
 	List<Map<String,String>> getPriorityCategoryList();
+
 	/**限定类别搜索类别列表
 	 * @return
 	 */
 	List<Map<String,Object>> getSpecialCategoryList();
+
 	/**限定类别搜索类别列表
 	 * @return
 	 */

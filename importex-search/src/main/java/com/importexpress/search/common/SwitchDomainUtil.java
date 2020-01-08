@@ -1,15 +1,7 @@
 package com.importexpress.search.common;
 
-import com.importexpress.comm.util.StrUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.solr.common.SolrDocument;
 import org.springframework.stereotype.Component;
-
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * 域名切换

@@ -95,6 +95,11 @@ public class SynonymServiceImpl implements SynonymService {
         }
         return k.trim();
     }
+
+    /**
+     * 反向同义词
+     * @param synonymsListResult
+     */
     private void reverSynonyms(Map<String,Set<String>> synonymsListResult){
         Map<String,Set<String>> synonymsListResultRever = Maps.newHashMap();
         Iterator<Map.Entry<String, Set<String>>> iterator = synonymsListResult.entrySet().iterator();

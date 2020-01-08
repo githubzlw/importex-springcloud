@@ -7,6 +7,9 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
+/**
+ * 项目初始化数据加载监听器
+ */
 @WebListener
 public class InitDataListener implements ServletContextListener {
     @Autowired

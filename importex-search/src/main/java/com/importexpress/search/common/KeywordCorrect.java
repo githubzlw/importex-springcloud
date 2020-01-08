@@ -13,6 +13,9 @@ public class KeywordCorrect {
     //特殊字符
     private static String specialCharactersReg = "([/\\\\\\$=\\|%`~<>_,\\:\\.\\?\\{\\}\\[\\]\";\\+\\*\\^#@!￥\\(\\)《》，。？、“”；：‘’（）｛｝【】*！~])";
 
+    private static String delGegex = "(\\b(where|to|is|are|for|if|of|by|or|in|at|on|and|now|" +
+            "before|after|when|who|but|how|designer|cute|cheap|wholesale|buy)\\b)";
+
     /**
      *   对字符串做过滤特殊字符处理
      *
@@ -25,7 +28,7 @@ public class KeywordCorrect {
         if(StringUtils.isBlank(keyword)) {
             return "";
         }
-        keyword = keyword.replaceAll(PropertyUtils.getDelGegex(), "");
+        keyword = keyword.replaceAll(delGegex, "");
 
         if(StrUtils.isMatch(keyword,"([a-zA-Z0-9]+(\\-[0-9a-zA-Z]+)+)")){
             keyword = keyword.replaceAll("\\-{2}", "-");
