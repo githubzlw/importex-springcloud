@@ -277,7 +277,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         String fq = null;
         //搜索词替换掉类别
         boolean isSynonyCategory = false;
-        if(param.getSite() == 1 && param.isSynonym() && !isValidQueryString){
+        /*if(param.getSite() == 1 && param.isSynonym() && !isValidQueryString){
             KeyToCategoryWrap keyToCategoryWrap = splicingSyntax.queryStrToCategory(queryString);
             if(keyToCategoryWrap != null){
                 List<String> lstCatid = keyToCategoryWrap.getLstCatid();
@@ -292,7 +292,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
                     solrParams.set("synon_category",fq);
                 }
             }
-        }
+        }*/
         //搜索词
         String qStr = isValidQueryString ? "*" : qStr(queryString,param.getSite(),isSynonyCategory);
         setQ(qStr,solrParams);
@@ -456,6 +456,9 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      * @param fq_condition
      */
     private void importType(SearchParam param,StringBuilder fq_condition){
+        if(param.getSite() == 8){
+            return;
+        }
         fq_condition.append(" AND (");
         //0 默认全部可搜 1-描述很精彩   2-卖过的   3-精选店铺
         if(param.getImportType() == 1){

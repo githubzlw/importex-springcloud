@@ -5,33 +5,32 @@ import org.apache.solr.client.solrj.response.FacetField;
 
 import java.util.List;
 
+
 /**
- * @author jack.luo
- * @date 2019/11/22
+ *
  */
 public interface SearchService {
     /**获取类别统计
      * @date 2017年2月13日
      * @author abc
      * @return
-     * @throws Exception
      */
     List<FacetField> groupCategory(SearchParam param);
 
     /**请求solr获取搜索
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     SearchResultWrap productSerach(SearchParam param);
 
 
     /**请求solr获取店铺搜索
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     SearchResultWrap shopSerach(SearchParam param);
     /**请求solr获取搜索产品数
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     long serachCount(SearchParam param);
@@ -39,7 +38,7 @@ public interface SearchService {
 
     /**
      *产品单页侧边展示相似商品
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     List<Product> similarProduct(SearchParam param);
@@ -51,7 +50,7 @@ public interface SearchService {
     List<Product> guessYouLike(SearchParam param);
     /**
      * 新版购物车该产品没有购买过则根据名称查询推荐商品
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     List<Product> boughtAndBought(SearchParam param);
@@ -63,15 +62,15 @@ public interface SearchService {
     List<Product> catidForGoods(SearchParam param);
 
     /**404页面推荐商品查询
-     * @param param
+     * @param param 搜索参数
      * @return
      */
     List<Product> errorRecommend(SearchParam param);
     /**
      * 当搜索词没有搜索结果且也没有搜索词热卖商品时，取搜索词频次高的搜索词结果当做热销商品展示
-     * @param param
+     * @param param 搜索参数
      * @return
-     * 王宏杰 2018-07-24
+     * @author 王宏杰
      */
     List<Product> hotProduct(SearchParam param);
 

@@ -24,10 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author jack.luo
- * @date 2019/11/22
- */
 @Slf4j
 @Service
 public class SearchServiceImpl implements SearchService {
@@ -377,11 +373,11 @@ public class SearchServiceImpl implements SearchService {
             if (StringUtils.isBlank(infoReviseFlag) || "0".equals(infoReviseFlag)
                     || StringUtils.isBlank(title)) {
                 title = StrUtils.object2Str(solrDocument.get("custom_enname"));
+                //拼接类别名称
+                /*1688标题短，就用 速卖通标题 这个 逻辑 去掉改成 1688 标题短 就 在标题里面 加上 这个产品的 类别名绝不能 直接用
+                速卖通 产品名--2018-01-05*/
+                title = splicingSyntax.categoryNameToTitle(title, catid);
             }
-            //拼接类别名称
-        /*1688标题短，就用 速卖通标题 这个 逻辑 去掉改成 1688 标题短 就 在标题里面 加上 这个产品的 类别名绝不能 直接用
-        速卖通 产品名--2018-01-05*/
-            title = splicingSyntax.categoryNameToTitle(title, catid);
             product.setName(title);
 
 
