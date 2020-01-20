@@ -37,6 +37,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     private HttpSolrClient httpSolrClient;
     @Autowired
     private SplicingSyntax splicingSyntax;
+    private  DecimalFormat df  = new DecimalFormat("#0.00");  //保留两位小数
 
     @Autowired
     public SolrServiceImpl(Config config){
@@ -203,7 +204,6 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         }
         return response;
     }
-
     @Override
     public Map<String,Object> searPriceRangeByKeyWord(SearchParam param) {
         Map<String,Object> aliMap = Maps.newHashMap();
@@ -215,8 +215,8 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if(solrParams == null){
             return aliMap;
         }
-        solrParams.set("fields", "custom_max_price");
-        solrParams.set("sort", "custom_max_price asc");
+        solrParams.set("fields", "custom_price");
+        solrParams.set("sort", "custom_price asc");
         solrParams.set("rows", 1);
         double midPrice = 0;//中位价
         QueryResponse response = sendRequest(solrParams,httpSolrClient);
@@ -235,9 +235,9 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         QueryResponse res = sendRequest(solrParams,httpSolrClient);
         if(res != null){
             SolrDocumentList results = res.getResults();
-            midPrice = StrUtils.object2Double(results.get(0).get("custom_max_price"));
+            midPrice = StrUtils.object2Double(results.get(0).get("custom_price"));
             if(half ){
-                Double price2 = StrUtils.object2Double(results.get(1).get("custom_max_price"));
+                Double price2 = StrUtils.object2Double(results.get(1).get("custom_price"));
                 midPrice = (midPrice + price2) / 2;
             }
         }
@@ -605,12 +605,11 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      * 传入查询条件,查询分组数据对应的数量  中位价和对应的solrFlag
      */
     private  Map<String, Integer> searchFaced(double midPrice,ModifiableSolrParams solrParams){
-        DecimalFormat df  = new DecimalFormat("0.00");  //保留两位小数
         //获取四个区间的范围
-        String firstRange = "custom_max_price:[* TO "+Double.parseDouble(df.format(midPrice / 2)) + "]";
-        String secondRange = "custom_max_price:["+(Double.parseDouble(df.format(midPrice / 2) + 1)) + " TO " + midPrice + "]";
-        String threeRange = "custom_max_price:["+(midPrice + 0.001) + " TO " + 2 * midPrice + "]";
-        String fourRange = "custom_max_price:["+(Double.parseDouble((2 * midPrice + "" + 1))) + " TO *]";
+        String firstRange = "custom_price:[* TO "+df.format(midPrice / 2) + "]";
+        String secondRange = "custom_price:["+df.format(midPrice / 2) + " TO " + midPrice + "]";
+        String threeRange = "custom_price:["+df.format(midPrice) + " TO " + df.format(2 * midPrice) + "]";
+        String fourRange = "custom_price:["+df.format(2 * midPrice) + " TO *]";
         solrParams.set("facet", true);
         solrParams.set("facet.query", firstRange);
         solrParams.add("facet.query", secondRange);

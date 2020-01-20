@@ -47,6 +47,7 @@ public class SearchServiceImpl implements SearchService {
     private CalculatePrice calculatePrice;
     @Autowired
     private ExhaustUtils exhaustUtils;
+    DecimalFormat df  = new DecimalFormat("#0.00");  //保留两位小数
 
     @Override
     public SearchResultWrap advertisement(String key, int site, String adgroupid) {
@@ -243,16 +244,15 @@ public class SearchServiceImpl implements SearchService {
         }
         double midPrice = (Double) response.get("midPrice");
         Map<String, Integer> solrMap = (Map<String, Integer>)response.get("solrMap");
-        DecimalFormat df  = new DecimalFormat("0.00");  //保留两位小数
         range.setKeyword(null);
         range.setOtherkeyword(null);
         range.setSectionOnePrice(Double.valueOf(df.format(midPrice/2)));
-        range.setSectionOneCount(solrMap.get("custom_max_price:[* TO "+Double.parseDouble(df.format(midPrice/2))+"]"));
+        range.setSectionOneCount(solrMap.get("custom_price:[* TO "+df.format(midPrice/2)+"]"));
         range.setSectionTwoPrice(Double.parseDouble(df.format(midPrice)));
-        range.setSectionTwoCount(solrMap.get("custom_max_price:["+(Double.parseDouble(df.format(midPrice/2)+1))+" TO "+midPrice+"]"));
+        range.setSectionTwoCount(solrMap.get("custom_price:["+df.format(midPrice/2)+" TO "+df.format(midPrice)+"]"));
         range.setSectionThreePrice(2*Double.parseDouble(df.format(midPrice)));
-        range.setSectionThreeCount(solrMap.get("custom_max_price:["+(midPrice+0.001)+" TO "+2*midPrice+"]"));
-        range.setSectionFourCount(solrMap.get("custom_max_price:["+(Double.parseDouble((2*midPrice+""+1)))+" TO *]"));
+        range.setSectionThreeCount(solrMap.get("custom_price:["+df.format(midPrice)+" TO "+df.format(2*midPrice)+"]"));
+        range.setSectionFourCount(solrMap.get("custom_price:["+df.format(2*midPrice)+" TO *]"));
         range.setState(0);
         //存放到数据库中
         if(!"USD".equals(param.getCurrency())){
