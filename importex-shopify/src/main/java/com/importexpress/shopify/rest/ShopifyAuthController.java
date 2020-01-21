@@ -40,7 +40,7 @@ public class ShopifyAuthController {
         this.shopifyAuthService = shopifyAuthService;
     }
 
-    @GetMapping(value = "/shopifyName/{userId}")
+    @GetMapping("/shopifyName/{userId}")
     @ApiOperation("查询客户是否绑定店铺")
     public CommonResult shopifyName(
             @ApiParam(name = "userId", value = "用户ID", required = true) @PathVariable(name = "userId") Integer userId) {
