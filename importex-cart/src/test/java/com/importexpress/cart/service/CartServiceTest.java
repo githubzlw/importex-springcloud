@@ -7,7 +7,6 @@ import com.importexpress.cart.pojo.Cart;
 import com.importexpress.comm.pojo.SiteEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +34,6 @@ public class CartServiceTest {
     private static final SiteEnum SITE = SiteEnum.KIDS;
     @Autowired
     private CartService cartService;
-
-//    @Before
-//    public void before()  {
-//
-//        cartService.delAllCartItem(SITE, USER_ID);
-//    }
 
     /**
      * addCart
