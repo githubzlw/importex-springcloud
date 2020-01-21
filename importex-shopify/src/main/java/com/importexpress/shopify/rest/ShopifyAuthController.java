@@ -11,13 +11,11 @@ import com.importexpress.shopify.util.Config;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,6 +39,26 @@ public class ShopifyAuthController {
         this.config = config;
         this.shopifyAuthService = shopifyAuthService;
     }
+
+    @GetMapping(value = "/shopifyName/{userId}")
+    @ApiOperation("查询客户是否绑定店铺")
+    public CommonResult shopifyName(
+            @ApiParam(name = "userId", value = "用户ID", required = true) @PathVariable(name = "userId") Integer userId) {
+
+        try {
+            String result = shopifyAuthService.getShopifyName(userId);
+            if (StringUtils.isNotBlank(result)) {
+                return CommonResult.success("GET SHOPIFY SUCCESSED", result);
+            } else {
+                return CommonResult.success("GET SHOPIFY SUCCESSED IS EMPTY", "");
+            }
+        } catch (Exception e) {
+            log.error("auth", e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+
+
 
     @PostMapping(value = "/auth")
     @ApiOperation("授权回调")

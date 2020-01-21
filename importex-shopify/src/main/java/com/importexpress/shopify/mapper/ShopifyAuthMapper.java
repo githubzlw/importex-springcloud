@@ -8,6 +8,11 @@ import java.util.List;
 @Component
 @Mapper
 public interface ShopifyAuthMapper{
+
+    @Select("select shopify_name from user where id = #{userId}")
+    String getShopifyName(int userId);
+
+
     @Insert(" insert into shopify_auth (id, shop_name, access_token,scope, create_time, update_time )" +
             "values (#{id,jdbcType=INTEGER}, #{shopName,jdbcType=VARCHAR}, #{accessToken,jdbcType=VARCHAR}," +
             " #{scope,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})")
