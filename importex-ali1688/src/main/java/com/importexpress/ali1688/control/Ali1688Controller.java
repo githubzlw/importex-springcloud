@@ -51,16 +51,10 @@ public class Ali1688Controller {
 
     @GetMapping("/pids/{pids}")
     public List<JSONObject> pid(@PathVariable("pids") Long[] pids,
-                                @RequestParam(value = "isCache", required = false, defaultValue = "true") boolean isCache,
-                                @RequestParam(value = "minSales", required = false, defaultValue = "10") int minSales) {
+                                @RequestParam(value = "isCache", required = false, defaultValue = "true") boolean isCache) {
 
         if (!isRunnable(false)) {
             return null;
-        }
-
-        if(minSales > 0){
-            log.info("setting minSales is [{}]",minSales);
-            config.minSales = minSales;
         }
 
         if (pids != null && pids.length == 1) {
@@ -75,10 +69,15 @@ public class Ali1688Controller {
 
 
     @GetMapping("/shop/{shopid}")
-    public CommonResult getItemsInShop(@PathVariable("shopid") String shopid) {
+    public CommonResult getItemsInShop(@PathVariable("shopid") String shopid,@RequestParam(value = "minSales", required = false, defaultValue = "10") int minSales) {
 
         if (!isRunnable(true)) {
             return CommonResult.failed("非运行期间");
+        }
+
+        if(minSales > 0){
+            log.info("setting minSales is [{}]",minSales);
+            config.minSales = minSales;
         }
 
         List<Ali1688Item> lstItems = null;
