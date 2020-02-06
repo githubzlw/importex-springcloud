@@ -75,7 +75,7 @@ public class Ali1688Controller {
             return CommonResult.failed("非运行期间");
         }
 
-        if(minSales > 0){
+        if(minSales >= 0){
             log.info("setting minSales is [{}]",minSales);
             config.minSales = minSales;
         }
