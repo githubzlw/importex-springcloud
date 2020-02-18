@@ -8,17 +8,12 @@ public class ShopifyException extends RuntimeException {
     private String retCd;
     private String msgDes;
 
-    public ShopifyException() {
-        super();
-    }
 
     public ShopifyException(String message) {
-        super(message);
-        msgDes = message;
+        this.msgDes = message;
     }
 
     public ShopifyException(String retCd, String msgDes) {
-        super();
         this.retCd = retCd;
         this.msgDes = msgDes;
     }

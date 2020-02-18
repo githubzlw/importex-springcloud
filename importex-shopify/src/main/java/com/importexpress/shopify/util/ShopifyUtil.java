@@ -74,6 +74,7 @@ public class ShopifyUtil {
      */
     public String postForObject(String uri, String token, String json) {
 
+        log.info("uri:[{}] token:[{}]  json:[{}]",uri,token,json);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-Shopify-Access-Token", token);

@@ -35,6 +35,11 @@ public class ShopifyAuthServiceImpl implements ShopifyAuthService {
     }
 
 
+    @Override
+    public String getShopifyName(int userId) {
+        return shopifyAuthMapper.getShopifyName(userId);
+    }
+
     /**
      * 取得店铺授权的token
      *

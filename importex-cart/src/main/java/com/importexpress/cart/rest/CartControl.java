@@ -74,13 +74,13 @@ public class CartControl {
         }
     }
 
-    @GetMapping("/{site}/{userId}")
-    @ApiOperation("查询购物车中所有商品")
-    public CommonResult getCart(@PathVariable(value = "site") SiteEnum site,
-                                @PathVariable(value = "userId") long userId) {
+        @GetMapping("/{site}/{userId}")
+        @ApiOperation("查询购物车中所有商品")
+        public CommonResult getCart(@PathVariable(value = "site") SiteEnum site,
+        @PathVariable(value = "userId") long userId) {
 
-        Cart cart = cartService.getCart(site, userId);
-        return CommonResult.success(cart);
+            Cart cart = cartService.getCart(site, userId);
+            return CommonResult.success(cart);
 
     }
 

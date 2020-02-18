@@ -354,7 +354,7 @@ public class CartServiceImpl implements CartService {
     public int delAllCartItem(SiteEnum site, long userId) {
         try {
             String userCartKey = getCartKey(site, userId);
-            redisTemplate.opsForHash().delete(userCartKey);
+            redisTemplate.delete(userCartKey);
             return SUCCESS;
         } catch (Exception e) {
             log.error("delChecked", e);
