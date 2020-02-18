@@ -1,8 +1,11 @@
 package com.importexpress.shopify.exception;
 
+import lombok.ToString;
+
 /**
  * @author jack.luo
  */
+@ToString
 public class ShopifyException extends RuntimeException {
 
     private String retCd;
