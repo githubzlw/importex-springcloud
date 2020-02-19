@@ -104,7 +104,7 @@ public interface SearchService {
      * @param site
      * @return
      */
-    List<AssociateWrap> associate(String keyWord,int site);
+    List<AssociateWrap> associate(String keyWord,SearchParam param);
 
     /**异步加载搜索页类别推荐搜索词
      * @param keyword

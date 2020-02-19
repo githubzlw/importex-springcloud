@@ -200,7 +200,7 @@ public class SearchServiceImpl implements SearchService {
         boolean suggestKey = isDefault(param);
         suggestKey = suggestKey && recordCount < 40 && param.getKeyword().split("(\\s+)").length > 1;
         if(suggestKey){
-            List<AssociateWrap> associate = associate(param.getKeyword(), param.getSite());
+            List<AssociateWrap> associate = associate(param.getKeyword(), param);
             wrapTemp.setAssociates(associate);
         }
         wrapTemp.setSuggest(suggestKey ? 1 : 0);
@@ -238,27 +238,19 @@ public class SearchServiceImpl implements SearchService {
         GoodsPriceRange range = new GoodsPriceRange();
         range.setCatid(param.getCatid());
         param.setSynonym(StringUtils.isBlank(param.getCatid()));
-        Map<String,Object> response = solrService.searPriceRangeByKeyWord(param);
-        if(response.isEmpty()){
+        GoodsPriceRange response = solrService.searPriceRangeByKeyWord(param);
+        if(response == null){
             return range;
         }
-        double midPrice = (Double) response.get("midPrice");
-        Map<String, Integer> solrMap = (Map<String, Integer>)response.get("solrMap");
-        range.setKeyword(null);
-        range.setOtherkeyword(null);
-        range.setSectionOnePrice(Double.valueOf(df.format(midPrice/2)));
-        range.setSectionOneCount(solrMap.get("custom_price:[* TO "+df.format(midPrice/2)+"]"));
-        range.setSectionTwoPrice(Double.parseDouble(df.format(midPrice)));
-        range.setSectionTwoCount(solrMap.get("custom_price:["+df.format(midPrice/2)+" TO "+df.format(midPrice)+"]"));
-        range.setSectionThreePrice(2*Double.parseDouble(df.format(midPrice)));
-        range.setSectionThreeCount(solrMap.get("custom_price:["+df.format(midPrice)+" TO "+df.format(2*midPrice)+"]"));
-        range.setSectionFourCount(solrMap.get("custom_price:["+df.format(2*midPrice)+" TO *]"));
-        range.setState(0);
-        //存放到数据库中
+        response.setKeyword(null);
+        response.setOtherkeyword(null);
+        response.setCatid(param.getCatid());
+        response.setState(0);
+        //切换货币
         if(!"USD".equals(param.getCurrency())){
-            ChangeCurrency.chang(range,param.getCurrency());
+            ChangeCurrency.chang(response,param.getCurrency());
         }
-        return range;
+        return response;
     }
 
     @Override
@@ -290,15 +282,13 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<AssociateWrap> associate(String keyWord, int site) {
+    public List<AssociateWrap> associate(String keyWord, SearchParam param) {
         String[] exhaust = exhaustUtils.combination(keyWord);
         if(exhaust == null) {
             return Lists.newArrayList();
         }
         List<AssociateWrap> result = Lists.newArrayList();
         AssociateWrap wrap = null;
-        SearchParam param = new SearchParam();
-        param.setSite(site);
         for(int i=0,length=exhaust.length;i<length&&result.size() <4;i++) {
             param.setKeyword(KeywordCorrect.getKeyWord(exhaust[i]));
             long countResult = serachCount(param);
