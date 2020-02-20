@@ -14,10 +14,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * *****************************************************************************************
@@ -103,46 +100,39 @@ public class SkuJsonParse {
     	}
     	List<Options> lstOptions = Lists.newArrayList();
 
+    	Map<String,List<String>> typeMap = Maps.newHashMap();
+
 		//规格数据
-		List<String> type1=Lists.newArrayList(),type2=Lists.newArrayList(),type3=Lists.newArrayList();
-		String typeName1 = "",typeName2 = "",typeName3 = "";
 		List<String> image = Lists.newArrayList();
-		Map<String,String> markMap = Maps.newHashMap();
-		int typeIndex = 1;
-		Images img;
 		for(TypeBean typeBean : typeList){
 			String type = typeBean.getType();
 			type = type.endsWith(":") ? type.substring(0, type.length() - 1) : type;
 			typeBean.setType(type);
 
-			String markType = markMap.get(type);
-			markType = markType==null ? "type"+(typeIndex++) : markType;
-			markMap.put(type, markType);
-
 			if(StringUtils.isNotBlank(typeBean.getImg())){
 				image.add(typeBean.getImg().replace(".60x60", ".400x400"));
 			}
-			if("type1".equals(markType)){
-				typeName1 = typeBean.getType();
-				type1.add(typeBean.getValue());
-			}else if("type2".equals(markType)){
-				typeName2 = typeBean.getType();
-				type2.add(typeBean.getValue());
-			}else if("type3".equals(markType)){
-				typeName3 = typeBean.getType();
-				type3.add(typeBean.getValue());
+
+			List<String> lstValue = typeMap.get(type);
+			lstValue = lstValue == null ? Lists.newArrayList() : lstValue;
+			if(lstValue.contains(typeBean.getValue()) || arrLength(typeMap)> 99){
+				continue;
 			}
+			lstValue.add(typeBean.getValue());
+			typeMap.put(type,lstValue);
 		}
-		markMap = null;
-		lstOptions.add(type2Options(typeName1,type1));
-		if(!type2.isEmpty()) {
-			lstOptions.add(type2Options(typeName2,type2));
-		}
-		if(!type3.isEmpty()) {
-			lstOptions.add(type2Options(typeName3,type3));
-		}
+		typeMap.entrySet().stream().forEach(t->lstOptions.add(type2Options(t.getKey(),t.getValue())));
 		return OptionWrap.builder().lstImages(image).options(lstOptions).build();
     }
+
+    private int arrLength(Map<String,List<String>> map){
+    	int size= 1;
+		Iterator<Map.Entry<String, List<String>>> iterator = map.entrySet().iterator();
+		while (iterator.hasNext()){
+			size = size * iterator.next().getValue().size();
+		}
+		return size;
+	}
 
     private Options type2Options(String typeName,List<String> lstValue){
 		Options options = new Options();
@@ -156,10 +146,18 @@ public class SkuJsonParse {
      * @param typeList
      * @return
      */
-    public List<Variants> sku2Variants(String skuProducts, List<TypeBean> typeList, String weight, String weightUnit){
-    	if(StringUtils.isBlank(skuProducts) || typeList == null || typeList.isEmpty()) {
+    public List<Variants> sku2Variants(String skuProducts, List<Options> options, List<TypeBean> typeList, String weightUnit){
+    	if(StringUtils.isBlank(skuProducts) || options == null || options.isEmpty() || typeList == null || typeList.isEmpty()) {
     		return Lists.newArrayList();
     	}
+		Options option1 = options.get(0);
+		Options option2 = options.size() > 1 ? options.get(1) : null;
+		Options option3 = options.size() > 2 ? options.get(2) : null;
+
+		List<String> lstValue1 = option1.getValues();
+		List<String> lstValue2 = option2==null?Lists.newArrayList():option2.getValues();
+		List<String> lstValue3 = option3==null?Lists.newArrayList():option3.getValues();
+
     	Map<String,TypeBean> typeMap = new HashMap<>();
     	for(int i=0,size = typeList.size();i<size;i++) {
     		typeMap.put(typeList.get(i).getId(), typeList.get(i));
@@ -198,22 +196,17 @@ public class SkuJsonParse {
 		        String availQuantity = StrUtils.object2Str(skuValObject.get("availQuantity"));
 		        variants.setInventory_quantity(Integer.valueOf(StrUtils.isNum(availQuantity) ? availQuantity : "0"));
 		        variants.setInventory_management("shopify");
-		        TypeBean typeBean = typeMap.get(skuPropIdsSplit[0]);
 
-		        if(typeBean != null) {
-		        	variants.setOption1(typeBean.getValue());
-		        }
+		        TypeBean typeBean = typeMap.get(skuPropIdsSplit[0]);
+				setOption(typeBean,variants,lstValue1,lstValue2,lstValue3);
 
 		        typeBean = length > 1 ? typeMap.get(skuPropIdsSplit[1]) : null;
-		        if(typeBean != null) {
-		        	variants.setOption2(typeBean.getValue());
-		        }
+				setOption(typeBean,variants,lstValue1,lstValue2,lstValue3);
 
 		        typeBean = length > 2 ? typeMap.get(skuPropIdsSplit[2]) : null;
-		        if(typeBean != null) {
-		        	variants.setOption3(typeBean.getValue());
-		        }
-		        List<PresentmentPrices> presentment_prices = new ArrayList<>();
+				setOption(typeBean,variants,lstValue1,lstValue2,lstValue3);
+
+				List<PresentmentPrices> presentment_prices = new ArrayList<>();
 		        PresentmentPrices prices = new PresentmentPrices();
 		        prices.setCompare_at_price(null);
 		        Price price = new Price();
@@ -222,7 +215,14 @@ public class SkuJsonParse {
 		        prices.setPrice(price);
 		        presentment_prices.add(prices);
 		        variants.setPresentment_prices(presentment_prices);
-		        lstVariants.add(variants);
+
+				boolean isActive = StringUtils.isNotBlank(variants.getOption1());
+				isActive = length > 1 ? isActive && StringUtils.isNotBlank(variants.getOption2()) : isActive;
+				isActive = length > 2 ? isActive && StringUtils.isNotBlank(variants.getOption3()) : isActive;
+
+		        if(isActive){
+					lstVariants.add(variants);
+				}
 
 			}
 		} catch (Exception e) {
@@ -230,5 +230,24 @@ public class SkuJsonParse {
 		}
     	return lstVariants;
     }
+
+
+    private boolean setOption(TypeBean typeBean,Variants variants,List<String> lstValue1,
+						   List<String> lstValue2,List<String> lstValue3){
+		if(typeBean == null) {
+			return false;
+		}
+
+		if(lstValue1.contains(typeBean.getValue())){
+			variants.setOption1(typeBean.getValue());
+		}else if(lstValue2.contains(typeBean.getValue())){
+			variants.setOption2(typeBean.getValue());
+		}else if(lstValue3.contains(typeBean.getValue())){
+			variants.setOption3(typeBean.getValue());
+		}else{
+			return false;
+		}
+		return true;
+	}
 
 }

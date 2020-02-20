@@ -40,13 +40,14 @@ public class ShopifyProduct {
         product.setProduct_type(category);
 
         OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
+
         product.setOptions(wrap.getOptions());
-        if(wrap.getOptions().isEmpty()){
+        if(wrap.getOptions() == null){
             throw  new ShopifyException("Product options has something wrong");
         }
 
         List<Variants> lstVariants = skuJsonParse.sku2Variants(goods.getSkuProducts(),
-                goods.getType(), goods.getPerWeight(), "kg");
+                wrap.getOptions(), goods.getType(), "kg");
         if(lstVariants.isEmpty()){
             Variants variant = variant(goods.getPrice(),goods.getPerWeight());
             lstVariants.add(variant);
