@@ -2,6 +2,7 @@ package com.importexpress.search.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.SwitchDomainUtil;
 import com.importexpress.search.mapper.CategoryMapper;
 import com.importexpress.search.pojo.Category;
@@ -215,5 +216,36 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 	@Override
 	public List<SearchWordWrap> getRecommendedWords() {
 		return categoryMapper.getRecommendedWords();
+	}
+
+	@Override
+	public String productsCate(List<CategoryWrap> rootTree){
+		if (rootTree == null || rootTree.isEmpty()) {
+			return "";
+		}
+		StringBuilder productsCate = new StringBuilder();
+		productsCate.append("<span class='add_seemore'>See more products in category:</span>");
+		boolean  addCategory = false;
+
+		for (int i = 0; i < rootTree.size() && i <= 4; i++) {
+			String category=rootTree.get(i).getName().toLowerCase().replace("'","")
+					.replaceAll("\\s+","");
+			if("childrensclothing".equals(category)) {
+				productsCate.append("<a class=\"searcwor\"  href=\"").append("/apa/clothing.html")
+						.append("\">").append("wholesale clothing").append("</a>");
+			}else{
+				productsCate.append("<a class=\"searcwor\"  href=\"/goodslist?catid=")
+						.append(rootTree.get(i).getId()).append("\">")
+						.append(rootTree.get(i).getName()).append("</a>");
+
+			}
+			addCategory = "mensclothing".equals(category) || "womensclothing".equals(category) ? true : addCategory;
+		}
+		if(addCategory){
+			productsCate.append("<a class=\"searcwor\" style='color:deeppink'  href=\"")
+					.append("/apa/clothing.html").append("\">")
+					.append("wholesale clothing").append("</a>");
+		}
+		return productsCate.toString();
 	}
 }

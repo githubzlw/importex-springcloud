@@ -32,7 +32,7 @@ public class ChangeCurrency {
         product.setWholesaleMiddlePrice(rangePrice(product.getWholesaleMiddlePrice(),exchangeRate));
         return product;
     }
-    /**搜索结果数据切换货币
+    /**价格分布区间切换货币
      * @param goodsPriceRange
      * @param currency
      * @return

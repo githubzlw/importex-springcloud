@@ -1,5 +1,6 @@
 package com.importexpress.search.service;
 
+import com.importexpress.search.pojo.GoodsPriceRange;
 import com.importexpress.search.pojo.SearchParam;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
@@ -69,7 +70,7 @@ public interface SolrService {
      * @param param
      * @return
      */
-    Map<String,Object> searPriceRangeByKeyWord(SearchParam param);
+    GoodsPriceRange searPriceRangeByKeyWord(SearchParam param);
     /**
      * 提示词
      * @param keyWord

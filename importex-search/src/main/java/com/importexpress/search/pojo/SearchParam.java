@@ -113,5 +113,8 @@ public class SearchParam implements Serializable {
 	@ApiModelProperty(value = "是否类别同义词替换")
 	private boolean synonym = false;
 
+	@ApiModelProperty(value = "是否美加可售")
+	private boolean salable = false;
+
 
 }

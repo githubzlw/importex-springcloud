@@ -24,10 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author jack.luo
- * @date 2019/11/22
- */
 @Slf4j
 @Service
 public class SearchServiceImpl implements SearchService {
@@ -51,6 +47,7 @@ public class SearchServiceImpl implements SearchService {
     private CalculatePrice calculatePrice;
     @Autowired
     private ExhaustUtils exhaustUtils;
+    DecimalFormat df  = new DecimalFormat("#0.00");  //保留两位小数
 
     @Override
     public SearchResultWrap advertisement(String key, int site, String adgroupid) {
@@ -203,10 +200,10 @@ public class SearchServiceImpl implements SearchService {
         boolean suggestKey = isDefault(param);
         suggestKey = suggestKey && recordCount < 40 && param.getKeyword().split("(\\s+)").length > 1;
         if(suggestKey){
-            List<AssociateWrap> associate = associate(param.getKeyword(), param.getSite());
-            wrap.setAssociates(associate);
+            List<AssociateWrap> associate = associate(param.getKeyword(), param);
+            wrapTemp.setAssociates(associate);
         }
-        wrapTemp.setSuggest(suggestKey);
+        wrapTemp.setSuggest(suggestKey ? 1 : 0);
         return wrapTemp;
 
     }
@@ -241,28 +238,19 @@ public class SearchServiceImpl implements SearchService {
         GoodsPriceRange range = new GoodsPriceRange();
         range.setCatid(param.getCatid());
         param.setSynonym(StringUtils.isBlank(param.getCatid()));
-        Map<String,Object> response = solrService.searPriceRangeByKeyWord(param);
-        if(response.isEmpty()){
+        GoodsPriceRange response = solrService.searPriceRangeByKeyWord(param);
+        if(response == null){
             return range;
         }
-        double midPrice = (Double) response.get("midPrice");
-        Map<String, Integer> solrMap = (Map<String, Integer>)response.get("solrMap");
-        DecimalFormat df  = new DecimalFormat("0.00");  //保留两位小数
-        range.setKeyword(null);
-        range.setOtherkeyword(null);
-        range.setSectionOnePrice(Double.valueOf(df.format(midPrice/2)));
-        range.setSectionOneCount(solrMap.get("custom_max_price:[* TO "+Double.parseDouble(df.format(midPrice/2))+"]"));
-        range.setSectionTwoPrice(Double.parseDouble(df.format(midPrice)));
-        range.setSectionTwoCount(solrMap.get("custom_max_price:["+(Double.parseDouble(df.format(midPrice/2)+1))+" TO "+midPrice+"]"));
-        range.setSectionThreePrice(2*Double.parseDouble(df.format(midPrice)));
-        range.setSectionThreeCount(solrMap.get("custom_max_price:["+(midPrice+0.001)+" TO "+2*midPrice+"]"));
-        range.setSectionFourCount(solrMap.get("custom_max_price:["+(Double.parseDouble((2*midPrice+""+1)))+" TO *]"));
-        range.setState(0);
-        //存放到数据库中
+        response.setKeyword(null);
+        response.setOtherkeyword(null);
+        response.setCatid(param.getCatid());
+        response.setState(0);
+        //切换货币
         if(!"USD".equals(param.getCurrency())){
-            ChangeCurrency.chang(range,param.getCurrency());
+            ChangeCurrency.chang(response,param.getCurrency());
         }
-        return range;
+        return response;
     }
 
     @Override
@@ -294,15 +282,13 @@ public class SearchServiceImpl implements SearchService {
     }
 
     @Override
-    public List<AssociateWrap> associate(String keyWord, int site) {
+    public List<AssociateWrap> associate(String keyWord, SearchParam param) {
         String[] exhaust = exhaustUtils.combination(keyWord);
         if(exhaust == null) {
             return Lists.newArrayList();
         }
         List<AssociateWrap> result = Lists.newArrayList();
         AssociateWrap wrap = null;
-        SearchParam param = new SearchParam();
-        param.setSite(site);
         for(int i=0,length=exhaust.length;i<length&&result.size() <4;i++) {
             param.setKeyword(KeywordCorrect.getKeyWord(exhaust[i]));
             long countResult = serachCount(param);
@@ -377,11 +363,11 @@ public class SearchServiceImpl implements SearchService {
             if (StringUtils.isBlank(infoReviseFlag) || "0".equals(infoReviseFlag)
                     || StringUtils.isBlank(title)) {
                 title = StrUtils.object2Str(solrDocument.get("custom_enname"));
+                //拼接类别名称
+                /*1688标题短，就用 速卖通标题 这个 逻辑 去掉改成 1688 标题短 就 在标题里面 加上 这个产品的 类别名绝不能 直接用
+                速卖通 产品名--2018-01-05*/
+                title = splicingSyntax.categoryNameToTitle(title, catid);
             }
-            //拼接类别名称
-        /*1688标题短，就用 速卖通标题 这个 逻辑 去掉改成 1688 标题短 就 在标题里面 加上 这个产品的 类别名绝不能 直接用
-        速卖通 产品名--2018-01-05*/
-            title = splicingSyntax.categoryNameToTitle(title, catid);
             product.setName(title);
 
 
@@ -546,6 +532,10 @@ public class SearchServiceImpl implements SearchService {
         if (param.isFactCategory()) {
             List<CategoryWrap> categorys = categoryService.categorys(param, solrResult.getCategoryFacet());
             wrap.setCategorys(categorys);
+            //See more products in category
+            String productsCate = categoryService.productsCate(categorys);
+            wrap.setProductsCate(productsCate);
+
         }
 
         //属性
@@ -560,8 +550,10 @@ public class SearchServiceImpl implements SearchService {
         long recordCount = solrResult.getRecordCount();
         PageWrap paging = pageService.paging(param, recordCount);
         wrap.setPage(paging);
+
         return wrap;
     }
+
     private boolean isDefault(SearchParam param){
         boolean isDefault = "default".equals(param.getSort()) && StringUtils.isBlank(param.getAttrId());
         isDefault = isDefault && (StringUtils.isBlank(param.getCatid())) && param.getPage() < 2;

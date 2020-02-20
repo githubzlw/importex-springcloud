@@ -6,6 +6,7 @@ import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.KeywordCorrect;
 import com.importexpress.search.common.SplicingSyntax;
 import com.importexpress.search.common.SwitchDomainUtil;
+import com.importexpress.search.pojo.GoodsPriceRange;
 import com.importexpress.search.pojo.KeyToCategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.pojo.SolrFacet;
@@ -37,6 +38,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     private HttpSolrClient httpSolrClient;
     @Autowired
     private SplicingSyntax splicingSyntax;
+    private  DecimalFormat df  = new DecimalFormat("#0.00");  //保留两位小数
 
     @Autowired
     public SolrServiceImpl(Config config){
@@ -203,30 +205,28 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         }
         return response;
     }
-
     @Override
-    public Map<String,Object> searPriceRangeByKeyWord(SearchParam param) {
-        Map<String,Object> aliMap = Maps.newHashMap();
+    public GoodsPriceRange searPriceRangeByKeyWord(SearchParam param) {
         if(StringUtils.isBlank(param.getKeyword())){
             log.error("param.getKeyword() is null ");
-            return aliMap;
+            return null;
         }
         ModifiableSolrParams solrParams = getSolrQuery(param);
         if(solrParams == null){
-            return aliMap;
+            return null;
         }
-        solrParams.set("fields", "custom_max_price");
-        solrParams.set("sort", "custom_max_price asc");
+        solrParams.set("fields", "custom_price");
+        solrParams.set("sort", "custom_price asc");
         solrParams.set("rows", 1);
         double midPrice = 0;//中位价
         QueryResponse response = sendRequest(solrParams,httpSolrClient);
         if(response == null){
-            return aliMap;
+            return null;
         }
         Long totalNum = response.getResults().getNumFound();
         if(totalNum < 1){
             log.info("searPriceRangeByKeyWord`s totalNum is  less than 1");
-            return aliMap;
+            return null;
         }
         //计算出中位价
         //计算出中位价
@@ -235,21 +235,16 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         QueryResponse res = sendRequest(solrParams,httpSolrClient);
         if(res != null){
             SolrDocumentList results = res.getResults();
-            midPrice = StrUtils.object2Double(results.get(0).get("custom_max_price"));
+            midPrice = StrUtils.object2Double(results.get(0).get("custom_price"));
             if(half ){
-                Double price2 = StrUtils.object2Double(results.get(1).get("custom_max_price"));
+                Double price2 = StrUtils.object2Double(results.get(1).get("custom_price"));
                 midPrice = (midPrice + price2) / 2;
             }
         }
 
         //根据中位价 查出对应的空间
-        Map<String, Integer> solrMap = searchFaced(midPrice,solrParams);
-        if(solrMap.isEmpty()){
-            return aliMap;
-        }
-        aliMap.put("midPrice",midPrice);
-        aliMap.put("solrMap",solrMap);
-        return aliMap;
+        GoodsPriceRange range = searchFaced(midPrice,solrParams);
+        return range;
     }
 
     @Override
@@ -277,7 +272,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         String fq = null;
         //搜索词替换掉类别
         boolean isSynonyCategory = false;
-        if(param.getSite() == 1 && param.isSynonym() && !isValidQueryString){
+        /*if(param.getSite() == 1 && param.isSynonym() && !isValidQueryString){
             KeyToCategoryWrap keyToCategoryWrap = splicingSyntax.queryStrToCategory(queryString);
             if(keyToCategoryWrap != null){
                 List<String> lstCatid = keyToCategoryWrap.getLstCatid();
@@ -292,7 +287,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
                     solrParams.set("synon_category",fq);
                 }
             }
-        }
+        }*/
         //搜索词
         String qStr = isValidQueryString ? "*" : qStr(queryString,param.getSite(),isSynonyCategory);
         setQ(qStr,solrParams);
@@ -300,7 +295,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         //FQ
         String fqStr = fqStr(param);
         //类别同义词设置后
-        fq = fq != null? fq + " AND " + fqStr : fqStr;
+        fq = fq != null? fqStr + " AND " + fq : fqStr;
         setFQ(fq,solrParams);
 
         //设置查询排序参数
@@ -447,7 +442,20 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         //权限版搜索,只展示可搜索的产品
         importType(param,fq_condition);
 
+        //限制美加用户,可售卖标识
+        salable(param,fq_condition);
+
         return fq_condition.toString();
+    }
+
+    /**限制美加用户,可售卖标识
+     * @param param
+     * @param fq_condition
+     */
+    private void salable(SearchParam param,StringBuilder fq_condition){
+        if(param.isSalable() && param.getSite()==2 ){
+            fq_condition.append(" AND -custom_salable:1");
+        }
     }
 
     /**权限版搜索,只展示可搜索的产品
@@ -456,6 +464,9 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      * @param fq_condition
      */
     private void importType(SearchParam param,StringBuilder fq_condition){
+        if(param.getSite() == 8){
+            return;
+        }
         fq_condition.append(" AND (");
         //0 默认全部可搜 1-描述很精彩   2-卖过的   3-精选店铺
         if(param.getImportType() == 1){
@@ -601,20 +612,32 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
     /**
      * 传入查询条件,查询分组数据对应的数量  中位价和对应的solrFlag
      */
-    private  Map<String, Integer> searchFaced(double midPrice,ModifiableSolrParams solrParams){
-        DecimalFormat df  = new DecimalFormat("0.00");  //保留两位小数
+    private  GoodsPriceRange searchFaced(double midPrice,ModifiableSolrParams solrParams){
         //获取四个区间的范围
-        String firstRange = "custom_max_price:[* TO "+Double.parseDouble(df.format(midPrice / 2)) + "]";
-        String secondRange = "custom_max_price:["+(Double.parseDouble(df.format(midPrice / 2) + 1)) + " TO " + midPrice + "]";
-        String threeRange = "custom_max_price:["+(midPrice + 0.001) + " TO " + 2 * midPrice + "]";
-        String fourRange = "custom_max_price:["+(Double.parseDouble((2 * midPrice + "" + 1))) + " TO *]";
+        String firstRange = "custom_price:[* TO "+df.format(midPrice / 2) + "]";
+        String secondRange = "custom_price:["+df.format(midPrice / 2) + " TO " + midPrice + "]";
+        String threeRange = "custom_price:["+df.format(midPrice) + " TO " + df.format(2 * midPrice) + "]";
+        String fourRange = "custom_price:["+df.format(2 * midPrice) + " TO *]";
         solrParams.set("facet", true);
         solrParams.set("facet.query", firstRange);
         solrParams.add("facet.query", secondRange);
         solrParams.add("facet.query", threeRange);
         solrParams.add("facet.query", fourRange);
         QueryResponse response = sendRequest(solrParams,httpSolrClient);
-        Map<String, Integer> map = response == null ? Maps.newHashMap() : response.getFacetQuery();
-        return map;
+        if(response == null){
+            return null;
+        }
+
+        Map<String, Integer> solrMap = response.getFacetQuery();
+        GoodsPriceRange range = new GoodsPriceRange();
+        range.setSectionOnePrice(Double.valueOf(df.format(midPrice/2)));
+        range.setSectionOneCount(solrMap.get(firstRange));
+        range.setSectionTwoPrice(Double.parseDouble(df.format(midPrice)));
+        range.setSectionTwoCount(solrMap.get(secondRange));
+        range.setSectionThreePrice(2*Double.parseDouble(df.format(midPrice)));
+        range.setSectionThreeCount(solrMap.get(threeRange));
+        range.setSectionFourCount(solrMap.get(fourRange));
+
+        return range;
     }
 }

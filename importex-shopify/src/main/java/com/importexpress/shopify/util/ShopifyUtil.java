@@ -84,7 +84,7 @@ public class ShopifyUtil {
             return restTemplate.postForObject(uri, requestEntity, String.class);
         } catch (Exception e) {
             log.error("postForObject",e);
-            throw new ShopifyException("1002", "postForObject error");
+            throw e;
         }
 
     }

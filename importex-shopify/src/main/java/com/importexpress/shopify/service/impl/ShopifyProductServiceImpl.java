@@ -63,12 +63,18 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
 
         Assert.notNull(productWraper, "product object is null");
         log.info("shopName:[{}] productWraper:[{}]", shopName, productWraper);
+        ProductWraper result = new ProductWraper();
+        try {
+            Gson gson = new Gson();
+            String json = gson.toJson(productWraper);
+            String returnJson = shopifyUtil.postForObject(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), shopifyAuthService.getShopifyToken(shopName), json);
+            log.info("returnJson:[{}]", returnJson);
+            result = gson.fromJson(returnJson, ProductWraper.class);
 
-        Gson gson = new Gson();
-        String json = gson.toJson(productWraper);
-        String returnJson = shopifyUtil.postForObject(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), shopifyAuthService.getShopifyToken(shopName), json);
-        log.info("returnJson:[{}]", returnJson);
-        ProductWraper result = gson.fromJson(returnJson, ProductWraper.class);
+        }catch (Exception e){
+            log.error("postForObject",e);
+            throw e;
+        }
         return result;
     }
 
@@ -105,7 +111,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
     @Override
     public ProductWraper onlineProduct(String shopname, ShopifyData goods) throws ShopifyException {
         com.importexpress.shopify.pojo.product.Product product = shopifyProduct.toProduct(goods);
-
+//        product.setTitle("AAAAAAAA"+product.getTitle());
         ShopifyBean shopifyBean = new ShopifyBean();
         shopifyBean.setShopifyName(shopname);
         shopifyBean.setPid(goods.getPid());

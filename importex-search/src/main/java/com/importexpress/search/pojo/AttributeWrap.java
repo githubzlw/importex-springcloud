@@ -1,5 +1,6 @@
 package com.importexpress.search.pojo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,16 +12,19 @@ public class AttributeWrap implements Serializable {
 	/**
 	 * 属性id
 	 */
+	@ApiModelProperty(value="属性id")
 	private String id;
 
 	/**
 	 * 名称
 	 */
+	@ApiModelProperty(value="名称")
 	private String name;
 
 	/**
 	 * 值列表
 	 */
+	@ApiModelProperty(value="值列表")
 	private List<Attribute> attrs;
 
 }

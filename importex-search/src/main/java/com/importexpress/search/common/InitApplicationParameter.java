@@ -14,6 +14,9 @@ import org.springframework.stereotype.Component;
 import javax.servlet.ServletContext;
 import java.util.*;
 
+/**
+ * 初始化加载数据
+ */
 @Slf4j
 @Component
 public class InitApplicationParameter {
@@ -90,6 +93,13 @@ public class InitApplicationParameter {
         log.info("全部1688Category的数据导入 Time:"+(System.currentTimeMillis()-startTime));
     }
 
+    /**类别新品日期检验是否有商品
+     * @param param
+     * @param site
+     * @param map
+     * @param catid
+     * @param d
+     */
     private void initDate(SearchParam param, int site, Map<String,List<CategoryWrap>> map, String catid, String d){
         param.setSite(site);
         param.setCollection(8);
