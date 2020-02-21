@@ -101,7 +101,7 @@ public interface SearchService {
      * 若搜索商品数量不足10个，推荐AB//ABCD及以上 减少一个单词-》 ABC//搜索ABC三个词没有结果，
      * 就要推荐AB或者AC或者BC(直接显示或者推荐都行)
      * @param keyWord
-     * @param site
+     * @param param
      * @return
      */
     List<AssociateWrap> associate(String keyWord,SearchParam param);

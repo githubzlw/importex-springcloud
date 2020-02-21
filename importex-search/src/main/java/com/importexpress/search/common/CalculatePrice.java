@@ -1,9 +1,13 @@
 package com.importexpress.search.common;
 
+import com.alibaba.fastjson.JSONArray;
+import com.importexpress.comm.pojo.Product;
 import com.importexpress.comm.util.StrUtils;
+import com.importexpress.search.service.ProductServiceFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.common.SolrDocument;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -17,6 +21,8 @@ import java.util.List;
 @Slf4j
 @Component
 public class CalculatePrice {
+    @Autowired
+    private ProductServiceFeign productServiceFeign;
 
     /**
      * import solr提高moq
@@ -420,5 +426,156 @@ public class CalculatePrice {
         }
 
         return listNew.toString();
+    }
+    //取得moq提高后计算的免邮价
+    public void searchRangePrice(SolrDocument solrDocument) {
+        try {
+            Product product = productServiceFeign.findProduct(
+                    Long.parseLong(StrUtils.object2Str(solrDocument.get("custom_pid"))));
+            //免邮价计算rangePrice
+            product.setSku(setNewRangePrice(product.getWholesale_price(),
+                    Integer.valueOf(product.getMorder()),product.getEntype(),
+                    product.getSku(),product.getPid(),Integer.valueOf(product.getValid())));
+            solrDocument.setField("custom_range_price_free",
+                    getRangeFreePrice(product.getEntype(),product.getSku(),
+                            product.getPid(),Integer.valueOf(product.getValid())));
+        } catch (Exception e) {
+            log.info("pid:" + solrDocument.get("custom_pid") + " error: " + e.getMessage());
+        }
+    }
+
+    /**取得区间价情况免邮价rangepricefree
+     * @param entypeStr
+     * @param skuStr
+     * @param pid
+     * @param valid
+     * @return
+     */
+    public static String getRangeFreePrice(String entypeStr, String skuStr, Long pid,int valid) {
+        String typePrice = null;
+
+        if(StringUtils.isBlank(skuStr) || valid==0){
+            return "";
+        }
+        try {
+            //step v1. @author: cjc @date：2019/1/14 14:05:34   Description : 根据skuid 解析出价格
+//            JSONArray jsonArray = JSONArray.fromObject(skuStr);
+            com.alibaba.fastjson.JSONArray jsonArray = com.alibaba.fastjson.JSONArray.parseArray(skuStr);
+            // @author: cjc @date：2019/10/21 2:19 下午   Description : 免邮价格最小值
+            double maxSamplePrice = 0d;
+            //// @author: cjc @date：2019/10/21 2:19 下午   Description : 免邮价格最大值
+            double minSamplePrice = 0d;
+            // @author: cjc @date：2019/10/28 2:14 下午   Description :    这样计算错误
+            for (int i = 0; i < jsonArray.size(); i++) {
+                Object o = jsonArray.get(i);
+                com.alibaba.fastjson.JSONObject o1 = (com.alibaba.fastjson.JSONObject) o;
+                //Added <V1.0.1> Start： cjc 2019/10/28 3:22 下午 Description :    校验sku中价格是否可用
+                String skuPropIds = (String) o1.get("skuPropIds");
+                boolean isExist = false;
+                if(org.apache.commons.lang.StringUtils.isNotBlank(skuPropIds)){
+                    if(skuPropIds.indexOf(",") > 0 ){
+                        String[] split = skuPropIds.split(",");
+                        if(entypeStr.contains(split[0]) && entypeStr.contains(split[1])){
+                            isExist = true;
+                        }
+                    }else {
+                        if(entypeStr.contains(skuPropIds)){
+                            isExist = true;
+                        }
+                    }
+                }
+                if(!isExist){
+                    continue;
+                }
+                //End：
+                // @author: cjc @date：2019/10/21 2:18 下午   Description : 获取免邮价格
+                Object skuVal = o1.get("skuVal");
+                com.alibaba.fastjson.JSONObject skuVal1 = (com.alibaba.fastjson.JSONObject) skuVal;
+                typePrice = (String) skuVal1.get("freeSkuPrice");
+                if (org.apache.commons.lang.StringUtils.isNotBlank(typePrice)) {
+                    double samplePrice = Double.parseDouble(typePrice);
+                    if (minSamplePrice > 0 && samplePrice < minSamplePrice) {
+                        minSamplePrice = samplePrice;
+                    }
+                    if (maxSamplePrice > 0 && samplePrice > maxSamplePrice) {
+                        maxSamplePrice = samplePrice;
+                    }
+                    if (minSamplePrice == 0 || maxSamplePrice == 0) {
+                        minSamplePrice = samplePrice;
+                        maxSamplePrice = samplePrice;
+                    }
+
+                }
+            }
+
+            if (minSamplePrice != maxSamplePrice) {
+                typePrice = minSamplePrice + "-" + maxSamplePrice;
+            } else {
+                typePrice = minSamplePrice + "";
+            }
+        } catch (Exception e) {
+            log.error("getRangeFreePrice,pid:[{}]",pid);
+            log.error("setNewRangePrice",e);
+        }
+        return typePrice;
+    }
+
+    /**新的免邮价区间价格多个sku
+     * @param wholsePrice
+     * @param moq
+     * @param enType
+     * @param sku
+     * @param pid
+     * @param valid
+     * @return
+     */
+    public static String setNewRangePrice(String wholsePrice,int moq,String enType,String sku, Long pid,int valid) {
+
+        try {
+            DecimalFormat priceFormat = new DecimalFormat("#0.00");
+            if(valid == 0){
+                return sku;
+            }
+            //站点
+            double  addPriceLv=1.37;
+            //1688 P1价格
+            double factoryPrice=getFactoryPrice(wholsePrice);
+            //用户要买99美元东西（大概700人民币，假设都买这个产品）
+            int moqX= (int) Math.ceil(700/Double.valueOf(factoryPrice));
+            //kids网站
+            moq = moqX;
+            double exchangerate = 6.6;
+
+            //区间价情况
+            if (StringUtils.isNotBlank(sku)) {
+                com.alibaba.fastjson.JSONArray jsonArr = JSONArray.parseArray(sku);
+                if (jsonArr != null && jsonArr.size() > 0) {
+                    for (int i = 0; i < jsonArr.size(); i++) {
+                        com.alibaba.fastjson.JSONObject json = jsonArr.getJSONObject(i);
+                        String fianlWeight = json.getString("fianlWeight");
+                        String costPrice = json.getJSONObject("skuVal").getString("costPrice");
+
+                        if(StringUtils.isBlank(costPrice) || StringUtils.isBlank(fianlWeight)){
+                            return sku;
+                        }
+                        double weight = Double.valueOf(fianlWeight)*1000;
+                        //basePrice：首重运费, ratioPrice：续重运费, baseWeight：续重重量, weight：需要计算的重量
+                        BigDecimal jcexPostFreight = FreightUtility.getShippingFormula(
+                                new BigDecimal(60),new BigDecimal(22),
+                                new BigDecimal(500),new BigDecimal(weight*moq));
+                        //初始邮费 = (JCEX运费（MOQ*单件重量）-$3)/ MOQ  这3美元是我们本来就给的首重减免
+                        double initialFreight = (jcexPostFreight.doubleValue()/exchangerate -7) /moq;
+                        double freeSkuPrice = Double.valueOf(costPrice)/exchangerate * addPriceLv +initialFreight;
+
+                        json.getJSONObject("skuVal").put("freeSkuPrice", priceFormat.format(freeSkuPrice));
+                    }
+                    sku = jsonArr.toString();
+                }
+            }
+        } catch (Exception e) {
+            log.error("setNewRangePrice,wholsePrice:[{}],sku:[{}],moq:[{}],pid:[{}]",wholsePrice,sku,moq,pid);
+            log.error("setNewRangePrice",e);
+        }
+        return sku;
     }
 }
