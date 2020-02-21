@@ -227,5 +227,4 @@ public class PageServiceImpl extends UriService implements PageService {
 		sb_href.append("&page=");
 		return sb_href.toString();
 	}
-
 }
