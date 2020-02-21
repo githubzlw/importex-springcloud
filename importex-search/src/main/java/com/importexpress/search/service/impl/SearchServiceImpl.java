@@ -348,7 +348,7 @@ public class SearchServiceImpl implements SearchService {
             calculatePrice.raiseMoqSearchGoods(solrDocument,param.getSite());
             if((param.getSite() == 1 || param.getSite() == 2 )
                     && StringUtils.isNotBlank(StrUtils.object2Str(solrDocument.get("custom_range_price")))){
-//                calculatePrice.searchRangePrice(solrDocument);
+                calculatePrice.searchRangePrice(solrDocument);
             }
 
             Product product = new Product();
