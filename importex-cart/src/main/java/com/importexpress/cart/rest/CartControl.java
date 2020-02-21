@@ -36,7 +36,7 @@ public class CartControl {
     @ApiOperation("添加商品到购物车")
     public CommonResult addCartItem(@PathVariable(value = "site") SiteEnum site,
                                     @PathVariable(value = "userId") long userId,
-                                    @PathVariable(value = "itemId") String itemId, int num) {
+                                    @PathVariable(value = "itemId") String itemId, Integer num) {
 
         int result = cartService.addCartItem(site, userId, itemId, num);
         if (result == SUCCESS) {
@@ -64,7 +64,7 @@ public class CartControl {
     @ApiOperation("更新购物车中指定商品")
     public CommonResult updateCartItem(@PathVariable(value = "site") SiteEnum site,
                                        @PathVariable(value = "userId") long userId,
-                                       @PathVariable(value = "itemId") String itemId, int num, int checked) {
+                                       @PathVariable(value = "itemId") String itemId, Integer num, Integer checked) {
 
         int result = cartService.updateCartItem(site, userId, itemId, num, checked);
         if (result == SUCCESS) {
@@ -87,7 +87,7 @@ public class CartControl {
     @PatchMapping("/{site}/{userId}/check_all")
     @ApiOperation("勾选/反勾选全部商品")
     public CommonResult checkAll(@PathVariable(value = "site") SiteEnum site,
-                                 @PathVariable(value = "userId") long userId, int checked) {
+                                 @PathVariable(value = "userId") long userId, Integer checked) {
 
         int result = cartService.checkAll(site, userId, checked);
         if (result == SUCCESS) {
@@ -137,7 +137,7 @@ public class CartControl {
 
     @GetMapping("/{site}/merge_carts")
     @ApiOperation("合并游客购物车到注册用户购物车")
-    public CommonResult mergeCarts(@PathVariable(value = "site") SiteEnum site,long userId, long touristId) {
+    public CommonResult mergeCarts(@PathVariable(value = "site") SiteEnum site,Long userId, Long touristId) {
 
         int result = cartService.mergeCarts(site,userId,touristId);
         if (result == SUCCESS) {
