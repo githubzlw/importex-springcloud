@@ -198,7 +198,8 @@ public class SearchServiceImpl implements SearchService {
         //是否需要推荐联想词
         long recordCount = page1 == null ? 0 : page1.getRecordCount();
         boolean suggestKey = isDefault(param);
-        suggestKey = suggestKey && recordCount < 40 && param.getKeyword().split("(\\s+)").length > 1;
+        suggestKey = suggestKey && recordCount < 40
+                && param.getKeyword().split("(\\s+)").length > 1;
         if(suggestKey){
             List<AssociateWrap> associate = associate(param.getKeyword(), param);
             wrapTemp.setAssociates(associate);
@@ -342,7 +343,14 @@ public class SearchServiceImpl implements SearchService {
             if (StringUtils.isBlank(itemId)) {
                 continue;
             }
+
+            ///import提高moq start
             calculatePrice.raiseMoqSearchGoods(solrDocument,param.getSite());
+            if((param.getSite() == 1 || param.getSite() == 2 )
+                    && StringUtils.isNotBlank(StrUtils.object2Str(solrDocument.get("custom_range_price")))){
+//                calculatePrice.searchRangePrice(solrDocument);
+            }
+
             Product product = new Product();
             product.setId(itemId);
 

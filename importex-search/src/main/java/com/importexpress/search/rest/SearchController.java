@@ -420,6 +420,7 @@ public class SearchController {
     public CommonResult associateKey(
             @ApiParam(name="keyWord",value="搜索词",required=true) String keyWord,
             @ApiParam(name="site",value="网站",required=true) String site,
+            @ApiParam(name="salable",value="是否开启不可售限制",required=true) String salable,
             HttpServletRequest request) {
         if(StringUtils.isBlank(keyWord)){
             return CommonResult.failed(" Keyword IS NULL!");
@@ -430,7 +431,10 @@ public class SearchController {
             return CommonResult.failed(" SITE IS WRONG!");
         }
         try {
-            List<AssociateWrap> associate = service.associate(keyWord, _site);
+            SearchParam param = new SearchParam();
+            param.setSite(_site);
+            param.setSalable("true".equalsIgnoreCase(salable));
+            List<AssociateWrap> associate = service.associate(keyWord, param);
             return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",JSONObject.toJSONString(associate));
         }catch (Exception e){
             log.error("获取搜索词其他组合推荐错误",e);
