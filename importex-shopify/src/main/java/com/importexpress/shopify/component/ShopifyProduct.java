@@ -29,7 +29,7 @@ public class ShopifyProduct {
     public Product toProduct(ShopifyData goods) throws ShopifyException {
         Product product = new Product();
         product.setTitle(goods.getName());
-
+        product.setPublished(goods.isPublished());
         String info_ori = info(goods.getInfoHtml());
         StringBuilder details = details(goods.getInfo());
         details.append(info_ori);

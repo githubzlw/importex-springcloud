@@ -37,4 +37,6 @@ public class ShopifyData implements Serializable {
 	private String price;
 	@ApiModelProperty(value ="网站",required = true)
 	private String vendor;
+	@ApiModelProperty(value ="是否直接发布商品",required = true)
+	private boolean published = false;
 }

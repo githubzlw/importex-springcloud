@@ -112,7 +112,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
     public ProductWraper onlineProduct(String shopname, ShopifyData goods) throws ShopifyException {
         com.importexpress.shopify.pojo.product.Product product = shopifyProduct.toProduct(goods);
 //        product.setTitle("AAAAAAAA"+product.getTitle());
-        ShopifyBean shopifyBean = new ShopifyBean();
+        ShopifyBean  shopifyBean = new ShopifyBean();
         shopifyBean.setShopifyName(shopname);
         shopifyBean.setPid(goods.getPid());
         ShopifyBean shopifyId = selectShopifyId(shopifyBean);
