@@ -98,6 +98,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
 
         //权限版搜索,只展示可搜索的产品
         importType(param, filterQueries);
+        salable(param,filterQueries);
 
         setFQ(filterQueries.toString(), solrParams);
 
@@ -122,8 +123,12 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         setQ(q.toString().length() > 0 ? q.toString() : "*", solrParams);
 
         //搜索限定类别
-        String specialCatidSearch = splicingSyntax.specialCatidSearch(param);
-        setFQ(specialCatidSearch + " custom_valid:1 AND custom_price:[10 TO *] ", solrParams);
+        StringBuilder fq = new StringBuilder(splicingSyntax.specialCatidSearch(param));
+        fq.append(" custom_valid:1 AND custom_price:[10 TO *] ");
+        importType(param,fq);
+        salable(param,fq);
+
+        setFQ(fq.toString(), solrParams);
 
         setRows(0, 12, solrParams);
 
@@ -151,6 +156,8 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if(StringUtils.isNotBlank(param.getPid())){
             fq.append(" AND -custom_pid:\"" + param.getPid() + "\"");
         }
+        importType(param,fq);
+        salable(param,fq);
         setFQ(fq.toString(), solrParams);
         return sendRequest(solrParams, httpSolrClient);
     }
@@ -170,6 +177,8 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if (StringUtils.isNotBlank(param.getCatid())) {
             fq.append(" AND custom_path_catid:" + param.getCatid());
         }
+        importType(param,fq);
+        salable(param,fq);
         setFQ(fq.toString(), solrParams);
         return requestSolr(solrParams);
     }
@@ -196,11 +205,16 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         setQ("custom_path_catid:\"" + param.getCatid() + "\"", solrParams);
         setSort("custom_is_sold_flag  desc,custom_ali_sold desc,custom_sold desc", solrParams);
         setRows(0, 200, solrParams);
-        String specialCatidSearch = splicingSyntax.specialCatidSearch(param);
-        setFQ(specialCatidSearch + " custom_price:[10 TO *] AND custom_valid:1", solrParams);
+        StringBuilder fq = new StringBuilder(splicingSyntax.specialCatidSearch(param));
+        fq.append(" custom_price:[10 TO *] AND custom_valid:1");
+        importType(param,fq);
+        salable(param,fq);
+
+        setFQ(fq.toString(), solrParams);
         QueryResponse response = sendRequest(solrParams, httpSolrClient);
         if (response != null && response.getResults().size() <= 4) {
-            setFQ(specialCatidSearch+" custom_price:[1 TO *] AND custom_valid:1", solrParams);
+            String newfq = fq.toString().replace("custom_price:[10 TO *]","custom_price:[1 TO *]");
+            setFQ(newfq, solrParams);
             response = sendRequest(solrParams, httpSolrClient);
         }
         return response;
