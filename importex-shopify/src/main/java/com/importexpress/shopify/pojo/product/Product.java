@@ -29,7 +29,7 @@ public class Product {
     private String tags;
     private String published_scope;
     private String admin_graphql_api_id;
-    private boolean published = true;
+    private boolean published = false;
     private List<Variants> variants;
     private List<Options> options;
     private List<Images> images;
