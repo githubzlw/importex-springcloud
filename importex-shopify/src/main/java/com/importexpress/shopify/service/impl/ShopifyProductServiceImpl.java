@@ -11,6 +11,7 @@ import com.importexpress.shopify.component.ShopifyProduct;
 import com.importexpress.shopify.exception.ShopifyException;
 import com.importexpress.shopify.feign.ProductServiceFeign;
 import com.importexpress.shopify.mapper.ShopifyProductMapper;
+import com.importexpress.shopify.pojo.ProductRequestWrap;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.ProductWraper;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
@@ -130,6 +131,14 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
             insertShopifyIdWithPid(shopifyBean);
         }
         return productWraper;
+    }
+    @Override
+    public ProductWraper pushProduct(ProductRequestWrap wrap) throws ShopifyException {
+        Product mongoProducts = productServiceFeign.findProduct(Long.parseLong(wrap.getPid()));
+        ShopifyData goods = MongoProductUtil.composeShopifyData(mongoProducts, wrap.getSite());
+        goods.setSkus(wrap.getSkus());
+        goods.setPublished(wrap.isPublished());
+        return onlineProduct(wrap.getShopname(),goods);
     }
     @Override
     public ShopifyBean checkProduct(String shopname, String itemId) throws ShopifyException {

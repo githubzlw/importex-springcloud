@@ -1,5 +1,6 @@
 package com.importexpress.shopify.pojo;
 
+import com.google.common.collect.Lists;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -39,4 +40,6 @@ public class ShopifyData implements Serializable {
 	private String vendor;
 	@ApiModelProperty(value ="是否直接发布商品",required = true)
 	private boolean published = false;
+	@ApiModelProperty(value ="选择的sku",required = true)
+	private List<String> skus = Lists.newArrayList();
 }
