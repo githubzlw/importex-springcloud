@@ -2,7 +2,6 @@ package com.importexpress.shopify.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.importexpress.shopify.exception.ShopifyException;
-import com.importexpress.shopify.util.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;

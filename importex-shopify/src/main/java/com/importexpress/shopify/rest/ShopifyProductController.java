@@ -4,6 +4,7 @@ package com.importexpress.shopify.rest;
 import com.google.gson.Gson;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.util.StrUtils;
+import com.importexpress.shopify.pojo.ProductRequestWrap;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.ShopifyRequestWrap;
 import com.importexpress.shopify.pojo.product.ProductWraper;
@@ -78,6 +79,36 @@ public class ShopifyProductController {
         ProductWraper productWraper;
         try {
             productWraper = shopifyProductService.onlineProduct(shopname,goods);
+            if(productWraper == null){
+                return CommonResult.failed("add shopify product failed");
+            }
+        } catch (Exception e) {
+            log.error("add product", e);
+            return CommonResult.failed(e.getMessage());
+        }
+        return CommonResult.success(new Gson().toJson(productWraper));
+    }
+    /**
+     * shopify铺货
+     *
+     * @param wrap
+     */
+    @PostMapping("/push/product")
+    @ApiOperation("铺货")
+    public CommonResult pushProduct(@ApiParam(name="productRequestWrap",value="铺货参数",required=true) @RequestBody ProductRequestWrap wrap) {
+        if (wrap == null) {
+            return CommonResult.failed("request parameter is null");
+        }
+        String shopname = wrap.getShopname();
+        if (StringUtils.isBlank(shopname)) {
+            return CommonResult.failed("shopname is null");
+        }
+        if (StringUtils.isBlank(wrap.getPid())) {
+            return CommonResult.failed("product is null");
+        }
+        ProductWraper productWraper;
+        try {
+            productWraper = shopifyProductService.pushProduct(wrap);
             if(productWraper == null){
                 return CommonResult.failed("add shopify product failed");
             }
