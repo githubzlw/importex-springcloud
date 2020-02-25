@@ -33,6 +33,12 @@ public interface ShopifyProductService {
     ProductWraper onlineProduct(String shopname, ShopifyData goods) throws ShopifyException;
     /**铺货
      * @param shopname
+     * @param itemId
+     * @return
+     */
+    ShopifyBean checkProduct(String shopname, String itemId) throws ShopifyException;
+    /**铺货
+     * @param shopname
      * @param ids
      * @param site
      * @return

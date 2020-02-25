@@ -2,6 +2,8 @@ package com.importexpress.shopify.component;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.importexpress.shopify.pojo.OptionWrap;
 import com.importexpress.shopify.pojo.SkuAttr;
 import com.importexpress.shopify.pojo.SkuVal;
@@ -163,22 +165,27 @@ public class SkuJsonParse {
     		typeMap.put(typeList.get(i).getId(), typeList.get(i));
     	}
     	List<Variants> lstVariants = Lists.newArrayList();
+		Gson gson = new Gson();
 		try {
-			JSONArray skuProductsArray = JSONArray.fromObject(skuProducts);
+//			JSONArray skuProductsArray = JSONArray.fromObject(skuProducts);
+			List<SkuAttr> skuProductsArray = gson.fromJson(skuProducts,
+					new TypeToken<List<SkuAttr>>() {}.getType());
 			Variants variants;
 			for(int i=0;i<skuProductsArray.size();i++){
-				JSONObject skuProductsObject = JSONObject.fromObject(StrUtils.object2Str(skuProductsArray.get(i)));
-				String skuPropIds = skuProductsObject.getString("skuPropIds");
-				JSONObject skuValObject = JSONObject.fromObject(StrUtils.object2Str(skuProductsObject.get("skuVal")));
-				String actSkuCalPrice = StrUtils.object2Str(skuValObject.get("actSkuCalPrice"));
+				SkuAttr skuAttr = skuProductsArray.get(i);
+//				JSONObject skuProductsObject = JSONObject.fromObject(StrUtils.object2Str(skuProductsArray.get(i)));
+				String skuPropIds = skuAttr.getSkuPropIds();
+				SkuVal skuValObject = skuAttr.getSkuVal();
+//				JSONObject skuValObject = JSONObject.fromObject(StrUtils.object2Str(skuProductsObject.get("skuVal")));
+				String actSkuCalPrice = skuValObject.getActSkuCalPrice();//StrUtils.object2Str(skuValObject.get("actSkuCalPrice"));
 				actSkuCalPrice = StringUtils.isBlank(actSkuCalPrice) ?
-						StrUtils.object2Str(skuValObject.get("actSkuPrice")) : actSkuCalPrice;
+						skuValObject.getActSkuPrice() : actSkuCalPrice;
 				actSkuCalPrice = StringUtils.isBlank(actSkuCalPrice) ?
-						StrUtils.object2Str(skuValObject.get("actSkuMultiCurrencyDisplayPrice")) : actSkuCalPrice;
+						skuValObject.getActSkuMultiCurrencyDisplayPrice() : actSkuCalPrice;
 				actSkuCalPrice = StringUtils.isBlank(actSkuCalPrice) ?
-						StrUtils.object2Str(skuValObject.get("skuMultiCurrencyDisplayPrice")) : actSkuCalPrice;
+						skuValObject.getSkuMultiCurrencyDisplayPrice() : actSkuCalPrice;
 				actSkuCalPrice = StringUtils.isBlank(actSkuCalPrice) ?
-						StrUtils.object2Str(skuValObject.get("skuPrice")) : actSkuCalPrice;
+						skuValObject.getSkuPrice() : actSkuCalPrice;
 
 				String[] skuPropIdsSplit = skuPropIds.split(",");
 				int length = skuPropIdsSplit.length;
@@ -189,11 +196,11 @@ public class SkuJsonParse {
 		        variants.setPrice(actSkuCalPrice);
 		        variants.setSku(skuPropIds.replace(",", "_"));
 		        variants.setRequires_shipping(true);
-		        variants.setWeight(StrUtils.object2Str(skuProductsObject.get("fianlWeight")));
+		        variants.setWeight(StrUtils.object2Str(skuAttr.getFianlWeight()));
 		        variants.setWeight_unit(weightUnit);
 		        variants.setCountry_code_of_origin("CN");
 		        variants.setInventory_policy("deny");
-		        String availQuantity = StrUtils.object2Str(skuValObject.get("availQuantity"));
+		        String availQuantity = StrUtils.object2Str(skuValObject.getAvailQuantity());
 		        variants.setInventory_quantity(Integer.valueOf(StrUtils.isNum(availQuantity) ? availQuantity : "0"));
 		        variants.setInventory_management("shopify");
 

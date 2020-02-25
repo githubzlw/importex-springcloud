@@ -131,6 +131,13 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         }
         return productWraper;
     }
+    @Override
+    public ShopifyBean checkProduct(String shopname, String itemId) throws ShopifyException {
+        ShopifyBean  shopifyBean = new ShopifyBean();
+        shopifyBean.setShopifyName(shopname);
+        shopifyBean.setPid(itemId);
+        return selectShopifyId(shopifyBean);
+    }
 
     @Override
     public List<ProductWraper> onlineProducts(String shopname, String[] ids, int site) throws ShopifyException {

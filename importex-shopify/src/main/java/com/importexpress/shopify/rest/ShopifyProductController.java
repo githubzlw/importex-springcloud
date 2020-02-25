@@ -7,12 +7,13 @@ import com.importexpress.comm.util.StrUtils;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.ShopifyRequestWrap;
 import com.importexpress.shopify.pojo.product.ProductWraper;
+import com.importexpress.shopify.pojo.product.ShopifyBean;
 import com.importexpress.shopify.service.ShopifyProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,32 @@ public class ShopifyProductController {
 
     public ShopifyProductController(ShopifyProductService shopifyProductService) {
         this.shopifyProductService = shopifyProductService;
+    }
+    /**
+     * shopify铺货验证
+     *
+     */
+    @GetMapping("/check")
+    @ApiOperation("铺货")
+    public CommonResult checking(@ApiParam(name="itemId",value="铺货产品id",required=true) String itemId,
+                                 @ApiParam(name="shopName",value="店铺名称",required=true) String shopName) {
+        if (StringUtils.isBlank(itemId) || StringUtils.isBlank(shopName)) {
+            return CommonResult.failed("request parameter is null");
+        }
+        ShopifyBean shopifyBean;
+        try {
+            shopifyBean = shopifyProductService.checkProduct(shopName,itemId);
+            if(shopifyBean == null){
+                shopifyBean = new ShopifyBean();
+                shopifyBean.setShopifyName(shopName);
+                shopifyBean.setShopifyPid(itemId);
+                return CommonResult.success(shopifyBean);
+            }
+        } catch (Exception e) {
+            log.error("add product", e);
+            return CommonResult.failed(e.getMessage());
+        }
+        return CommonResult.success(new Gson().toJson(shopifyBean));
     }
 
     /**
