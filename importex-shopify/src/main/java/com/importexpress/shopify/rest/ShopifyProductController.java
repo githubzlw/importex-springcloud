@@ -64,7 +64,8 @@ public class ShopifyProductController {
      */
     @PostMapping("/product")
     @ApiOperation("铺货")
-    public CommonResult addProduct(@ApiParam(name="shopifyRequestWrap",value="铺货参数",required=true) @RequestBody ShopifyRequestWrap wrap) {
+    public CommonResult addProduct(
+            @ApiParam(name="shopifyRequestWrap",value="铺货参数",required=true) @RequestBody ShopifyRequestWrap wrap) {
         if (wrap == null) {
             return CommonResult.failed("request parameter is null");
         }
@@ -95,7 +96,8 @@ public class ShopifyProductController {
      */
     @PostMapping("/push/product")
     @ApiOperation("铺货")
-    public CommonResult pushProduct(@ApiParam(name="productRequestWrap",value="铺货参数",required=true) @RequestBody ProductRequestWrap wrap) {
+    public CommonResult pushProduct(
+            @ApiParam(name="productRequestWrap",value="铺货参数",required=true) @RequestBody ProductRequestWrap wrap) {
         if (wrap == null) {
             return CommonResult.failed("request parameter is null");
         }
@@ -130,6 +132,7 @@ public class ShopifyProductController {
     public CommonResult addProductByIds(
             @ApiParam(name="ids",value="产品id数组",required=true) String ids,
             @ApiParam(name="site",value="网站",required=true) String site,
+            @ApiParam(name="published",value="发布状态,1-发布 0-预发布",required=true) String published,
             @ApiParam(name="shopName",value="shopify店铺",required=true) String shopName) {
         if (ids == null) {
             return CommonResult.failed("ids is empty");
@@ -144,7 +147,7 @@ public class ShopifyProductController {
         int intSite = StrUtils.isNum(site) ? Integer.parseInt(site) : 1;
         try {
             List<ProductWraper> productWrapers =
-                    shopifyProductService.onlineProducts(shopName,idArray,intSite);
+                    shopifyProductService.onlineProducts(shopName,idArray,intSite,"1".equalsIgnoreCase(published));
             if(productWrapers == null || productWrapers.isEmpty()){
                 return CommonResult.failed("add shopify product failed");
             }

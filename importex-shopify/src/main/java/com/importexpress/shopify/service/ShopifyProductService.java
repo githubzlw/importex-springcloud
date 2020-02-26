@@ -49,7 +49,7 @@ public interface ShopifyProductService {
      * @param site
      * @return
      */
-    List<ProductWraper> onlineProducts(String shopname, String[] ids, int site) throws ShopifyException;
+    List<ProductWraper> onlineProducts(String shopname, String[] ids, int site,boolean published) throws ShopifyException;
 
 
 }
