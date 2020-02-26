@@ -128,6 +128,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
             // 铺货完成后，绑定店铺数据信息，方便下单后对应ID获取我们产 品ID
             shopifyBean.setShopifyPid(String.valueOf(productWraper.getProduct().getId()));
             shopifyBean.setShopifyInfo(JSONObject.toJSONString(productWraper));
+            shopifyBean.setPublish(product.isPublished() ? 1 : 0);
             insertShopifyIdWithPid(shopifyBean);
         }
         return productWraper;
@@ -149,7 +150,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
     }
 
     @Override
-    public List<ProductWraper> onlineProducts(String shopname, String[] ids, int site) throws ShopifyException {
+    public List<ProductWraper> onlineProducts(String shopname, String[] ids, int site,boolean published) throws ShopifyException {
         List<ProductWraper> wraps = Lists.newArrayList();
         List<Long> pids = Lists.newArrayList();
         for (String id : ids) {
@@ -158,6 +159,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         List<Product> mongoProducts = productServiceFeign.findProducts(Longs.toArray(pids), 1);
         for (Product product : mongoProducts) {
             ShopifyData goods = MongoProductUtil.composeShopifyData(product, site);
+            goods.setPublished(published);
             ProductWraper wraper = onlineProduct(shopname, goods);
             if (wraper != null) {
                 wraps.add(wraper);
