@@ -51,16 +51,18 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
             log.error("param.getKeyword() is null ");
             return null;
         }
-        param.setOrder(false);
-        param.setFactPvid(false);
-        ModifiableSolrParams solrParams = getSolrQuery(param);
+        SearchParam paramNew = clone(param);
+
+        paramNew.setOrder(false);
+        paramNew.setFactPvid(false);
+        ModifiableSolrParams solrParams = getSolrQuery(paramNew);
         if(solrParams == null){
             return null;
         }
         SolrFacet facet = new SolrFacet("custom_path_catid",4,5000);
         setFacet(solrParams,facet);
 
-        setFQ(removeFQ(solrParams,param),solrParams);
+        setFQ(removeFQ(solrParams,paramNew),solrParams);
         setFL("custom_enname,custom_pid",solrParams);
         setRows(0,1,solrParams);
 
@@ -653,5 +655,43 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         range.setSectionFourCount(solrMap.get(fourRange));
 
         return range;
+    }
+    private SearchParam clone(SearchParam param){
+        SearchParam paramNew = new SearchParam();
+        paramNew.setSalable(param.isSalable());
+        paramNew.setSite(param.getSite());
+        paramNew.setKeyword(param.getKeyword());
+        paramNew.setFactPvid(param.isFactPvid());
+        paramNew.setSynonym(param.isSynonym());
+        paramNew.setFactCategory(param.isFactCategory());
+        paramNew.setCurrency(param.getCurrency());
+        paramNew.setFreeShipping(param.getFreeShipping());
+        paramNew.setOrder(param.isOrder());
+        paramNew.setCollection(param.getCollection());
+        paramNew.setNewArrivalDate(param.getNewArrivalDate());
+        paramNew.setCatid(param.getCatid());
+        paramNew.setAttrId(param.getAttrId());
+        paramNew.setUserType(param.getUserType());
+        paramNew.setMobile(param.isMobile());
+        paramNew.setPageSize(param.getPageSize());
+        paramNew.setPage(param.getPage());
+        paramNew.setPid(param.getPid());
+        paramNew.setUnkey(param.getUnkey());
+        paramNew.setMinq(param.getMinq());
+        paramNew.setMaxq(param.getMaxq());
+        paramNew.setImportExpress(param.isImportExpress());
+        paramNew.setSort(param.getSort());
+        paramNew.setReverseKeywords(param.getReverseKeywords());
+        paramNew.setPrices(param.getPrices());
+        paramNew.setImportType(param.getImportType());
+        paramNew.setFKey(param.getFKey());
+        paramNew.setMaxPrice(param.getMaxPrice());
+        paramNew.setMinPrice(param.getMinPrice());
+        paramNew.setBoutique(param.isBoutique());
+        paramNew.setStoried(param.getStoried());
+        paramNew.setUriRequest(param.getUriRequest());
+        paramNew.setSelectedInterval(param.getSelectedInterval());
+        paramNew.setRange(param.isRange());
+        return paramNew;
     }
 }
