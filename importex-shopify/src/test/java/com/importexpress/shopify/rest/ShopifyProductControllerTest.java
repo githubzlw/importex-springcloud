@@ -54,7 +54,7 @@ public class ShopifyProductControllerTest {
     public void addProduct() throws Exception {
         ShopifyRequestWrap wrap = new ShopifyRequestWrap();
         wrap.setData(data());
-        wrap.setShopname("importglove");
+        wrap.setShopname("importxtest");
         String requestJson = JSONObject.toJSONString(wrap);
         String contentAsString = mockMvc.perform(post("/shopify/product")
                 .contentType(MediaType.APPLICATION_JSON)
