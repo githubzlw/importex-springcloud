@@ -11,6 +11,7 @@ import com.importexpress.shopify.component.ShopifyProduct;
 import com.importexpress.shopify.exception.ShopifyException;
 import com.importexpress.shopify.feign.ProductServiceFeign;
 import com.importexpress.shopify.mapper.ShopifyProductMapper;
+import com.importexpress.shopify.pojo.ProductRequestWrap;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.ProductWraper;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
@@ -127,13 +128,29 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
             // 铺货完成后，绑定店铺数据信息，方便下单后对应ID获取我们产 品ID
             shopifyBean.setShopifyPid(String.valueOf(productWraper.getProduct().getId()));
             shopifyBean.setShopifyInfo(JSONObject.toJSONString(productWraper));
+            shopifyBean.setPublish(product.isPublished() ? 1 : 0);
             insertShopifyIdWithPid(shopifyBean);
         }
         return productWraper;
     }
+    @Override
+    public ProductWraper pushProduct(ProductRequestWrap wrap) throws ShopifyException {
+        Product mongoProducts = productServiceFeign.findProduct(Long.parseLong(wrap.getPid()));
+        ShopifyData goods = MongoProductUtil.composeShopifyData(mongoProducts, wrap.getSite());
+        goods.setSkus(wrap.getSkus());
+        goods.setPublished(wrap.isPublished());
+        return onlineProduct(wrap.getShopname(),goods);
+    }
+    @Override
+    public ShopifyBean checkProduct(String shopname, String itemId) throws ShopifyException {
+        ShopifyBean  shopifyBean = new ShopifyBean();
+        shopifyBean.setShopifyName(shopname);
+        shopifyBean.setPid(itemId);
+        return selectShopifyId(shopifyBean);
+    }
 
     @Override
-    public List<ProductWraper> onlineProducts(String shopname, String[] ids, int site) throws ShopifyException {
+    public List<ProductWraper> onlineProducts(String shopname, String[] ids, int site,boolean published) throws ShopifyException {
         List<ProductWraper> wraps = Lists.newArrayList();
         List<Long> pids = Lists.newArrayList();
         for (String id : ids) {
@@ -142,6 +159,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         List<Product> mongoProducts = productServiceFeign.findProducts(Longs.toArray(pids), 1);
         for (Product product : mongoProducts) {
             ShopifyData goods = MongoProductUtil.composeShopifyData(product, site);
+            goods.setPublished(published);
             ProductWraper wraper = onlineProduct(shopname, goods);
             if (wraper != null) {
                 wraps.add(wraper);

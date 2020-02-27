@@ -10,4 +10,5 @@ public class ShopifyBean {
     private String pid;
     private String shopifyInfo;
     private String createTime;
+    private int publish;
 }

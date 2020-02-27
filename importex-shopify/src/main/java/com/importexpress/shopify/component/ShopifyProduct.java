@@ -7,13 +7,12 @@ import com.importexpress.shopify.pojo.OptionWrap;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.*;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -38,16 +37,24 @@ public class ShopifyProduct {
         product.setVendor(goods.getVendor());
         String category = productType(goods.getCategory());
         product.setProduct_type(category);
+        OptionWrap wrap;
+        try {
+            wrap = skuJsonParse.optionVariant(goods.getType(),goods.getSkus(),goods.getSkuProducts());
+        }catch (Exception e){
+            log.error("Option and Variant error",e.getMessage());
+            throw new ShopifyException("1005",e.getMessage());
+        }
 
-        OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
+        /*OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
 
-        product.setOptions(wrap.getOptions());
+        product.setOptions(wrap.getOptions());*/
         if(wrap.getOptions() == null){
             throw  new ShopifyException("Product options has something wrong");
         }
 
-        List<Variants> lstVariants = skuJsonParse.sku2Variants(goods.getSkuProducts(),
-                wrap.getOptions(), goods.getType(), "kg");
+        List<Variants> lstVariants = wrap.getVariants();
+        /*skuJsonParse.sku2Variants(goods.getSkuProducts(),
+                wrap.getOptions(), goods.getType(), "kg");*/
         if(lstVariants.isEmpty()){
             Variants variant = variant(goods.getPrice(),goods.getPerWeight());
             lstVariants.add(variant);
@@ -77,7 +84,7 @@ public class ShopifyProduct {
         variants.setWeight_unit("kg");
         variants.setCountry_code_of_origin("CN");
         variants.setInventory_policy("deny");
-        variants.setInventory_quantity(999);
+        variants.setInventory_quantity(9999);
         variants.setInventory_management("shopify");
         List<PresentmentPrices> presentment_prices = Lists.newArrayList();
         PresentmentPrices prices = new PresentmentPrices();

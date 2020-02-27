@@ -2,6 +2,7 @@ package com.importexpress.shopify.service;
 
 
 import com.importexpress.shopify.exception.ShopifyException;
+import com.importexpress.shopify.pojo.ProductRequestWrap;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.ProductWraper;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
@@ -32,12 +33,23 @@ public interface ShopifyProductService {
      */
     ProductWraper onlineProduct(String shopname, ShopifyData goods) throws ShopifyException;
     /**铺货
+     * @param wrap 铺货请求参数
+     * @return
+     */
+    ProductWraper pushProduct(ProductRequestWrap wrap) throws ShopifyException;
+    /**铺货
+     * @param shopname
+     * @param itemId
+     * @return
+     */
+    ShopifyBean checkProduct(String shopname, String itemId) throws ShopifyException;
+    /**铺货
      * @param shopname
      * @param ids
      * @param site
      * @return
      */
-    List<ProductWraper> onlineProducts(String shopname, String[] ids, int site) throws ShopifyException;
+    List<ProductWraper> onlineProducts(String shopname, String[] ids, int site,boolean published) throws ShopifyException;
 
 
 }
