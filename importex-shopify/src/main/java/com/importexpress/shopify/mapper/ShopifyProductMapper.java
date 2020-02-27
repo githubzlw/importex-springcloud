@@ -22,8 +22,8 @@ public interface ShopifyProductMapper {
      * @param  shopifyBean
      * @return
      */
-    @Insert("insert into shopify_pid_info(shopify_name,shopify_pid,pid,create_time,publish )" +
-            "values( #{shopifyName},#{shopifyPid},#{pid},now(),#{publish})")
+    @Insert("insert into shopify_pid_info(shopify_name,shopify_pid,pid,create_time,publish,shopify_info )" +
+            "values( #{shopifyName},#{shopifyPid},#{pid},now(),#{publish},#{shopifyInfo})")
     int insertShopifyIdWithPid(ShopifyBean shopifyBean);
     /**
      * 绑定shopify铺货的ID与我司网站的PID关联
@@ -31,7 +31,7 @@ public interface ShopifyProductMapper {
      * @param  shopifyBean
      * @return
      */
-    @Update("update shopify_pid_info set shopify_pid=#{shopifyPid},publish=#{publish} " +
+    @Update("update shopify_pid_info set shopify_pid=#{shopifyPid},publish=#{publish},shopify_info=#{shopifyInfo} " +
             "where  shopify_name=#{shopifyName} and pid=#{pid}")
     int updateShopifyIdWithPid(ShopifyBean shopifyBean);
     /**
@@ -40,7 +40,7 @@ public interface ShopifyProductMapper {
      * @param  shopifyBean
      * @return
      */
-    @Select("select id,shopify_name,shopify_pid,pid,publish from shopify_pid_info " +
+    @Select("select id,shopify_name,shopify_pid,pid,publish,shopify_info from shopify_pid_info " +
             "where shopify_name = #{shopifyName} and pid=#{pid} limit 1")
     @Results({
             @Result(column = "id", property = "id"),
