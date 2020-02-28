@@ -45,9 +45,6 @@ public class ShopifyProduct {
             throw new ShopifyException("1005",e.getMessage());
         }
 
-        /*OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
-
-        product.setOptions(wrap.getOptions());*/
         if(wrap !=null && wrap.getOptions() == null){
             throw  new ShopifyException("Product options has something wrong");
         }else if(wrap !=null){
@@ -55,8 +52,6 @@ public class ShopifyProduct {
         }
 
         List<Variants> lstVariants = wrap.getVariants();
-        /*skuJsonParse.sku2Variants(goods.getSkuProducts(),
-                wrap.getOptions(), goods.getType(), "kg");*/
         if(lstVariants.isEmpty()){
             Variants variant = variant(goods.getPrice(),goods.getPerWeight());
             lstVariants.add(variant);
