@@ -22,7 +22,6 @@ public class SearchResultWrap implements Serializable {
 		this.products = Lists.newArrayList();
 		this.categorys = Lists.newArrayList();
 		this.attributes = Lists.newArrayList();
-		this.selectedAttr = Lists.newArrayList();
 		this.associates = Lists.newArrayList();
 		this.searchNavigation = Maps.newHashMap();
 	}
@@ -56,7 +55,7 @@ public class SearchResultWrap implements Serializable {
 	 * 已选择属性集合
 	 */
 	@ApiModelProperty(value="已选择属性集合")
-	private List<Attribute> selectedAttr;
+	private AttributeWrap selectedAttr;
 
 	/**
 	 * 是否推荐联想词 1-是 0-否

@@ -8,14 +8,14 @@ import com.importexpress.search.pojo.AttributeWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.service.AttributeService;
 import com.importexpress.search.service.base.UriService;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletContext;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,16 +39,18 @@ public class AttributeServiceImpl extends UriService implements AttributeService
 	}
 
 	@Override
-	public List<Attribute> selectedAttributes(SearchParam param) {
+	public AttributeWrap selectedAttributes(SearchParam param) {
+		AttributeWrap result = new AttributeWrap();
 		String attrId = param.getAttrId();
 		if(StringUtils.isBlank(attrId)) {
-			return Lists.newArrayList();
+			result.setAttrs(Lists.newArrayList());
+			return null;
 		}
 		//
 		Map<String, Attribute> byPvids = (Map<String, Attribute>)application.getAttribute("newpvidList");
 
 		//初始化
-		String url = initUri(param).replaceAll("pvid=.*", "");
+		String url = initUri(param).replaceAll("pvid=.*", "")+"pvid=";
 
 		List<Attribute> filterAttr = Lists.newArrayList();
 
@@ -60,12 +62,14 @@ public class AttributeServiceImpl extends UriService implements AttributeService
 				continue;
 			}
 			String surplusAttr = attrId.replace("," + attr + ",", ",");
-			surplusAttr = surplusAttr.substring(1);
+			surplusAttr = surplusAttr.startsWith(",") ? surplusAttr.substring(1) : surplusAttr;
 			surplusAttr = surplusAttr.endsWith(",") ? surplusAttr.substring(0, surplusAttr.length()-1) : surplusAttr;
 			attributeBean.setUrl(StringUtils.isBlank(surplusAttr) ? "" : url + surplusAttr);
 			filterAttr.add(attributeBean);
 		}
-		return filterAttr;
+		result.setName("Clear");
+		result.setAttrs(filterAttr);
+		return result;
 	}
 
 	@Override
@@ -79,7 +83,7 @@ public class AttributeServiceImpl extends UriService implements AttributeService
 		String url = initUri(param);
 
 		//解析solr结果到类别
-		List<Attribute> attributes = facetAttributes(facetFields, byPvids);
+		List<Attribute> attributes = facetAttributes(facetFields, byPvids,param);
 
 		//排序
 		List<AttributeWrap> attributeWrap = attributeWrap(attributes, url);
@@ -121,14 +125,24 @@ public class AttributeServiceImpl extends UriService implements AttributeService
 	 * @param pvids
 	 * @return
 	 */
-	private List<Attribute> facetAttributes(List<FacetField> facetFields, Map<String, Attribute> pvids){
+	private List<Attribute> facetAttributes(List<FacetField> facetFields,
+											Map<String, Attribute> pvids,SearchParam  param){
 		List<Attribute> attributes = Lists.newArrayList();
+		String attrId = param.getAttrId();
+		List<String> lstParamId = Lists.newArrayList();
+		if(StringUtils.isNotBlank(attrId)){
+			String[] attrIds = attrId.split(",");
+			for(String s : attrIds){
+				lstParamId.add(s.split("_")[0]);
+			}
+		}
+
 		for(FacetField facet : facetFields){
 			List<Count> values = facet.getValues();
 			for(Count value : values){
 				String id = value.getName();
 				Attribute attr = pvids.get(id);
-				if(attr == null){
+				if(attr == null || lstParamId.contains(attr.getId().split("_")[0])){
 					continue;
 				}
 				attributes.add(attr);

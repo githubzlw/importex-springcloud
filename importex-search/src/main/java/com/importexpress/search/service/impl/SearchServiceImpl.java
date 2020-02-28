@@ -406,7 +406,7 @@ public class SearchServiceImpl implements SearchService {
             product.setUrl(goods_url.replaceAll("\\%", ""));
 
             //价格
-            if(!productPrice(isFree, solrDocument, product)){
+            if(!productPrice(isFree, solrDocument, product,param.getSite())){
                continue;
             }
             //单位
@@ -453,7 +453,7 @@ public class SearchServiceImpl implements SearchService {
      * @param solrDocument
      * @param searchGoods
      */
-    private boolean productPrice(boolean isFree, SolrDocument solrDocument, Product searchGoods) {
+    private boolean productPrice(boolean isFree, SolrDocument solrDocument, Product searchGoods,int site) {
         String rangePrice = StrUtils.object2Str(solrDocument.get("custom_range_price"));
         if(StringUtils.isNotBlank(rangePrice)){
             if (isFree) {
@@ -468,7 +468,7 @@ public class SearchServiceImpl implements SearchService {
             searchGoods.setPrice(rangePrice);
             return true;
         }
-        String price = StrUtils.object2Str(solrDocument.get("custom_price"));
+        String price = StrUtils.object2Str(solrDocument.get(solrService.getPriceField(site)));
         searchGoods.setPrice(price);
 
         //批量价格显示
@@ -485,14 +485,14 @@ public class SearchServiceImpl implements SearchService {
         if(modefideWholesalePrice.isEmpty()){
             return false;
         }
-        price = modefideWholesalePrice.get(0).getPrice();
+//        price = modefideWholesalePrice.get(0).getPrice();
         if(modefideWholesalePrice.size() == 1){
             searchGoods.setWholesaleMiddlePrice(null);
         }else{
             searchGoods.setWholesalePrice(modefideWholesalePrice);
         }
-//        price = modefideWholesalePrice.get(modefideWholesalePrice.size() - 1).getPrice();
-//        price = price + "-" + modefideWholesalePrice.get(0).getPrice();
+        price = modefideWholesalePrice.get(modefideWholesalePrice.size() - 1).getPrice();
+        price = price + "-" + modefideWholesalePrice.get(0).getPrice();
         searchGoods.setPrice(price);
         return true;
     }
@@ -550,7 +550,7 @@ public class SearchServiceImpl implements SearchService {
         if (param.isFactPvid()) {
             List<AttributeWrap> attributes = attributeService.attributes(param, solrResult.getAttrFacet());
             wrap.setAttributes(attributes);
-            List<Attribute> selectedAttr = attributeService.selectedAttributes(param);
+            AttributeWrap selectedAttr = attributeService.selectedAttributes(param);
             wrap.setSelectedAttr(selectedAttr);
         }
 

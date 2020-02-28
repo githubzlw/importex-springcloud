@@ -79,6 +79,6 @@ public interface SolrService {
     SpellCheckResponse searchAutocomplete(String keyWord,int site);
 
 
-
+    String getPriceField(int site);
 
 }
