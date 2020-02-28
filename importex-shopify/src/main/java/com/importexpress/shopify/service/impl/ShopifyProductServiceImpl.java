@@ -1,6 +1,7 @@
 package com.importexpress.shopify.service.impl;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Longs;
@@ -20,6 +21,7 @@ import com.importexpress.shopify.service.ShopifyProductService;
 import com.importexpress.shopify.util.Config;
 import com.importexpress.shopify.util.ShopifyUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -135,6 +137,11 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
     }
     @Override
     public ProductWraper pushProduct(ProductRequestWrap wrap) throws ShopifyException {
+        //验证是否已经铺货过
+        ProductWraper productWraper = checkPush(wrap.getShopname(), wrap.getPid());
+        if(productWraper != null){
+            return productWraper;
+        }
         Product mongoProducts = productServiceFeign.findProduct(Long.parseLong(wrap.getPid()));
         ShopifyData goods = MongoProductUtil.composeShopifyData(mongoProducts, wrap.getSite());
         goods.setSkus(wrap.getSkus());
@@ -154,6 +161,11 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         List<ProductWraper> wraps = Lists.newArrayList();
         List<Long> pids = Lists.newArrayList();
         for (String id : ids) {
+            ProductWraper productWraper = checkPush(shopname,id);
+            if(productWraper != null){
+                wraps.add(productWraper);
+                continue;
+            }
             pids.add(Long.parseLong(id));
         }
         List<Product> mongoProducts = productServiceFeign.findProducts(Longs.toArray(pids), 1);
@@ -166,5 +178,17 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
             }
         }
         return wraps;
+    }
+    private ProductWraper checkPush(String shopName,String pid){
+        ShopifyBean shopifyBean = checkProduct(shopName, pid);
+        if(shopifyBean != null && StringUtils.isNotBlank(shopifyBean.getShopifyPid())){
+            ProductWraper wraper = new ProductWraper();
+            if(StringUtils.isNotBlank(shopifyBean.getShopifyInfo())){
+                wraper = JSON.parseObject(shopifyBean.getShopifyInfo(),ProductWraper.class);
+            }
+            wraper.setPush(true);
+            return wraper;
+        }
+        return null;
     }
 }
