@@ -48,8 +48,10 @@ public class ShopifyProduct {
         /*OptionWrap wrap = skuJsonParse.spec2Options(goods.getType());
 
         product.setOptions(wrap.getOptions());*/
-        if(wrap.getOptions() == null){
+        if(wrap !=null && wrap.getOptions() == null){
             throw  new ShopifyException("Product options has something wrong");
+        }else if(wrap !=null){
+            product.setOptions(wrap.getOptions());
         }
 
         List<Variants> lstVariants = wrap.getVariants();
