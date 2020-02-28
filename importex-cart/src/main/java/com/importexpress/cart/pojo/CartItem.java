@@ -79,15 +79,30 @@ public class CartItem {
     private String img;
 
 
-    private String sellunit;
+    /**
+     * sellunit
+     */
+    private String su;
 
-    private String remotpath;
+    /**
+     * remotpath
+     */
+    private String rp;
 
-    private String morder;
+    /**
+     * morder
+     */
+    private String mo;
 
-    private String range_price;
+    /**
+     * range_price
+     */
+    private String rpe;
 
-    private String feeprice;
+    /**
+     * feeprice
+     */
+    private String fp;
 
     /**
      * create timestamp

@@ -147,11 +147,11 @@ public class CartServiceImpl implements CartService {
         }
         cartItem.setChk(1);
         //add field
-        cartItem.setSellunit(product.getSellunit());
-        cartItem.setRemotpath(product.getRemotpath());
-        cartItem.setMorder(product.getMorder());
-        cartItem.setRange_price(product.getRange_price());
-        cartItem.setFeeprice(product.getFeeprice());
+        cartItem.setSu(product.getSellunit());
+        cartItem.setRp(product.getRemotpath());
+        cartItem.setMo(product.getMorder());
+        cartItem.setRpe(product.getRange_price());
+        cartItem.setFp(product.getFeeprice());
         long now = Instant.now().toEpochMilli();
         cartItem.setCt(now);
         cartItem.setUt(now);
