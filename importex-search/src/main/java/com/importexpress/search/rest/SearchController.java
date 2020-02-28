@@ -1,6 +1,6 @@
 package com.importexpress.search.rest;
 
-import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.ProductSearch;
@@ -43,6 +43,7 @@ public class SearchController {
     private CategoryService categoryService;
     @Autowired
     private ProductSearch productSearch;
+    private Gson gson = new Gson();
 
     /**产品搜索
      * @param request
@@ -70,7 +71,7 @@ public class SearchController {
                         productSearch.searchNavigation(param);
                 wrap.setSearchNavigation(searchNavigation);
                 wrap.setParam(param);
-                return CommonResult.success("GET SOLR RESULT SUCCESSED!",JSONObject.toJSONString(wrap));
+                return CommonResult.success("GET SOLR RESULT SUCCESSED!",gson.toJson(wrap));
             }
         }catch (Exception e){
             log.error("WRONG HAPPENED",e);
@@ -99,7 +100,7 @@ public class SearchController {
             if(wrap == null){
                 return CommonResult.failed(" WRONG HAPPENED WHEN GET SHOP RESULT!");
             }else{
-                return CommonResult.success("GET SHOP PRODUCT SUCCESSED!",JSONObject.toJSONString(wrap));
+                return CommonResult.success("GET SHOP PRODUCT SUCCESSED!",gson.toJson(wrap));
             }
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
@@ -158,7 +159,7 @@ public class SearchController {
             categorys = categorys.stream()
                                  .sorted(Comparator.comparing(CategoryWrap::getName))
                                  .collect(Collectors.toList());
-            return CommonResult.success("CATEGORY STATISTICS SUCCESSED",JSONObject.toJSONString(categorys));
+            return CommonResult.success("CATEGORY STATISTICS SUCCESSED",gson.toJson(categorys));
         } catch (Exception e) {
             log.error("错误--exception:",e);
             return CommonResult.failed(e.getMessage());
@@ -182,7 +183,7 @@ public class SearchController {
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
             List<Product> products = service.similarProduct(param);
-            return CommonResult.success("GET SIMILAR PRODUCT SUCCESSED!",JSONObject.toJSONString(products));
+            return CommonResult.success("GET SIMILAR PRODUCT SUCCESSED!",gson.toJson(products));
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
@@ -205,7 +206,7 @@ public class SearchController {
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
             List<Product> products = service.guessYouLike(param);
-            return CommonResult.success("GET GUESS YOU LIKE PRODUCT SUCCESSED!",JSONObject.toJSONString(products));
+            return CommonResult.success("GET GUESS YOU LIKE PRODUCT SUCCESSED!",gson.toJson(products));
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
@@ -228,7 +229,7 @@ public class SearchController {
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
             List<Product> products = service.boughtAndBought(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",JSONObject.toJSONString(products));
+            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
@@ -252,7 +253,7 @@ public class SearchController {
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
             List<Product> products = service.catidForGoods(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",JSONObject.toJSONString(products));
+            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
@@ -276,7 +277,7 @@ public class SearchController {
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
             List<Product> products = service.errorRecommend(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",JSONObject.toJSONString(products));
+            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
@@ -300,7 +301,7 @@ public class SearchController {
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
             List<Product> products = service.hotProduct(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",JSONObject.toJSONString(products));
+            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
@@ -324,7 +325,7 @@ public class SearchController {
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
             List<Product> products = service.hotProductForCatid(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",JSONObject.toJSONString(products));
+            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
@@ -352,7 +353,7 @@ public class SearchController {
         }
         try {
             List<String> lstAuto = service.searchAutocomplete(keyWord, _site);
-            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!",JSONObject.toJSONString(lstAuto));
+            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!",gson.toJson(lstAuto));
         }catch (Exception e){
             log.error("搜索提示词错误",e);
             return CommonResult.failed(e.getMessage());
@@ -402,7 +403,7 @@ public class SearchController {
             } else {
                 wrap.setTotal(0);
             }
-            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!",JSONObject.toJSONString(wrap));
+            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!",gson.toJson(wrap));
         }catch (Exception e){
             log.error("搜索页异步加载区间价错误",e);
             return CommonResult.failed(e.getMessage());
@@ -435,7 +436,7 @@ public class SearchController {
             param.setSite(_site);
             param.setSalable("true".equalsIgnoreCase(salable));
             List<AssociateWrap> associate = service.associate(keyWord, param);
-            return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",JSONObject.toJSONString(associate));
+            return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",gson.toJson(associate));
         }catch (Exception e){
             log.error("获取搜索词其他组合推荐错误",e);
             return CommonResult.failed(e.getMessage());
@@ -464,7 +465,7 @@ public class SearchController {
         }
         try {
             List<SearchWordWrap> list = service.searchWord(keyWord, _site);
-            return CommonResult.success("GET SUGGEST KEY SUCCESSED!",JSONObject.toJSONString(list));
+            return CommonResult.success("GET SUGGEST KEY SUCCESSED!",gson.toJson(list));
         }catch (Exception e){
             log.error("异步加载搜索页类别推荐搜索词",e);
             return CommonResult.failed(e.getMessage());
@@ -495,7 +496,7 @@ public class SearchController {
         }
         try {
             SearchResultWrap advertisement = service.advertisement(keyWord, _site, adgroupid);
-            return CommonResult.success("GET ADVERTISEMENT KEY SUCCESSED!",JSONObject.toJSONString(advertisement));
+            return CommonResult.success("GET ADVERTISEMENT KEY SUCCESSED!",gson.toJson(advertisement));
         }catch (Exception e){
             log.error("广告落地页",e);
             return CommonResult.failed(e.getMessage());
