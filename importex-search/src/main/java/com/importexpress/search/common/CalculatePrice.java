@@ -21,6 +21,7 @@ import java.util.List;
 @Slf4j
 @Component
 public class CalculatePrice {
+    private static double exchangerate = 7.0;
     @Autowired
     private ProductServiceFeign productServiceFeign;
 
@@ -106,7 +107,6 @@ public class CalculatePrice {
 //        if(site ==2){
             moq = moqX;
 //        }
-        double exchangerate = 6.6;
         //basePrice：首重运费, ratioPrice：续重运费, baseWeight：续重重量, weight：需要计算的重量
         BigDecimal jcexPostFreight = FreightUtility.getShippingFormula( new BigDecimal(basePrice),
                 new BigDecimal(ratioPrice),new BigDecimal(baseWeight),new BigDecimal(weight*moq));
@@ -544,7 +544,6 @@ public class CalculatePrice {
             int moqX= (int) Math.ceil(700/Double.valueOf(factoryPrice));
             //kids网站
             moq = moqX;
-            double exchangerate = 6.6;
 
             //区间价情况
             if (StringUtils.isNotBlank(sku)) {
