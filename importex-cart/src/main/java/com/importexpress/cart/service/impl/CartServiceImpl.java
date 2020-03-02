@@ -234,9 +234,8 @@ public class CartServiceImpl implements CartService {
         for (Map<String, String> map : maps) {
             for (String key : map.keySet()) {
                 if ("skuPropIds".equals(key)) {
-                    if (cartItem.getItemId().equals(cartItem.getPid() + ":" + map.get(key))) {
+                    if (cartItem.getItemId().equals(cartItem.getPid() + ":" + map.get(key).replace(',',':'))) {
                         //找到规格
-
                         //重新设置重量
                         Float wei = NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
                         //重新设置价格
