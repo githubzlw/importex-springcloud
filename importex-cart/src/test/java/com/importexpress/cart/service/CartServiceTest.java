@@ -26,7 +26,7 @@ import java.time.Instant;
 public class CartServiceTest {
 
     public static final long USER_ID = 100001L;
-    public static final String ITEM_ID1 = "560676334685:32162:324514";
+    public static final String ITEM_ID1 = "559803042434:321631:324518";
     public static final String ITEM_ID2 = "560676334685:32161:324513";
     public static final String ITEM_ID3 = "530333452003:32164:324512";
     public static final String ITEM_ID4 = "547188149310:32161:324514";
