@@ -151,7 +151,7 @@ public class CartServiceImpl implements CartService {
             cartItem.setSt(0);
         }
         //美加限制区分(1可搜索，0不可搜索)
-        cartItem.setSalable(product.getSalable());
+        cartItem.setSl(product.getSalable());
         //add field
         cartItem.setSu(product.getSellunit());
         cartItem.setRp(product.getRemotpath());
