@@ -54,8 +54,8 @@ public class CartServiceTest {
         Assert.assertEquals(368, cart.getItems().get(0).getPri());
         Assert.assertEquals("greybeard 80cm(31 inch | age 9-12M)", cart.getItems().get(0).getTn());
         Assert.assertEquals("560676334685/9192394532_2128907802.60x60.jpg", cart.getItems().get(0).getImg());
-        Assert.assertTrue(cart.getItems().get(0).getCt()< Instant.now().toEpochMilli());
-        Assert.assertTrue(cart.getItems().get(0).getUt()< Instant.now().toEpochMilli());
+        Assert.assertTrue(cart.getItems().get(0).getCt() < Instant.now().toEpochMilli());
+        Assert.assertTrue(cart.getItems().get(0).getUt() < Instant.now().toEpochMilli());
 
     }
 
@@ -67,7 +67,7 @@ public class CartServiceTest {
 
         Assert.assertEquals
                 (1, cartService.updateCartItem(SITE, USER_ID, ITEM_ID1, 99, 1));
-        Cart cart =  cartService.getCart(SITE, USER_ID);
+        Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
         Assert.assertEquals(335, cart.getItems().get(0).getPri());
 
@@ -80,7 +80,7 @@ public class CartServiceTest {
     public void cart4() {
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
-        Cart cart =  cartService.getCart(SITE, USER_ID);
+        Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
         Assert.assertEquals(314, cart.getItems().get(0).getPri());
     }
@@ -103,10 +103,10 @@ public class CartServiceTest {
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2));
-        Cart cart =  cartService.getCart(SITE, USER_ID);
+        Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(3, cart.getTotalAmount());
         Assert.assertEquals(1005, cart.getTotalPrice());
-        Assert.assertEquals(0.11f*3, cart.getTotalWeight(),0.0001f);
+        Assert.assertEquals(0.11f * 3, cart.getTotalWeight(), 0.0001f);
         Assert.assertEquals(2, cart.getItems().size());
         Assert.assertEquals(1, cart.getItems().get(0).getChk());
 
@@ -127,7 +127,7 @@ public class CartServiceTest {
                 (1, cartService.checkAll(SITE, USER_ID, 1));
         Assert.assertEquals
                 (1, cartService.delChecked(SITE, USER_ID));
-        Cart cart =  cartService.getCart(SITE, USER_ID);
+        Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(0, cart.getItems().size());
     }
 
@@ -151,7 +151,7 @@ public class CartServiceTest {
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID4, 4));
 
 
-        Cart cart =  cartService.getCart(SITE, USER_ID);
+        Cart cart = cartService.getCart(SITE, USER_ID);
 
         Assert.assertEquals(10, cart.getTotalAmount());
         Assert.assertEquals(4, cart.getItems().size());
@@ -186,7 +186,7 @@ public class CartServiceTest {
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 4));
 
 
-        Cart cart =  cartService.getCart(SITE, USER_ID);
+        Cart cart = cartService.getCart(SITE, USER_ID);
 
         Assert.assertEquals(10, cart.getTotalAmount());
         Assert.assertEquals(4, cart.getItems().size());
@@ -222,7 +222,7 @@ public class CartServiceTest {
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 4));
 
 
-        Cart cart =  cartService.getCart(SITE, USER_ID);
+        Cart cart = cartService.getCart(SITE, USER_ID);
 
         Assert.assertEquals(10, cart.getTotalAmount());
         Assert.assertEquals(4, cart.getItems().size());
@@ -255,12 +255,12 @@ public class CartServiceTest {
         Assert.assertTrue(StringUtils.isEmpty(cart.getItems().get(0).getTn()));
 
         Assert.assertEquals
-                (1, cartService.updateCartItem(SITE, USER_ID, "100473434:999999", 200,1));
+                (1, cartService.updateCartItem(SITE, USER_ID, "100473434:999999", 200, 1));
         cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(423, cart.getItems().get(0).getPri());
 
         Assert.assertEquals
-                (1, cartService.updateCartItem(SITE, USER_ID, "100473434:999999", 3000,1));
+                (1, cartService.updateCartItem(SITE, USER_ID, "100473434:999999", 3000, 1));
         cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(373, cart.getItems().get(0).getPri());
         Assert.assertEquals
@@ -269,37 +269,37 @@ public class CartServiceTest {
     }
 
     @Test
-    public void convert(){
+    public void convert() {
         String str = "[[id=32161, type=Color, value=White beard, img=560676334685/9168867283_2128907802.60x60.jpg], [id=32162, type=Color, value=greybeard, img=560676334685/9192394532_2128907802.60x60.jpg], [id=32163, type=Color, value=Blue wave point, img=560676334685/9210989827_2128907802.60x60.jpg], [id=32164, type=Color, value=Powder point, img=560676334685/9210995840_2128907802.60x60.jpg], [id=324511, type=Spec, value=59cm(23 inch | age 0-3M), img=], [id=324512, type=Spec, value=66cm(26 inch | age 3-6M), img=], [id=324513, type=Spec, value=73cm(29 inch | age 6-9M), img=], [id=324514, type=Spec, value=80cm(31 inch | age 9-12M), img=], [id=324515, type=Spec, value=85cm(33 inch | age 9-12M), img=], [id=324516, type=Spec, value=90cm(35 inch | age 1-2T), img=], [id=324517, type=Spec, value=95cm(37 inch | age 1-2T), img=]]";
 
         ImmutableList<String> lst = ImmutableList.copyOf(Splitter.on("],").split(str));
-        for(String item:lst){
+        for (String item : lst) {
             String cleanStr = CharMatcher.anyOf("[]").removeFrom(item).trim();
-            if(StringUtils.contains(cleanStr,"id=324517")){
+            if (StringUtils.contains(cleanStr, "id=324517")) {
                 String str1 = "value=";
                 int beginIndex = cleanStr.indexOf(str1);
-                cleanStr=cleanStr.substring(beginIndex+str1.length(), cleanStr.indexOf(',', beginIndex));
+                cleanStr = cleanStr.substring(beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex));
                 System.out.println(cleanStr);
             }
         }
     }
 
     @Test
-    public void generateTouristId(){
+    public void generateTouristId() {
 
-        for(int i=0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             long result = this.cartService.generateTouristId(SiteEnum.KIDS);
-            Assert.assertTrue(result>0);
+            Assert.assertTrue(result > 0);
         }
 
-        for(int i=0;i<10;i++){
+        for (int i = 0; i < 10; i++) {
             long result = this.cartService.generateTouristId(SiteEnum.MEDIC);
-            Assert.assertTrue(result>0);
+            Assert.assertTrue(result > 0);
         }
     }
 
     @Test
-    public void mergeCarts(){
+    public void mergeCarts() {
 
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
@@ -316,7 +316,7 @@ public class CartServiceTest {
         Assert.assertEquals(2, this.cartService.getCart(SITE, USER_ID).getItems().size());
         Assert.assertEquals(3, this.cartService.getCart(SITE, touristId).getItems().size());
 
-        Assert.assertEquals(1, this.cartService.mergeCarts(SITE,USER_ID,touristId));
+        Assert.assertEquals(1, this.cartService.mergeCarts(SITE, USER_ID, touristId));
 
         Assert.assertEquals(0, this.cartService.getCart(SITE, touristId).getItems().size());
         Cart cart = this.cartService.getCart(SITE, USER_ID);
@@ -326,4 +326,5 @@ public class CartServiceTest {
         this.cartService.delAllCartItem(SITE, USER_ID);
 
     }
+
 }

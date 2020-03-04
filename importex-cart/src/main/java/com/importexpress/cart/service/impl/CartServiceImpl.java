@@ -146,6 +146,10 @@ public class CartServiceImpl implements CartService {
             cartItem.setSid2(NumberUtils.toLong(split[2]));
         }
         cartItem.setChk(1);
+        if ("0".equals(product.getValid())) {
+            //下架商品
+            cartItem.setSt(0);
+        }
         //add field
         cartItem.setSu(product.getSellunit());
         cartItem.setRp(product.getRemotpath());
@@ -234,7 +238,7 @@ public class CartServiceImpl implements CartService {
         for (Map<String, String> map : maps) {
             for (String key : map.keySet()) {
                 if ("skuPropIds".equals(key)) {
-                    if (cartItem.getItemId().equals(cartItem.getPid() + ":" + map.get(key).replace(',',':'))) {
+                    if (cartItem.getItemId().equals(cartItem.getPid() + ":" + map.get(key).replace(',', ':'))) {
                         //找到规格
                         //重新设置重量
                         Float wei = NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
@@ -292,6 +296,27 @@ public class CartServiceImpl implements CartService {
             }
             cartItem.setUt(Instant.now().toEpochMilli());
             redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
+            return SUCCESS;
+        } catch (Exception e) {
+            log.error("updateCartItem", e);
+            return FAILUT;
+        }
+    }
+
+    /**
+     * 更新购物车
+     *
+     * @param site
+     * @param userId
+     * @param cartItem
+     * @return
+     */
+    private int updateCartItem(SiteEnum site, long userId, CartItem cartItem) {
+        try {
+
+            String userCartKey = getCartKey(site, userId);
+            cartItem.setUt(Instant.now().toEpochMilli());
+            redisTemplate.opsForHash().put(userCartKey, cartItem.getItemId(), new Gson().toJson(cartItem));
             return SUCCESS;
         } catch (Exception e) {
             log.error("updateCartItem", e);
@@ -372,7 +397,7 @@ public class CartServiceImpl implements CartService {
         try {
             String newKey = getCartKey(site, newId);
             String oldKey = getCartKey(site, oldId);
-            redisTemplate.rename(oldKey,newKey);
+            redisTemplate.rename(oldKey, newKey);
             return SUCCESS;
         } catch (Exception e) {
             log.error("delChecked", e);
@@ -383,10 +408,11 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 为游客生成ID
-     *
+     * <p>
      * Id规则： 一共12位，前1位为9，接着3位为网站code，最后8位为递增位
      * 例如：
-     *   kids网站 900200000001
+     * kids网站 900200000001
+     *
      * @param site
      * @return
      */
@@ -407,7 +433,7 @@ public class CartServiceImpl implements CartService {
     public int mergeCarts(SiteEnum site, long userId, long touristId) {
         try {
             List<CartItem> cartItemsTourist = this.getCartItems(site, touristId);
-            for(CartItem item:cartItemsTourist){
+            for (CartItem item : cartItemsTourist) {
                 this.addCartItem(site, userId, item.getItemId(), item.getNum());
             }
             //删除游客购物车key
@@ -417,5 +443,37 @@ public class CartServiceImpl implements CartService {
             log.error("mergeCarts", e);
             return FAILUT;
         }
+    }
+
+    /**
+     * 刷新购物车（下架商品检查）
+     *
+     * @param site
+     * @param userId
+     * @return 1:发现下架（发现下架商品,购物车刷新) 0:未发现（未发现下架商品) -1:执行失败
+     */
+    @Override
+    public int refreshCart(SiteEnum site, long userId) {
+        int result = 0;
+        Cart cart = this.getCart(site, userId);
+        for (CartItem cartItem : cart.getItems()) {
+            if (cartItem.getSt() == 0) {
+                //已经下架状态
+                continue;
+            }
+            Product product = productServiceFeign.findProduct(cartItem.getPid());
+            if ("0".equals(product.getValid())) {
+                //下架商品
+                cartItem.setSt(0);
+                if (SUCCESS == this.updateCartItem(site, userId, cartItem)) {
+                    result = 1;
+                } else {
+                    result = -1;
+                    break;
+                }
+
+            }
+        }
+        return result;
     }
 }
