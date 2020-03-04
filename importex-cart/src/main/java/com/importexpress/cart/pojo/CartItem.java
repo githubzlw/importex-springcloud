@@ -105,6 +105,11 @@ public class CartItem {
     private String fp;
 
     /**
+     * 美加限制区分(1可搜索，0不可搜索)
+     */
+    private String salable;
+
+    /**
      * create timestamp
      */
     private long ct;
