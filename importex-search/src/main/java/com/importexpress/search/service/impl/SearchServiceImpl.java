@@ -43,11 +43,11 @@ public class SearchServiceImpl implements SearchService {
     private SolrService solrService;
     @Autowired
     private ServletContext application;
-    @Autowired
-    private CalculatePrice calculatePrice;
+//    @Autowired
+//    private CalculatePrice calculatePrice;
     @Autowired
     private ExhaustUtils exhaustUtils;
-    DecimalFormat df  = new DecimalFormat("#0.00");  //保留两位小数
+//    DecimalFormat df  = new DecimalFormat("#0.00");  //保留两位小数
 
     @Override
     public SearchResultWrap advertisement(String key, int site, String adgroupid) {
@@ -174,7 +174,7 @@ public class SearchServiceImpl implements SearchService {
         }
         return list;
     }
-
+    @Override
     public List<FacetField> groupCategory(SearchParam param) {
         QueryResponse response = solrService.groupCategory(param);
         //取分组统计列表
@@ -345,10 +345,17 @@ public class SearchServiceImpl implements SearchService {
             }
 
             ///import提高moq start
-            calculatePrice.raiseMoqSearchGoods(solrDocument,param.getSite());
+            /*calculatePrice.raiseMoqSearchGoods(solrDocument,param.getSite());
             if((param.getSite() == 1 || param.getSite() == 2 )
                     && StringUtils.isNotBlank(StrUtils.object2Str(solrDocument.get("custom_range_price")))){
                 calculatePrice.searchRangePrice(solrDocument);
+            }*/
+            if(param.getSite() == 1 || param.getSite() == 2 ){
+                if(StringUtils.isNotBlank(StrUtils.object2Str(solrDocument.get("custom_range_price")))){
+                    solrDocument.setField("custom_range_price_free",solrDocument.get("custom_range_price_free_new"));
+                }else{
+                    solrDocument.setField("custom_feeprice",solrDocument.get("custom_free_price_new"));
+                }
             }
 
             Product product = new Product();
