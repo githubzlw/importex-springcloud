@@ -87,6 +87,25 @@ public class ShopifyUtil {
         }
 
     }
+    /**
+     * deleteForObject
+     * @param uri
+     * @param token
+     * @return
+     */
+    public int deleteForObject(String uri, String token) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("X-Shopify-Access-Token", token);
+        try {
+            restTemplate.delete(uri);
+            return 1;
+        } catch (Exception e) {
+            log.error("postForObject",e);
+            throw e;
+        }
+    }
 
     /**
      * exchange

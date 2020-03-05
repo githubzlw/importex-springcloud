@@ -157,5 +157,33 @@ public class ShopifyProductController {
             return CommonResult.failed(e.getMessage());
         }
     }
+    /**
+     * 下架
+     *
+     * @param shopName
+     * @param productId
+     */
+    @PostMapping("/delete")
+    @ApiOperation("铺货")
+    public CommonResult deleteProduct(
+            @ApiParam(name="shopName",value="店铺名称",required=true)String shopName,
+            @ApiParam(name="productId",value="产品id",required=true)String productId) {
+        if (StringUtils.isBlank(shopName)) {
+            return CommonResult.failed("shopname is null");
+        }
+        if (StringUtils.isBlank(productId)) {
+            return CommonResult.failed("product is null");
+        }
+        try {
+            int delete = shopifyProductService.delete(shopName, productId);
+            if(delete < 1){
+                return CommonResult.failed("delete shopify product failed");
+            }
+        } catch (Exception e) {
+            log.error("delete product", e);
+            return CommonResult.failed(e.getMessage());
+        }
+        return CommonResult.success(1);
+    }
 
 }
