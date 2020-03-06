@@ -35,9 +35,9 @@ public class ShopifyProductController {
      *
      */
     @GetMapping("/check")
-    @ApiOperation("铺货")
-    public CommonResult checking(@ApiParam(name="itemId",value="铺货产品id",required=true) String itemId,
-                                 @ApiParam(name="shopName",value="店铺名称",required=true) String shopName) {
+    @ApiOperation("验证铺货")
+    public CommonResult checking(@ApiParam(name="itemId",value="铺货产品id",required=true) @RequestParam String itemId,
+                                 @ApiParam(name="shopName",value="店铺名称",required=true) @RequestParam String shopName) {
         if (StringUtils.isBlank(itemId) || StringUtils.isBlank(shopName)) {
             return CommonResult.failed("request parameter is null");
         }
@@ -128,12 +128,12 @@ public class ShopifyProductController {
      * @param shopName
      */
     @PostMapping("/products")
-    @ApiOperation("铺货")
+    @ApiOperation("批量铺货")
     public CommonResult addProductByIds(
-            @ApiParam(name="ids",value="产品id数组",required=true) String ids,
-            @ApiParam(name="site",value="网站",required=true) String site,
-            @ApiParam(name="published",value="发布状态,1-发布 0-预发布",required=true) String published,
-            @ApiParam(name="shopName",value="shopify店铺",required=true) String shopName) {
+            @ApiParam(name="ids",value="产品id数组",required=true) @RequestParam String ids,
+            @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
+            @ApiParam(name="published",value="发布状态,1-发布 0-预发布",required=true) @RequestParam String published,
+            @ApiParam(name="shopName",value="shopify店铺",required=true) @RequestParam String shopName) {
         if (ids == null) {
             return CommonResult.failed("ids is empty");
         }
