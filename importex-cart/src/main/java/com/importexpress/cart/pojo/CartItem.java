@@ -110,6 +110,11 @@ public class CartItem {
     private String sl;
 
     /**
+     * 备注
+     */
+    private String memo;
+
+    /**
      * create timestamp
      */
     private long ct;
