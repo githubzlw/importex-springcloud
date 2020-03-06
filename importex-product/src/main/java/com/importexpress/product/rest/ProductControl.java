@@ -4,10 +4,7 @@ import com.importexpress.product.mongo.MongoProduct;
 import com.importexpress.product.service.ProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,9 +38,16 @@ public class ProductControl {
         return productService.findProduct(pid);
     }
 
+    @PostMapping("/pid/{pid}")
+    public int updateProduct(@PathVariable("pid") long pid, @RequestParam(value = "valid") int valid) {
+
+        return productService.updateProduct(pid, valid);
+    }
+
     @GetMapping("/pids/{pids}")
     public List<MongoProduct> findProducts(@PathVariable("pids") long[] pids, @RequestParam(value = "valid", required = false, defaultValue = "-1") int valid) {
 
         return productService.findProducts(pids, valid);
     }
+
 }

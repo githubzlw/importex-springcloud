@@ -113,5 +113,9 @@ public class Product {
      */
     private String range_price_free;
 
+    /**
+     * 美加限制区分(1可搜索，0不可搜索)
+     */
+    private String salable;
 
 }

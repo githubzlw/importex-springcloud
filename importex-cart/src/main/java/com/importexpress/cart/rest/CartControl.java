@@ -74,13 +74,13 @@ public class CartControl {
         }
     }
 
-        @GetMapping("/{site}/{userId}")
-        @ApiOperation("查询购物车中所有商品")
-        public CommonResult getCart(@PathVariable(value = "site") SiteEnum site,
-        @PathVariable(value = "userId") long userId) {
+    @GetMapping("/{site}/{userId}")
+    @ApiOperation("查询购物车中所有商品")
+    public CommonResult getCart(@PathVariable(value = "site") SiteEnum site,
+                                @PathVariable(value = "userId") long userId) {
 
-            Cart cart = cartService.getCart(site, userId);
-            return CommonResult.success(cart);
+        Cart cart = cartService.getCart(site, userId);
+        return CommonResult.success(cart);
 
     }
 
@@ -125,9 +125,9 @@ public class CartControl {
     @DeleteMapping("/{site}/{userId}")
     @ApiOperation("清空购物车")
     public CommonResult delCart(@PathVariable(value = "site") SiteEnum site,
-                                    @PathVariable(value = "userId") long userId) {
+                                @PathVariable(value = "userId") long userId) {
 
-        int result = cartService.delAllCartItem(site,userId);
+        int result = cartService.delAllCartItem(site, userId);
         if (result == SUCCESS) {
             return CommonResult.success();
         } else {
@@ -137,13 +137,31 @@ public class CartControl {
 
     @GetMapping("/{site}/merge_carts")
     @ApiOperation("合并游客购物车到注册用户购物车")
-    public CommonResult mergeCarts(@PathVariable(value = "site") SiteEnum site,Long userId, Long touristId) {
+    public CommonResult mergeCarts(@PathVariable(value = "site") SiteEnum site, Long userId, Long touristId) {
 
-        int result = cartService.mergeCarts(site,userId,touristId);
+        int result = cartService.mergeCarts(site, userId, touristId);
         if (result == SUCCESS) {
             return CommonResult.success();
         } else {
             return CommonResult.failed();
         }
     }
+
+    @GetMapping("/{site}/{userId}/refresh")
+    @ApiOperation("刷新购物车（下架商品检查） 返回结果中如果内容有‘refreshed’则代表有下架商品，已刷新")
+    public CommonResult refreshCart(@PathVariable(value = "site") SiteEnum site,
+                                    @PathVariable(value = "userId") long userId) {
+
+        int result = cartService.refreshCart(site, userId);
+        if (result != -1) {
+            if (result == 1) {
+                return CommonResult.success("refreshed");
+            } else {
+                return CommonResult.success();
+            }
+        } else {
+            return CommonResult.failed();
+        }
+    }
+
 }

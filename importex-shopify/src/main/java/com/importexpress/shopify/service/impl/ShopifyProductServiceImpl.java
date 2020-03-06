@@ -72,7 +72,14 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         try {
             Gson gson = new Gson();
             String json = gson.toJson(productWraper);
-            String returnJson = shopifyUtil.postForObject(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), shopifyAuthService.getShopifyToken(shopName), json);
+            String returnJson;
+            if(config.SHOPIFY_API_KEY_SHOPNAME.equals(shopName)){
+                //自己店铺
+                log.info("add product to myself shop:[{}]",shopName);
+                returnJson =shopifyUtil.postObject(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), json);
+            }else{
+                returnJson = shopifyUtil.postForObject(String.format(config.SHOPIFY_URI_PRODUCTS, shopName), shopifyAuthService.getShopifyToken(shopName), json);
+            }
             log.info("returnJson:[{}]", returnJson);
             result = gson.fromJson(returnJson, ProductWraper.class);
 

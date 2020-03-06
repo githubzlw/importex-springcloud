@@ -65,6 +65,23 @@ public class ShopifyProductControllerTest {
         Assert.assertEquals(200,result.getCode());
 
     }
+
+    @Test
+    public void addProductToMyself() throws Exception {
+        ShopifyRequestWrap wrap = new ShopifyRequestWrap();
+        wrap.setData(data());
+        wrap.setShopname("kr-cart-test");
+        String requestJson = JSONObject.toJSONString(wrap);
+        String contentAsString = mockMvc.perform(post("/shopify/product")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)).andExpect(status().isOk()).andDo(print())
+                .andReturn()
+                .getResponse().getContentAsString();
+        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
+        Assert.assertEquals(200,result.getCode());
+
+    }
+
     @Test(expected =NullPointerException.class)
     public void addProductNoParam() throws Exception {
         String jsonWrap = null;
