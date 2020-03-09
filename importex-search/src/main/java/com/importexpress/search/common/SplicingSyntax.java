@@ -128,7 +128,11 @@ public class SplicingSyntax {
         if(param.getUserType() == 0 || param.getSite()== 1){
             return "";
         }
-        Map<Integer,List<String>> specialCatid = (Map<Integer,List<String>>)application.getAttribute("specialCatidList");
+        Object special = application.getAttribute("specialCatidList");
+        if(special == null){
+            return "";
+        }
+        Map<Integer,List<String>> specialCatid = (Map<Integer,List<String>>)special;
         StringBuilder fq_condition = new StringBuilder();
         List<String> specialCatidList = specialCatid.get(param.getSite());
         if(specialCatidList != null){
@@ -167,6 +171,9 @@ public class SplicingSyntax {
      */
     public String categoryNameToTitle(String title,String catid){
         Object catidList1688 = application.getAttribute("categorys");
+        if(catidList1688 == null){
+            return "";
+        }
         Map<String, Category> catidMap1688 = (Map<String, Category>)catidList1688;
         if(title.split("(\\s+)").length < 6 && StringUtils.isNotBlank(catid)){
             catid = catid.startsWith(",") ? catid.substring(1) : catid;
