@@ -62,6 +62,19 @@ public interface CartService {
     int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked);
 
     /**
+     * 更新
+     *
+     * @param site
+     * @param userId
+     * @param itemId
+     * @param num
+     * @param checked
+     * @param memo
+     * @return 1:成功 0:失败
+     */
+    int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked,String memo);
+
+    /**
      * 删除单个
      *
      * @param site

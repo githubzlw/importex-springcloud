@@ -277,11 +277,17 @@ public class CartServiceImpl implements CartService {
     @Override
     public int updateCartItem(SiteEnum site, long userId, String itemId, int num) {
 
-        return updateCartItem(site, userId, itemId, num, -1);
+        return updateCartItem(site, userId, itemId, num, -1,null);
     }
 
     @Override
     public int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked) {
+
+        return updateCartItem(site, userId, itemId, num, checked,null);
+    }
+
+    @Override
+    public int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked,String memo) {
         try {
             checkItemId(itemId);
 
@@ -296,6 +302,7 @@ public class CartServiceImpl implements CartService {
             if (checked != -1) {
                 cartItem.setChk(checked);
             }
+            cartItem.setMemo(memo);
             cartItem.setUt(Instant.now().toEpochMilli());
             redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
             return SUCCESS;
