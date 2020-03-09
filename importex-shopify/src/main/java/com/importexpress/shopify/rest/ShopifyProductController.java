@@ -164,10 +164,10 @@ public class ShopifyProductController {
      * @param productId
      */
     @PostMapping("/delete")
-    @ApiOperation("铺货")
+    @ApiOperation("下架商品")
     public CommonResult deleteProduct(
-            @ApiParam(name="shopName",value="店铺名称",required=true)String shopName,
-            @ApiParam(name="productId",value="产品id",required=true)String productId) {
+            @ApiParam(name="shopName",value="店铺名称",required=true) @RequestParam String shopName,
+            @ApiParam(name="productId",value="产品id",required=true) @RequestParam String productId) {
         if (StringUtils.isBlank(shopName)) {
             return CommonResult.failed("shopname is null");
         }
