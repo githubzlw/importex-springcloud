@@ -153,20 +153,12 @@ public class CartControl {
     }
 
     @GetMapping("/{site}/{userId}/refresh")
-    @ApiOperation("刷新购物车（下架商品检查） 返回结果中如果内容有‘refreshed’则代表有下架商品，已刷新")
+    @ApiOperation("刷新购物车")
     public CommonResult refreshCart(@PathVariable(value = "site") SiteEnum site,
                                     @PathVariable(value = "userId") long userId) {
 
-        int result = cartService.refreshCart(site, userId);
-        if (result != -1) {
-            if (result == 1) {
-                return CommonResult.success("refreshed");
-            } else {
-                return CommonResult.success();
-            }
-        } else {
-            return CommonResult.failed();
-        }
+        return
+                cartService.refreshCart(site, userId) == 1 ? CommonResult.success() : CommonResult.failed();
     }
 
 }

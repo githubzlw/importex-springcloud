@@ -141,11 +141,11 @@ public interface CartService {
     int mergeCarts(SiteEnum site, long userId, long touristId);
 
     /**
-     * 刷新购物车（下架商品检查）
+     * 刷新购物车（下架，价格，重量，图片）
      *
      * @param site
      * @param userId
-     * @return 1:成功（未发现下架商品) 0:失败（发现下架商品,购物车数据已刷新) -1:执行失败
+     * @return 1:刷新成功 0:刷新失败
      */
     int refreshCart(SiteEnum site, long userId);
 }

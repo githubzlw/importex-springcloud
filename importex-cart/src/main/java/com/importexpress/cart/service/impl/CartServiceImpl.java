@@ -208,12 +208,16 @@ public class CartServiceImpl implements CartService {
                 if (StringUtils.isNotEmpty(strImg)) {
                     //fill img path
                     cartItem.setImg(strImg);
+                }else{
+                    //图片为空的情况下用主图替代
+                    cartItem.setImg(product.getCustom_main_image());
                 }
                 //fill type
                 beginIndex = cleanStr.indexOf(str1);
                 sb.append(cleanStr, beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex)).append(" ");
             }
         }
+        //设置规格
         cartItem.setTn(sb.toString().trim());
 
         if (str3.equals(product.getWprice())) {
@@ -455,22 +459,23 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
-     * 刷新购物车（下架商品检查）
+     * 刷新购物车（下架，价格，重量，图片）
      *
      * @param site
      * @param userId
-     * @return 1:发现下架（发现下架商品,购物车刷新) 0:未发现（未发现下架商品) -1:执行失败
+     * @return 1:刷新成功 0:刷新失败
      */
     @Override
     public int refreshCart(SiteEnum site, long userId) {
         int result = 0;
         Cart cart = this.getCart(site, userId);
         for (CartItem cartItem : cart.getItems()) {
-            if (cartItem.getSt() == 0) {
-                //已经下架状态
-                continue;
-            }
+
             Product product = productServiceFeign.findProduct(cartItem.getPid());
+
+            //刷新图片，价格，重量
+            fillOthersInfoToProduct(product, cartItem);
+
             if ("0".equals(product.getValid())) {
                 //下架商品
                 cartItem.setSt(0);
@@ -478,10 +483,8 @@ public class CartServiceImpl implements CartService {
                 if (SUCCESS == this.updateCartItem(site, userId, cartItem)) {
                     result = 1;
                 } else {
-                    result = -1;
-                    break;
+                    result = 0;
                 }
-
             }
         }
         return result;
