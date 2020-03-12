@@ -390,9 +390,12 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         }else if(param.getSort().equals("order-desc")){
             sorts.append("sum(custom_sold,custom_ali_sold) desc");
         }else{
-            splicingSyntax.priorityCategorySort(param.getKeyword(), sorts);
-            sorts.append("product("+getPriceField(param.getSite())+",custom_morder")
-                    .append(",map(custom_best_match,-1,2,1,0.7)")
+            String priorityCategorySort = splicingSyntax.priorityCategorySort(param.getKeyword());
+            sorts.append("product(").append(getPriceField(param.getSite())).append(",custom_morder");
+            if(StringUtils.isNotBlank(priorityCategorySort)){
+                sorts.append(",").append(priorityCategorySort);
+            }
+            sorts.append(",map(custom_best_match,-1,2,1,0.7)")
                     .append(",map(custom_sold_flag,1,1,0.6,1)")
                     .append(",map(custom_video_flag,1,1,0.7,1)")
                     .append(",map(custom_is_stock_flag,1,1,0.4,1)");
@@ -405,6 +408,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
                     .append(",map(custom_quality_avg,0,3,2,1)")
                     .append(",map(custom_weight_sort_flag,1,1,100,1)")
                     .append(",max(0.3,custom_feight_price_rate)")
+                    .append(",min(9999,custom_top_sort)")
                     .append(") asc");
         }
         return sorts.toString();

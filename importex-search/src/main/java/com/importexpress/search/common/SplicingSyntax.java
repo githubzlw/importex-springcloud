@@ -64,7 +64,7 @@ public class SplicingSyntax {
      * @param keyword
      * @param sorts
      */
-    public String priorityCategorySort(String keyword,StringBuilder sorts) {
+    public String priorityCategorySort(String keyword) {
         //优先类别数据
         Object priorityCategoryList = application.getAttribute("priorityCategoryList");
         String priorityCategory = getPriorityCategory(priorityCategoryList,keyword);
@@ -83,13 +83,13 @@ public class SplicingSyntax {
                 termCatid.append(",");
                 multCatID = true;
             }
-            termCatid.append("map(termfreq(custom_path_catid,\"" + category[i] + "\"),1,1,1,0)");
+            termCatid.append("map(termfreq(custom_path_catid,\"" + category[i] + "\"),1,10,0.01,1)");
         }
         if(multCatID) {
-            sorts.append("sum(").append(termCatid).append(") desc,");
+//            sorts.append("sum(").append(termCatid).append(") ");
             return "sum("+termCatid.toString()+")";
         }else {
-            sorts.append(termCatid).append(" desc,");
+//            sorts.append(termCatid);
             return termCatid.toString();
         }
     }

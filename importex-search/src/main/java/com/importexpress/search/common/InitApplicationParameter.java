@@ -103,6 +103,7 @@ public class InitApplicationParameter {
     private void initDate(SearchParam param, int site, Map<String,List<CategoryWrap>> map, String catid, String d){
         param.setSite(site);
         param.setCollection(8);
+        param.setSalable(true);
         if(search.serachCount(param) > 0){
             List<CategoryWrap> lst = map.get(catid);
             lst = lst == null ? Lists.newArrayList() : lst;
