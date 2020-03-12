@@ -92,15 +92,16 @@ public class ShopifyUtil {
     /**
      * deleteForObject
      * @param uri
-     * @param token
      * @return
      */
-    public int deleteForObject(String uri, String token) {
+    public int deleteForObject(String uri) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-Shopify-Access-Token", token);
         try {
+            BasicAuthorizationInterceptor basicAuthorizationInterceptor =
+                    new BasicAuthorizationInterceptor(config.SHOPIFY_API_KEY, config.SHOPIFY_API_KEY_SECRET);
+            restTemplate.getInterceptors().add(basicAuthorizationInterceptor);
             restTemplate.delete(uri);
             return 1;
         } catch (Exception e) {

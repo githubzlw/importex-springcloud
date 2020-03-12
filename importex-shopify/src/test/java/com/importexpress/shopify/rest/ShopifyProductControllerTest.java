@@ -41,9 +41,9 @@ public class ShopifyProductControllerTest {
     @Test
     public void addProducts() throws Exception {
         String contentAsString = mockMvc.perform(post("/shopify/products")
-                .param("ids", "526283881632,529001573566")
-                .param("site", "2")
-                .param("shopName", "importxtest")
+                .param("ids", "1274862636")
+                .param("site", "32")
+                .param("shopName", "kr-cart-test")
         ).andExpect(status().isOk()).andDo(print()).andReturn()
                 .getResponse().getContentAsString();
         CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);

@@ -16,6 +16,7 @@ import com.importexpress.shopify.mapper.ShopifyProductMapper;
 import com.importexpress.shopify.pojo.ProductRequestWrap;
 import com.importexpress.shopify.pojo.ShopifyData;
 import com.importexpress.shopify.pojo.product.ProductWraper;
+import com.importexpress.shopify.pojo.product.PushPrduct;
 import com.importexpress.shopify.pojo.product.ShopifyBean;
 import com.importexpress.shopify.service.ShopifyAuthService;
 import com.importexpress.shopify.service.ShopifyProductService;
@@ -71,7 +72,9 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         ProductWraper result = new ProductWraper();
         try {
             Gson gson = new Gson();
-            String json = gson.toJson(productWraper);
+            PushPrduct wrap = new PushPrduct();
+            wrap.setProduct(productWraper.getProduct());
+            String json = gson.toJson(wrap);
             String returnJson;
             if(config.SHOPIFY_API_KEY_SHOPNAME.equals(shopName)){
                 //自己店铺
@@ -177,6 +180,9 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
             }
             pids.add(Long.parseLong(id));
         }
+        if(pids.isEmpty()){
+            return wraps;
+        }
         List<Product> mongoProducts = productServiceFeign.findProducts(Longs.toArray(pids), 1);
         for (Product product : mongoProducts) {
             ShopifyData goods = MongoProductUtil.composeShopifyData(product, site);
@@ -212,8 +218,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         int result = 0;
         try {
             result = shopifyUtil.deleteForObject(String.format(config.SHOPIFY_URI_DELETE,
-                    shopname,shopifyBean.getShopifyPid()),
-                    shopifyAuthService.getShopifyToken(shopname));
+                    shopname,shopifyBean.getShopifyPid()));
             if(result > 0){
                 shopifyBean.setPublish(-1);
                 shopifyProductMapper.deleteShopifyIdWithPid(shopname,shopifyBean.getShopifyPid());
