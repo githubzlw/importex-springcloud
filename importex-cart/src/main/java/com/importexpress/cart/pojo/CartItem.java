@@ -115,6 +115,31 @@ public class CartItem {
     private String memo;
 
     /**
+     * 备用1
+     */
+    private String bk1;
+
+    /**
+     * 备用2
+     */
+    private String bk2;
+
+    /**
+     * 备用3
+     */
+    private String bk3;
+
+    /**
+     * 备用4
+     */
+    private String bk4;
+
+    /**
+     * 备用5
+     */
+    private String bk5;
+
+    /**
      * create timestamp
      */
     private long ct;

@@ -15,10 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Comparator;
@@ -340,8 +337,8 @@ public class SearchController {
     @PostMapping("/auto")
     @ApiOperation("获取搜索词提示词列表")
     public CommonResult searchAutocomplete(
-            @ApiParam(name="keyWord",value="搜索词",required=true) String keyWord,
-            @ApiParam(name="site",value="网站",required=true) String site,
+            @ApiParam(name="keyWord",value="搜索词",required=true) @RequestParam String keyWord,
+            @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
                                            HttpServletRequest request) {
         if(StringUtils.isBlank(keyWord)){
             return CommonResult.failed(" Keyword IS NULL!");
@@ -419,9 +416,9 @@ public class SearchController {
     @PostMapping("/associate")
     @ApiOperation("获取搜索词其他组合推荐")
     public CommonResult associateKey(
-            @ApiParam(name="keyWord",value="搜索词",required=true) String keyWord,
-            @ApiParam(name="site",value="网站",required=true) String site,
-            @ApiParam(name="salable",value="是否开启不可售限制",required=true) String salable,
+            @ApiParam(name="keyWord",value="搜索词",required=true) @RequestParam String keyWord,
+            @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
+            @ApiParam(name="salable",value="是否开启不可售限制",required=true) @RequestParam String salable,
             HttpServletRequest request) {
         if(StringUtils.isBlank(keyWord)){
             return CommonResult.failed(" Keyword IS NULL!");
@@ -452,8 +449,8 @@ public class SearchController {
     @PostMapping("/catid/suggest")
     @ApiOperation("异步加载搜索页类别推荐搜索词")
     public CommonResult catidSuggest(
-            @ApiParam(name="keyWord",value="搜索词",required=true) String keyWord,
-            @ApiParam(name="site",value="网站",required=true) String site,
+            @ApiParam(name="keyWord",value="搜索词",required=true) @RequestParam String keyWord,
+            @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
             HttpServletRequest request) {
         if(StringUtils.isBlank(keyWord)){
             return CommonResult.failed(" Keyword IS NULL!");
@@ -482,9 +479,9 @@ public class SearchController {
     @PostMapping("advertisement")
     @ApiOperation("广告落地页")
     public CommonResult advertisement(
-            @ApiParam(name="keyWord",value="搜索词",required=true) String keyWord,
-            @ApiParam(name="site",value="网站",required=true) String site,
-            @ApiParam(name="adgroupid",value="广告词",required=true) String adgroupid,
+            @ApiParam(name="keyWord",value="搜索词",required=true) @RequestParam String keyWord,
+            @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
+            @ApiParam(name="adgroupid",value="广告词",required=true) @RequestParam String adgroupid,
             HttpServletRequest request) {
         if(StringUtils.isBlank(keyWord)){
             return CommonResult.failed(" Keyword IS NULL!");
