@@ -199,6 +199,10 @@ public class CartServiceImpl implements CartService {
         StringBuilder sb = new StringBuilder();
         ImmutableList<String> lst = ImmutableList.copyOf(Splitter.on("],").split(enType));
         for (String item : lst) {
+            if("[]".equals(item)){
+                //无规格情况下，用主图替代
+                cartItem.setImg(product.getCustom_main_image());
+            }
             String cleanStr = CharMatcher.anyOf(str3).removeFrom(item).trim();
             if (StringUtils.contains(cleanStr, str4 + cartItem.getSid1() + ",")
                     || StringUtils.contains(cleanStr, str4 + cartItem.getSid2() + ",")) {
