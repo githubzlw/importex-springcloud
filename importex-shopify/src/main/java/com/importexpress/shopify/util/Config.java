@@ -29,6 +29,8 @@ public class Config {
 
     @Value("${shopify.uri_products}")
     public String SHOPIFY_URI_PRODUCTS;
+    @Value("${shopify.uri_delete}")
+    public String SHOPIFY_URI_DELETE;
 
     @Value("${shopify.uri_orders}")
     public String SHOPIFY_URI_ORDERS;

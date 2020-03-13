@@ -13,6 +13,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,6 +88,26 @@ public class ShopifyUtil {
             throw e;
         }
 
+    }
+    /**
+     * deleteForObject
+     * @param uri
+     * @return
+     */
+    public int deleteForObject(String uri) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        try {
+            BasicAuthorizationInterceptor basicAuthorizationInterceptor =
+                    new BasicAuthorizationInterceptor(config.SHOPIFY_API_KEY, config.SHOPIFY_API_KEY_SECRET);
+            restTemplate.getInterceptors().add(basicAuthorizationInterceptor);
+            restTemplate.delete(uri);
+            return 1;
+        } catch (Exception e) {
+            log.error("postForObject",e);
+            throw e;
+        }
     }
 
     /**

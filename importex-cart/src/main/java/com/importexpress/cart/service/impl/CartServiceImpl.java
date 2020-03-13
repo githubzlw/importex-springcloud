@@ -23,6 +23,7 @@ import org.springframework.util.Assert;
 import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -60,6 +61,7 @@ public class CartServiceImpl implements CartService {
                     cartItem.setNum(cartItem.getNum() + num);
                     cartItem.setUt(Instant.now().toEpochMilli());
                     redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
+                    setTouristExpire(userId, userCartKey);
                 } else {
                     return FAILUT;
                 }
@@ -79,10 +81,24 @@ public class CartServiceImpl implements CartService {
                 }
             }
             redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
+            setTouristExpire(userId, userCartKey);
             return SUCCESS;
-        } catch (Exception e) {
-            log.error("addCartItem", e);
+        } catch(Exception iae){
+            log.error("addCartItem", iae);
             return FAILUT;
+        }
+    }
+
+    /**
+     * 游客的情况下，设置购物车有效期(14 days)
+     * @param userId
+     * @param userCartKey
+     */
+    private void setTouristExpire(long userId, String userCartKey) {
+        String strUserid = String.valueOf(userId);
+        if(StringUtils.length(strUserid)==12){
+            //游客情况下有效期为14天
+            redisTemplate.expire(userCartKey, 14, TimeUnit.DAYS);
         }
     }
 
@@ -199,6 +215,10 @@ public class CartServiceImpl implements CartService {
         StringBuilder sb = new StringBuilder();
         ImmutableList<String> lst = ImmutableList.copyOf(Splitter.on("],").split(enType));
         for (String item : lst) {
+            if("[]".equals(item)){
+                //无规格情况下，用主图替代
+                cartItem.setImg(product.getCustom_main_image());
+            }
             String cleanStr = CharMatcher.anyOf(str3).removeFrom(item).trim();
             if (StringUtils.contains(cleanStr, str4 + cartItem.getSid1() + ",")
                     || StringUtils.contains(cleanStr, str4 + cartItem.getSid2() + ",")) {
@@ -214,7 +234,7 @@ public class CartServiceImpl implements CartService {
                 }
                 //fill type
                 beginIndex = cleanStr.indexOf(str1);
-                sb.append(cleanStr, beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex)).append(" ");
+                sb.append(cleanStr, beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex)).append("@");
             }
         }
         //设置规格

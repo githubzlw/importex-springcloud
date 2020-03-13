@@ -6,12 +6,18 @@ package com.importexpress.comm.pojo;
  */
 public enum SiteEnum {
 
-
+    /**import express网站*/
     IMPORTX(1,"https://www.import-express.com","ImportExpress"),
+    /**童装网站*/
     KIDS(2,"https://www.kidsproductwholesale.com","KidsProductWholesale"),
+    /**宠物网站*/
     PETS(4,"https://www.petstoreinc.com","PetStoreInc"),
+    /**家居网站*/
     HOME(8,"https://www.homeproductimport.com","HomeProductImport"),
-    MEDIC(16,"https://www.medicaldevicefactory.com","MedicalDeviceFactory");
+    /**医疗网站*/
+    MEDIC(16,"https://www.medicaldevicefactory.com","MedicalDeviceFactory"),
+    /**管接头网站*/
+    E_PIPE(32,"https://www.pipe.com","PIPE");
 
     private int code;
 

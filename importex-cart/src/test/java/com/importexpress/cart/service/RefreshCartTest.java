@@ -66,7 +66,7 @@ public class RefreshCartTest {
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 3));
         //判断无变更
         Assert.assertEquals
-                (0, cartService.refreshCart(SITE, USER_ID));
+                (1, cartService.refreshCart(SITE, USER_ID));
         //复原
         productServiceFeign.updateProduct(Long.parseLong(ITEM_ID2.substring(0, ITEM_ID2.indexOf(":"))), 1);
         Assert.assertEquals
