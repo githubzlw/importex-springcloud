@@ -45,9 +45,9 @@ public class CartServiceTest {
         Assert.assertEquals
                 (1, cartService.delCartItem(SITE, USER_ID, "567465400208:0"));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, "597742932103:324511:32161",1));
+                (1, cartService.addCartItem(SITE, USER_ID, "597742932103:32161:324511",1));
         Assert.assertEquals
-                (1, cartService.delCartItem(SITE, USER_ID, "597742932103:324511:32161"));
+                (1, cartService.delCartItem(SITE, USER_ID, "597742932103:32161:324511"));
     }
 
     /**
@@ -275,6 +275,15 @@ public class CartServiceTest {
     }
 
     @Test
+    public void cart12() {
+        Assert.assertEquals
+                (1, cartService.addCartItem(SiteEnum.E_PIPE, USER_ID, "567465400208:0", 1));
+        Assert.assertEquals
+                (1, cartService.delCartItem(SiteEnum.E_PIPE, USER_ID, "567465400208:0"));
+    }
+
+
+    @Test
     public void convert() {
         String str = "[[id=32161, type=Color, value=White beard, img=560676334685/9168867283_2128907802.60x60.jpg], [id=32162, type=Color, value=greybeard, img=560676334685/9192394532_2128907802.60x60.jpg], [id=32163, type=Color, value=Blue wave point, img=560676334685/9210989827_2128907802.60x60.jpg], [id=32164, type=Color, value=Powder point, img=560676334685/9210995840_2128907802.60x60.jpg], [id=324511, type=Spec, value=59cm(23 inch | age 0-3M), img=], [id=324512, type=Spec, value=66cm(26 inch | age 3-6M), img=], [id=324513, type=Spec, value=73cm(29 inch | age 6-9M), img=], [id=324514, type=Spec, value=80cm(31 inch | age 9-12M), img=], [id=324515, type=Spec, value=85cm(33 inch | age 9-12M), img=], [id=324516, type=Spec, value=90cm(35 inch | age 1-2T), img=], [id=324517, type=Spec, value=95cm(37 inch | age 1-2T), img=]]";
 
@@ -332,5 +341,6 @@ public class CartServiceTest {
         this.cartService.delAllCartItem(SITE, USER_ID);
 
     }
+
 
 }
