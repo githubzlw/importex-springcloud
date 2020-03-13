@@ -48,7 +48,7 @@ public class CartItem {
     private String wpri;
 
     /**
-     * 规格
+     * 规格（多规格情况下用@分割）
      */
     private String tn;
 
