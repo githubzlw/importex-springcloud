@@ -38,12 +38,12 @@ public interface ShopifyProductMapper {
      * 下架shopify商品
      *
      * @param  shopifyPid
-     * @param  shopName
+     * @param  shopifyName
      * @return
      */
     @Update("update shopify_pid_info set publish=-1 " +
             "where  shopify_name=#{shopifyName} and shopify_pid=#{shopifyPid}")
-    int deleteShopifyIdWithPid(String shopName,String shopifyPid);
+    int deleteShopifyIdWithPid(@Param("shopifyName")String shopifyName,@Param("shopifyPid")String shopifyPid);
     /**
      * 绑定shopify铺货的ID与我司网站的PID关联
      *

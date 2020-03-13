@@ -74,7 +74,9 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
             Gson gson = new Gson();
             PushPrduct wrap = new PushPrduct();
             wrap.setProduct(productWraper.getProduct());
-            String json = gson.toJson(wrap);
+            String json =  gson.toJson(wrap);
+//            String json = JSONObject.toJSONString(wrap);
+//            String json =  JSON.toJSONString(wrap);
             String returnJson;
             if(config.SHOPIFY_API_KEY_SHOPNAME.equals(shopName)){
                 //自己店铺
@@ -158,6 +160,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         ShopifyData goods = MongoProductUtil.composeShopifyData(mongoProducts, wrap.getSite());
         goods.setSkus(wrap.getSkus());
         goods.setPublished(wrap.isPublished());
+        goods.setBodyHtml(wrap.isBodyHtml());
         return onlineProduct(wrap.getShopname(),goods);
     }
     @Override
@@ -169,7 +172,8 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
     }
 
     @Override
-    public List<ProductWraper> onlineProducts(String shopname, String[] ids, int site,boolean published) throws ShopifyException {
+    public List<ProductWraper> onlineProducts(String shopname, String[] ids, int site,boolean published,boolean bodyHtml)
+            throws ShopifyException {
         List<ProductWraper> wraps = Lists.newArrayList();
         List<Long> pids = Lists.newArrayList();
         for (String id : ids) {
@@ -187,6 +191,7 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
         for (Product product : mongoProducts) {
             ShopifyData goods = MongoProductUtil.composeShopifyData(product, site);
             goods.setPublished(published);
+            goods.setBodyHtml(bodyHtml);
             ProductWraper wraper = onlineProduct(shopname, goods);
             if (wraper != null) {
                 wraps.add(wraper);
@@ -201,8 +206,10 @@ public class ShopifyProductServiceImpl implements ShopifyProductService {
             if(StringUtils.isNotBlank(shopifyBean.getShopifyInfo())){
                 wraper = JSON.parseObject(shopifyBean.getShopifyInfo(),ProductWraper.class);
             }
-            wraper.setPush(true);
-            return wraper;
+            if(shopifyBean.getPublish() > 0){
+                wraper.setPush(true);
+                return wraper;
+            }
         }
         return null;
     }
