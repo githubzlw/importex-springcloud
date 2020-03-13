@@ -390,6 +390,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         }else if(param.getSort().equals("order-desc")){
             sorts.append("sum(custom_sold,custom_ali_sold) desc");
         }else{
+            //2020-03-13 增加自定义排序
             String priorityCategorySort = splicingSyntax.priorityCategorySort(param.getKeyword());
             sorts.append("product(").append(getPriceField(param.getSite())).append(",custom_morder");
             if(StringUtils.isNotBlank(priorityCategorySort)){
