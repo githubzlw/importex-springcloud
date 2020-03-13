@@ -80,8 +80,8 @@ public class CartServiceImpl implements CartService {
             }
             redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
             return SUCCESS;
-        } catch (Exception e) {
-            log.error("addCartItem", e);
+        } catch(Exception iae){
+            log.error("addCartItem", iae);
             return FAILUT;
         }
     }
@@ -218,7 +218,7 @@ public class CartServiceImpl implements CartService {
                 }
                 //fill type
                 beginIndex = cleanStr.indexOf(str1);
-                sb.append(cleanStr, beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex)).append(" ");
+                sb.append(cleanStr, beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex)).append("@");
             }
         }
         //设置规格

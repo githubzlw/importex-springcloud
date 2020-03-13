@@ -44,6 +44,10 @@ public class CartServiceTest {
                 (1, cartService.addCartItem(SITE, USER_ID, "567465400208:0", 1));
         Assert.assertEquals
                 (1, cartService.delCartItem(SITE, USER_ID, "567465400208:0"));
+        Assert.assertEquals
+                (1, cartService.addCartItem(SITE, USER_ID, "597742932103:324511:32161",1));
+        Assert.assertEquals
+                (1, cartService.delCartItem(SITE, USER_ID, "597742932103:324511:32161"));
     }
 
     /**
