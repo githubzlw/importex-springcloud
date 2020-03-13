@@ -40,6 +40,8 @@ public class ShopifyData implements Serializable {
 	private String vendor;
 	@ApiModelProperty(value ="是否直接发布商品",required = true)
 	private boolean published = false;
+	@ApiModelProperty(value ="是否详情",required = true)
+	private boolean bodyHtml = false;
 	@ApiModelProperty(value ="选择的sku",required = true)
 	private List<String> skus = Lists.newArrayList();
 }

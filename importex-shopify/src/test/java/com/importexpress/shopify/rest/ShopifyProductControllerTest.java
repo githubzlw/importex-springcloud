@@ -41,9 +41,9 @@ public class ShopifyProductControllerTest {
     @Test
     public void addProducts() throws Exception {
         String contentAsString = mockMvc.perform(post("/shopify/products")
-                .param("ids", "526283881632,529001573566")
-                .param("site", "2")
-                .param("shopName", "importxtest")
+                .param("ids", "1274862636")
+                .param("site", "32")
+                .param("shopName", "kr-cart-test")
         ).andExpect(status().isOk()).andDo(print()).andReturn()
                 .getResponse().getContentAsString();
         CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
@@ -159,5 +159,16 @@ public class ShopifyProductControllerTest {
         goods.setImage(lstImg);
         goods.setSkuProducts("[{\"skuAttr\":\"3216:32161\", \"skuPropIds\":\"32161\", \"specId\":\"0061b739ae60e11d22170378ac121c70\", \"skuId\":\"3201894141571\", \"fianlWeight\":\"0.02\",\"volumeWeight\":\"0.02\", \"wholesalePrice\":\"[2-119 $ 5.50, ≥120 $ 5.00]\", \"skuVal\":{\"actSkuCalPrice\":\"0.96\", \"actSkuMultiCurrencyCalPrice\":\"0.96\", \"actSkuMultiCurrencyDisplayPrice\":\"0.96\", \"availQuantity\":0, \"inventory\":0, \"isActivity\":true, \"skuCalPrice\":\"0.96\", \"skuMultiCurrencyCalPrice\":\"0.96\", \"skuMultiCurrencyDisplayPrice\":\"0.96\", \"costPrice\":\"5.5\", \"freeSkuPrice\":\"1.16\"}}, {\"skuAttr\":\"3216:32163\", \"skuPropIds\":\"32163\", \"specId\":\"c9915469fda3cbd1d4a261f715388eab\", \"skuId\":\"3201894141573\", \"fianlWeight\":\"0.02\",\"volumeWeight\":\"0.02\", \"wholesalePrice\":\"[2-119 $ 5.50, ≥120 $ 5.00]\", \"skuVal\":{\"actSkuCalPrice\":\"0.96\", \"actSkuMultiCurrencyCalPrice\":\"0.96\", \"actSkuMultiCurrencyDisplayPrice\":\"0.96\", \"availQuantity\":6, \"inventory\":6, \"isActivity\":true, \"skuCalPrice\":\"0.96\", \"skuMultiCurrencyCalPrice\":\"0.96\", \"skuMultiCurrencyDisplayPrice\":\"0.96\", \"costPrice\":\"5.5\", \"freeSkuPrice\":\"1.16\"}}, {\"skuAttr\":\"3216:32162\", \"skuPropIds\":\"32162\", \"specId\":\"4872dc478000b9bf5120596432ec71fa\", \"skuId\":\"3201894141572\", \"fianlWeight\":\"0.02\",\"volumeWeight\":\"0.02\", \"wholesalePrice\":\"[2-119 $ 5.50, ≥120 $ 5.00]\", \"skuVal\":{\"actSkuCalPrice\":\"0.96\", \"actSkuMultiCurrencyCalPrice\":\"0.96\", \"actSkuMultiCurrencyDisplayPrice\":\"0.96\", \"availQuantity\":248, \"inventory\":248, \"isActivity\":true, \"skuCalPrice\":\"0.96\", \"skuMultiCurrencyCalPrice\":\"0.96\", \"skuMultiCurrencyDisplayPrice\":\"0.96\", \"costPrice\":\"5.5\", \"freeSkuPrice\":\"1.16\"}}]");
         return goods;
+    }
+    @Test
+    public void deleteProduct() throws Exception {
+        String contentAsString = mockMvc.perform(post("/shopify/delete")
+                .param("productId", "601946341249")
+                .param("shopName", "importxtest")
+        ).andExpect(status().isOk()).andDo(print()).andReturn()
+                .getResponse().getContentAsString();
+        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
+        Assert.assertEquals(200,result.getCode());
+
     }
 }

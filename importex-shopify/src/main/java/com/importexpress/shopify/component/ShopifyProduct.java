@@ -29,10 +29,12 @@ public class ShopifyProduct {
         Product product = new Product();
         product.setTitle(goods.getName());
         product.setPublished(goods.isPublished());
-        String info_ori = info(goods.getInfoHtml());
-        StringBuilder details = details(goods.getInfo());
-        details.append(info_ori);
-        product.setBody_html(details.toString());
+        if(goods.isBodyHtml()){
+            String info_ori = info(goods.getInfoHtml());
+            StringBuilder details = details(goods.getInfo());
+            details.append(info_ori);
+            product.setBody_html(details.toString());
+        }
 
         product.setVendor(goods.getVendor());
         String category = productType(goods.getCategory());

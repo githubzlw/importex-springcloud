@@ -18,6 +18,4 @@ public class ProductWraper {
     private Product product;
     @ApiModelProperty(value ="是否发布过",required = true)
     private boolean push=false;
-
-
 }

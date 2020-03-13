@@ -133,6 +133,7 @@ public class ShopifyProductController {
             @ApiParam(name="ids",value="产品id数组",required=true) @RequestParam String ids,
             @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
             @ApiParam(name="published",value="发布状态,1-发布 0-预发布",required=true) @RequestParam String published,
+            @ApiParam(name="bodyHtml",value="详情状态,1-有 0-无",required=true) @RequestParam String bodyHtml,
             @ApiParam(name="shopName",value="shopify店铺",required=true) @RequestParam String shopName) {
         if (ids == null) {
             return CommonResult.failed("ids is empty");
@@ -147,7 +148,8 @@ public class ShopifyProductController {
         int intSite = StrUtils.isNum(site) ? Integer.parseInt(site) : 1;
         try {
             List<ProductWraper> productWrapers =
-                    shopifyProductService.onlineProducts(shopName,idArray,intSite,"1".equalsIgnoreCase(published));
+                    shopifyProductService.onlineProducts(shopName,idArray,intSite,
+                            "1".equalsIgnoreCase(published),"1".equalsIgnoreCase(bodyHtml));
             if(productWrapers == null || productWrapers.isEmpty()){
                 return CommonResult.failed("add shopify product failed");
             }
@@ -156,6 +158,34 @@ public class ShopifyProductController {
             log.error("add product", e);
             return CommonResult.failed(e.getMessage());
         }
+    }
+    /**
+     * 下架
+     *
+     * @param shopName
+     * @param productId
+     */
+    @PostMapping("/delete")
+    @ApiOperation("下架商品")
+    public CommonResult deleteProduct(
+            @ApiParam(name="shopName",value="店铺名称",required=true) @RequestParam String shopName,
+            @ApiParam(name="productId",value="产品id",required=true) @RequestParam String productId) {
+        if (StringUtils.isBlank(shopName)) {
+            return CommonResult.failed("shopname is null");
+        }
+        if (StringUtils.isBlank(productId)) {
+            return CommonResult.failed("product is null");
+        }
+        try {
+            int delete = shopifyProductService.delete(shopName, productId);
+            if(delete < 1){
+                return CommonResult.failed("delete shopify product failed");
+            }
+        } catch (Exception e) {
+            log.error("delete product", e);
+            return CommonResult.failed(e.getMessage());
+        }
+        return CommonResult.success(1);
     }
 
 }
