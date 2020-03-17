@@ -245,6 +245,9 @@ public class CartServiceImpl implements CartService {
             Assert.isTrue(weiAndPri != null, "weiAndPri is null.pid=" + product.getPid());
             cartItem.setWei(weiAndPri.getLeft());
             cartItem.setPri(weiAndPri.getRight());
+        }else{
+            //单个重量
+            cartItem.setWei(Float.valueOf(product.getFinal_weight()));
         }
     }
 
