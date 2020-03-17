@@ -8,7 +8,7 @@ import com.importexpress.ali1688.model.AliExpressItem;
 import com.importexpress.ali1688.model.ItemResultPage;
 import com.importexpress.ali1688.service.AliExpressCacheService;
 import com.importexpress.ali1688.service.AliExpressService;
-import com.importexpress.ali1688.util.ConfigExpress;
+import com.importexpress.ali1688.util.Config;
 import com.importexpress.ali1688.util.InvalidKeyWord;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.exception.BizErrorCodeEnum;
@@ -42,7 +42,7 @@ public class AliExpressServiceImpl implements AliExpressService {
     private final AliExpressCacheService cacheService;
     private static final String REDIS_CALL_COUNT = "aliexpress:call:count";
     private static final String YYYYMMDD = "yyyyMMdd";
-    private final ConfigExpress config;
+    private final Config config;
 
     /**
      * 获取商品详情
@@ -50,7 +50,7 @@ public class AliExpressServiceImpl implements AliExpressService {
     private final static String URL_ITEM_SEARCH = "https://api.onebound.cn/aliexpress/api_call.php?key=%s&secret=%s&q=%s&api_name=item_search&lang=en&page=%s";// &sort=_sale
 
     @Autowired
-    public AliExpressServiceImpl(StringRedisTemplate redisTemplate, AliExpressCacheService cacheService, ConfigExpress config) {
+    public AliExpressServiceImpl(StringRedisTemplate redisTemplate, AliExpressCacheService cacheService, Config config) {
         this.redisTemplate = redisTemplate;
         this.cacheService = cacheService;
         this.config = config;
