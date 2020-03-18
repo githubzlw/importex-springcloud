@@ -75,7 +75,7 @@ public class SearchServiceImpl implements SearchService {
         List<SearchWordWrap> cList = (List<SearchWordWrap>) application.getAttribute("recommendedWords");
         List<SearchWordWrap> list = Lists.newArrayList();
         try {
-            FSearchTool tool = new FSearchTool(cList, "key_word", "path");
+            FSearchTool tool = new FSearchTool(cList, "keyWord", "path");
             List<Object> listWord = tool.searchTasks(keyword);
             if (listWord == null || listWord.isEmpty()) {
                 return list;
