@@ -234,7 +234,12 @@ public class CartServiceImpl implements CartService {
                 }
                 //fill type
                 beginIndex = cleanStr.indexOf(str1);
-                sb.append(cleanStr, beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex)).append("@");
+                int endPosi=cleanStr.indexOf(',', beginIndex);
+                if(endPosi == -1){
+                    //后面没有内容时候
+                    endPosi = cleanStr.length();
+                }
+                sb.append(cleanStr, beginIndex + str1.length(), endPosi).append("@");
             }
         }
         //设置规格
