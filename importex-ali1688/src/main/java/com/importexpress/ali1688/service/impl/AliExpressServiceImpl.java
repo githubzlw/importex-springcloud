@@ -47,7 +47,7 @@ public class AliExpressServiceImpl implements AliExpressService {
     /**
      * 获取商品详情
      */
-    private final static String URL_ITEM_SEARCH = "https://api.onebound.cn/aliexpress/api_call.php?key=%s&secret=%s&q=%s&api_name=item_search&lang=en&page=%s";// &sort=_sale
+    private final static String URL_ITEM_SEARCH = "https://api.onebound.cn/aliexpress/api_call.php?key=%s&secret=%s&q=%s&api_name=item_search&lang=en&page=%s&sort=_sale";// &sort=_sale
 
     @Autowired
     public AliExpressServiceImpl(StringRedisTemplate redisTemplate, AliExpressCacheService cacheService, Config config) {
