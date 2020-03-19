@@ -26,7 +26,7 @@ public interface AttributeService {
 	 * @param param 搜索参数
 	 * @return
 	 */
-	List<Attribute> selectedAttributes(SearchParam param);
+	AttributeWrap selectedAttributes(SearchParam param);
 
 	/**数据表读取属性列表
 	 * @return

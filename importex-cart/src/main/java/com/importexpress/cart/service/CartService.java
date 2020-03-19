@@ -14,7 +14,7 @@ public interface CartService {
     public static final int SUCCESS = 1;
 
     /**
-     *  0:失败
+     * 0:失败
      */
     public static final int FAILUT = 0;
 
@@ -62,6 +62,19 @@ public interface CartService {
     int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked);
 
     /**
+     * 更新
+     *
+     * @param site
+     * @param userId
+     * @param itemId
+     * @param num
+     * @param checked
+     * @param memo
+     * @return 1:成功 0:失败
+     */
+    int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked,String memo);
+
+    /**
      * 删除单个
      *
      * @param site
@@ -92,6 +105,7 @@ public interface CartService {
 
     /**
      * 清空购物车
+     *
      * @param site
      * @param userId
      * @return
@@ -100,6 +114,7 @@ public interface CartService {
 
     /**
      * 购物车key重命名
+     *
      * @param site
      * @param oldId
      * @param newId
@@ -109,6 +124,7 @@ public interface CartService {
 
     /**
      * 为游客生成ID
+     *
      * @param site
      * @return
      */
@@ -116,10 +132,20 @@ public interface CartService {
 
     /**
      * 合并游客购物车到用户购物车
+     *
      * @param site
-     * @param userId  用户id
+     * @param userId    用户id
      * @param touristId 游客id
      * @return 1:成功 0:失败
      */
     int mergeCarts(SiteEnum site, long userId, long touristId);
+
+    /**
+     * 刷新购物车（下架，价格，重量，图片）
+     *
+     * @param site
+     * @param userId
+     * @return 1:刷新成功 0:刷新失败
+     */
+    int refreshCart(SiteEnum site, long userId);
 }

@@ -23,4 +23,7 @@ public class Config {
     @Value("${ali1688api.dates.shop}")
     public String datesShop;
 
+    @Value("${ali1688api.shop.minSales}")
+    public int minSales;
+
 }

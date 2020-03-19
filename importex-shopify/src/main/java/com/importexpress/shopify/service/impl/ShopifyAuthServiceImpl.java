@@ -35,6 +35,11 @@ public class ShopifyAuthServiceImpl implements ShopifyAuthService {
     }
 
 
+    @Override
+    public String getShopifyName(int userId) {
+        return shopifyAuthMapper.getShopifyName(userId);
+    }
+
     /**
      * 取得店铺授权的token
      *
@@ -97,8 +102,7 @@ public class ShopifyAuthServiceImpl implements ShopifyAuthService {
     public String getShopifyToken(String shopName) {
 
         List<ShopifyAuth> shopifyAuths = shopifyAuthMapper.selectByShopName(shopName);
-        Assert.isTrue(shopifyAuths!=null,"select from table 's data is null");
-        Assert.isTrue(shopifyAuths.size()==1,"select from table 's data > 1");
+        Assert.isTrue(shopifyAuths.size()==1,"select from table(shopify_auth) 's data != 1");
         return shopifyAuths.get(0).getAccessToken();
     }
 

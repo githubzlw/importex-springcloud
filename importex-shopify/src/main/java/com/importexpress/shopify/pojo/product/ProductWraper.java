@@ -3,6 +3,7 @@
  */
 package com.importexpress.shopify.pojo.product;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -13,8 +14,8 @@ import lombok.Data;
  */
 @Data
 public class ProductWraper {
-
+    @ApiModelProperty(value ="商品信息",required = true)
     private Product product;
-
-
+    @ApiModelProperty(value ="是否发布过",required = true)
+    private boolean push=false;
 }

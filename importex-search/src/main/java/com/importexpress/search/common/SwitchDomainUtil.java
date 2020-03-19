@@ -95,4 +95,15 @@ public class SwitchDomainUtil {
         return keyword;
     }
 
+    public static SiteEnum getSiteEnum(int site) {
+        switch (site){
+            case 1:
+                return SiteEnum.IMPORT;
+            case 2:
+                return SiteEnum.KIDS;
+            case 4:
+                return SiteEnum.PETS;
+        }
+        return SiteEnum.IMPORT;
+    }
 }

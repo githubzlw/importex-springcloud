@@ -1,34 +1,35 @@
 package com.importexpress.shopify.exception;
 
+import lombok.Data;
+
 /**
  * @author jack.luo
  */
+@Data
 public class ShopifyException extends RuntimeException {
 
-    private String retCd;
-    private String msgDes;
+    private static final long serialVersionUID = -1864604160297181941L;
 
-    public ShopifyException() {
-        super();
+    private String code;
+    private String detailedMessage;
+
+    private ShopifyException() {
     }
 
-    public ShopifyException(String message) {
-        super(message);
-        msgDes = message;
+    public ShopifyException(final String detailedMessage) {
+        super(detailedMessage);
+        this.detailedMessage = detailedMessage;
     }
 
-    public ShopifyException(String retCd, String msgDes) {
-        super();
-        this.retCd = retCd;
-        this.msgDes = msgDes;
+    public ShopifyException(final String code, final String detailedMessage) {
+        super(detailedMessage);
+        this.code = code;
+        this.detailedMessage = detailedMessage;
     }
 
-    public String getRetCd() {
-        return retCd;
+    public ShopifyException(final Throwable t) {
+        super(t);
     }
 
-    public String getMsgDes() {
-        return msgDes;
-    }
 
 }

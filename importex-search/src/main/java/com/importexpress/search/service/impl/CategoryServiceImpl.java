@@ -2,6 +2,8 @@ package com.importexpress.search.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.importexpress.comm.util.StrUtils;
+import com.importexpress.search.common.SwitchDomainUtil;
 import com.importexpress.search.mapper.CategoryMapper;
 import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.CategoryWrap;
@@ -50,9 +52,58 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		//子类类别集合
 		List<CategoryWrap> dealCategoryChildren = dealCategoryChildren(categorys,selectedList);
 
+		if(selectedList.isEmpty()){
+			return dealCategoryChildren;
+		}
+
+		//新品日志列表
+		newArrivalDate(param,dealCategoryChildren);
+
 		return dealCategoryChildren;
 	}
 
+	/**设置新品
+	 * @param param
+	 * @param dealCategoryChildren
+	 */
+	private void newArrivalDate(SearchParam param, List<CategoryWrap> dealCategoryChildren){
+		//新品日期
+		Map<String,List<CategoryWrap>> dateMap = SwitchDomainUtil.getSiteEnum(param.getSite()).dateMap(application);
+		//日期
+		for(int i=0;i<dealCategoryChildren.size();i++){
+			if(i != 0 || dealCategoryChildren.get(i).getLevel() != 1){
+				continue;
+			}
+			CategoryWrap categoryWrap = dealCategoryChildren.get(0);
+			List<CategoryWrap> lstDate = dateMap.get(categoryWrap.getId());
+			if(lstDate != null && !lstDate.isEmpty()){
+				CategoryWrap wrap = new CategoryWrap();
+				wrap.setSelected(param.getCollection() == 8 ? 1 : 0);
+				wrap.setName("New Arrivals");
+				wrap.setUrl("keyword=&srt=default&collection=8&catid="+categoryWrap.getId());
+				wrap.setChilden(setDateSelected(param,lstDate));
+				List<CategoryWrap> newChilden = Lists.newArrayList();
+				newChilden.add(wrap);
+				newChilden.addAll(categoryWrap.getChilden());
+				categoryWrap.setChilden(newChilden);
+			}
+		}
+	}
+
+	/**所选日期设置选中模式
+	 * @param param
+	 * @param lstDate
+	 * @return
+	 */
+	private List<CategoryWrap> setDateSelected(SearchParam param,List<CategoryWrap> lstDate){
+		if(StringUtils.isBlank(param.getNewArrivalDate())){
+			return lstDate;
+		}
+		lstDate.stream().forEach(l->{
+			l.setSelected(l.getName().equalsIgnoreCase(param.getNewArrivalDate()) ? 1 : 0);
+		});
+		return lstDate;
+	}
 
 	/**
 	 * 已选择类别的类别树
@@ -78,16 +129,24 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 	private List<CategoryWrap> dealCategoryChildren(List<CategoryWrap> categorys, List<String> selectedCatid){
 		Map<String,List<CategoryWrap>> category_map = Maps.newHashMap();
 		List<CategoryWrap> firstLevelCategory  = Lists.newArrayList();
+		CategoryWrap selected = null;
 		for(CategoryWrap c : categorys) {
-			c.setSelected(selectedCatid.contains(c.getId()));
+			c.setSelected(selectedCatid.contains(c.getId()) ? 1 :0);
 			String parentCategory = c.getParentCategory();
 			List<CategoryWrap> childrenList = category_map.get(parentCategory);
 			childrenList = childrenList == null ? Lists.newArrayList() : childrenList;
 			childrenList.add(c);
 			category_map.put(parentCategory, childrenList);
 			if("0".equals(parentCategory)) {
-				firstLevelCategory.add(c);
+				if(selectedCatid.contains(c.getId())){
+					selected = c;
+				}else{
+					firstLevelCategory.add(c);
+				}
 			}
+		}
+		if(selected != null){
+			firstLevelCategory.add(0,selected);
 		}
 		List<CategoryWrap> dealCategory = dealCategory(category_map, firstLevelCategory);
 
@@ -103,7 +162,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 	private List<CategoryWrap> dealCategory(Map<String,List<CategoryWrap>> category_map,
 											List<CategoryWrap> categorys){
 		if(categorys == null) {
-			return null;
+			return Lists.newArrayList();
 		}
 		for(CategoryWrap c : categorys) {
 			List<CategoryWrap> childrenList = category_map.get(c.getId());
@@ -154,9 +213,39 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		return sb_href.toString();
 	}
 
-
 	@Override
 	public List<SearchWordWrap> getRecommendedWords() {
 		return categoryMapper.getRecommendedWords();
+	}
+
+	@Override
+	public String productsCate(List<CategoryWrap> rootTree){
+		if (rootTree == null || rootTree.isEmpty()) {
+			return "";
+		}
+		StringBuilder productsCate = new StringBuilder();
+		productsCate.append("<span class='add_seemore'>See more products in category:</span>");
+		boolean  addCategory = false;
+
+		for (int i = 0; i < rootTree.size() && i <= 4; i++) {
+			String category=rootTree.get(i).getName().toLowerCase().replace("'","")
+					.replaceAll("\\s+","");
+			if("childrensclothing".equals(category)) {
+				productsCate.append("<a class=\"searcwor\"  href=\"").append("/apa/clothing.html")
+						.append("\">").append("wholesale clothing").append("</a>");
+			}else{
+				productsCate.append("<a class=\"searcwor\"  href=\"/goodslist?catid=")
+						.append(rootTree.get(i).getId()).append("\">")
+						.append(rootTree.get(i).getName()).append("</a>");
+
+			}
+			addCategory = "mensclothing".equals(category) || "womensclothing".equals(category) ? true : addCategory;
+		}
+		if(addCategory){
+			productsCate.append("<a class=\"searcwor\" style='color:deeppink'  href=\"")
+					.append("/apa/clothing.html").append("\">")
+					.append("wholesale clothing").append("</a>");
+		}
+		return productsCate.toString();
 	}
 }

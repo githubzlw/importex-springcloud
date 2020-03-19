@@ -2,7 +2,6 @@ package com.importexpress.shopify.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.importexpress.shopify.exception.ShopifyException;
-import com.importexpress.shopify.util.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -14,6 +13,8 @@ import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +75,7 @@ public class ShopifyUtil {
      */
     public String postForObject(String uri, String token, String json) {
 
+        log.info("uri:[{}] token:[{}]  json:[{}]",uri,token,json);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("X-Shopify-Access-Token", token);
@@ -83,9 +85,29 @@ public class ShopifyUtil {
             return restTemplate.postForObject(uri, requestEntity, String.class);
         } catch (Exception e) {
             log.error("postForObject",e);
-            throw new ShopifyException("1002", "postForObject error");
+            throw e;
         }
 
+    }
+    /**
+     * deleteForObject
+     * @param uri
+     * @return
+     */
+    public int deleteForObject(String uri) {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        try {
+            BasicAuthorizationInterceptor basicAuthorizationInterceptor =
+                    new BasicAuthorizationInterceptor(config.SHOPIFY_API_KEY, config.SHOPIFY_API_KEY_SECRET);
+            restTemplate.getInterceptors().add(basicAuthorizationInterceptor);
+            restTemplate.delete(uri);
+            return 1;
+        } catch (Exception e) {
+            log.error("postForObject",e);
+            throw e;
+        }
     }
 
     /**
@@ -113,14 +135,14 @@ public class ShopifyUtil {
 
 
     /**
-     * getForObjectByBAI
+     * getObject
      * @param uri
      * @return
      */
-    public String getForObjectByBAI(String uri) {
+    public String getObject(String uri) {
 
         BasicAuthorizationInterceptor basicAuthorizationInterceptor =
-                new BasicAuthorizationInterceptor("ef75308bcd9586383870056f3d9823e6", "d1b1e87b24bc76bc0e485ee5a04aeede");
+                new BasicAuthorizationInterceptor(config.SHOPIFY_API_KEY, config.SHOPIFY_API_KEY_SECRET);
 
         restTemplate.getInterceptors().add(basicAuthorizationInterceptor);
         HttpHeaders headers = new HttpHeaders();
@@ -132,15 +154,15 @@ public class ShopifyUtil {
     }
 
     /**
-     * postForObjectByBAI
+     * postObject
      * @param uri
      * @param json
      * @return
      */
-    public String postForObjectByBAI(String uri, String json) {
+    public String postObject(String uri, String json) {
 
         BasicAuthorizationInterceptor basicAuthorizationInterceptor =
-                new BasicAuthorizationInterceptor("ef75308bcd9586383870056f3d9823e6", "d1b1e87b24bc76bc0e485ee5a04aeede");
+                new BasicAuthorizationInterceptor(config.SHOPIFY_API_KEY, config.SHOPIFY_API_KEY_SECRET);
 
         restTemplate.getInterceptors().add(basicAuthorizationInterceptor);
         HttpHeaders headers = new HttpHeaders();
@@ -150,7 +172,6 @@ public class ShopifyUtil {
         String result = restTemplate.postForObject(uri, requestEntity, String.class);
         log.info("result:[{}]", result);
         return result;
-
     }
 
     /**

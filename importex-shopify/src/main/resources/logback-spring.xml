@@ -104,6 +104,13 @@
             <appender-ref ref="errorAppender"/>
         </root>
     </springProfile>
+    <springProfile name="prod">
+        <root level="info">
+            <appender-ref ref="infoAppender"/>
+            <appender-ref ref="warnAppender"/>
+            <appender-ref ref="errorAppender"/>
+        </root>
+    </springProfile>
     <springProfile name="online">
         <root level="info">
             <appender-ref ref="infoAppender"/>

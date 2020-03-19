@@ -11,8 +11,4 @@ public interface LandingPageTriggerKeyService {
      */
     LimitKey getTriggerKey(String key, String adgroupid);
 
-    /**
-     * 重新获取数据
-     */
-    List<LimitKey> refleshTriggerKey();
 }

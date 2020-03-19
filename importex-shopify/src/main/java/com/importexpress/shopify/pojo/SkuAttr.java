@@ -12,5 +12,5 @@ public class SkuAttr {
     private String specId;
     private String skuId;
     private double fianlWeight;
-    private List<String> wholesalePrice;
+    /*private List<String> wholesalePrice;*/
 }

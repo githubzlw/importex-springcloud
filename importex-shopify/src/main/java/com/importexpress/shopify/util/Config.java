@@ -12,6 +12,15 @@ public class Config {
     @Value("${shopify.client_secret}")
     public String SHOPIFY_CLIENT_SECRET;
 
+    @Value("${shopify.api_key}")
+    public String SHOPIFY_API_KEY;
+
+    @Value("${shopify.api_key_secret}")
+    public String SHOPIFY_API_KEY_SECRET;
+
+    @Value("${shopify.api_key_shopname}")
+    public String SHOPIFY_API_KEY_SHOPNAME;
+
     @Value("${shopify.scope}")
     public String SHOPIFY_SCOPE;
 
@@ -20,6 +29,8 @@ public class Config {
 
     @Value("${shopify.uri_products}")
     public String SHOPIFY_URI_PRODUCTS;
+    @Value("${shopify.uri_delete}")
+    public String SHOPIFY_URI_DELETE;
 
     @Value("${shopify.uri_orders}")
     public String SHOPIFY_URI_ORDERS;

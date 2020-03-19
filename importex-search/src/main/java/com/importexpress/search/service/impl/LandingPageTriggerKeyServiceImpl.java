@@ -32,9 +32,4 @@ public class LandingPageTriggerKeyServiceImpl  implements LandingPageTriggerKeyS
         }
         return result;
     }
-    @Override
-    public List<LimitKey> refleshTriggerKey() {
-        triggerKeyList = landingPageTriggerKeyMapper.getTriggerKeyList();
-        return triggerKeyList;
-    }
 }

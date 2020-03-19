@@ -23,6 +23,7 @@ import org.springframework.util.Assert;
 import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 
@@ -60,6 +61,7 @@ public class CartServiceImpl implements CartService {
                     cartItem.setNum(cartItem.getNum() + num);
                     cartItem.setUt(Instant.now().toEpochMilli());
                     redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
+                    setTouristExpire(userId, userCartKey);
                 } else {
                     return FAILUT;
                 }
@@ -79,10 +81,24 @@ public class CartServiceImpl implements CartService {
                 }
             }
             redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
+            setTouristExpire(userId, userCartKey);
             return SUCCESS;
-        } catch (Exception e) {
-            log.error("addCartItem", e);
+        } catch(Exception iae){
+            log.error("addCartItem", iae);
             return FAILUT;
+        }
+    }
+
+    /**
+     * 游客的情况下，设置购物车有效期(14 days)
+     * @param userId
+     * @param userCartKey
+     */
+    private void setTouristExpire(long userId, String userCartKey) {
+        String strUserid = String.valueOf(userId);
+        if(StringUtils.length(strUserid)==12){
+            //游客情况下有效期为14天
+            redisTemplate.expire(userCartKey, 14, TimeUnit.DAYS);
         }
     }
 
@@ -146,6 +162,18 @@ public class CartServiceImpl implements CartService {
             cartItem.setSid2(NumberUtils.toLong(split[2]));
         }
         cartItem.setChk(1);
+        if ("0".equals(product.getValid())) {
+            //下架商品
+            cartItem.setSt(0);
+        }
+        //美加限制区分(1可搜索，0不可搜索)
+        cartItem.setSl(product.getSalable());
+        //add field
+        cartItem.setSu(product.getSellunit());
+        cartItem.setRp(product.getRemotpath());
+        cartItem.setMo(product.getMorder());
+        cartItem.setRpe(product.getRange_price());
+        cartItem.setFp(product.getFeeprice());
         long now = Instant.now().toEpochMilli();
         cartItem.setCt(now);
         cartItem.setUt(now);
@@ -187,6 +215,10 @@ public class CartServiceImpl implements CartService {
         StringBuilder sb = new StringBuilder();
         ImmutableList<String> lst = ImmutableList.copyOf(Splitter.on("],").split(enType));
         for (String item : lst) {
+            if("[]".equals(item)){
+                //无规格情况下，用主图替代
+                cartItem.setImg(product.getCustom_main_image());
+            }
             String cleanStr = CharMatcher.anyOf(str3).removeFrom(item).trim();
             if (StringUtils.contains(cleanStr, str4 + cartItem.getSid1() + ",")
                     || StringUtils.contains(cleanStr, str4 + cartItem.getSid2() + ",")) {
@@ -196,12 +228,16 @@ public class CartServiceImpl implements CartService {
                 if (StringUtils.isNotEmpty(strImg)) {
                     //fill img path
                     cartItem.setImg(strImg);
+                }else{
+                    //图片为空的情况下用主图替代
+                    cartItem.setImg(product.getCustom_main_image());
                 }
                 //fill type
                 beginIndex = cleanStr.indexOf(str1);
-                sb.append(cleanStr, beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex)).append(" ");
+                sb.append(cleanStr, beginIndex + str1.length(), cleanStr.indexOf(',', beginIndex)).append("@");
             }
         }
+        //设置规格
         cartItem.setTn(sb.toString().trim());
 
         if (str3.equals(product.getWprice())) {
@@ -209,6 +245,9 @@ public class CartServiceImpl implements CartService {
             Assert.isTrue(weiAndPri != null, "weiAndPri is null.pid=" + product.getPid());
             cartItem.setWei(weiAndPri.getLeft());
             cartItem.setPri(weiAndPri.getRight());
+        }else{
+            //单个重量
+            cartItem.setWei(Float.valueOf(product.getFinal_weight()));
         }
     }
 
@@ -228,9 +267,8 @@ public class CartServiceImpl implements CartService {
         for (Map<String, String> map : maps) {
             for (String key : map.keySet()) {
                 if ("skuPropIds".equals(key)) {
-                    if (cartItem.getItemId().equals(cartItem.getPid() + ":" + map.get(key))) {
+                    if (cartItem.getItemId().equals(cartItem.getPid() + ":" + map.get(key).replace(',', ':'))) {
                         //找到规格
-
                         //重新设置重量
                         Float wei = NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
                         //重新设置价格
@@ -266,11 +304,17 @@ public class CartServiceImpl implements CartService {
     @Override
     public int updateCartItem(SiteEnum site, long userId, String itemId, int num) {
 
-        return updateCartItem(site, userId, itemId, num, -1);
+        return updateCartItem(site, userId, itemId, num, -1,null);
     }
 
     @Override
     public int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked) {
+
+        return updateCartItem(site, userId, itemId, num, checked,null);
+    }
+
+    @Override
+    public int updateCartItem(SiteEnum site, long userId, String itemId, int num, int checked,String memo) {
         try {
             checkItemId(itemId);
 
@@ -285,8 +329,30 @@ public class CartServiceImpl implements CartService {
             if (checked != -1) {
                 cartItem.setChk(checked);
             }
+            cartItem.setMemo(memo);
             cartItem.setUt(Instant.now().toEpochMilli());
             redisTemplate.opsForHash().put(userCartKey, itemId, new Gson().toJson(cartItem));
+            return SUCCESS;
+        } catch (Exception e) {
+            log.error("updateCartItem", e);
+            return FAILUT;
+        }
+    }
+
+    /**
+     * 更新购物车
+     *
+     * @param site
+     * @param userId
+     * @param cartItem
+     * @return
+     */
+    private int updateCartItem(SiteEnum site, long userId, CartItem cartItem) {
+        try {
+
+            String userCartKey = getCartKey(site, userId);
+            cartItem.setUt(Instant.now().toEpochMilli());
+            redisTemplate.opsForHash().put(userCartKey, cartItem.getItemId(), new Gson().toJson(cartItem));
             return SUCCESS;
         } catch (Exception e) {
             log.error("updateCartItem", e);
@@ -367,7 +433,7 @@ public class CartServiceImpl implements CartService {
         try {
             String newKey = getCartKey(site, newId);
             String oldKey = getCartKey(site, oldId);
-            redisTemplate.rename(oldKey,newKey);
+            redisTemplate.rename(oldKey, newKey);
             return SUCCESS;
         } catch (Exception e) {
             log.error("delChecked", e);
@@ -378,10 +444,11 @@ public class CartServiceImpl implements CartService {
 
     /**
      * 为游客生成ID
-     *
+     * <p>
      * Id规则： 一共12位，前1位为9，接着3位为网站code，最后8位为递增位
      * 例如：
-     *   kids网站 900200000001
+     * kids网站 900200000001
+     *
      * @param site
      * @return
      */
@@ -402,7 +469,7 @@ public class CartServiceImpl implements CartService {
     public int mergeCarts(SiteEnum site, long userId, long touristId) {
         try {
             List<CartItem> cartItemsTourist = this.getCartItems(site, touristId);
-            for(CartItem item:cartItemsTourist){
+            for (CartItem item : cartItemsTourist) {
                 this.addCartItem(site, userId, item.getItemId(), item.getNum());
             }
             //删除游客购物车key
@@ -412,5 +479,37 @@ public class CartServiceImpl implements CartService {
             log.error("mergeCarts", e);
             return FAILUT;
         }
+    }
+
+    /**
+     * 刷新购物车（下架，价格，重量，图片）
+     *
+     * @param site
+     * @param userId
+     * @return 1:刷新成功 0:刷新失败
+     */
+    @Override
+    public int refreshCart(SiteEnum site, long userId) {
+        int result = 0;
+        Cart cart = this.getCart(site, userId);
+        for (CartItem cartItem : cart.getItems()) {
+
+            Product product = productServiceFeign.findProduct(cartItem.getPid());
+
+            //刷新图片，价格，重量
+            fillOthersInfoToProduct(product, cartItem);
+
+            if ("0".equals(product.getValid())) {
+                //下架商品
+                cartItem.setSt(0);
+                cartItem.setChk(0);
+                if (SUCCESS == this.updateCartItem(site, userId, cartItem)) {
+                    result = 1;
+                } else {
+                    result = 0;
+                }
+            }
+        }
+        return result;
     }
 }

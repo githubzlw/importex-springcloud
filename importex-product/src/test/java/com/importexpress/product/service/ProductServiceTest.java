@@ -1,6 +1,5 @@
 package com.importexpress.product.service;
 
-import com.google.gson.Gson;
 import com.importexpress.product.mongo.MongoProduct;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
@@ -46,9 +45,8 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void test() {
-        String str = "[1003015602/493664063_1751210702.60x60.jpg]";
-        List<String> list = new Gson().fromJson(str, List.class);
-        System.out.println(list.toString());
+    public void updateProduct() {
+        Long pid = 530333452003L;
+        Assert.assertEquals(1, productService.updateProduct(pid, 0));
     }
 }

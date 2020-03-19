@@ -81,6 +81,7 @@ public class VerifySearchParameter {
         param.setFactPvid(false);
         param.setBoutique(false);
         param.setOrder(false);
+        param.setSynonym(false);
     }
 
     /**预处理关键词+类别
@@ -230,9 +231,6 @@ public class VerifySearchParameter {
      */
     private void page( SearchParam param){
         param.setPage(Math.max(param.getPage(),1));
-        if(param.isMobile()){
-            param.setPageSize(30);
-        }
     }
 
     /**检查用户是否有权限搜索

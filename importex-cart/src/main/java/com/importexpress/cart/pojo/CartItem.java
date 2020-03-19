@@ -48,7 +48,7 @@ public class CartItem {
     private String wpri;
 
     /**
-     * 规格
+     * 规格（多规格情况下用@分割）
      */
     private String tn;
 
@@ -77,6 +77,67 @@ public class CartItem {
      * 图片路径
      */
     private String img;
+
+
+    /**
+     * sellunit
+     */
+    private String su;
+
+    /**
+     * remotpath
+     */
+    private String rp;
+
+    /**
+     * morder
+     */
+    private String mo;
+
+    /**
+     * range_price
+     */
+    private String rpe;
+
+    /**
+     * feeprice
+     */
+    private String fp;
+
+    /**
+     * 美加限制区分(1可搜索，0不可搜索)
+     */
+    private String sl;
+
+    /**
+     * 备注
+     */
+    private String memo;
+
+    /**
+     * 备用1
+     */
+    private String bk1;
+
+    /**
+     * 备用2
+     */
+    private String bk2;
+
+    /**
+     * 备用3
+     */
+    private String bk3;
+
+    /**
+     * 备用4
+     */
+    private String bk4;
+
+    /**
+     * 备用5
+     */
+    private String bk5;
 
     /**
      * create timestamp

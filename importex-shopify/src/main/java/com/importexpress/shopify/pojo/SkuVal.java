@@ -14,4 +14,6 @@ public class SkuVal {
 	private String skuMultiCurrencyCalPrice;
 	private String skuMultiCurrencyDisplayPrice;
 	private String freeSkuPrice;
+	private String actSkuPrice;
+	private String skuPrice;
 }

@@ -22,4 +22,10 @@ public class ShopifyAuthServiceTest {
         int save = shopifyAuthService.saveShopifyAuth(shopName,token,scope);
         System.err.println(save);
     }
+    @Test
+    public void getShopifyToken(){
+        String shopName = "importxtest";
+        String save = shopifyAuthService.getShopifyToken(shopName);
+        System.err.println(save);
+    }
 }

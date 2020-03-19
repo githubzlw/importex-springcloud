@@ -1,14 +1,16 @@
 package com.importexpress.search.common;
 
 import com.google.common.collect.Maps;
+import com.importexpress.comm.util.StrUtils;
+import com.importexpress.search.pojo.CategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.service.DCService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
+
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -21,7 +23,7 @@ public class ProductSearch {
      * @return
      */
     public Map<String,String> searchNavigation(SearchParam param){
-        Map<String,String> resultMap = new HashMap<>();
+        Map<String,String> resultMap = Maps.newHashMap();
         StringBuilder sb = new StringBuilder();
         String  searchStr = "", naStr = "";
         Map<String,String> result = Maps.newHashMap();

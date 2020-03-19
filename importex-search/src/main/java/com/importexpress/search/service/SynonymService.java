@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * 同义词
+ */
 public interface SynonymService {
     /**
      * 初始化同义词列表
