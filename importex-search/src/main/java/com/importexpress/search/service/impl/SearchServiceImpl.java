@@ -499,7 +499,9 @@ public class SearchServiceImpl implements SearchService {
             searchGoods.setWholesalePrice(modefideWholesalePrice);
         }
         price = modefideWholesalePrice.get(modefideWholesalePrice.size() - 1).getPrice();
-        price = price + "-" + modefideWholesalePrice.get(0).getPrice();
+        if(modefideWholesalePrice.size() > 1){
+            price = price + "-" + modefideWholesalePrice.get(0).getPrice();
+        }
         searchGoods.setPrice(price);
         return true;
     }
