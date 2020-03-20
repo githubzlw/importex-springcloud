@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -70,6 +71,9 @@ public class AliExpressServiceImpl implements AliExpressService {
             Integer totalPage = totalNum / rsPageSize;
             if (totalNum % rsPageSize > 0) {
                 totalPage++;
+            }
+            if (aliExpressItems != null && aliExpressItems.size() > 0) {
+                aliExpressItems.sort(Comparator.comparing(AliExpressItem::getNum_iid));
             }
             ItemResultPage resultPage = new ItemResultPage(aliExpressItems, currPage, rsPageSize, totalPage, totalNum);
             return CommonResult.success(resultPage);
