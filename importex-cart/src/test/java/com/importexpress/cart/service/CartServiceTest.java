@@ -290,6 +290,36 @@ public class CartServiceTest {
                 (1, cartService.delCartItem(SiteEnum.E_PIPE, USER_ID, "567465400208:0"));
     }
 
+    @Test
+    public void cart13() {
+
+        cartService.delAllCartItem(SiteEnum.KIDS, USER_ID);
+        Assert.assertEquals
+                (1, cartService.addCartItem(SiteEnum.KIDS, USER_ID, "521127446329:32165:4502", 1));
+
+        Cart cart = cartService.getCart(SiteEnum.KIDS, USER_ID);
+        Assert.assertEquals(1,cart.getItems().size());
+        Assert.assertEquals("[1-2 $ 1.56, 3-29 $ 1.46, ≥30 $ 1.42]",cart.getItems().get(0).getFp());
+
+        cartService.delAllCartItem(SiteEnum.IMPORTX, USER_ID);
+        Assert.assertEquals
+                (1, cartService.addCartItem(SiteEnum.IMPORTX, USER_ID, "521127446329:32165:4502", 1));
+
+        cart = cartService.getCart(SiteEnum.IMPORTX, USER_ID);
+        Assert.assertEquals(1,cart.getItems().size());
+        Assert.assertEquals("[1-2 $ 1.56, 3-29 $ 1.46, ≥30 $ 1.42]",cart.getItems().get(0).getFp());
+
+
+        cartService.delAllCartItem(SiteEnum.PETS, USER_ID);
+        Assert.assertEquals
+                (1, cartService.addCartItem(SiteEnum.PETS, USER_ID, "521127446329:32165:4502", 1));
+
+        cart = cartService.getCart(SiteEnum.PETS, USER_ID);
+        Assert.assertEquals(1,cart.getItems().size());
+        Assert.assertEquals("[1-2 $ 1.70, 3-29 $ 1.58, ≥30 $ 1.46]",cart.getItems().get(0).getFp());
+
+    }
+
 
     @Test
     public void convert() {

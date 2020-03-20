@@ -70,8 +70,9 @@ public class CartServiceImpl implements CartService {
             //如果不存在，根据商品id取商品信息
             String[] split = itemId.split(":");
             Assert.isTrue(split.length >= 2, "The itemId invalid:" + itemId);
+            Assert.isTrue(StringUtils.isNotEmpty(split[0]), "The itemId invalid:" + itemId);
             Product product = productServiceFeign.findProduct(Long.parseLong(split[0]));
-            CartItem cartItem = product2CartItem(product, num, split);
+            CartItem cartItem = product2CartItem(site,product, num, split);
             //查找同pid商品做排序处理
             List<CartItem> lstCartItem = getCartItems(site, userId);
             for (CartItem item : lstCartItem) {
@@ -147,7 +148,7 @@ public class CartServiceImpl implements CartService {
      * @param split
      * @return
      */
-    private CartItem product2CartItem(Product product, long num, String[] split) {
+    private CartItem product2CartItem(SiteEnum site,Product product, long num, String[] split) {
 
         CartItem cartItem = new CartItem();
         cartItem.setPid(product.getPid());
@@ -172,13 +173,35 @@ public class CartServiceImpl implements CartService {
         cartItem.setSu(product.getSellunit());
         cartItem.setRp(product.getRemotpath());
         cartItem.setMo(product.getMorder());
-        cartItem.setRpe(product.getRange_price());
-        cartItem.setFp(product.getFeeprice());
+        changePrice(site, product, cartItem);
         long now = Instant.now().toEpochMilli();
         cartItem.setCt(now);
         cartItem.setUt(now);
         fillOthersInfoToProduct(product, cartItem);
         return cartItem;
+    }
+
+    /**
+     * 不同网站价格不一样
+     * @param site
+     * @param product
+     * @param cartItem
+     */
+    private void changePrice(SiteEnum site, Product product, CartItem cartItem) {
+
+        if(site == SiteEnum.KIDS || site == SiteEnum.IMPORTX){
+            //range_price
+            cartItem.setRpe(product.getRange_price_free_new());
+            //feeprice
+            cartItem.setFp(product.getFree_price_new());
+            //sku
+            cartItem.setSku(product.getSku_new());
+        }else{
+            //range_price
+            cartItem.setRpe(product.getRange_price());
+            //feeprice
+            cartItem.setFp(product.getFeeprice());
+        }
     }
 
     /**
@@ -503,6 +526,8 @@ public class CartServiceImpl implements CartService {
 
             //刷新图片，价格，重量
             fillOthersInfoToProduct(product, cartItem);
+            //改变价格
+            changePrice(site, product, cartItem);
 
             if ("0".equals(product.getValid())) {
                 //下架商品
