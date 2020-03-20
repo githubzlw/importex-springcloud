@@ -192,10 +192,17 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if (solrParams == null) {
             return null;
         }
+        StringBuilder fqs=new StringBuilder();
+        String fq = solrParams.get("fq");
+        fqs.append(fq).append(" AND "+getPriceField(param.getSite())+":[10 TO *]");
+        setFQ(fqs.toString(), solrParams);
+        String sort = solrParams.get("sort");
+        int num = (int)(Math.random()*100000);
+        setSort("rand_"+num+" desc,"+sort,solrParams);
         QueryResponse response = sendRequest(solrParams,httpSolrClient);
         //取商品列表
         if (response != null && response.getResults().size() <= 4) {
-            setFQ(getPriceField(param.getSite())+":[1 TO *] AND custom_valid:1", solrParams);
+            setFQ(fq, solrParams);
             response = sendRequest(solrParams, httpSolrClient);
         }
         return response;
