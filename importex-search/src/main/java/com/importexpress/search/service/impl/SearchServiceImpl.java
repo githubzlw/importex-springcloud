@@ -133,8 +133,8 @@ public class SearchServiceImpl implements SearchService {
         QueryResponse response = solrService.catidForGoods(param);
         if (response != null) {
             list = docToProduct(response.getResults(), param);
-            list = list.stream().filter(e -> StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
-                    .collect(Collectors.toList());
+            /*list = list.stream().filter(e -> StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
+                    .collect(Collectors.toList());*/
         }
         return list;
 
@@ -146,8 +146,8 @@ public class SearchServiceImpl implements SearchService {
         QueryResponse response = solrService.errorRecommend(param);
         if (response != null) {
             list = docToProduct(response.getResults(), param);
-            list = list.stream().filter(e -> StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
-                    .collect(Collectors.toList());
+           /* list = list.stream().filter(e -> StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
+                    .collect(Collectors.toList());*/
         }
         return list;
     }
