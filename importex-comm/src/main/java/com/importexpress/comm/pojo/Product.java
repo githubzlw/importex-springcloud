@@ -98,6 +98,9 @@ public class Product {
     private String _class;
     private String pvids_new;
     private int is_simplify;
+    private String free_price_new;
+    private String range_price_free_new;
+    private String sku_new;
     /**
      * step v1. @author: cjc @date：  16:45:46  产品表【promotion_flag=1】 是促销商品，不参加购物车降价。
      */
