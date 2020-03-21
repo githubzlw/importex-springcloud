@@ -16,11 +16,14 @@ import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.util.UrlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -65,6 +68,7 @@ public class AliExpressServiceImpl implements AliExpressService {
             return CommonResult.failed("no data");
         } else {
             List<AliExpressItem> aliExpressItems = JSONArray.parseArray(jsonObject.getJSONObject("items").getString("item"), AliExpressItem.class);
+
             Integer totalNum = jsonObject.getJSONObject("items").getInteger("total_results");
             Integer rsPage = jsonObject.getJSONObject("items").getInteger("page");
             Integer rsPageSize = jsonObject.getJSONObject("items").getInteger("page_size");
@@ -74,6 +78,19 @@ public class AliExpressServiceImpl implements AliExpressService {
             }
             if (aliExpressItems != null && aliExpressItems.size() > 0) {
                 aliExpressItems.sort(Comparator.comparing(AliExpressItem::getNum_iid));
+                aliExpressItems.forEach(e -> {
+                    double tempPrice = Double.parseDouble(e.getPrice());
+                    if (tempPrice > 0D) {
+                        if (tempPrice < 10D) {
+                            tempPrice = tempPrice * 0.8;
+                        } else if (tempPrice < 30D) {
+                            tempPrice = tempPrice * 0.875;
+                        } else if (tempPrice < 100D) {
+                            tempPrice = tempPrice * 0.95;
+                        }
+                    }
+                    e.setPrice(new BigDecimal(tempPrice).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                });
             }
             ItemResultPage resultPage = new ItemResultPage(aliExpressItems, currPage, rsPageSize, totalPage, totalNum);
             return CommonResult.success(resultPage);
