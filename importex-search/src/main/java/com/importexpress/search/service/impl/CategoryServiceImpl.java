@@ -84,7 +84,9 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 				wrap.setChilden(setDateSelected(param,lstDate));
 				List<CategoryWrap> newChilden = Lists.newArrayList();
 				newChilden.add(wrap);
-				newChilden.addAll(categoryWrap.getChilden());
+				if(categoryWrap.getChilden() != null){
+					newChilden.addAll(categoryWrap.getChilden());
+				}
 				categoryWrap.setChilden(newChilden);
 			}
 		}
@@ -167,7 +169,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		for(CategoryWrap c : categorys) {
 			List<CategoryWrap> childrenList = category_map.get(c.getId());
 			dealCategory(category_map, childrenList);
-			c.setChilden(childrenList);
+			c.setChilden(childrenList == null ? Lists.newArrayList() : childrenList);
 		}
 		return categorys;
 	}
