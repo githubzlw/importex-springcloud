@@ -40,6 +40,12 @@ public class CartServiceTest {
      */
     @Test
     public void cart1() {
+
+        Assert.assertEquals
+                (1, cartService.addCartItem(SITE, USER_ID, "554783602333:321628", 1));
+        Assert.assertEquals
+                (1, cartService.delCartItem(SITE, USER_ID, "554783602333:321628"));
+
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, "567465400208:0", 1));
         Assert.assertEquals
