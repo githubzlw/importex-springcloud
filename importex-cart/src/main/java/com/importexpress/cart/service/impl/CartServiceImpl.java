@@ -236,7 +236,7 @@ public class CartServiceImpl implements CartService {
         final String str4 = "id=";
         String enType = product.getEntype();
         StringBuilder sb = new StringBuilder();
-        ImmutableList<String> lst = ImmutableList.copyOf(Splitter.on("],").split(enType));
+        ImmutableList<String> lst = ImmutableList.copyOf(Splitter.on("], [").split(enType));
         for (String item : lst) {
             if("[]".equals(item)){
                 //无规格情况下，用主图替代
