@@ -492,7 +492,6 @@ public class SearchServiceImpl implements SearchService {
         if(modefideWholesalePrice.isEmpty()){
             return false;
         }
-//        price = modefideWholesalePrice.get(0).getPrice();
         if(modefideWholesalePrice.size() == 1){
             searchGoods.setWholesaleMiddlePrice(null);
         }else{
