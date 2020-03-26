@@ -25,10 +25,11 @@ public class AliExpressController {
     }
 
 
-    @GetMapping("/search/{page}/{keyword}")
-    public CommonResult searchItem(@PathVariable("page") Integer page, @PathVariable("keyword") String keyword,
+    @PostMapping("/search")
+    @ResponseBody
+    public CommonResult searchItem(Integer page, String keyword, String start_price, String end_price, String sort,
                                    @RequestParam(value = "isCache", required = false, defaultValue = "true") boolean isCache) {
-        return expressService.getItemByKeyWord(page, keyword, isCache);
+        return expressService.getItemByKeyWord(page, keyword,start_price, end_price, sort, isCache);
     }
 
 }

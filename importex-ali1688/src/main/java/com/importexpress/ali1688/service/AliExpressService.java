@@ -11,5 +11,5 @@ import com.importexpress.comm.domain.CommonResult;
 public interface AliExpressService {
 
 
-    CommonResult getItemByKeyWord(Integer page, String keyword, boolean isCache);
+    CommonResult getItemByKeyWord(Integer page, String keyword, String start_price, String end_price, String sort, boolean isCache);
 }

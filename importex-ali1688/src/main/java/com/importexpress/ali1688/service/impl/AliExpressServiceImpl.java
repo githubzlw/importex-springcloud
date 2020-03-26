@@ -16,11 +16,9 @@ import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.util.UrlUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -51,7 +49,7 @@ public class AliExpressServiceImpl implements AliExpressService {
     /**
      * 获取商品详情
      */
-    private final static String URL_ITEM_SEARCH = "https://api.onebound.cn/aliexpress/api_call.php?key=%s&secret=%s&q=%s&api_name=item_search&lang=en&page=%s&sort=_sale";// &sort=_sale
+    private final static String URL_ITEM_SEARCH = "https://api.onebound.cn/aliexpress/api_call.php?key=%s&secret=%s&q=%s&api_name=item_search&lang=en&page=%s";// &sort=_sale
 
     @Autowired
     public AliExpressServiceImpl(StringRedisTemplate redisTemplate, AliExpressCacheService cacheService, Config config) {
@@ -61,8 +59,9 @@ public class AliExpressServiceImpl implements AliExpressService {
     }
 
     @Override
-    public CommonResult getItemByKeyWord(Integer currPage, String keyword, boolean isCache) {
-        JSONObject jsonObject = searchResultByKeyWord(currPage, keyword, isCache);
+    public CommonResult getItemByKeyWord(Integer currPage, String keyword, String start_price, String end_price,
+                                         String sort, boolean isCache) {
+        JSONObject jsonObject = searchResultByKeyWord(currPage, keyword, start_price, end_price, sort, isCache);
         if (jsonObject == null || jsonObject.getJSONObject("items") == null
                 || jsonObject.getJSONObject("items").getString("item") == null) {
             return CommonResult.failed("no data");
@@ -98,7 +97,8 @@ public class AliExpressServiceImpl implements AliExpressService {
     }
 
 
-    private JSONObject searchResultByKeyWord(Integer page, String keyword, boolean isCache) {
+    private JSONObject searchResultByKeyWord(Integer page, String keyword, String start_price, String end_price,
+                                             String sort, boolean isCache) {
         /**
          * api.onebound.cn/aliexpress/api_call.php?
          * q=shoe&start_price=&end_price=&page=&cat=&discount_only=&sort=&page_size=&seller_info=&nick=&ppath=&api_name=item_search&lang=zh-CN&key=tel13222738797&secret=20200316
@@ -108,7 +108,8 @@ public class AliExpressServiceImpl implements AliExpressService {
 
             @Override
             public JSONObject call() {
-                return getItemByKeyword(page, keyword, isCache);
+                return getItemByKeyword(page, keyword, start_price, end_price,
+                        sort, isCache);
 
             }
         };
@@ -127,10 +128,11 @@ public class AliExpressServiceImpl implements AliExpressService {
     }
 
 
-    private JSONObject getItemByKeyword(Integer page, String keyword, boolean isCache) {
+    private JSONObject getItemByKeyword(Integer page, String keyword, String start_price, String end_price,
+                                        String sort, boolean isCache) {
         Objects.requireNonNull(keyword);
         if (isCache) {
-            JSONObject itemFromRedis = this.cacheService.getItemByKeyword(page, keyword);
+            JSONObject itemFromRedis = this.cacheService.getItemByKeyword(page, keyword, start_price, end_price, sort);
             if (itemFromRedis != null) {
                 checkKeyWord(page, keyword, itemFromRedis);
                 return itemFromRedis;
@@ -138,8 +140,19 @@ public class AliExpressServiceImpl implements AliExpressService {
         }
 
         try {
-            // "https://api.onebound.cn/aliexpress/api_call.php?key=%s&secret=%s&q=%s&api_name=item_search&lang=zh-CN&page_size=%s&page=%s"
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_KEY, config.API_SECRET, keyword, page));
+            // 组合过滤条件
+            StringBuffer sb = new StringBuffer(URL_ITEM_SEARCH);
+            if (StringUtils.isNotBlank(start_price)) {
+                sb.append("&start_price=" + start_price);
+            }
+            if (StringUtils.isNotBlank(end_price)) {
+                sb.append("&end_price=" + end_price);
+            }
+            if (StringUtils.isNotBlank(sort)) {
+                sb.append("&sort=" + sort);
+            }
+            System.err.println("url:" + sb.toString());
+            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(sb.toString(), config.API_KEY, config.API_SECRET, keyword, page));
             String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
             this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "keyword_" + strYmd, 1);
             String error = jsonObject.getString("error");
@@ -155,7 +168,7 @@ public class AliExpressServiceImpl implements AliExpressService {
                 log.warn("json's error is not empty:[{}]，keyword:[{}]", error, keyword);
                 jsonObject = InvalidKeyWord.of(keyword, error);
             }
-            this.cacheService.saveItemByKeyword(page, keyword, jsonObject);
+            this.cacheService.saveItemByKeyword(page, keyword, start_price, end_price, sort, jsonObject);
             checkKeyWord(page, keyword, jsonObject);
 
             return jsonObject;
