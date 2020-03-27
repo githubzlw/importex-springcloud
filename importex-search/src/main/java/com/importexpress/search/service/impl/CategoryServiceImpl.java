@@ -244,7 +244,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			}
 			addCategory = "mensclothing".equals(category) || "womensclothing".equals(category) ? true : addCategory;
 		}
-		if(!addCategory){
+		if(addCategory){
 			productsCate.append("<a class=\"searcwor\" style='color:deeppink'  href=\"")
 					.append("/apa/clothing.html").append("\">")
 					.append("wholesale clothing").append("</a>");
