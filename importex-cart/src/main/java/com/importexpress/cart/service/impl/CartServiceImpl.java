@@ -270,7 +270,7 @@ public class CartServiceImpl implements CartService {
 
         if (str3.equals(product.getWprice())) {
             ImmutablePair<Float, Long> weiAndPri = getWeiAndPri(product.getSku(), cartItem);
-            Assert.isTrue(weiAndPri != null, "weiAndPri is null.pid=" + product.getPid());
+            Assert.isTrue(weiAndPri != null, "weiAndPri is null.cartItem=" + cartItem);
             cartItem.setWei(weiAndPri.getLeft());
             cartItem.setPri(weiAndPri.getRight());
         }else{
