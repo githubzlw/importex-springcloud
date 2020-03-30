@@ -17,7 +17,9 @@ public enum SiteEnum {
     /**医疗网站*/
     MEDIC(16,"https://www.medicaldevicefactory.com","MedicalDeviceFactory"),
     /**管接头网站*/
-    E_PIPE(32,"https://www.pipe.com","PIPE");
+    E_PIPE(32,"https://www.pipe.com","PIPE"),
+    /**电缆网站*/
+    LINE(64,"https://www.line.com","LINE");
 
     private int code;
 

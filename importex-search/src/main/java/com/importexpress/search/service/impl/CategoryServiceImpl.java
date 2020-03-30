@@ -233,8 +233,9 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			String category=rootTree.get(i).getName().toLowerCase().replace("'","")
 					.replaceAll("\\s+","");
 			if("childrensclothing".equals(category)) {
-				productsCate.append("<a class=\"searcwor\"  href=\"").append("/apa/clothing.html")
-						.append("\">").append("wholesale clothing").append("</a>");
+				productsCate.append("<a class=\"searcwor\"  href=\"")
+						.append("/goodslist?catid=311")
+						.append("\">").append("Wholesale Children's Clothing").append("</a>");
 			}else{
 				productsCate.append("<a class=\"searcwor\"  href=\"/goodslist?catid=")
 						.append(rootTree.get(i).getId()).append("\">")
