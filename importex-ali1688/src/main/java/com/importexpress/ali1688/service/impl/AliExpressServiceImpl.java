@@ -24,12 +24,14 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author: JiangXW
@@ -75,6 +77,7 @@ public class AliExpressServiceImpl implements AliExpressService {
             if (totalNum % rsPageSize > 0) {
                 totalPage++;
             }
+            List<AliExpressItem> rsList = new ArrayList<>();
             if (aliExpressItems != null && aliExpressItems.size() > 0) {
                 aliExpressItems.sort(Comparator.comparing(AliExpressItem::getNum_iid));
                 aliExpressItems.forEach(e -> {
@@ -90,8 +93,15 @@ public class AliExpressServiceImpl implements AliExpressService {
                     }
                     e.setPrice(new BigDecimal(tempPrice).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
                 });
+                if(aliExpressItems.size() > 28){
+                    rsList = aliExpressItems.stream().limit(28L).collect(Collectors.toList());
+                }else{
+                    int cicleNum = aliExpressItems.size() / 4;
+                    rsList = aliExpressItems.stream().limit(cicleNum * 4L).collect(Collectors.toList());
+                }
+                aliExpressItems.clear();
             }
-            ItemResultPage resultPage = new ItemResultPage(aliExpressItems, currPage, rsPageSize, totalPage, totalNum);
+            ItemResultPage resultPage = new ItemResultPage(rsList, currPage, rsPageSize, totalPage, totalNum);
             return CommonResult.success(resultPage);
         }
     }
