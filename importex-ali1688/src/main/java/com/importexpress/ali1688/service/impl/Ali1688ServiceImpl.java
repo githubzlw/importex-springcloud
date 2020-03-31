@@ -245,7 +245,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         params.put("lang", "zh-CN");
         params.put("key", config.API_KEY);
         params.put("secret", config.API_SECRET);
-        params.put("imgcode", file);
+        params.put("imgcode", Base64.getEncoder().encodeToString(file));
 
             try {
                 JSONObject jsonObject = UrlUtil.getInstance().doPut(String.format(API_URL, config.API_HOST),params);
