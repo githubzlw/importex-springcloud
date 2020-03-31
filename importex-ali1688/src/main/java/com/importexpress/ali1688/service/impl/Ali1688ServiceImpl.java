@@ -50,18 +50,18 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     /**
      * 获取商品详情
      */
-    private final static String URL_ITEM_GET = "%sapi_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
+    private final static String URL_ITEM_GET = "%s1688/api_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
 
     /**
      * API URL
      */
-    private final static String API_URL = "%sapi_call.php";
+    private final static String TAOBAO_API_URL = "%staobao/demo/img_upload.php";
 
-//    private final static String URL_ITEM_GET = "%sapi_call.php?key=%s&secret=%s&num_iid=%s&cache=no&api_name=item_get&lang=zh-CN";
+
     /**
      * 获取店铺商品
      */
-    private final static String URL_ITEM_SEARCH = "%sapi_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&api_name=item_search_shop&lang=zh-CN";
+    private final static String URL_ITEM_SEARCH = "%s1688/api_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&api_name=item_search_shop&lang=zh-CN";
     private Ali1688CacheService ali1688CacheService;
     private Config config;
     private PidQueueMapper pidQueueMapper;
@@ -230,32 +230,23 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     /**
-     * 上传图片到1688
+     * 上传图片到taobao
      *
-     * @param file
+     * @param fileName
      * @return
      */
     @Override
-    public String uploadImgTo1688(byte[] file){
+    public String uploadImgToTaobao(String fileName) throws IOException {
 
-        String url="";
-        //imgcode=111111111&api_name=upload_img&lang=zh-CN&key=tel13661551662&secret=20200331
-        Map<String, Object> params = new HashMap<>(3);
-        params.put("api_name", "upload_img");
-        params.put("lang", "zh-CN");
-        params.put("key", config.API_KEY);
-        params.put("secret", config.API_SECRET);
-        params.put("imgcode", Base64.getEncoder().encodeToString(file));
+        String url=null;
 
-            try {
-                JSONObject jsonObject = UrlUtil.getInstance().doPut(String.format(API_URL, config.API_HOST),params);
-                if(jsonObject !=null){
-                    log.info("result:[{}]",jsonObject);
-                    //TODO
+        JSONObject jsonObject = UrlUtil.getInstance().doPostForImgUpload(String.format(TAOBAO_API_URL, config.API_HOST),"taobao",fileName);
+        if(jsonObject !=null){
+            //sample:  tfsid -> https://img.alicdn.com/imgextra/i4/2601011849/O1CN01Ob6weI1PWsusJC7Xt_!!2601011849.jpg
+            log.info("result:[{}]",jsonObject);
+            url=jsonObject.getString("tfsid");
                 }
-            } catch (IOException e) {
-                log.error("uploadImgTo1688",e);
-        }
+
         return url;
     }
     /**

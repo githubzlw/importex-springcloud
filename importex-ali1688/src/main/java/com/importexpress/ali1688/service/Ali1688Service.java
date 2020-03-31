@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.model.PidQueue;
 import com.importexpress.comm.pojo.Ali1688Item;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -37,12 +38,12 @@ public interface Ali1688Service {
     List<Ali1688Item> getItemsInShop(String shopid);
 
     /**
-     * 上传图片到1688
+     * 上传图片到taobao
      *
-     * @param file
+     * @param fileName
      * @return
      */
-    String uploadImgTo1688(byte[] file);
+    String uploadImgToTaobao(String fileName) throws IOException;
 
     /**
      * 清除redis缓存里面下架商品

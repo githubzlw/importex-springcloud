@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -110,11 +108,9 @@ public class Ali1688APITest {
 
 
     @Test
-    public void uploadImgTo1688() throws IOException {
+    public void uploadImgToTaobao() throws IOException {
 
-        Path path = Paths.get("C:\\Users\\luohao\\Downloads\\1111.jpg");
-        byte[] bytes = Files.readAllBytes(path);
-        String result = ali1688Service.uploadImgTo1688(bytes);
+        String result = ali1688Service.uploadImgToTaobao("C:\\Users\\luohao\\Downloads\\1111.jpg");
         System.out.println(result);
     }
 }

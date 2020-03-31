@@ -4,11 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
@@ -263,16 +261,22 @@ public class UrlUtil {
     /**
      * do post
      * @param url
-     * @param params
+     * @param tp
+     * @param fileName
      * @return
      * @throws IOException
      */
-    public JSONObject doPut(String url, Map<String,Object> params) throws IOException {
-        FormBody.Builder builder = addParamToBuilder(params);
-        FormBody body = builder.build();
+    public JSONObject doPostForImgUpload(String url, String tp, String fileName) throws IOException {
+        File file=new File(fileName);
+        RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("fname", file.getName(),
+                        RequestBody.create(MediaType.parse("image/jpeg"), file))
+                .addFormDataPart("tp", "taobao")
+                .build();
+
         Request request = new Request.Builder()
                 .url(url)
-                .put(body)
+                .post(requestBody)
                 .build();
         // Create a new Call object with put method.
         Response response = client.newCall(request).execute();
