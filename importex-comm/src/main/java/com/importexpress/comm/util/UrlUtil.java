@@ -4,11 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -257,5 +260,43 @@ public class UrlUtil {
 
     }
 
+    /**
+     * do post
+     * @param url
+     * @param params
+     * @return
+     * @throws IOException
+     */
+    public JSONObject doPut(String url, Map<String,Object> params) throws IOException {
+        FormBody.Builder builder = addParamToBuilder(params);
+        FormBody body = builder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .build();
+        // Create a new Call object with put method.
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            throw new IOException("response is not successful");
+        }
+        return response.body() != null ?
+                JSON.parseObject(response.body().string()) : null;
+    }
 
+    /**
+     * addParamToBuilder
+     * @param map
+     * @return
+     */
+    private FormBody.Builder addParamToBuilder( Map<String,Object> map){
+        FormBody.Builder builder=new FormBody.Builder();
+        if(map!=null){
+            Iterator<Map.Entry<String,Object>> ite= map.entrySet().iterator();
+            for(;ite.hasNext();){
+                Map.Entry<String,Object> kv=ite.next();
+                builder.add(kv.getKey(), kv.getValue().toString());
+            }
+        }
+        return builder;
+    }
 }

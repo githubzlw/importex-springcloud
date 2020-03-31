@@ -52,6 +52,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      */
     private final static String URL_ITEM_GET = "%sapi_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
 
+    /**
+     * API URL
+     */
+    private final static String API_URL = "%sapi_call.php";
+
 //    private final static String URL_ITEM_GET = "%sapi_call.php?key=%s&secret=%s&num_iid=%s&cache=no&api_name=item_get&lang=zh-CN";
     /**
      * 获取店铺商品
@@ -109,7 +114,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     /**
-     * 1688商品详情查询
+     * 1688商品详情查询（单个）
      *
      * @param pid
      * @return
@@ -141,7 +146,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     /**
-     * get items by pid array
+     * 1688商品详情查询（多个）
      *
      * @param pids
      * @return
@@ -178,7 +183,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     /**
-     * get Items In Shop
+     * 获得店铺商品
      *
      * @param shopid
      * @return
@@ -224,32 +229,86 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         }
     }
 
+    /**
+     * 上传图片到1688
+     *
+     * @param file
+     * @return
+     */
+    @Override
+    public String uploadImgTo1688(byte[] file){
+
+        String url="";
+        //imgcode=111111111&api_name=upload_img&lang=zh-CN&key=tel13661551662&secret=20200331
+        Map<String, Object> params = new HashMap<>(3);
+        params.put("api_name", "upload_img");
+        params.put("lang", "zh-CN");
+        params.put("key", config.API_KEY);
+        params.put("secret", config.API_SECRET);
+        params.put("imgcode", file);
+
+            try {
+                JSONObject jsonObject = UrlUtil.getInstance().doPut(String.format(API_URL, config.API_HOST),params);
+                if(jsonObject !=null){
+                    log.info("result:[{}]",jsonObject);
+                    //TODO
+                }
+            } catch (IOException e) {
+                log.error("uploadImgTo1688",e);
+        }
+        return url;
+    }
+    /**
+     * 清除redis缓存里面下架商品
+     * @return
+     */
     @Override
     public int clearNotExistItemInCache() {
         return this.ali1688CacheService.processNotExistItemInCache(true);
     }
 
+    /**
+     * 清除redis缓存里面所有商品
+     * @return
+     */
     @Override
     public int clearAllPidInCache() {
         return this.ali1688CacheService.clearAllPidInCache();
     }
 
+    /**
+     * 清除redis缓存里面所有店铺
+     * @return
+     */
     @Override
     public int clearAllShopInCache() {
         return this.ali1688CacheService.clearAllShopInCache();
     }
 
-
+    /**
+     * 下架商品数量统计
+     * @return
+     */
     @Override
     public int getNotExistItemInCache() {
         return this.ali1688CacheService.processNotExistItemInCache(false);
     }
 
+    /**
+     * 设置key的过期时间
+     * @param days
+     */
     @Override
     public void setItemsExpire(int days) {
         this.ali1688CacheService.setItemsExpire(days);
     }
 
+    /**
+     * pid_queue表：获得pid（分页）
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @Override
     public List<PidQueue> getAllPids(int page, int pageSize) {
         int offset = (page - 1) * pageSize;
@@ -259,6 +318,10 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.pidQueueMapper.selectByExampleAndRowBounds(example, new RowBounds(offset, pageSize));
     }
 
+    /**
+     * pid_queue表：获得所有pid
+     * @return
+     */
     @Override
     public List<PidQueue> getAllPids() {
 
@@ -268,6 +331,10 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
+    /**
+     * pid_queue表：获得UnStartpid
+     * @return
+     */
     @Override
     public List<PidQueue> getAllUnStartPids() {
 
@@ -276,6 +343,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.pidQueueMapper.select(pidQueue);
     }
 
+    /**
+     * pid_queue表：更新状态
+     * @param id
+     * @param status
+     * @return
+     */
     @Override
     public int updatePidQueue(int id, int status) {
 
@@ -286,6 +359,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.pidQueueMapper.updateByPrimaryKeySelective(pidQueue);
     }
 
+    /**
+     * pid_queue表：增加pid
+     * @param shopId
+     * @param pid
+     * @return
+     */
     @Override
     public int pushPid(String shopId, int pid) {
         PidQueue pidQueue = new PidQueue();
@@ -308,6 +387,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         }
     }
 
+    /**
+     * pid_queue表：删除pid
+     * @param id
+     * @return
+     */
     @Override
     public int deleteIdInQueue(int id) {
 
