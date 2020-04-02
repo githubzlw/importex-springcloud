@@ -7,6 +7,7 @@ import com.importexpress.comm.domain.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,8 +49,11 @@ public class ImageSearchController {
         File dest = new File(config.fileUploadPath + fileName);
         try {
             file.transferTo(dest);
-            log.info("上传成功");
+            log.info("upload file({}) successful",dest);
             String url = ali1688Service.uploadImgToTaobao(dest.getAbsolutePath());
+            if(StringUtils.isEmpty(url)){
+                return CommonResult.failed("upload image failed");
+            }
             JSONObject jsonObject = ali1688Service.searchImgFromTaobao(url);
             return CommonResult.success(jsonObject);
         } catch (IOException e) {

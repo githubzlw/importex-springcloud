@@ -55,12 +55,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     /**
      * img_upload API URL
      */
-    private final static String TAOBAO_API_URL = "%staobao/demo/img_upload.php";
+    private final static String IMG_UPLOAD_TAOBAO_API = "%staobao/demo/img_upload.php";
 
     /**
      * image search API URL
      */
-    private final static String SEARCH_IMG_TAOBAO_API = "%staobao/api_call.php?imgid=%s&lang=en&key=%s&secret=%s&api_name=item_search_img&cat=";
+    private final static String IMG_SEARCH_TAOBAO_API = "%staobao/api_call.php?imgid=%s&lang=en&key=%s&secret=%s&api_name=item_search_img&cat=";
 
 
     /**
@@ -246,7 +246,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         String url=null;
 
         try {
-            JSONObject jsonObject = UrlUtil.getInstance().doPostForImgUpload(String.format(TAOBAO_API_URL, config.API_HOST), "taobao", file);
+            JSONObject jsonObject = UrlUtil.getInstance().doPostForImgUpload(String.format(IMG_UPLOAD_TAOBAO_API, config.API_HOST), "taobao", file);
             if (jsonObject != null) {
                 //sample:  tfsid -> https://img.alicdn.com/imgextra/i4/2601011849/O1CN01Ob6weI1PWsusJC7Xt_!!2601011849.jpg
                 log.info("result:[{}]", jsonObject);
@@ -272,7 +272,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
         JSONObject jsonObject = null;
         try {
-            jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(SEARCH_IMG_TAOBAO_API, config.API_HOST ,imgUrl,config.API_KEY, config.API_SECRET ));
+            jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(IMG_SEARCH_TAOBAO_API, config.API_HOST ,imgUrl,config.API_KEY, config.API_SECRET ));
         } catch (IOException ioe) {
             log.error("searchImgFromTaobao",ioe);
         }
