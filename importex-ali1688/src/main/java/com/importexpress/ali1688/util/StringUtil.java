@@ -18,4 +18,11 @@ public class StringUtil {
         }
         return keyword;
     }
+
+    public static String checkAndChangeSpaceAndOther(String keyword, String replaceStr) {
+        if(keyword.contains(".")){
+            keyword = keyword.replace(".","_");
+        }
+        return checkAndChangeSpace(keyword, replaceStr);
+    }
 }
