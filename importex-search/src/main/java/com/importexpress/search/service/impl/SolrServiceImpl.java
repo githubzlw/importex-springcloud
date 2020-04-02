@@ -126,7 +126,10 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
 
         //搜索限定类别
         StringBuilder fq = new StringBuilder(splicingSyntax.specialCatidSearch(param));
-        fq.append(" custom_valid:1 AND "+getPriceField(param.getSite())+":[10 TO *] ");
+        fq.append(" custom_valid:1 AND "+getPriceField(param.getSite())+":[1 TO *] ");
+        if(StringUtils.isNotBlank(param.getCatid())){
+            fq.append(" AND custom_path_catid:\"" + param.getCatid() + "\"");
+        }
         importType(param,fq);
         salable(param,fq);
 
