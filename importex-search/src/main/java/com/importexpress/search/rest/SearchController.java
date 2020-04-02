@@ -208,14 +208,14 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
-    /**新版购物车该产品没有购买过则根据名称查询推荐商品
+    /**根据已买过的产品推荐产品
      * @param request
      * @param param 搜索参数
      * @return
      */
     @PostMapping("/bought")
     @ApiOperation("根据已买过的产品推荐产品")
-    public CommonResult boughtAndBought(
+    public CommonResult bought(
             @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
                                         HttpServletRequest request) {
         if(param == null){
@@ -226,6 +226,43 @@ public class SearchController {
             param  = verifySearchParameter.verification(request,param);
             //请求solr获取结果
             List<Product> products = service.boughtAndBought(param);
+            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
+        }catch (Exception e){
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+    /**新版购物车该产品没有购买过则根据名称查询推荐商品
+     * @param request
+     * @param param 搜索参数
+     * @return
+     */
+    @PostMapping("/boughtandbought")
+    @ApiOperation("根据已买过的产品推荐产品")
+    public CommonResult boughtAndBought(
+            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if(param == null){
+            return CommonResult.failed(" SearchParam IS NULL!");
+        }
+        try {
+            //参数处理
+            param  = verifySearchParameter.verification(request,param);
+            //请求solr获取结果
+            List<Product> products = service.boughtAndBought(param);
+
+            if(products.size()<4 && StringUtils.isNotBlank(param.getKeyword())){
+                String title = param.getKeyword();
+                int length = title.split(" ").length;
+                for(int i=0;i<length && products.size()<5 ;i++){
+                    String word = param.getKeyword();
+                    if(!word.contains(" ")){
+                        break;
+                    }
+                    word = word.substring(0,word.lastIndexOf(" "));
+                    param.setKeyword(word);
+                    products = service.boughtAndBought(param);
+                }
+            }
             return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
