@@ -281,7 +281,7 @@ public class UrlUtil {
         // Create a new Call object with put method.
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {
-            throw new IOException("response is not successful");
+            throw new IOException("doPostForImgUpload's response is not successful");
         }
         return response.body() != null ?
                 JSON.parseObject(response.body().string()) : null;

@@ -49,7 +49,7 @@ public class ImageSearchController {
         File dest = new File(config.fileUploadPath + fileName);
         try {
             file.transferTo(dest);
-            log.info("upload file({}) successful",dest);
+            log.info("upload file({}) successful",dest.getAbsolutePath());
             String url = ali1688Service.uploadImgToTaobao(dest.getAbsolutePath());
             if(StringUtils.isEmpty(url)){
                 return CommonResult.failed("upload image failed");
@@ -60,10 +60,10 @@ public class ImageSearchController {
             log.error(e.toString(), e);
             return CommonResult.failed(e.toString());
         }finally {
-            boolean isOk = dest.delete();
-            if(isOk){
-                log.info("file:[{}] is deleted",dest.getAbsolutePath());
-            }
+//            boolean isOk = dest.delete();
+//            if(isOk){
+//                log.info("file:[{}] is deleted",dest.getAbsolutePath());
+//            }
         }
 
     }
