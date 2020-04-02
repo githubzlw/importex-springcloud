@@ -267,6 +267,8 @@ public class UrlUtil {
      * @throws IOException
      */
     public JSONObject doPostForImgUpload(String url, String tp, String fileName) throws IOException {
+        log.info("url:{} tp:{} fileName:{}",url,tp,fileName);
+
         File file=new File(fileName);
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("fname", file.getName(),
@@ -281,6 +283,8 @@ public class UrlUtil {
         // Create a new Call object with put method.
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {
+            log.error("response:{}",response);
+
             throw new IOException("doPostForImgUpload's response is not successful");
         }
         return response.body() != null ?

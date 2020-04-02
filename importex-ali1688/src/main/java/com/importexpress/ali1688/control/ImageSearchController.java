@@ -60,10 +60,10 @@ public class ImageSearchController {
             log.error(e.toString(), e);
             return CommonResult.failed(e.toString());
         }finally {
-//            boolean isOk = dest.delete();
-//            if(isOk){
-//                log.info("file:[{}] is deleted",dest.getAbsolutePath());
-//            }
+            boolean isOk = dest.delete();
+            if(isOk){
+                log.info("file:[{}] is deleted",dest.getAbsolutePath());
+            }
         }
 
     }
