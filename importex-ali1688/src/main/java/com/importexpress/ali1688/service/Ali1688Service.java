@@ -40,10 +40,18 @@ public interface Ali1688Service {
     /**
      * 上传图片到taobao
      *
-     * @param fileName
+     * @param file
      * @return
      */
-    String uploadImgToTaobao(String fileName) throws IOException;
+    String uploadImgToTaobao(String file);
+
+    /**
+     * 图片搜索
+     *
+     * @param imgUrl
+     * @return
+     */
+    JSONObject searchImgFromTaobao(String imgUrl);
 
     /**
      * 清除redis缓存里面下架商品

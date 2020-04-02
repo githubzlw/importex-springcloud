@@ -271,7 +271,7 @@ public class UrlUtil {
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("fname", file.getName(),
                         RequestBody.create(MediaType.parse("image/jpeg"), file))
-                .addFormDataPart("tp", "taobao")
+                .addFormDataPart("tp", tp)
                 .build();
 
         Request request = new Request.Builder()

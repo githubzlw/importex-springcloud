@@ -26,4 +26,8 @@ public class Config {
     @Value("${ali1688api.shop.minSales}")
     public int minSales;
 
+    @Value("${file_upload_path}")
+    public String fileUploadPath;
+
+
 }

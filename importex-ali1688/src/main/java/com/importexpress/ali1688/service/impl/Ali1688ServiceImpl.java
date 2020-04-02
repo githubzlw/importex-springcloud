@@ -53,9 +53,14 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     private final static String URL_ITEM_GET = "%s1688/api_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
 
     /**
-     * API URL
+     * img_upload API URL
      */
     private final static String TAOBAO_API_URL = "%staobao/demo/img_upload.php";
+
+    /**
+     * image search API URL
+     */
+    private final static String SEARCH_IMG_TAOBAO_API = "%staobao/api_call.php?imgid=%s&lang=en&key=%s&secret=%s&api_name=item_search_img&cat=";
 
 
     /**
@@ -232,23 +237,49 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     /**
      * 上传图片到taobao
      *
-     * @param fileName
+     * @param file
      * @return
      */
     @Override
-    public String uploadImgToTaobao(String fileName) throws IOException {
+    public String uploadImgToTaobao(String file) {
 
         String url=null;
 
-        JSONObject jsonObject = UrlUtil.getInstance().doPostForImgUpload(String.format(TAOBAO_API_URL, config.API_HOST),"taobao",fileName);
-        if(jsonObject !=null){
-            //sample:  tfsid -> https://img.alicdn.com/imgextra/i4/2601011849/O1CN01Ob6weI1PWsusJC7Xt_!!2601011849.jpg
-            log.info("result:[{}]",jsonObject);
-            url=jsonObject.getString("tfsid");
-                }
-
+        try {
+            JSONObject jsonObject = UrlUtil.getInstance().doPostForImgUpload(String.format(TAOBAO_API_URL, config.API_HOST), "taobao", file);
+            if (jsonObject != null) {
+                //sample:  tfsid -> https://img.alicdn.com/imgextra/i4/2601011849/O1CN01Ob6weI1PWsusJC7Xt_!!2601011849.jpg
+                log.info("result:[{}]", jsonObject);
+                url = jsonObject.getString("tfsid");
+            }
+        }catch(IllegalStateException ise){
+            log.warn("file size is error",ise);
+            return null;
+        }catch (IOException ioe){
+            log.error("uploadImgToTaobao",ioe);
+        }
         return url;
     }
+
+    /**
+     * 图片搜索
+     * @param imgUrl
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public JSONObject searchImgFromTaobao(String imgUrl) {
+
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(SEARCH_IMG_TAOBAO_API, config.API_HOST ,imgUrl,config.API_KEY, config.API_SECRET ));
+        } catch (IOException ioe) {
+            log.error("searchImgFromTaobao",ioe);
+        }
+
+        return jsonObject;
+    }
+
     /**
      * 清除redis缓存里面下架商品
      * @return

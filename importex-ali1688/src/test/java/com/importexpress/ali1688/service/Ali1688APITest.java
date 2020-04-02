@@ -108,9 +108,16 @@ public class Ali1688APITest {
 
 
     @Test
-    public void uploadImgToTaobao() throws IOException {
+    public void uploadImgToTaobao1() throws IOException {
 
-        String result = ali1688Service.uploadImgToTaobao("C:\\Users\\luohao\\Downloads\\1111.jpg");
-        System.out.println(result);
+        Assert.assertNotNull(ali1688Service.uploadImgToTaobao("C:\\Users\\luohao\\Downloads\\1111.jpg"));
+    }
+
+    @Test
+    public void searchImgFromTaobao()  {
+
+        String URL = ali1688Service.uploadImgToTaobao("C:\\Users\\luohao\\Downloads\\1111.jpg");
+        Assert.assertNotNull(URL);
+        Assert.assertNotNull(ali1688Service.searchImgFromTaobao(URL));
     }
 }
