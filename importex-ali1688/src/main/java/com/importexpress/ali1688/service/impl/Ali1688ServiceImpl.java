@@ -15,6 +15,7 @@ import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
 import com.importexpress.comm.util.UrlUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -232,6 +234,28 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             log.error("getItemsInShop", e);
             throw new IllegalStateException("io exception,need retry!");
         }
+    }
+
+    /**
+     * 从缓存中获取图片搜索结果
+     * @param md5Hex
+     * @return
+     */
+    @Override
+    public JSONObject getImageSearchFromCatch(String md5Hex){
+        return ali1688CacheService.getImageSearch(md5Hex);
+    }
+
+    /**
+     * 图片搜索结果保存到缓存中
+     * @param md5
+     * @param jsonObject
+     * @return
+     */
+    @Override
+    public int saveImageSearchFromCatch(String md5,JSONObject jsonObject){
+        ali1688CacheService.saveImageSearch(md5,jsonObject);
+        return 1;
     }
 
     /**

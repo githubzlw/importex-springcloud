@@ -46,6 +46,21 @@ public interface Ali1688Service {
     String uploadImgToTaobao(String file);
 
     /**
+     * 从缓存中获取图片搜索结果
+     * @param md5
+     * @return
+     */
+    JSONObject getImageSearchFromCatch(String md5);
+
+    /**
+     * 图片搜索结果保存到缓存中
+     * @param md5
+     * @param jsonObject
+     * @return
+     */
+    int saveImageSearchFromCatch(String md5,JSONObject jsonObject);
+
+    /**
      * 图片搜索
      *
      * @param imgUrl

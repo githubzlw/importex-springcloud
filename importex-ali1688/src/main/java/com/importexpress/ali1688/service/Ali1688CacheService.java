@@ -26,6 +26,7 @@ public class Ali1688CacheService {
 
     private static final String REDIS_PID_PRE = "ali:pid:";
     private static final String REDIS_SHOP_PRE = "ali:shopid:";
+    private static final String REDIS_IMG_PRE = "ali:img:";
     private static final int REDIS_EXPIRE_DAYS = 7;
     private StringRedisTemplate redisTemplate;
 
@@ -35,6 +36,11 @@ public class Ali1688CacheService {
         this.redisTemplate = redisTemplate;
     }
 
+    /**
+     * 从缓存中读取pid数据
+     * @param pid
+     * @return
+     */
     public JSONObject getItem(Long pid) {
         Objects.requireNonNull(pid);
         String value = this.redisTemplate.opsForValue().get(REDIS_PID_PRE + pid);
@@ -45,12 +51,48 @@ public class Ali1688CacheService {
         }
     }
 
+    /**
+     * 缓存pid到redis
+     * @param pid
+     * @param value
+     */
     public void saveItemIntoRedis(Long pid, JSONObject value) {
         Objects.requireNonNull(pid);
         Objects.requireNonNull(value);
         this.redisTemplate.opsForValue().set(REDIS_PID_PRE + pid, JSONObject.toJSONString(value), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
+    /**
+     * 缓存图片搜索到redis
+     * @param md5
+     * @param value
+     */
+    public void saveImageSearch(String md5, JSONObject value) {
+        Objects.requireNonNull(md5);
+        Objects.requireNonNull(value);
+        this.redisTemplate.opsForValue().set(REDIS_IMG_PRE + md5, JSONObject.toJSONString(value), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
+    }
+
+    /**
+     * 从缓存中读取图片搜索数据
+     * @param md5
+     * @return
+     */
+    public JSONObject getImageSearch(String md5) {
+        Objects.requireNonNull(md5);
+        String value = this.redisTemplate.opsForValue().get(REDIS_IMG_PRE + md5);
+        if (StringUtils.isNotEmpty(value)) {
+            return JSONObject.parseObject(value);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * getShop
+     * @param shopId
+     * @return
+     */
     public List<Ali1688Item> getShop(String shopId) {
         Objects.requireNonNull(shopId);
         String value = this.redisTemplate.opsForValue().get(REDIS_SHOP_PRE + shopId);
@@ -62,6 +104,11 @@ public class Ali1688CacheService {
         }
     }
 
+    /**
+     * setShop
+     * @param shopId
+     * @param value
+     */
     public void setShop(String shopId, List<Ali1688Item> value) {
         Objects.requireNonNull(shopId);
         Objects.requireNonNull(value);
@@ -69,6 +116,11 @@ public class Ali1688CacheService {
     }
 
 
+    /**
+     * processNotExistItemInCache
+     * @param isClear
+     * @return
+     */
     public int processNotExistItemInCache(boolean isClear) {
         int count = 0;
         Set<String> keys = this.redisTemplate.keys(REDIS_PID_PRE + "*");

@@ -7,12 +7,14 @@ import com.importexpress.comm.domain.CommonResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.UUID;
@@ -50,11 +52,28 @@ public class ImageSearchController {
         try {
             file.transferTo(dest);
             log.info("upload file({}) successful",dest.getAbsolutePath());
+
+            String md5;
+            try {
+                md5 = DigestUtils.md5Hex(new FileInputStream(dest.getAbsolutePath()));
+            } catch (IOException e) {
+                log.error(e.getMessage(),e);
+                return CommonResult.failed("md5获取失败");
+            }
+            //缓存中判断
+            JSONObject imageSearchFromCatch = ali1688Service.getImageSearchFromCatch(md5);
+            if(imageSearchFromCatch !=null){
+                return CommonResult.success(imageSearchFromCatch);
+            }
+
             String url = ali1688Service.uploadImgToTaobao(dest.getAbsolutePath());
             if(StringUtils.isEmpty(url)){
                 return CommonResult.failed("upload image failed");
             }
             JSONObject jsonObject = ali1688Service.searchImgFromTaobao(url);
+            //缓存中保存
+            ali1688Service.saveImageSearchFromCatch(md5, jsonObject);
+
             return CommonResult.success(jsonObject);
         } catch (IOException e) {
             log.error(e.toString(), e);
