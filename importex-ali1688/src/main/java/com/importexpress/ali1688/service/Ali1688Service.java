@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.model.PidQueue;
 import com.importexpress.comm.pojo.Ali1688Item;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -13,7 +14,7 @@ import java.util.List;
 public interface Ali1688Service {
 
     /**
-     * 1688商品详情查询
+     * 1688商品详情查询（单个）
      *
      * @param pid
      * @return
@@ -21,7 +22,7 @@ public interface Ali1688Service {
     JSONObject getItem(Long pid, boolean isCache);
 
     /**
-     * get items by pid array
+     * 1688商品详情查询（多个）
      *
      * @param pids
      * @return
@@ -29,12 +30,43 @@ public interface Ali1688Service {
     List<JSONObject> getItems(Long[] pids, boolean isCache);
 
     /**
-     * get Items In Shop
+     * 获得店铺商品
      *
      * @param shopid
      * @return
      */
     List<Ali1688Item> getItemsInShop(String shopid);
+
+    /**
+     * 上传图片到taobao
+     *
+     * @param file
+     * @return
+     */
+    String uploadImgToTaobao(String file);
+
+    /**
+     * 从缓存中获取图片搜索结果
+     * @param md5
+     * @return
+     */
+    JSONObject getImageSearchFromCatch(String md5);
+
+    /**
+     * 图片搜索结果保存到缓存中
+     * @param md5
+     * @param jsonObject
+     * @return
+     */
+    int saveImageSearchFromCatch(String md5,JSONObject jsonObject);
+
+    /**
+     * 图片搜索
+     *
+     * @param imgUrl
+     * @return
+     */
+    JSONObject searchImgFromTaobao(String imgUrl);
 
     /**
      * 清除redis缓存里面下架商品
@@ -43,8 +75,16 @@ public interface Ali1688Service {
      */
     int clearNotExistItemInCache();
 
+    /**
+     * 清除redis缓存里面所有商品
+     * @return
+     */
     int clearAllPidInCache();
 
+    /**
+     * 清除redis缓存里面所有店铺
+     * @return
+     */
     int clearAllShopInCache();
 
     /**
@@ -61,15 +101,46 @@ public interface Ali1688Service {
      */
     void setItemsExpire(int days);
 
+    /**
+     * pid_queue表：获得pid（分页）
+     * @param page
+     * @param pageSize
+     * @return
+     */
     List<PidQueue> getAllPids(int page, int pageSize);
 
+    /**
+     * pid_queue表：获得所有pid
+     * @return
+     */
     List<PidQueue> getAllPids();
 
+    /**
+     * pid_queue表：获得UnStartpid
+     * @return
+     */
     List<PidQueue> getAllUnStartPids();
 
+    /**
+     * pid_queue表：更新状态
+     * @param id
+     * @param status
+     * @return
+     */
     int updatePidQueue(int id, int status);
 
+    /**
+     * pid_queue表：增加pid
+     * @param shopId
+     * @param pid
+     * @return
+     */
     int pushPid(String shopId, int pid);
 
+    /**
+     * pid_queue表：删除pid
+     * @param id
+     * @return
+     */
     int deleteIdInQueue(int id);
 }

@@ -28,12 +28,12 @@ public class AliExpressCacheService {
     }
 
 
-    public JSONObject getItemByKeyword(Integer page, String keyword) {
+    public JSONObject getItemByKeyword(Integer page, String keyword, String start_price, String end_price,
+                                       String sort) {
         Objects.requireNonNull(page);
         Objects.requireNonNull(keyword);
 
-        String value = this.redisTemplate.opsForValue().get(REDIS_KEYWORD_PRE
-                + StringUtil.checkAndChangeSpace(keyword, "_") + "_" + page);
+        String value = this.redisTemplate.opsForValue().get(getRedisKeyInfo(page, keyword, start_price, end_price, sort));
         if (StringUtils.isNotEmpty(value)) {
             return JSONObject.parseObject(value);
         } else {
@@ -41,20 +41,38 @@ public class AliExpressCacheService {
         }
     }
 
-    public void saveItemByKeyword(Integer page, String keyword, JSONObject jsonObject) {
+
+    public void saveItemByKeyword(Integer page, String keyword, String start_price, String end_price,
+                                  String sort, JSONObject jsonObject) {
         Objects.requireNonNull(page);
         Objects.requireNonNull(keyword);
         Objects.requireNonNull(jsonObject);
-        this.redisTemplate.opsForValue().set(REDIS_KEYWORD_PRE + StringUtil.checkAndChangeSpace(keyword, "_") + "_" + page,
+        this.redisTemplate.opsForValue().set(getRedisKeyInfo(page, keyword, start_price, end_price, sort),
                 JSONObject.toJSONString(jsonObject), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
 
-    public Boolean deleteKeyword(Integer page, String keyword) {
+    public Boolean deleteKeyword(Integer page, String keyword, String start_price, String end_price,
+                                 String sort) {
         Objects.requireNonNull(page);
         Objects.requireNonNull(keyword);
-        return this.redisTemplate.delete(REDIS_KEYWORD_PRE + StringUtil.checkAndChangeSpace(keyword, "_") + "_" + page);
+        return this.redisTemplate.delete(getRedisKeyInfo(page, keyword, start_price, end_price, sort));
     }
 
+    private String getRedisKeyInfo(Integer page, String keyword, String start_price, String end_price,
+                                   String sort) {
+        StringBuffer redisKey = new StringBuffer(REDIS_KEYWORD_PRE
+                + StringUtil.checkAndChangeSpace(keyword, "_") + "_" + page);
+        if (StringUtils.isNotBlank(start_price)) {
+            redisKey.append("_" + StringUtil.checkAndChangeSpaceAndOther(start_price, "_"));
+        }
+        if (StringUtils.isNotBlank(end_price)) {
+            redisKey.append("_" + StringUtil.checkAndChangeSpaceAndOther(end_price, "_"));
+        }
+        if (StringUtils.isNotBlank(sort)) {
+            redisKey.append("_" + sort);
+        }
+        return redisKey.toString();
+    }
 
 }

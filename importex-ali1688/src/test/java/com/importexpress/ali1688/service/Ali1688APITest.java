@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -100,5 +104,20 @@ public class Ali1688APITest {
         List<Ali1688Item> result = ali1688Service.getItemsInShop("shop1432227742608");
         Assert.assertNotNull(result);
         Assert.assertEquals(169, result.size());
+    }
+
+
+    @Test
+    public void uploadImgToTaobao1() throws IOException {
+
+        Assert.assertNotNull(ali1688Service.uploadImgToTaobao("C:\\Users\\luohao\\Downloads\\1111.jpg"));
+    }
+
+    @Test
+    public void searchImgFromTaobao()  {
+
+        String URL = ali1688Service.uploadImgToTaobao("C:\\Users\\luohao\\Downloads\\1111.jpg");
+        Assert.assertNotNull(URL);
+        Assert.assertNotNull(ali1688Service.searchImgFromTaobao(URL));
     }
 }

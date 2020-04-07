@@ -15,6 +15,7 @@ import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
 import com.importexpress.comm.util.UrlUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -50,13 +52,23 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     /**
      * 获取商品详情
      */
-    private final static String URL_ITEM_GET = "%sapi_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
+    private final static String URL_ITEM_GET = "%s1688/api_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
 
-//    private final static String URL_ITEM_GET = "%sapi_call.php?key=%s&secret=%s&num_iid=%s&cache=no&api_name=item_get&lang=zh-CN";
+    /**
+     * img_upload API URL
+     */
+    private final static String IMG_UPLOAD_TAOBAO_API = "%staobao/demo/img_upload.php";
+
+    /**
+     * image search API URL
+     */
+    private final static String IMG_SEARCH_TAOBAO_API = "%staobao/api_call.php?imgid=%s&lang=en&key=%s&secret=%s&api_name=item_search_img&cat=";
+
+
     /**
      * 获取店铺商品
      */
-    private final static String URL_ITEM_SEARCH = "%sapi_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&api_name=item_search_shop&lang=zh-CN";
+    private final static String URL_ITEM_SEARCH = "%s1688/api_call.php?key=%s&secret=%s&seller_nick=%s&start_price=0&end_price=0&q=&page=%d&cid=&api_name=item_search_shop&lang=zh-CN";
     private Ali1688CacheService ali1688CacheService;
     private Config config;
     private PidQueueMapper pidQueueMapper;
@@ -109,7 +121,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     /**
-     * 1688商品详情查询
+     * 1688商品详情查询（单个）
      *
      * @param pid
      * @return
@@ -141,7 +153,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     /**
-     * get items by pid array
+     * 1688商品详情查询（多个）
      *
      * @param pids
      * @return
@@ -178,7 +190,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
     /**
-     * get Items In Shop
+     * 获得店铺商品
      *
      * @param shopid
      * @return
@@ -224,32 +236,125 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         }
     }
 
+    /**
+     * 从缓存中获取图片搜索结果
+     * @param md5Hex
+     * @return
+     */
+    @Override
+    public JSONObject getImageSearchFromCatch(String md5Hex){
+        return ali1688CacheService.getImageSearch(md5Hex);
+    }
+
+    /**
+     * 图片搜索结果保存到缓存中
+     * @param md5
+     * @param jsonObject
+     * @return
+     */
+    @Override
+    public int saveImageSearchFromCatch(String md5,JSONObject jsonObject){
+        ali1688CacheService.saveImageSearch(md5,jsonObject);
+        return 1;
+    }
+
+    /**
+     * 上传图片到taobao
+     *
+     * @param file
+     * @return
+     */
+    @Override
+    public String uploadImgToTaobao(String file) {
+
+        String url=null;
+
+        try {
+            JSONObject jsonObject = UrlUtil.getInstance().doPostForImgUpload(String.format(IMG_UPLOAD_TAOBAO_API, config.API_HOST), "taobao", file);
+            if (jsonObject != null) {
+                //sample:  tfsid -> https://img.alicdn.com/imgextra/i4/2601011849/O1CN01Ob6weI1PWsusJC7Xt_!!2601011849.jpg
+                log.info("result:[{}]", jsonObject);
+                url = jsonObject.getString("tfsid");
+            }
+        }catch(IllegalStateException ise){
+            log.warn("file size is error",ise);
+            return null;
+        }catch (IOException ioe){
+            log.error("uploadImgToTaobao",ioe);
+        }
+        return url;
+    }
+
+    /**
+     * 图片搜索
+     * @param imgUrl
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public JSONObject searchImgFromTaobao(String imgUrl) {
+
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(IMG_SEARCH_TAOBAO_API, config.API_HOST ,imgUrl,config.API_KEY, config.API_SECRET ));
+        } catch (IOException ioe) {
+            log.error("searchImgFromTaobao",ioe);
+        }
+
+        return jsonObject;
+    }
+
+    /**
+     * 清除redis缓存里面下架商品
+     * @return
+     */
     @Override
     public int clearNotExistItemInCache() {
         return this.ali1688CacheService.processNotExistItemInCache(true);
     }
 
+    /**
+     * 清除redis缓存里面所有商品
+     * @return
+     */
     @Override
     public int clearAllPidInCache() {
         return this.ali1688CacheService.clearAllPidInCache();
     }
 
+    /**
+     * 清除redis缓存里面所有店铺
+     * @return
+     */
     @Override
     public int clearAllShopInCache() {
         return this.ali1688CacheService.clearAllShopInCache();
     }
 
-
+    /**
+     * 下架商品数量统计
+     * @return
+     */
     @Override
     public int getNotExistItemInCache() {
         return this.ali1688CacheService.processNotExistItemInCache(false);
     }
 
+    /**
+     * 设置key的过期时间
+     * @param days
+     */
     @Override
     public void setItemsExpire(int days) {
         this.ali1688CacheService.setItemsExpire(days);
     }
 
+    /**
+     * pid_queue表：获得pid（分页）
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @Override
     public List<PidQueue> getAllPids(int page, int pageSize) {
         int offset = (page - 1) * pageSize;
@@ -259,6 +364,10 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.pidQueueMapper.selectByExampleAndRowBounds(example, new RowBounds(offset, pageSize));
     }
 
+    /**
+     * pid_queue表：获得所有pid
+     * @return
+     */
     @Override
     public List<PidQueue> getAllPids() {
 
@@ -268,6 +377,10 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
+    /**
+     * pid_queue表：获得UnStartpid
+     * @return
+     */
     @Override
     public List<PidQueue> getAllUnStartPids() {
 
@@ -276,6 +389,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.pidQueueMapper.select(pidQueue);
     }
 
+    /**
+     * pid_queue表：更新状态
+     * @param id
+     * @param status
+     * @return
+     */
     @Override
     public int updatePidQueue(int id, int status) {
 
@@ -286,6 +405,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.pidQueueMapper.updateByPrimaryKeySelective(pidQueue);
     }
 
+    /**
+     * pid_queue表：增加pid
+     * @param shopId
+     * @param pid
+     * @return
+     */
     @Override
     public int pushPid(String shopId, int pid) {
         PidQueue pidQueue = new PidQueue();
@@ -308,6 +433,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         }
     }
 
+    /**
+     * pid_queue表：删除pid
+     * @param id
+     * @return
+     */
     @Override
     public int deleteIdInQueue(int id) {
 
