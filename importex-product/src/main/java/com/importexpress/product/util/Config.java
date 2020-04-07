@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Config {
 
-    @Value("${test}")
-    public String test;
+
 
 }

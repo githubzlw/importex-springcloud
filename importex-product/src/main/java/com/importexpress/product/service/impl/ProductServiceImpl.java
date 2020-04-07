@@ -29,12 +29,34 @@ public class ProductServiceImpl implements ProductService {
         this.mongoTemplate = mongoTemplate;
     }
 
+    /**
+     * 产品搜索
+     * @param pid
+     * @return
+     */
     @Override
     public MongoProduct findProduct(Long pid) {
         Query query = new Query(Criteria.where(PID).is(pid));
         return mongoTemplate.findOne(query, MongoProduct.class);
     }
 
+    /**
+     * 通过店铺id搜索
+     * @param shopId
+     * @return
+     */
+    @Override
+    public List<MongoProduct> findProductByShopId(String shopId){
+        Query query = new Query(Criteria.where("shop_id").is(shopId));
+        return mongoTemplate.find(query, MongoProduct.class);
+    }
+
+    /**
+     * 更新产品
+     * @param pid
+     * @param valid
+     * @return
+     */
     @Override
     public int updateProduct(Long pid, int valid) {
         Query query = new Query();
@@ -45,6 +67,12 @@ public class ProductServiceImpl implements ProductService {
         return mongoTemplate.findAndModify(query, update, MongoProduct.class) != null ? 1 : 0;
     }
 
+    /**
+     * 多个产品搜索
+     * @param pids
+     * @param valid
+     * @return
+     */
     @Override
     public List<MongoProduct> findProducts(long[] pids, int valid) {
 

@@ -60,4 +60,11 @@ public class ProductControl {
         return productService.findProducts(pids, valid);
     }
 
+    @GetMapping("/shop/{shopid}")
+    @ApiOperation("通过店铺id搜索")
+    public List<MongoProduct> findProductByShopId(@ApiParam(name = "shopid", value = "shopid", required = true) @PathVariable("shopid") String shopid) {
+
+        return productService.findProductByShopId(shopid);
+    }
+
 }
