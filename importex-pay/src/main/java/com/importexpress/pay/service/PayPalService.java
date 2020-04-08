@@ -1,8 +1,8 @@
 package com.importexpress.pay.service;
 
 import com.importexpress.comm.domain.CommonResult;
-import com.importexpress.pay.service.impl.PayPalPaymentIntentEnum;
-import com.importexpress.pay.service.impl.PayPalPaymentMethodEnum;
+import com.importexpress.pay.service.enumc.PayPalPaymentIntentEnum;
+import com.importexpress.pay.service.enumc.PayPalPaymentMethodEnum;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 

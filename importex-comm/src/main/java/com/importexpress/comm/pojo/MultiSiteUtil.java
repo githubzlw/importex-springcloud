@@ -28,6 +28,10 @@ public class MultiSiteUtil {
                 return 'H';
             case MEDIC:
                 return 'M';
+            case E_PIPE:
+                return 'E';
+            case LINE:
+                return 'L';
             default:
                 throw new IllegalArgumentException("Unsupport siteEnum:"+siteEnum);
         }
