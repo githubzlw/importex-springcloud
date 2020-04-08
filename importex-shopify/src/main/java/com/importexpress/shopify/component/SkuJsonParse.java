@@ -67,10 +67,11 @@ public class SkuJsonParse {
 		for(int i=0;i<skuProductsArray.size();i++){
 			SkuAttr skuAttr = skuProductsArray.get(i);
 			String skuPropIds = skuAttr.getSkuPropIds();
-			if((initSku && skus.size() > 99) || (!initSku && !skus.contains(skuPropIds))){
+			String skuid = skuAttr.getSkuId();
+
+			if((initSku && skus.size() > 99) || (!initSku && !skus.contains(skuid))){
 				continue;
 			}
-
 			SkuVal skuValObject = skuAttr.getSkuVal();
 			String actSkuCalPrice = skuPrice(skuValObject);
 			String[] skuPropIdsSplit = skuPropIds.split(",");
