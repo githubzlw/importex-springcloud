@@ -161,28 +161,48 @@ public class OrderNoGeneratorByRedis implements OrderNoGenerator {
      */
     @Override
     public String generateOrderNumber(SiteEnum site, ClientTypeEnum clientTypeEnum, TradeTypeEnum tradeTypeEnum) throws Exception {
-        char clientType = '0';
-        if (clientTypeEnum.equals(ClientTypeEnum.MOBILE)) {
-            clientType = '1';
-        } else if (clientTypeEnum.equals(ClientTypeEnum.PC)) {
-            clientType = '2';
+
+        //clientType
+        char clientType;
+        switch (clientTypeEnum){
+            case MOBILE:
+                clientType = '1';
+                break;
+            case PC:
+                clientType = '2';
+                break;
+            default:
+                throw new IllegalArgumentException("input clientTypeEnum is error");
         }
-        char tradeType = '0';
-        if (tradeTypeEnum.equals(TradeTypeEnum.NORMAL)) {
-            tradeType = '1';
-        } else if (tradeTypeEnum.equals(TradeTypeEnum.DROPSHIP)) {
-            tradeType = '2';
-        } else if (tradeTypeEnum.equals(TradeTypeEnum.BUYFORME)) {
-            tradeType = '3';
-        } else if (tradeTypeEnum.equals(TradeTypeEnum.REORDER)) {
-            tradeType = '4';
-        } else if (tradeTypeEnum.equals(TradeTypeEnum.RECHARGE)) {
-            tradeType = '5';
-        } else if (tradeTypeEnum.equals(TradeTypeEnum.OTHER)) {
-            tradeType = '9';
-        } else if(tradeTypeEnum.equals(TradeTypeEnum.MEMBERRENWAL)){
-            tradeType = '8';
+
+        //tradeType
+        char tradeType;
+        switch (tradeTypeEnum){
+            case NORMAL:
+                tradeType = '1';
+                break;
+            case DROPSHIP:
+                tradeType = '2';
+                break;
+            case BUYFORME:
+                tradeType = '3';
+                break;
+            case REORDER:
+                tradeType = '4';
+                break;
+            case RECHARGE:
+                tradeType = '5';
+                break;
+            case OTHER:
+                tradeType = '9';
+                break;
+            case MEMBERRENWAL:
+                tradeType = '8';
+                break;
+            default:
+                throw new IllegalArgumentException("input tradeType is error");
         }
+
         String yyMMdd = LocalDate.now().format(fmtyyMMdd);
         if(site == SiteEnum.IMPORTX){
             //10位（兼容老格式）

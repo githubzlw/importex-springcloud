@@ -11,7 +11,7 @@ import com.importexpress.pay.service.enumc.TradeTypeEnum;
 public interface OrderNoGenerator {
 
     /**
-     * 新版订单号编制
+     * 订单号编制
      * @param site
      * @param clientTypeEnum
      * @param tradeTypeEnum
