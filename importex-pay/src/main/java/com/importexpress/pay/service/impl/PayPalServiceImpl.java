@@ -28,8 +28,6 @@ public class PayPalServiceImpl implements PayPalService {
         this.config = config;
     }
 
-    private static String strId =null;
-
     @Override
     public Payment createPayment(
             Double total,
@@ -61,7 +59,6 @@ public class PayPalServiceImpl implements PayPalService {
             String successUrl,
             String orderNO,
             String customMsg) throws PayPalRESTException {
-        log.info("createPayment():[{}],[{}],[{}],[{}],[{}],[{}],[{}]", total, currency, method, intent, description, cancelUrl, successUrl);
 
         APIContext apiContext = getApiContext();
 
@@ -138,8 +135,6 @@ public class PayPalServiceImpl implements PayPalService {
      * @return
      */
     private APIContext getApiContext() {
-
-        log.info("getApiContext()");
 
         Map<String, String> sdkConfig = new HashMap<>(1);
         sdkConfig.put("mode", config.paypalMode);
