@@ -12,7 +12,7 @@ import java.io.IOException;
  * @author jack.luo
  * @date 2019/12/6
  */
-public interface PaypalService {
+public interface PayPalService {
     /**
      * 创建交易
      *

@@ -1,7 +1,7 @@
 package com.importexpress.pay.service.impl;
 
 import com.importexpress.comm.domain.CommonResult;
-import com.importexpress.pay.service.PaypalService;
+import com.importexpress.pay.service.PayPalService;
 import com.importexpress.pay.util.Config;
 import com.paypal.api.payments.*;
 import com.paypal.base.rest.APIContext;
@@ -18,7 +18,7 @@ import java.util.*;
  */
 @Service
 @Slf4j
-public class PayPalServiceImpl implements PaypalService {
+public class PayPalServiceImpl implements PayPalService {
 
     private final Config config;
 

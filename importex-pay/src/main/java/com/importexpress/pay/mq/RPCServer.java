@@ -2,7 +2,7 @@ package com.importexpress.pay.mq;
 
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.domain.CommonResult;
-import com.importexpress.pay.service.PaypalService;
+import com.importexpress.pay.service.PayPalService;
 import com.importexpress.pay.util.Config;
 import com.importexpress.comm.util.MD5Util;
 import com.rabbitmq.client.*;
@@ -22,7 +22,7 @@ public class RPCServer implements Runnable {
 
     private final Config config;
 
-    private final PaypalService paypalService;
+    private final PayPalService paypalService;
 
     /**
      * 保存生成出来的UUID
@@ -34,7 +34,7 @@ public class RPCServer implements Runnable {
      */
     private final static int MAX_TIMEOUT = 30000;
 
-    public RPCServer(Config config, PaypalService paypalService) {
+    public RPCServer(Config config, PayPalService paypalService) {
         this.config = config;
         this.paypalService = paypalService;
     }

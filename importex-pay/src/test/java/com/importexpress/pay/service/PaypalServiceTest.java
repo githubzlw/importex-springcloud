@@ -18,7 +18,7 @@ import java.io.IOException;
 public class PaypalServiceTest {
 
     @Autowired
-    private PaypalService paypalService;
+    private PayPalService paypalService;
 
     @Test
     public void createPayment() throws PayPalRESTException {
