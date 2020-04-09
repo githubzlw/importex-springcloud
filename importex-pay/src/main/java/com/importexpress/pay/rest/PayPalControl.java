@@ -11,6 +11,7 @@ import com.paypal.base.rest.PayPalRESTException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,34 +37,44 @@ public class PayPalControl {
     @PostMapping("/{site}/create")
     @ApiOperation("支付创建")
     public CommonResult createPayment(@PathVariable(value = "site") SiteEnum site,
-                                      @RequestParam Double total,@RequestParam String orderNo,@RequestParam(value = "customMsg", required = false, defaultValue = "") String customMsg,@RequestParam(value = "cancelUrlType", defaultValue = "0") int cancelUrlType) {
+                                      @RequestParam Double total,@RequestParam String orderNo,@RequestParam(value = "customMsg", required = false, defaultValue = "") String customMsg,@RequestParam(value = "cancelUrlType", defaultValue = "0") int cancelUrlType,
+   @RequestParam(value = "successUrl", required = false, defaultValue = "") String successUrl,
+   @RequestParam(value = "cancelUrl", required = false, defaultValue = "") String cancelUrl) {
 
-        String strApprovalUrl=null;
         try {
-            String cancelUrl = site.getUrl() + "/myaccount";
-            if(cancelUrlType==1){
-                //返回购物车
-                cancelUrl = site.getUrl() + "/Goods/getShopCar?from=pay";
+            if(StringUtils.isEmpty(successUrl)){
+                successUrl = site.getUrl() + "/doPayment/pay";
             }
+            if(StringUtils.isEmpty(cancelUrl)){
+                if(cancelUrlType==1){
+                    //返回购物车
+                    cancelUrl = site.getUrl() + "/Goods/getShopCar?from=pay";
+                }else{
+                    //返回个人中心
+                    cancelUrl = site.getUrl() + "/myaccount";
+                }
+            }
+
             Payment payment = payPalService.createPayment(total,
                     "USD",
                     PayPalPaymentMethodEnum.paypal,
                     PayPalPaymentIntentEnum.sale,
                     "",
                     cancelUrl,
-                    site.getUrl()+"/doPayment/pay",
+                    successUrl,
                     orderNo, customMsg);
+            String strApprovalUrl=null;
             for (Links links : payment.getLinks()) {
                 if (links.getRel().equals("approval_url")) {
                     strApprovalUrl=links.getHref();
                     break;
                 }
             }
-        } catch (PayPalRESTException e) {
-            log.error(e.getMessage(), e);
+            return CommonResult.success(strApprovalUrl);
+        } catch (Exception e) {
+            log.error("createPayment()", e);
             return CommonResult.failed(e.getMessage());
         }
-        return CommonResult.success(strApprovalUrl);
     }
 
     @PostMapping("/{site}/execute")
@@ -73,12 +84,12 @@ public class PayPalControl {
         try {
             Payment payment = payPalService.executePayment(paymentId, payerId);
             if (payment.getState().equals("approved")) {
-                return CommonResult.success(payment);
+                return CommonResult.success(payment.toJSON());
             } else {
                 return CommonResult.failed(payment.getState());
             }
-        } catch (PayPalRESTException e) {
-            log.error(e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("execute()", e);
             return CommonResult.failed(e.getMessage());
         }
     }
