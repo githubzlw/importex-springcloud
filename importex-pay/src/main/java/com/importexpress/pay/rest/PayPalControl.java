@@ -1,5 +1,6 @@
 package com.importexpress.pay.rest;
 
+import com.google.gson.Gson;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.pojo.SiteEnum;
 import com.importexpress.pay.service.PayPalService;
@@ -84,7 +85,7 @@ public class PayPalControl {
         try {
             Payment payment = payPalService.executePayment(paymentId, payerId);
             if (payment.getState().equals("approved")) {
-                return CommonResult.success(payment.toJSON());
+                return CommonResult.success(new Gson().toJson(payment));
             } else {
                 return CommonResult.failed(payment.getState());
             }
