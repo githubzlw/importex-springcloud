@@ -73,7 +73,7 @@ public class PayPalControl {
         try {
             Payment payment = payPalService.executePayment(paymentId, payerId);
             if (payment.getState().equals("approved")) {
-                return CommonResult.success(payment);
+                return CommonResult.success(payment.toJSON());
             } else {
                 return CommonResult.failed(payment.getState());
             }
