@@ -41,8 +41,6 @@ public class PayPalControl {
    @RequestParam(value = "successUrl", required = false, defaultValue = "") String successUrl,
    @RequestParam(value = "cancelUrl", required = false, defaultValue = "") String cancelUrl) {
 
-
-        String strApprovalUrl=null;
         try {
             if(StringUtils.isEmpty(successUrl)){
                 successUrl = site.getUrl() + "/doPayment/pay";
@@ -65,17 +63,18 @@ public class PayPalControl {
                     cancelUrl,
                     successUrl,
                     orderNo, customMsg);
+            String strApprovalUrl=null;
             for (Links links : payment.getLinks()) {
                 if (links.getRel().equals("approval_url")) {
                     strApprovalUrl=links.getHref();
                     break;
                 }
             }
-        } catch (PayPalRESTException e) {
-            log.error(e.getMessage(), e);
+            return CommonResult.success(strApprovalUrl);
+        } catch (Exception e) {
+            log.error("createPayment()", e);
             return CommonResult.failed(e.getMessage());
         }
-        return CommonResult.success(strApprovalUrl);
     }
 
     @PostMapping("/{site}/execute")
@@ -89,8 +88,8 @@ public class PayPalControl {
             } else {
                 return CommonResult.failed(payment.getState());
             }
-        } catch (PayPalRESTException e) {
-            log.error(e.getMessage(), e);
+        } catch (Exception e) {
+            log.error("execute()", e);
             return CommonResult.failed(e.getMessage());
         }
     }
