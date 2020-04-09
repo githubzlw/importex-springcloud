@@ -2,7 +2,7 @@ package com.importexpress.pay.rest;
 
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.pojo.SiteEnum;
-import com.importexpress.pay.service.OrderNoGenerator;
+import com.importexpress.pay.service.OrderService;
 import com.importexpress.pay.service.enumc.ClientTypeEnum;
 import com.importexpress.pay.service.enumc.TradeTypeEnum;
 import io.swagger.annotations.Api;
@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/order")
 public class OrderControl {
 
-    private OrderNoGenerator orderNoGenerator;
+    private OrderService orderNoGenerator;
 
     @Autowired
-    public OrderControl(OrderNoGenerator orderNoGenerator) {
+    public OrderControl(OrderService orderNoGenerator) {
 
         this.orderNoGenerator = orderNoGenerator;
     }

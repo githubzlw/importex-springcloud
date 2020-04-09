@@ -8,7 +8,14 @@ import com.importexpress.pay.service.enumc.TradeTypeEnum;
 /**
  * 订单号生成器
  */
-public interface OrderNoGenerator {
+public interface OrderService {
+
+
+    /**
+     * 清理redis缓存
+     * @return
+     */
+    boolean clearRedisCache();
 
     /**
      * 订单号编制
