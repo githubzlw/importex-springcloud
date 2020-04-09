@@ -1,12 +1,10 @@
 package com.importexpress.pay.service.impl;
 
-import com.importexpress.comm.pojo.SiteEnum;
-import com.importexpress.pay.service.OrderService;
-import com.importexpress.pay.service.enumc.ClientTypeEnum;
-import com.importexpress.pay.service.enumc.TradeTypeEnum;
+import com.importexpress.pay.util.DistributedLockHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -31,15 +29,19 @@ import java.util.stream.IntStream;
 public class OrderNoHelp {
 
     private static final String ORDERNO = "ORDERNO:";
-    private static final int ONE_DAY = 60 * 60 * 24 + 60;
+
+    private static final String lockKey = "ORDERNO_LOCK_KEY";
 
     private static final DateTimeFormatter fmtMMdd = DateTimeFormatter.ofPattern("MMdd");
 
 
     private final StringRedisTemplate redisTemplate;
 
-    public OrderNoHelp(StringRedisTemplate redisTemplate) {
+    private final DistributedLockHandler distributedLockHandler;
+
+    public OrderNoHelp(StringRedisTemplate redisTemplate, DistributedLockHandler distributedLockHandler) {
         this.redisTemplate = redisTemplate;
+        this.distributedLockHandler = distributedLockHandler;
     }
 
     /**
@@ -73,7 +75,7 @@ public class OrderNoHelp {
      *
      * @param lstOrders
      */
-    private void pushToRedis(List<String> lstOrders) {
+    private void pushToRedis(String key,List<String> lstOrders) {
 
 
         //execute a transaction
@@ -82,12 +84,11 @@ public class OrderNoHelp {
 
             @Override
             public List<Object> execute(RedisOperations operations) throws DataAccessException {
-                String key = ORDERNO + getToday();
                 operations.watch(key);
                 operations.multi();
-                log.info("begin pushToRedis multi()");
+                log.debug("begin pushToRedis multi()");
                 operations.opsForList().leftPushAll(key, lstOrders);
-                operations.expire(key, ONE_DAY, TimeUnit.SECONDS);
+                operations.expire(key, 7, TimeUnit.DAYS);
                 return operations.exec();
             }
         });
@@ -100,9 +101,9 @@ public class OrderNoHelp {
      *
      * @return
      */
-    private boolean checkRedis() {
+    private boolean checkRedis(String key) {
 
-        return redisTemplate.hasKey(ORDERNO + getToday());
+        return redisTemplate.hasKey(key);
     }
 
     /**
@@ -123,10 +124,23 @@ public class OrderNoHelp {
 
         String key = ORDERNO + getToday();
         String keyHis = ORDERNO + getToday() + ":his";
-        if (!checkRedis()) {
-            pushToRedis(generatorArrays());
+
+        try{
+            if(distributedLockHandler.tryLock(lockKey, 3)){
+                if (!checkRedis(key)) {
+                    pushToRedis(key,generatorArrays());
+                }
+                return redisTemplate.opsForList().rightPopAndLeftPush(key, keyHis);
+            }else {
+                log.warn("can't get lock.");
+                return null;
+            }
+        }catch(Exception e){
+            log.error("getOrderNoFromRedis",e);
+            return null;
+        }finally {
+            distributedLockHandler.realseLock(lockKey);
         }
-        return redisTemplate.opsForList().rightPopAndLeftPush(key, keyHis);
     }
 
 }
