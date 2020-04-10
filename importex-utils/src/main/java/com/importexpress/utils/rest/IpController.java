@@ -3,6 +3,7 @@ package com.importexpress.utils.rest;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.utils.service.IpService;
+import com.importexpress.utils.util.GeoIpUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
@@ -52,7 +53,13 @@ public class IpController {
                     this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, countryCode);
                     return CommonResult.success(countryCode);
                 } else {
-                    return CommonResult.failed("ip lookup failed");
+                    countryCode = GeoIpUtils.getCountryCode(ip);
+                    if(StringUtils.isNotEmpty(countryCode)) {
+                        this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, countryCode);
+                        return CommonResult.success(countryCode);
+                    }else{
+                        return CommonResult.failed("ip lookup failed");
+                    }
 
                 }
             } catch (Exception e) {
