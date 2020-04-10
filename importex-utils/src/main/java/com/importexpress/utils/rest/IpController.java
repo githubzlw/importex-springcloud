@@ -45,24 +45,17 @@ public class IpController {
         if (StringUtils.isNotEmpty(result)) {
             return CommonResult.success(result);
         } else {
-            //from url read
             try {
                 JSONObject json = this.ipService.queryIp(ip);
-//                if (!"success".equals(json.getString("status"))) {
-//                    return CommonResult.failed("ip search result is fault");
-//                } else {
-//                    String country = json.getString("countryCode");
-//                    this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, country);
-//                    return CommonResult.success(country);
-//                }
-                if (!"0".equals(json.getString("code"))) {
-                    return CommonResult.failed("ip search result is fault");
+                String countryCode = json.getString("country_code");
+                if (StringUtils.isNotEmpty(countryCode)) {
+                    this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, countryCode);
+                    return CommonResult.success(countryCode);
                 } else {
-                    String countryId = json.getJSONObject("data").getString("country_id");
-                    this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, countryId);
-                    return CommonResult.success(countryId);
+                    return CommonResult.failed("ip lookup failed");
+
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return CommonResult.failed(e.getMessage());
             }
         }
@@ -72,7 +65,8 @@ public class IpController {
     @ApiOperation("clearCache")
     public CommonResult clearCache() {
 
-        if(this.redisTemplate.delete(REDIS_HASH_IP)){
+        Boolean isOK = this.redisTemplate.delete(REDIS_HASH_IP);
+        if(isOK!=null && isOK){
             return CommonResult.success();
         }else{
             return CommonResult.failed();
