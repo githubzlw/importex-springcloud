@@ -47,21 +47,19 @@ public class IpController {
             return CommonResult.success(result);
         } else {
             try {
-                JSONObject json = this.ipService.queryIp(ip);
-                String countryCode = json.getString("country_code");
-                if (StringUtils.isNotEmpty(countryCode)) {
-                    this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, countryCode);
-                    return CommonResult.success(countryCode);
-                } else {
-                    countryCode = GeoIpUtils.getCountryCode(ip);
-                    if(StringUtils.isNotEmpty(countryCode)) {
-                        this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, countryCode);
-                        return CommonResult.success(countryCode);
-                    }else{
-                        return CommonResult.failed("ip lookup failed");
-                    }
+                //本地数据库搜索ip
+                String countryCode = GeoIpUtils.getCountryCode(ip);
 
+                if(StringUtils.isEmpty(countryCode)) {
+                    //线上搜索ip
+                    JSONObject json = this.ipService.queryIp(ip);
+                    countryCode = json.getString("country_code");
+                    if (StringUtils.isEmpty(countryCode)) {
+                      throw new IOException("ip lookup failed");
+                    }
                 }
+                this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, countryCode);
+                return CommonResult.success(countryCode);
             } catch (Exception e) {
                 return CommonResult.failed(e.getMessage());
             }
