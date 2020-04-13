@@ -158,7 +158,8 @@ public class SearchServiceImpl implements SearchService {
         QueryResponse response = solrService.hotProductForCatid(param);
         if (response != null) {
             list = docToProduct(response.getResults(), param);
-            list = list.stream().filter(e -> StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
+            list = list.stream()
+                    .filter(e -> StrUtils.isMatch(e.getPrice(),"(\\d+(\\.\\d+){0,1})"))
                     .collect(Collectors.toList());
             list = Utility.getRandomNumList(list, 12);
         }
@@ -351,10 +352,15 @@ public class SearchServiceImpl implements SearchService {
                 calculatePrice.searchRangePrice(solrDocument);
             }*/
             if(param.getSite() == 1 || param.getSite() == 2 ){
-                if(StringUtils.isNotBlank(StrUtils.object2Str(solrDocument.get("custom_range_price")))){
-                    solrDocument.setField("custom_range_price_free",solrDocument.get("custom_range_price_free_new"));
+                if(StringUtils.isNotBlank(
+                        StrUtils.object2Str(solrDocument.get("custom_range_price")))){
+                    solrDocument.setField(
+                            "custom_range_price_free",
+                            solrDocument.get("custom_range_price_free_new"));
                 }else{
-                    solrDocument.setField("custom_feeprice",solrDocument.get("custom_free_price_new"));
+                    solrDocument.setField(
+                            "custom_feeprice",
+                            solrDocument.get("custom_free_price_new"));
                 }
             }
 
@@ -367,7 +373,8 @@ public class SearchServiceImpl implements SearchService {
             //zlw 2018/05/25 update 对标商品销量 Max(速卖通，1688销量) str
             String custom_ali_sold = StrUtils.object2NumStr(solrDocument.get("custom_ali_sold"));
             String custom_sold = StrUtils.object2NumStr(solrDocument.get("custom_sold"));
-            String soldObject = String.valueOf(Integer.parseInt(custom_ali_sold) + Integer.parseInt(custom_sold));
+            String soldObject = String.valueOf(
+                    Integer.parseInt(custom_ali_sold) + Integer.parseInt(custom_sold));
             product.setSold(soldObject);
             //zlw 2018/05/25 update 对标商品销量 Max(速卖通，1688销量) end
 
@@ -379,7 +386,8 @@ public class SearchServiceImpl implements SearchService {
                     || StringUtils.isBlank(title)) {
                 title = StrUtils.object2Str(solrDocument.get("custom_enname"));
                 //拼接类别名称
-                /*1688标题短，就用 速卖通标题 这个 逻辑 去掉改成 1688 标题短 就 在标题里面 加上 这个产品的 类别名绝不能 直接用
+                /*1688标题短，就用 速卖通标题 这个 逻辑 去掉改成 1688 标题短
+                就 在标题里面 加上 这个产品的 类别名绝不能 直接用
                 速卖通 产品名--2018-01-05*/
                 title = splicingSyntax.categoryNameToTitle(title, catid);
             }
@@ -409,7 +417,8 @@ public class SearchServiceImpl implements SearchService {
             /**
              * 添加伪静态化链接
              */
-            String goods_url = UriCompose.pseudoStaticUrl(itemId, product.getName(), catid1, catid2, 1);
+            String goods_url = UriCompose.pseudoStaticUrl(
+                    itemId, product.getName(), catid1, catid2, 1);
             product.setUrl(goods_url.replaceAll("\\%", ""));
 
             //价格
@@ -420,13 +429,15 @@ public class SearchServiceImpl implements SearchService {
             String unit = StrUtils.object2Str(solrDocument.get("custom_sellunit"));
             unit = StringUtils.isBlank(unit) ? "piece" : unit;
             String setSellUnits_ = StrUtils.matchStr(unit, "(\\(.*\\))");
-            unit = StringUtils.isNotBlank(setSellUnits_) ? unit.replace(setSellUnits_, "").trim() : unit;
+            unit = StringUtils.isNotBlank(setSellUnits_) ?
+                    unit.replace(setSellUnits_, "").trim() : unit;
             product.setPriceUnit(unit);
             product.setMoqUnit(unit);
             String goods_minOrder = StrUtils.object2Str(solrDocument.get("custom_morder"));
             goods_minOrder = StrUtils.isNum(goods_minOrder) ? goods_minOrder : "1";
             product.setMinOrder(goods_minOrder);
-            if (StringUtils.isNotBlank(goods_minOrder) && !"1".equals(goods_minOrder) && !"pcs".equals(unit)) {
+            if (StringUtils.isNotBlank(goods_minOrder) &&
+                    !"1".equals(goods_minOrder) && !"pcs".equals(unit)) {
                 product.setMoqUnit(unit + "s" + setSellUnits_);
             } else {
                 product.setMoqUnit(unit + setSellUnits_);
@@ -464,7 +475,8 @@ public class SearchServiceImpl implements SearchService {
         String rangePrice = StrUtils.object2Str(solrDocument.get("custom_range_price"));
         if(StringUtils.isNotBlank(rangePrice)){
             if (isFree) {
-                String rangePriceFree = StrUtils.object2Str(solrDocument.get("custom_range_price_free"));
+                String rangePriceFree = StrUtils.object2Str(
+                        solrDocument.get("custom_range_price_free"));
                 if (StringUtils.isNotBlank(rangePriceFree)) {
                     rangePrice = rangePriceFree;
                 } else {

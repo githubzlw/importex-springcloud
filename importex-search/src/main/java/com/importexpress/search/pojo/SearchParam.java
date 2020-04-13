@@ -116,5 +116,6 @@ public class SearchParam implements Serializable {
 	@ApiModelProperty(value = "是否美加可售")
 	private boolean salable = false;
 
-
+	@ApiModelProperty(value = "移动端返回上次请求行数")
+	private int backRows;
 }
