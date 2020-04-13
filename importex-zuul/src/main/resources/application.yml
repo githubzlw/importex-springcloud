@@ -1,5 +1,5 @@
 logging:
-  file: logs/zuul.log
+  file: logs/zuul/zuul.log
   level:
     com.importexpress: info
 
