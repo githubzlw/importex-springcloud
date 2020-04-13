@@ -1,18 +1,18 @@
 package com.importexpress.utils.util;
 
-import java.io.File;
+import java.io.InputStream;
 import java.net.InetAddress;
 
-import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CountryResponse;
 import com.maxmind.geoip2.record.Country;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 /**
+ * @author jack.luo
  * @Description: geoip工具类
  */
 @Slf4j
@@ -48,8 +48,10 @@ public class GeoIpUtils {
         try{
             if(reader == null){
                 log.info("打开ip数据库");
-                File database =  new File(GeoIpUtils.class.getClassLoader().getResource("GeoLite2-Country.mmdb").getFile()); // 附件下载百度云地址https://pan.baidu.com/s/1ENqTeCoMIWJMbh88nYU5gg
-                reader = new DatabaseReader.Builder(database).build();
+                Resource resource = new ClassPathResource("GeoLite2-Country.mmdb");
+                try(InputStream inputStream=resource.getInputStream()){
+                    reader = new DatabaseReader.Builder(inputStream).build();
+                }
             }
             return reader;
         }catch(Exception e){
