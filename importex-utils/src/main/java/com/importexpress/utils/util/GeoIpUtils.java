@@ -44,7 +44,7 @@ public class GeoIpUtils {
 
     private DatabaseReader reader;
 
-    private DatabaseReader getReader(){
+    private synchronized DatabaseReader getReader(){
         try{
             if(reader == null){
                 log.info("打开ip数据库");
