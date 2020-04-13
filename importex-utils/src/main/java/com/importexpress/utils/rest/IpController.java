@@ -48,7 +48,7 @@ public class IpController {
         } else {
             try {
                 //本地数据库搜索ip
-                String countryCode = GeoIpUtils.getCountryCode(ip);
+                String countryCode = GeoIpUtils.getInstance().getCountryCode(ip);
 
                 if(StringUtils.isEmpty(countryCode)) {
                     //线上搜索ip
