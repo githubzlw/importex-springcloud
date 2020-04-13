@@ -30,7 +30,6 @@ public abstract class SolrBase {
 		solrParams.set("facet.mincount", facet.getFacetMincount());
 	}
 
-
 	/**设置row
 	 * @param param
 	 * @param solrParams
