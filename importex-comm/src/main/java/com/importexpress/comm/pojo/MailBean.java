@@ -32,7 +32,7 @@ public class MailBean {
     /**
      * body
      */
-    public String body;
+    private String body;
 
     /**
      * 填充键值
@@ -47,7 +47,7 @@ public class MailBean {
     /**
      * 1:线上请求    2:线下请求
      */
-    public int type = 1;
+    private int type = 1;
 
     /**
      * true:测试模板（不实际发送邮件）

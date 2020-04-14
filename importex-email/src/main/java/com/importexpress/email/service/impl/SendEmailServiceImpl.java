@@ -3,7 +3,6 @@ package com.importexpress.email.service.impl;
 import com.importexpress.comm.pojo.*;
 import com.importexpress.comm.util.MD5Util;
 import com.importexpress.comm.util.StrUtils;
-import com.importexpress.email.mapper.QueryMapper;
 import com.importexpress.email.service.SendEmailService;
 import com.importexpress.email.service.SendMailFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +24,6 @@ import java.util.*;
 public class SendEmailServiceImpl implements SendEmailService {
 
     @Autowired
-    private QueryMapper queryMapper;
-
-    @Autowired
     private SendMailFactory sendMailFactory;
 
 
@@ -45,7 +41,6 @@ public class SendEmailServiceImpl implements SendEmailService {
 
         MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.WELCOME).siteEnum(siteEnum).build();
         String activationCode = MD5Util.encoder(email + UUID.randomUUID().toString().replaceAll("-", ""));
-        queryMapper.upUserActivationCodeState1(email, activationCode);
         String activeLink = siteEnum.getUrl() + "/userController/upUserState?code=" + activationCode + "&email=" + email + "&from=" + from;
         String here = siteEnum.getUrl() + "/individual/getCenter";
         int site = MultiSiteUtil.site;
@@ -94,7 +89,6 @@ public class SendEmailServiceImpl implements SendEmailService {
         List<OrderEmailBean> orderEmailBeans = null;
         String delivery = null;
         try {
-            orderEmailBeans = queryMapper.getOrderDetails(orderNostr.toString());
             delivery = orderEmailBeans.get(0).getDelivery_time();
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,7 +106,7 @@ public class SendEmailServiceImpl implements SendEmailService {
         c.add(Calendar.DAY_OF_MONTH, +7);
         c.add(Calendar.DAY_OF_MONTH, delivery_time);
         String format = sf.format(c.getTime());
-        OrderAddressEmailBean orderAddressEmailInfo = queryMapper.getOrderAddressEmailInfo(orderNostr.toString());
+        OrderAddressEmailBean orderAddressEmailInfo = null;
         if (null == orderAddressEmailInfo) {
             log.error("genReceivedBodyAndSend sendEmail error!,OrderAddressEmailBean is null!,orderno:" + orderNostr);
             return;
@@ -136,7 +130,7 @@ public class SendEmailServiceImpl implements SendEmailService {
         c.add(Calendar.DAY_OF_MONTH, Integer.parseInt(time1));
 
         //用户信息
-        UserBean ub = queryMapper.getUserById(userId);
+        UserBean ub = null;
         mailBean.setTo(ub.getEmail());
         Map<String, Object> model = new HashMap<>();
         // 发送邮件
@@ -210,7 +204,6 @@ public class SendEmailServiceImpl implements SendEmailService {
         try {
             MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.ACTIVATION).siteEnum(siteEnum).build();
             String activationCode = MD5Util.encoder(mailBean.getTo() + UUID.randomUUID().toString().replaceAll("-", ""));
-            queryMapper.upUserActivationCodeState1(mailBean.getTo(), activationCode);
             String activeLink = siteEnum.getUrl() + "/userController/upUserState?code=" + activationCode + "&email=" + email + "&from=" + fromWhere;
             String here = siteEnum.getUrl() + "/individual/getCenter";
             Map<String, Object> model = new HashMap<>();
@@ -244,9 +237,8 @@ public class SendEmailServiceImpl implements SendEmailService {
         String title = "Reset Your Password At " + siteEnum.getName();
         try {
             MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.ACCOUNT_UPDATE).siteEnum(siteEnum).build();
-            UserBean userBean = queryMapper.getUserByEmail(mailBean.getTo(), mailBean.getSiteEnum().getCode());
+            UserBean userBean = null;
             String activationPassCode = MD5Util.encoder(mailBean.getTo() + System.currentTimeMillis());
-            queryMapper.upUserActivationCodeState2(mailBean.getTo(), activationPassCode);
             if (userBean != null) {
                 String activeLink = siteEnum.getUrl() + "/forgotPassword/passActivate?email=" + mailBean.getTo()
                         + "&validateCode=" + activationPassCode;

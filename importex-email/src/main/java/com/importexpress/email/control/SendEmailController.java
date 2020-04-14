@@ -30,13 +30,10 @@ public class SendEmailController {
     @PostMapping("/mailBean")
     public CommonResult sendEmailByBody(@RequestBody MailBean mailBean) {
 
-        Assert.notNull(mailBean.getTo(), "邮箱异常");
-        Assert.notNull(mailBean.getBody(), "邮件内容异常");
-        Assert.notNull(mailBean.getSiteEnum(), "网站异常");
         try {
             mailBean.setTest(true);
             sendMailFactory.sendMail(mailBean);
-            return CommonResult.success("send to " + mailBean.getTo() + " success");
+            return CommonResult.success("send to " + mailBean.getTo() + " successful.");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("sendEmailByMailBean,send email to[{}],error", mailBean, e);

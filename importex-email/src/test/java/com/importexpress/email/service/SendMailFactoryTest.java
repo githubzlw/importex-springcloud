@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.HashMap;
 
 /**
  * @Author jack.luo
@@ -78,7 +77,7 @@ public class SendMailFactoryTest {
     }
 
     @Test
-    public void sendMail() {
+    public void sendMail6() {
         String body = String.join(
                 System.getProperty("line.separator"),
                 "<h1>Amazon SES SMTP Email Test</h1>",
@@ -86,7 +85,7 @@ public class SendMailFactoryTest {
                 "<a href='https://github.com/javaee/javamail'>Javamail Package</a>",
                 " for <a href='https://www.java.com'>Java</a>."
         );
-        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a test email").siteEnum(SiteEnum.KIDS).body(body).isTest(false).build();
+        MailBean mailBean = MailBean.builder().type(1).to("luohao518@yeah.net").subject("This is a test email").siteEnum(SiteEnum.KIDS).body(body).isTest(false).build();
         sendMailFactory.sendMail(mailBean);
     }
 
