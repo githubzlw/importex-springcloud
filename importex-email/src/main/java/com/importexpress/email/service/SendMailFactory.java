@@ -45,7 +45,13 @@ public class SendMailFactory {
 
         checkMailBean(mailBean);
 
-        saveHtml(mailBean.getTemplateType().toString(), mailBean.getBody());
+        String fileName=null;
+        if(mailBean.getTemplateType() !=null){
+            fileName = mailBean.getTemplateType().toString();
+        }else{
+            fileName = mailBean.getSubject();
+        }
+        saveHtml(fileName, mailBean.getBody());
 
         if (!mailBean.isTest()) {
             //是否实际发送邮件

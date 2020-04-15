@@ -1,6 +1,7 @@
 package com.importexpress.email.mq;
 
 import com.importexpress.comm.pojo.MailBean;
+import com.importexpress.comm.pojo.MailTemplateBean;
 import com.importexpress.email.config.Config;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,8 @@ public class SendMQ {
         this.config = config;
     }
 
-    public void sendMQToMail(MailBean mailBean) {
-        this.rabbitTemplate.convertAndSend(Config.QUEUE_MAIL, mailBean);
+    public void sendMQToMail(MailTemplateBean mailTemplateBean) {
+        this.rabbitTemplate.convertAndSend(Config.QUEUE_MAIL, mailTemplateBean);
     }
 
 

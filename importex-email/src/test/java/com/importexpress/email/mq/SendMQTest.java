@@ -4,6 +4,7 @@ import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.SiteEnum;
 import com.importexpress.comm.pojo.TemplateType;
 import com.importexpress.email.config.Config;
+import com.importexpress.email.vo.WelcomeMailTemplateBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -51,6 +52,25 @@ public class SendMQTest {
 
     @Test
     public void sendMQToMail1() {
+
+        MailBean mailBean = new MailBean();
+        mailBean.setTest(true);
+        mailBean.setSiteEnum(SiteEnum.KIDS);
+        mailBean.setTo("luohao@kairong.com");
+        mailBean.setTemplateType(TemplateType.WELCOME);
+
+        WelcomeMailTemplateBean welcomeBean = new WelcomeMailTemplateBean();
+        welcomeBean.setActivationCode("aabbcc");
+        welcomeBean.setFrom("kairong");
+        welcomeBean.setName("luohao");
+        welcomeBean.setPass("pass");
+        welcomeBean.setMailBean(mailBean);
+
+        sender.sendMQToMail(welcomeBean);
+    }
+
+    @Test
+    public void sendMQToMail2() {
         String body = String.join(
                 System.getProperty("line.separator"),
                 "<h1>Amazon SES SMTP Email Test</h1>",
@@ -58,9 +78,18 @@ public class SendMQTest {
                 "<a href='https://github.com/javaee/javamail'>Javamail Package</a>",
                 " for <a href='https://www.java.com'>Java</a>."
         );
-        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a test email").siteEnum(SiteEnum.KIDS)
-                .body(body).isTest(false).build();
-        sender.sendMQToMail(mailBean);
+
+        MailBean mailBean = new MailBean();
+        mailBean.setTest(true);
+        mailBean.setSiteEnum(SiteEnum.KIDS);
+        mailBean.setTo("luohao@kairong.com");
+        mailBean.setSubject("test mail");
+        mailBean.setBody(body);
+
+        WelcomeMailTemplateBean welcomeBean = new WelcomeMailTemplateBean();
+        welcomeBean.setMailBean(mailBean);
+
+        sender.sendMQToMail(welcomeBean);
     }
 
 //    @Test

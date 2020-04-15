@@ -36,7 +36,11 @@ public class TemplateMailServiceImpl implements TemplateMailService {
 
         Assert.notNull(mailTemplateBean);
         Assert.notNull(mailTemplateBean.getMailBean());
-        Assert.notNull(mailTemplateBean.getMailBean().getTemplateType());
+
+        if(mailTemplateBean.getMailBean().getTemplateType() == null){
+            //not template mail
+            return mailTemplateBean.getMailBean();
+        }
         MailBean mailBean;
         TemplateMailProcess templateMailProcess ;
         switch (mailTemplateBean.getMailBean().getTemplateType()){

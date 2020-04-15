@@ -35,8 +35,12 @@ public class ReceiveMQ {
     @RabbitListener(queues = Config.QUEUE_MAIL, containerFactory = "rabbitListenerContainerFactory")
     public void receiveMail(@Payload MailTemplateBean mailTemplateBean) {
 
-        sendMailFactory.sendMail(templateMailService.processTemplate(mailTemplateBean));
-        log.info("received mq count:[{}]", count.incrementAndGet());
+        try{
+            sendMailFactory.sendMail(templateMailService.processTemplate(mailTemplateBean));
+            log.info("received mq count:[{}]", count.incrementAndGet());
+        }catch(Exception e){
+            log.error("receiveMail",e);
+        }
     }
 
 }
