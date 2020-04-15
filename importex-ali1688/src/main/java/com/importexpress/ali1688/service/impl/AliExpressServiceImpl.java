@@ -93,13 +93,16 @@ public class AliExpressServiceImpl implements AliExpressService {
                     }
                     e.setPrice(new BigDecimal(tempPrice).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
                 });
-                if(aliExpressItems.size() > 28){
+                if (aliExpressItems.size() > 28) {
                     rsList = aliExpressItems.stream().limit(28L).collect(Collectors.toList());
-                }else{
+                    aliExpressItems.clear();
+                } else if (aliExpressItems.size() > 4) {
                     int cicleNum = aliExpressItems.size() / 4;
                     rsList = aliExpressItems.stream().limit(cicleNum * 4L).collect(Collectors.toList());
+                    aliExpressItems.clear();
+                }else{
+                    rsList = aliExpressItems;
                 }
-                aliExpressItems.clear();
             }
             ItemResultPage resultPage = new ItemResultPage(rsList, currPage, rsPageSize, totalPage, totalNum);
             return CommonResult.success(resultPage);
