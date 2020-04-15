@@ -63,42 +63,42 @@ public class SendMQTest {
         sender.sendMQToMail(mailBean);
     }
 
-    @Test
-    public void sendMQToMail2() {
+//    @Test
+//    public void sendMQToMail2() {
+//
+//        Map<String, Object> model = new HashMap<>();
+//        model.put("logoUrl", SiteEnum.KIDS.getUrl());
+//        model.put("name", "name1");
+//        model.put("email", "test@gmail.com");
+//        model.put("pass", "pass1");
+//        model.put("activeLink", "activeLink......");
+//        model.put("here", "here");
+//
+//        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a ACTIVATION email").siteEnum(SiteEnum.KIDS)
+//                .model(model).templateType(TemplateType.ACTIVATION).isTest(false).build();
+//        sender.sendMQToMail(mailBean);
+//    }
 
-        Map<String, Object> model = new HashMap<>();
-        model.put("logoUrl", SiteEnum.KIDS.getUrl());
-        model.put("name", "name1");
-        model.put("email", "test@gmail.com");
-        model.put("pass", "pass1");
-        model.put("activeLink", "activeLink......");
-        model.put("here", "here");
-
-        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a ACTIVATION email").siteEnum(SiteEnum.KIDS)
-                .model(model).templateType(TemplateType.ACTIVATION).isTest(false).build();
-        sender.sendMQToMail(mailBean);
-    }
-
-    @Test
-    public void sendMQToMail3() {
-
-        Map<String, Object> model = new HashMap<>();
-        model.put("logoUrl", SiteEnum.IMPORTX.getUrl());
-        model.put("name", "name1");
-        model.put("email", "test@gmail.com");
-        model.put("pass", "pass1");
-        model.put("activeLink", "activeLink......");
-        model.put("here", "here");
-        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a ACTIVATION email").siteEnum(SiteEnum.IMPORTX)
-                .model(model).templateType(TemplateType.ACTIVATION).isTest(false).build();
-
-        IntStream.range(1, 100).forEach(i -> {
-            sender.sendMQToMail(mailBean);
-            try {
-                Thread.currentThread().sleep(100);
-            } catch (InterruptedException e) {
-
-            }
-        });
-    }
+//    @Test
+//    public void sendMQToMail3() {
+//
+//        Map<String, Object> model = new HashMap<>();
+//        model.put("logoUrl", SiteEnum.IMPORTX.getUrl());
+//        model.put("name", "name1");
+//        model.put("email", "test@gmail.com");
+//        model.put("pass", "pass1");
+//        model.put("activeLink", "activeLink......");
+//        model.put("here", "here");
+//        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a ACTIVATION email").siteEnum(SiteEnum.IMPORTX)
+//                .model(model).templateType(TemplateType.ACTIVATION).isTest(false).build();
+//
+//        IntStream.range(1, 100).forEach(i -> {
+//            sender.sendMQToMail(mailBean);
+//            try {
+//                Thread.currentThread().sleep(100);
+//            } catch (InterruptedException e) {
+//
+//            }
+//        });
+//    }
 }

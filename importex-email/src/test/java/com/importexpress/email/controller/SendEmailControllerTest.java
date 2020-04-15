@@ -47,33 +47,33 @@ public class SendEmailControllerTest {
     }
 
 
-    @Test
-    public void testSendEmail() throws Exception {
-        Map<String, Object> model = new HashMap<>();
-        // String email = "kairong404report@hotmail.com";
-        String email = "1071083166@qq.com";
-        model.put("date", LocalDateTime.now());
-        model.put("param", "{}");
-        String title = "400 Error!";
-        model.put("title", title);
-        String url = MultiSiteUtil.siteEnum.getUrl();
-        model.put("requestURL", url);
-        MailBean mailBean = MailBean.builder().to(email).subject(title).model(model).templateType(TemplateType.SEND_ERROR)
-                .siteEnum(MultiSiteUtil.siteEnum).build();
-        mailBean.setTest(true);
-        /*MvcResult mvcResult = mockMvc.perform(post("/sendMail/mailBean")
-                .params(MapAndBeanUtil.bean2map(mailBean)))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.code").value("200")).andReturn();
-        String rsStr = mvcResult.getResponse().getContentAsString();
-
-        Assert.assertTrue("发送异常", rsStr.contains(email));*/
-
-        RestTemplate restTemplate = RestTemplateUtil.getInstance("utf-8");
-
-        url = "http://localhost:18001/sendMail/mailBean";
-        String result = restTemplate.postForObject(url, mailBean, String.class);
-        Assert.assertTrue("发送异常", result.contains(email));
-    }
+//    @Test
+//    public void testSendEmail() throws Exception {
+//        Map<String, Object> model = new HashMap<>();
+//        // String email = "kairong404report@hotmail.com";
+//        String email = "1071083166@qq.com";
+//        model.put("date", LocalDateTime.now());
+//        model.put("param", "{}");
+//        String title = "400 Error!";
+//        model.put("title", title);
+//        String url = MultiSiteUtil.siteEnum.getUrl();
+//        model.put("requestURL", url);
+//        MailBean mailBean = MailBean.builder().to(email).subject(title).model(model).templateType(TemplateType.SEND_ERROR)
+//                .siteEnum(MultiSiteUtil.siteEnum).build();
+//        mailBean.setTest(true);
+//        /*MvcResult mvcResult = mockMvc.perform(post("/sendMail/mailBean")
+//                .params(MapAndBeanUtil.bean2map(mailBean)))
+//                .andExpect(status().isOk()).andExpect(jsonPath("$.code").value("200")).andReturn();
+//        String rsStr = mvcResult.getResponse().getContentAsString();
+//
+//        Assert.assertTrue("发送异常", rsStr.contains(email));*/
+//
+//        RestTemplate restTemplate = RestTemplateUtil.getInstance("utf-8");
+//
+//        url = "http://localhost:18001/sendMail/mailBean";
+//        String result = restTemplate.postForObject(url, mailBean, String.class);
+//        Assert.assertTrue("发送异常", result.contains(email));
+//    }
 
 
     @Test

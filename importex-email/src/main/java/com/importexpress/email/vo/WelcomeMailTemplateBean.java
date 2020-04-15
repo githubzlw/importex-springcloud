@@ -1,7 +1,7 @@
 package com.importexpress.email.vo;
 
-import com.importexpress.comm.pojo.SiteEnum;
-import lombok.Builder;
+import com.importexpress.comm.pojo.MailBean;
+import com.importexpress.comm.pojo.MailTemplateBean;
 import lombok.Data;
 
 /**
@@ -9,15 +9,12 @@ import lombok.Data;
  * @create 2020/4/15 11:22
  * Description
  */
-@Builder
 @Data
-public class WelcomeBean extends AbstractMailBean{
+public class WelcomeMailTemplateBean extends MailTemplateBean {
 
-    private SiteEnum siteEnum;
-    private String toEmail;
+
     private String name;
     private String pass;
     private String from;
     private String activationCode;
-    private boolean test;
 }
