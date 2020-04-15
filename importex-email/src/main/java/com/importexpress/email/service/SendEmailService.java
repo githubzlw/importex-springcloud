@@ -1,6 +1,7 @@
 package com.importexpress.email.service;
 
 import com.importexpress.comm.pojo.SiteEnum;
+import com.importexpress.email.vo.WelcomeBean;
 
 /**
  * @author: JiangXW
@@ -10,7 +11,7 @@ import com.importexpress.comm.pojo.SiteEnum;
  */
 public interface SendEmailService {
 
-    void genWelcomeBodyAndSend(String email, String name, String pass, String from, SiteEnum siteEnum);
+    void genWelcomeBodyAndSend(WelcomeBean welcomeBean);
 
     void genReceivedBodyAndSend(String orderNo, int userId, SiteEnum siteEnum);
 

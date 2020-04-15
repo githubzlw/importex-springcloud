@@ -5,6 +5,7 @@ import com.importexpress.comm.util.MD5Util;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.email.service.SendEmailService;
 import com.importexpress.email.service.SendMailFactory;
+import com.importexpress.email.vo.WelcomeBean;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,31 +30,27 @@ public class SendEmailServiceImpl implements SendEmailService {
 
     /**
      * WELCOME 模板获取数据并且发送邮件
-     *
-     * @param email
-     * @param name
-     * @param pass
-     * @param from
-     * @param siteEnum
+     * @param welcomeBean
      */
     @Override
-    public void genWelcomeBodyAndSend(String email, String name, String pass, String from, SiteEnum siteEnum) {
+    public void genWelcomeBodyAndSend(WelcomeBean welcomeBean) {
 
-        MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.WELCOME).siteEnum(siteEnum).build();
-        String activationCode = MD5Util.encoder(email + UUID.randomUUID().toString().replaceAll("-", ""));
-        String activeLink = siteEnum.getUrl() + "/userController/upUserState?code=" + activationCode + "&email=" + email + "&from=" + from;
-        String here = siteEnum.getUrl() + "/individual/getCenter";
+        MailBean mailBean = MailBean.builder().to(welcomeBean.getToEmail()).type(1).templateType(TemplateType.WELCOME).siteEnum(welcomeBean.getSiteEnum()).build();
+        String activeLink = welcomeBean.getSiteEnum().getUrl() + "/userController/upUserState?code="
+                + welcomeBean.getActivationCode() + "&toEmail=" + welcomeBean.getToEmail() + "&from=" + welcomeBean.getFrom();
+        String here = welcomeBean.getSiteEnum().getUrl() + "/individual/getCenter";
         int site = MultiSiteUtil.site;
         Map<String, Object> model = new HashMap<>(9);
         model.put("logoUrl", String.valueOf(site));
-        model.put("name", name);
-        model.put("email", email);
-        model.put("pass", pass);
+        model.put("name", welcomeBean.getName());
+        model.put("email", welcomeBean.getToEmail());
+        model.put("pass", welcomeBean.getPass());
         model.put("activeLink", activeLink);
         model.put("here", here);
-        String title = "You've successfully created an " + siteEnum.getName() + " account. We Welcome You!";
+        String title = "You've successfully created an " + welcomeBean.getSiteEnum().getName() + " account. We Welcome You!";
         mailBean.setSubject(title);
         mailBean.setModel(model);
+        mailBean.setTest(welcomeBean.isTest());
         sendMailFactory.sendMail(mailBean);
     }
 

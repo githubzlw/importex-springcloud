@@ -64,22 +64,22 @@ public class SendEmailController {
     }
 
 
-    @PostMapping("/genWelcomeBodyAndSend")
-    public CommonResult genWelcomeBodyAndSend(@RequestParam(name = "email", required = true) String email,
-                                              @RequestParam(name = "name", required = true) String name,
-                                              @RequestParam(name = "pass", required = true) String pass,
-                                              @RequestParam(name = "from", required = true) String from,
-                                              @RequestParam(name = "siteEnum", required = true) SiteEnum siteEnum) {
-        try {
-            sendEmailService.genWelcomeBodyAndSend(email, name, pass, from, siteEnum);
-            return CommonResult.success("genWelcomeBodyAndSend send to " + email + " success");
-        } catch (Exception e) {
-            e.printStackTrace();
-            log.error("genWelcomeBodyAndSend,send email[{}],name[{}],pass[{}],from[{}],siteEnum[{}],error", email, name,
-                    pass, from, siteEnum, e);
-            return CommonResult.failed(e.getMessage());
-        }
-    }
+//    @PostMapping("/genWelcomeBodyAndSend")
+//    public CommonResult genWelcomeBodyAndSend(@RequestParam(name = "email", required = true) String email,
+//                                              @RequestParam(name = "name", required = true) String name,
+//                                              @RequestParam(name = "pass", required = true) String pass,
+//                                              @RequestParam(name = "from", required = true) String from,
+//                                              @RequestParam(name = "siteEnum", required = true) SiteEnum siteEnum) {
+//        try {
+//            sendEmailService.genWelcomeBodyAndSend(email, name, pass, from, siteEnum);
+//            return CommonResult.success("genWelcomeBodyAndSend send to " + email + " success");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            log.error("genWelcomeBodyAndSend,send email[{}],name[{}],pass[{}],from[{}],siteEnum[{}],error", email, name,
+//                    pass, from, siteEnum, e);
+//            return CommonResult.failed(e.getMessage());
+//        }
+//    }
 
     @PostMapping("/genReceivedBodyAndSend")
     public CommonResult genReceivedBodyAndSend(@RequestParam(name = "orderNo", required = true) String orderNo,
