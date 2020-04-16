@@ -45,9 +45,9 @@ public class SendMailFactory {
 
         checkMailBean(mailBean);
 
-        String fileName=null;
+        String fileName;
         if(mailBean.getTemplateType() !=null){
-            fileName = mailBean.getTemplateType().toString();
+            fileName = mailBean.getSiteEnum().toString().toLowerCase() + "_" + mailBean.getTemplateType().toString();
         }else{
             fileName = mailBean.getSubject();
         }
