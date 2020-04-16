@@ -3,6 +3,9 @@ package com.importexpress.email.service.impl;
 import com.importexpress.comm.pojo.*;
 import com.importexpress.email.service.TemplateMailProcess;
 import com.importexpress.email.service.TemplateMailService;
+import com.importexpress.email.service.impl.process.AccountUpdateMailImpl;
+import com.importexpress.email.service.impl.process.ActivationMailImpl;
+import com.importexpress.email.service.impl.process.NewPasswordMailImpl;
 import com.importexpress.email.service.impl.process.WelcomeMailImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,11 +45,22 @@ public class TemplateMailServiceImpl implements TemplateMailService {
             return mailTemplateBean.getMailBean();
         }
         MailBean mailBean;
-        TemplateMailProcess templateMailProcess ;
         switch (mailTemplateBean.getMailBean().getTemplateType()){
             case WELCOME:
-                templateMailProcess = new WelcomeMailImpl();
-                mailBean = templateMailProcess.process(mailTemplateBean,thymeleafEngine);
+                mailBean = new WelcomeMailImpl().process(mailTemplateBean,thymeleafEngine);
+                break;
+            case NEW_PASSWORD:
+                mailBean = new NewPasswordMailImpl().process(mailTemplateBean,thymeleafEngine);
+                break;
+            case ACTIVATION:
+                mailBean = new ActivationMailImpl().process(mailTemplateBean,thymeleafEngine);
+                break;
+            case ACCOUNT_UPDATE:
+                mailBean = new AccountUpdateMailImpl().process(mailTemplateBean,thymeleafEngine);
+                break;
+            case RECEIVED:
+                //TODO
+                mailBean = new AccountUpdateMailImpl().process(mailTemplateBean,thymeleafEngine);
                 break;
             default:
                 throw new IllegalArgumentException("mailTemplateBean.getTemplateType() is not support! "+mailTemplateBean.getMailBean().getTemplateType());
@@ -157,109 +171,6 @@ public class TemplateMailServiceImpl implements TemplateMailService {
 //
 //    }
 //
-//
-//    /**
-//     * NEW_PASSWORD 模板获取数据并且发送邮件
-//     *
-//     * @param email
-//     * @param passWord
-//     * @param businessName
-//     * @param businessIntroduction
-//     * @param siteEnum
-//     */
-//    public void genNewPasswordBodyAndSend(String email, String passWord, String businessName, String businessIntroduction, SiteEnum siteEnum) {
-//        MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.NEW_PASSWORD).siteEnum(siteEnum).build();
-//        try {
-//            String here = siteEnum.getUrl() + "/individual/getCenter";
-//            Map<String, Object> model = new HashMap<>();
-//            model.put("businessIntroduction", businessIntroduction);
-//            model.put("businessName", businessName);
-//            model.put("name", email);
-//            model.put("email", email);
-//            model.put("pass", passWord);
-//            model.put("here", here);
-//            model.put("logoUrl", String.valueOf(siteEnum.getCode()));
-//            String title = "You've successfully complete your info!";
-//            mailBean.setSubject(title);
-//            mailBean.setModel(model);
-//            sendMailFactory.sendMail(mailBean);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            log.error("genNewPasswordBodyAndSend email[{}],businessName[{}]", email, businessName, e);
-//        }
-//    }
-//
-//
-//    /**
-//     * ACTIVATION 模板获取数据并且发送邮件
-//     *
-//     * @param email
-//     * @param name
-//     * @param pass
-//     * @param fromWhere
-//     * @param siteEnum
-//     */
-//    public void genActivationBodyAndSend(String email, String name, String pass, String fromWhere, SiteEnum siteEnum) {
-//        try {
-//            MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.ACTIVATION).siteEnum(siteEnum).build();
-//            String activationCode = MD5Util.encoder(mailBean.getTo() + UUID.randomUUID().toString().replaceAll("-", ""));
-//            String activeLink = siteEnum.getUrl() + "/userController/upUserState?code=" + activationCode + "&email=" + email + "&from=" + fromWhere;
-//            String here = siteEnum.getUrl() + "/individual/getCenter";
-//            Map<String, Object> model = new HashMap<>();
-//            model.put("logoUrl", String.valueOf(siteEnum.getCode()));
-//            model.put("name", name);
-//            model.put("email", email);
-//            model.put("pass", pass);
-//            model.put("activeLink", activeLink);
-//            model.put("here", here);
-//            String title = "Reset Your Password " + mailBean.getSiteEnum().getName() + " account.";
-//            mailBean.setSubject(title);
-//            mailBean.setModel(model);
-//            sendMailFactory.sendMail(mailBean);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            log.error("genActivationBodyAndSend email[{}],fromWhere[{}]", email, fromWhere, e);
-//        }
-//
-//    }
-//
-//    /**
-//     * ACCOUNT_UPDATE 模板获取数据并且发送邮件
-//     *
-//     * @param email
-//     * @param siteEnum
-//     */
-//    public void genAccountUpdateBodyAndSend(String email, SiteEnum siteEnum) {
-//
-//
-//        String title = "Reset Your Password At " + siteEnum.getName();
-//        try {
-//            MailBean mailBean = MailBean.builder().to(email).type(1).templateType(TemplateType.ACCOUNT_UPDATE).siteEnum(siteEnum).build();
-//            UserBean userBean = null;
-//            String activationPassCode = MD5Util.encoder(mailBean.getTo() + System.currentTimeMillis());
-//            if (userBean != null) {
-//                String activeLink = siteEnum.getUrl() + "/forgotPassword/passActivate?email=" + mailBean.getTo()
-//                        + "&validateCode=" + activationPassCode;
-//                String here = siteEnum.getUrl() + "/individual/getCenter";
-//                Map<String, Object> model = new HashMap<>();
-//                model.put("name", mailBean.getTo());
-//                model.put("email", mailBean.getTo());
-//                model.put("activeLink", activeLink);
-//                model.put("here", here);
-//                model.put("logoUrl", String.valueOf(siteEnum.getCode()));
-//                mailBean.setSubject(title);
-//                mailBean.setModel(model);
-//                sendMailFactory.sendMail(mailBean);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            log.error("genAccountUpdateBodyAndSend email:[{}],title:[{}]", email, title, e);
-//        }
-//
-//    }
-//
-//    public void justSend(String email, String content, String title, SiteEnum siteEnum) {
-//        MailBean mailBean = MailBean.builder().to(email).type(1).body(content).subject(title).siteEnum(siteEnum).build();
-//        sendMailFactory.sendMail(mailBean);
-//    }
+
+
 }
