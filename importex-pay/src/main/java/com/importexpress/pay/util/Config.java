@@ -24,7 +24,7 @@ public class Config {
     @Value("${STRIPE.PK_KEY}")
     public String stripePk;
 
-    @Value("${PAYPAL.SK_KEY}")
+    @Value("${STRIPE.SK_KEY}")
     public String stripeSk;
 
     @Value("${rabbitmq.host}")
