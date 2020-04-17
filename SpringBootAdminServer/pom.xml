@@ -48,7 +48,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <!-- 指定该Main Class为全局的唯一入口 -->
-                    <mainClass>com.importexpress.springbootadmin.SpringBootAdminApplication</mainClass>
+                    <mainClass>com.importexpress.springbootadmin.AdminServerApplication</mainClass>
 
                     <executable>true</executable>
                 </configuration>
