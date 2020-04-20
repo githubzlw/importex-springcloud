@@ -20,7 +20,6 @@
         <module>importex-shopify</module>
         <module>importex-product</module>
         <module>importex-cart</module>
-        <module>SpringBootAdminServer</module>
     </modules>
 
     <properties>
