@@ -1,15 +1,17 @@
 package com.importexpress.email.mq;
 
+import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.pojo.MailTemplateBean;
+import com.importexpress.comm.pojo.TemplateType;
 import com.importexpress.email.config.Config;
 import com.importexpress.email.service.SendMailFactory;
 import com.importexpress.email.service.TemplateMailService;
+import com.importexpress.email.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -33,11 +35,40 @@ public class ReceiveMQ {
     }
 
     @RabbitListener(queues = Config.QUEUE_MAIL, containerFactory = "rabbitListenerContainerFactory")
-    public void receiveMail(@Payload MailTemplateBean mailTemplateBean) {
+    public void receiveMail(byte[] bytes) {
 
         try{
-            sendMailFactory.sendMail(templateMailService.processTemplate(mailTemplateBean));
             log.info("received mq count:[{}]", count.incrementAndGet());
+            String json = new String(bytes);
+            log.info("received mq:[{}]", json);
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            Objects.requireNonNull(jsonObject);
+            JSONObject mailBean = jsonObject.getJSONObject("mailBean");
+            Objects.requireNonNull(mailBean);
+            String templateType = mailBean.getString("templateType");
+            MailTemplateBean mailTemplateBean;
+            switch (TemplateType.valueOf(templateType)){
+                case WELCOME:
+                    mailTemplateBean=JSONObject.parseObject(json, WelcomeMailTemplateBean.class);
+                    break;
+                case NEW_PASSWORD:
+                    mailTemplateBean=JSONObject.parseObject(json, NewPasswordMailTemplateBean.class);
+                    break;
+                case ACTIVATION:
+                    mailTemplateBean=JSONObject.parseObject(json, ActivationMailTemplateBean.class);
+                    break;
+                case ACCOUNT_UPDATE:
+                    mailTemplateBean=JSONObject.parseObject(json, AccountUpdateMailTemplateBean.class);
+                    break;
+                case RECEIVED:
+                    mailTemplateBean=JSONObject.parseObject(json, ReceivedMailTemplateBean.class);
+                    break;
+                default:
+                    throw new IllegalArgumentException("mailTemplateBean.getTemplateType() is not support! "+templateType);
+
+            }
+
+            sendMailFactory.sendMail(templateMailService.processTemplate(mailTemplateBean));
         }catch(Exception e){
             log.error("receiveMail",e);
         }
