@@ -15,7 +15,7 @@ import java.util.List;
 @Slf4j
 @Component
 @Configuration
-@EnableScheduling
+//@EnableScheduling
 public class ShopifyOrderScheduleTask {
 
     private final ShopifyOrderService shopifyOrderService;
