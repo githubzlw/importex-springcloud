@@ -43,7 +43,7 @@ public interface Ali1688Service {
      * @param file
      * @return
      */
-    String uploadImgToTaobao(String file);
+    String uploadImgToTaobao(String file) throws IOException;
 
     /**
      * 从缓存中获取图片搜索结果
@@ -66,7 +66,7 @@ public interface Ali1688Service {
      * @param imgUrl
      * @return
      */
-    JSONObject searchImgFromTaobao(String imgUrl);
+    JSONObject searchImgFromTaobao(String imgUrl) throws IOException;
 
     /**
      * 清除redis缓存里面下架商品

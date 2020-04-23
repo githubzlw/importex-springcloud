@@ -114,7 +114,7 @@ public class Ali1688APITest {
     }
 
     @Test
-    public void searchImgFromTaobao()  {
+    public void searchImgFromTaobao() throws IOException {
 
         String URL = ali1688Service.uploadImgToTaobao("C:\\Users\\luohao\\Downloads\\1111.jpg");
         Assert.assertNotNull(URL);

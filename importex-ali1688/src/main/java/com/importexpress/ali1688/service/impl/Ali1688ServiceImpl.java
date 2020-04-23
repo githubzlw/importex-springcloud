@@ -265,7 +265,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @return
      */
     @Override
-    public String uploadImgToTaobao(String file) {
+    public String uploadImgToTaobao(String file) throws IOException {
 
         String url=null;
 
@@ -276,12 +276,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 log.info("result:[{}]", jsonObject);
                 url = jsonObject.getString("tfsid");
             }
-        }catch(IllegalStateException ise){
-            log.warn("file size is error",ise);
+        }catch(IllegalStateException ise) {
+            log.warn("file size is error", ise);
             return null;
-        }catch (IOException ioe){
-            log.error("uploadImgToTaobao",ioe);
         }
+
         return url;
     }
 
@@ -292,14 +291,9 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @throws IOException
      */
     @Override
-    public JSONObject searchImgFromTaobao(String imgUrl) {
+    public JSONObject searchImgFromTaobao(String imgUrl) throws IOException{
 
-        JSONObject jsonObject = null;
-        try {
-            jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(IMG_SEARCH_TAOBAO_API, config.API_HOST ,imgUrl,config.API_KEY, config.API_SECRET ));
-        } catch (IOException ioe) {
-            log.error("searchImgFromTaobao",ioe);
-        }
+        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(IMG_SEARCH_TAOBAO_API, config.API_HOST ,imgUrl,config.API_KEY, config.API_SECRET ));
 
         return jsonObject;
     }
