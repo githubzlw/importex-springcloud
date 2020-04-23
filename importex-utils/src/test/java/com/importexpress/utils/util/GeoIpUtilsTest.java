@@ -17,13 +17,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class GeoIpUtilsTest extends TestCase {
 
-    @Autowired
-    private GeoIpUtils geoIpUtils;
-
     @Test
     public void test()  {
 
-        assertEquals("US",geoIpUtils.getCountry("108.162.215.124").getIsoCode());
-        assertEquals("United States",geoIpUtils.getCountry("108.162.215.124").getName());
+        assertEquals("US",GeoIpUtils.getInstance().getCountry("108.162.215.124").getIsoCode());
+        assertEquals("United States",GeoIpUtils.getInstance().getCountry("108.162.215.124").getName());
     }
 }

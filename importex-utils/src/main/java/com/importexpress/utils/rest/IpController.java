@@ -29,15 +29,13 @@ public class IpController {
 
     private IpService ipService;
 
-    private final GeoIpUtils geoIpUtils;
 
     private StringRedisTemplate redisTemplate;
 
     @Autowired
-    public IpController(IpService ipService, StringRedisTemplate redisTemplate, GeoIpUtils geoIpUtils) {
+    public IpController(IpService ipService, StringRedisTemplate redisTemplate) {
         this.ipService = ipService;
         this.redisTemplate = redisTemplate;
-        this.geoIpUtils = geoIpUtils;
     }
 
 
@@ -52,7 +50,7 @@ public class IpController {
         } else {
             try {
                 //本地数据库搜索ip
-                Country country = geoIpUtils.getCountry(ip);
+                Country country = GeoIpUtils.getInstance().getCountry(ip);
                 String countryCode;
                 String countryName;
                 if(country !=null){
