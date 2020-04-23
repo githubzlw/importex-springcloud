@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.utils.service.IpService;
 import com.importexpress.utils.util.GeoIpUtils;
+import com.maxmind.geoip2.record.Country;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
@@ -28,12 +29,15 @@ public class IpController {
 
     private IpService ipService;
 
+    private final GeoIpUtils geoIpUtils;
+
     private StringRedisTemplate redisTemplate;
 
     @Autowired
-    public IpController(IpService ipService, StringRedisTemplate redisTemplate) {
+    public IpController(IpService ipService, StringRedisTemplate redisTemplate, GeoIpUtils geoIpUtils) {
         this.ipService = ipService;
         this.redisTemplate = redisTemplate;
+        this.geoIpUtils = geoIpUtils;
     }
 
 
@@ -48,18 +52,24 @@ public class IpController {
         } else {
             try {
                 //本地数据库搜索ip
-                String countryCode = GeoIpUtils.getInstance().getCountryCode(ip);
-
-                if(StringUtils.isEmpty(countryCode)) {
+                Country country = geoIpUtils.getCountry(ip);
+                String countryCode;
+                String countryName;
+                if(country !=null){
+                    countryCode = country.getIsoCode();
+                    countryName = country.getName();
+                }else{
                     //线上搜索ip
                     JSONObject json = this.ipService.queryIp(ip);
                     countryCode = json.getString("country_code");
-                    if (StringUtils.isEmpty(countryCode)) {
+                    countryName = json.getString("country_name");
+                    if (StringUtils.isEmpty(countryCode) || StringUtils.isEmpty(countryName)) {
                       throw new IOException("ip lookup failed");
                     }
                 }
-                this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, countryCode);
-                return CommonResult.success(countryCode);
+                result = countryCode + ":" + countryName;
+                this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, result);
+                return CommonResult.success(result);
             } catch (Exception e) {
                 return CommonResult.failed(e.getMessage());
             }
