@@ -40,7 +40,7 @@ public class SendMQTest {
                 "<a href='https://github.com/javaee/javamail'>Javamail Package</a>",
                 " for <a href='https://www.java.com'>Java</a>."
         );
-        MailBean mailBean = MailBean.builder().to("luohao518@yeah.net").subject("This is a test email").siteEnum(SiteEnum.KIDS)
+        MailBean mailBean = MailBean.builder().to("1071083166@qq.com").subject("This is a test email").siteEnum(SiteEnum.KIDS)
                 .body(body).isTest(false).build();
         rabbitTemplate.convertAndSend(Config.QUEUE_MAIL, mailBean);
     }
