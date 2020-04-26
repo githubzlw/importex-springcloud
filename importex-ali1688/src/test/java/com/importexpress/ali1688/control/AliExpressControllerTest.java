@@ -3,6 +3,7 @@ package com.importexpress.ali1688.control;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.model.AliExpressItem;
+import com.importexpress.ali1688.model.ItemDetails;
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -17,9 +18,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -72,7 +71,6 @@ public class AliExpressControllerTest {
     }
 
 
-
     @Test
     public void searchItem1() throws Exception {
         String keyword = "shoes";
@@ -121,7 +119,25 @@ public class AliExpressControllerTest {
     }
 
 
-    private static String getSearchParam(String sort){
+    @Test
+    public void getDetails() throws Exception {
+        String pid = "4000517333117";
+        MvcResult mvcResult = mockMvc.perform(get("/aliExpress/details/" + pid))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value("200"))
+                .andReturn();
+        String rs = mvcResult.getResponse().getContentAsString();
+        Assert.assertNotNull("获取结果空", rs);
+        JSONObject jsonObject = JSONObject.parseObject(rs);
+        Assert.assertNotNull("无data数据", jsonObject.getString("data"));
+
+        ItemDetails itemDetails = JSONObject.parseObject(jsonObject.getString("data"), ItemDetails.class);
+
+        System.err.println(JSONObject.toJSONString(itemDetails));
+    }
+
+
+    private static String getSearchParam(String sort) {
         /**
          * 0 Best Match, 1 Price Low To High,
          * 2 Best Selling 3 New Arrivals
@@ -129,14 +145,14 @@ public class AliExpressControllerTest {
          * sort:排序[bid,_bid,_sale,_new]
          *   (bid:总价,sale:销量,new上架时间,加_前缀为从大到小排序)
          */
-        switch (sort){
+        switch (sort) {
             case "0":
                 return "";
-                case "1":
+            case "1":
                 return "bid";
-                case "2":
+            case "2":
                 return "_sale";
-                case "3":
+            case "3":
                 return "_new";
             default:
                 return "";

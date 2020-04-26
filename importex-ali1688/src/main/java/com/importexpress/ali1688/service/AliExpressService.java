@@ -12,4 +12,7 @@ public interface AliExpressService {
 
 
     CommonResult getItemByKeyWord(Integer page, String keyword, String start_price, String end_price, String sort, boolean isCache);
+
+
+    CommonResult getDetails(String pid);
 }

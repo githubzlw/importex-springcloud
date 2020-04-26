@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class AliExpressCacheService {
     private static final String REDIS_KEYWORD_PRE = "ali:keyword:";
+    private static final String REDIS_PID_PRE = "ali:pid:";
     private static final int REDIS_EXPIRE_DAYS = 7;
     private final StringRedisTemplate redisTemplate;
 
@@ -73,6 +74,24 @@ public class AliExpressCacheService {
             redisKey.append("_" + sort);
         }
         return redisKey.toString();
+    }
+
+
+    public void setItemInfo(String pid, JSONObject jsonObject) {
+        Objects.requireNonNull(jsonObject);
+        this.redisTemplate.opsForValue().set(REDIS_PID_PRE + pid,
+                JSONObject.toJSONString(jsonObject), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
+    }
+
+    public JSONObject getItemInfo(String pid) {
+        Objects.requireNonNull(pid);
+
+        String value = this.redisTemplate.opsForValue().get(REDIS_PID_PRE + pid);
+        if (StringUtils.isNotEmpty(value)) {
+            return JSONObject.parseObject(value);
+        } else {
+            return null;
+        }
     }
 
 }
