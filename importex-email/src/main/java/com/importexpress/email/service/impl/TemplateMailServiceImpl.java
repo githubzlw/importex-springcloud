@@ -69,6 +69,9 @@ public class TemplateMailServiceImpl implements TemplateMailService {
             case CANCEL_ORDER:
                 mailBean = new OrderCancelMailImpl().process(mailTemplateBean, thymeleafEngine);
                 break;
+            case CHECK:
+                mailBean = new CheckMailImpl().process(mailTemplateBean, thymeleafEngine);
+                break;
             default:
                 throw new IllegalArgumentException("mailTemplateBean.getTemplateType() is not support! " + mailTemplateBean.getMailBean().getTemplateType());
 
