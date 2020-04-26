@@ -63,6 +63,18 @@ public class ReceiveMQ {
                 case RECEIVED:
                     mailTemplateBean=JSONObject.parseObject(json, ReceivedMailTemplateBean.class);
                     break;
+                case SHOPPING_CART_NO_CHANGE:
+                case SHOPPING_CART_UPDATE_PRICE:
+                case SHOPPING_CART_FREIGHT_COUPON:
+                case SHOPPING_CART_BEST_TRANSPORT:
+                    mailTemplateBean = JSONObject.parseObject(json, ShopMarketingCarListMail.class);
+                    break;
+                case CANCEL_ORDER:
+                    mailTemplateBean = JSONObject.parseObject(json, OrderCancelMail.class);
+                    break;
+                case CHECK:
+                    mailTemplateBean = JSONObject.parseObject(json, CheckMail.class);
+                    break;
                 default:
                     throw new IllegalArgumentException("mailTemplateBean.getTemplateType() is not support! "+templateType);
 
