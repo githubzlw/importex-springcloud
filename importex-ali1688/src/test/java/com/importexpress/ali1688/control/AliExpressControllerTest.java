@@ -121,7 +121,7 @@ public class AliExpressControllerTest {
 
     @Test
     public void getDetails() throws Exception {
-        String pid = "4000517333117";
+        String pid = "32821682345";
         MvcResult mvcResult = mockMvc.perform(get("/aliExpress/details/" + pid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("200"))

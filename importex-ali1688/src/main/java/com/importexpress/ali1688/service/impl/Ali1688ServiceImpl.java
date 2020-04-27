@@ -12,13 +12,13 @@ import com.importexpress.ali1688.service.Ali1688CacheService;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
 import com.importexpress.ali1688.util.InvalidPid;
+import com.importexpress.ali1688.util.DataDealUtil;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.exception.BizErrorCodeEnum;
 import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.pojo.Ali1688Item;
 import com.importexpress.comm.util.UrlUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -462,8 +461,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             JSONObject itemJson = itemInfo.getJSONObject("item");
             itemDetail.setNum_iid(itemJson.getString("num_iid"));
             itemDetail.setTitle(itemJson.getString("title"));
-            itemDetail.setPrice(itemJson.getString("price"));
-            itemDetail.setOrginal_price(itemJson.getString("orginal_price"));
+            itemDetail.setPrice(DataDealUtil.dealTaoBaoPriceAndChange(itemJson.getString("price")));
+            itemDetail.setOrginal_price(DataDealUtil.dealTaoBaoPriceAndChange(itemJson.getString("orginal_price")));
             itemDetail.setDetail_url(itemJson.getString("detail_url"));
             itemDetail.setPic_url(itemJson.getString("pic_url"));
             itemDetail.setBrand(itemJson.getString("brand"));
@@ -520,8 +519,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                                 }
                             }
                         }
-                        skuClJson.put("price", price);
-                        skuClJson.put("orginal_price", orginal_price);
+                        skuClJson.put("price", DataDealUtil.dealTaoBaoPriceAndChange(price));
+                        skuClJson.put("orginal_price", DataDealUtil.dealTaoBaoPriceAndChange(orginal_price));
                         skuClJson.put("properties", properties);
                         skuClJson.put("properties_name", properties_name);
                         skuClJson.put("quantity", quantity);

@@ -52,7 +52,7 @@ public class ImageSearchControllerTest {
     @Test
     public void test() throws Exception {
 
-        MockMultipartFile firstFile = new MockMultipartFile("file", "1111.jpg", "image/jpeg", Files.readAllBytes(Paths.get("C:\\Users\\luohao\\Downloads\\1111.jpg")));
+        MockMultipartFile firstFile = new MockMultipartFile("file", "22.jpg", "image/jpeg", Files.readAllBytes(Paths.get("H:\\picture\\22.jpg")));
 
         MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         mockMvc.perform(MockMvcRequestBuilders.multipart("/searchimg/upload")

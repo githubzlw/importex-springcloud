@@ -12,6 +12,7 @@ import com.importexpress.ali1688.service.AliExpressService;
 import com.importexpress.ali1688.util.Config;
 import com.importexpress.ali1688.util.InvalidKeyWord;
 import com.importexpress.ali1688.util.InvalidPid;
+import com.importexpress.ali1688.util.DataDealUtil;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.exception.BizErrorCodeEnum;
 import com.importexpress.comm.exception.BizException;
@@ -23,7 +24,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -83,19 +83,8 @@ public class AliExpressServiceImpl implements AliExpressService {
             List<AliExpressItem> rsList = new ArrayList<>();
             if (aliExpressItems != null && aliExpressItems.size() > 0) {
                 aliExpressItems.sort(Comparator.comparing(AliExpressItem::getNum_iid));
-                aliExpressItems.forEach(e -> {
-                    double tempPrice = Double.parseDouble(e.getPrice());
-                    if (tempPrice > 0D) {
-                        if (tempPrice < 10D) {
-                            tempPrice = tempPrice * 0.8;
-                        } else if (tempPrice < 30D) {
-                            tempPrice = tempPrice * 0.875;
-                        } else if (tempPrice < 100D) {
-                            tempPrice = tempPrice * 0.95;
-                        }
-                    }
-                    e.setPrice(new BigDecimal(tempPrice).setScale(2, BigDecimal.ROUND_HALF_UP).toString());
-                });
+                // 价格格式化
+                aliExpressItems.forEach(e -> e.setPrice(DataDealUtil.changeAliPrice(e.getPrice())));
                 if (aliExpressItems.size() > 28) {
                     rsList = aliExpressItems.stream().limit(28L).collect(Collectors.toList());
                     aliExpressItems.clear();
@@ -122,8 +111,8 @@ public class AliExpressServiceImpl implements AliExpressService {
             JSONObject itemJson = itemInfo.getJSONObject("item");
             itemDetail.setNum_iid(itemJson.getString("num_iid"));
             itemDetail.setTitle(itemJson.getString("title"));
-            itemDetail.setPrice(itemJson.getString("price"));
-            itemDetail.setOrginal_price(itemJson.getString("orginal_price"));
+            itemDetail.setPrice(DataDealUtil.dealAliPriceAndChange(itemJson.getString("price")));
+            itemDetail.setOrginal_price(DataDealUtil.dealAliPriceAndChange(itemJson.getString("orginal_price")));
             itemDetail.setDetail_url(itemJson.getString("detail_url"));
             itemDetail.setPic_url(itemJson.getString("pic_url"));
             itemDetail.setBrand(itemJson.getString("brand"));
@@ -180,8 +169,8 @@ public class AliExpressServiceImpl implements AliExpressService {
                                 }
                             }
                         }
-                        skuClJson.put("price", price);
-                        skuClJson.put("orginal_price", orginal_price);
+                        skuClJson.put("price", DataDealUtil.dealAliPriceAndChange(price));
+                        skuClJson.put("orginal_price", DataDealUtil.dealAliPriceAndChange(orginal_price));
                         skuClJson.put("properties", properties);
                         skuClJson.put("properties_name", properties_name);
                         skuClJson.put("quantity", quantity);
@@ -242,7 +231,6 @@ public class AliExpressServiceImpl implements AliExpressService {
             return CommonResult.failed("no data");
         }
     }
-
 
     private JSONObject searchResultByKeyWord(Integer page, String keyword, String start_price, String end_price,
                                              String sort, boolean isCache) {
