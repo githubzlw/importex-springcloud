@@ -9,7 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>importex-cart</artifactId>
+    <artifactId>importex-message</artifactId>
+
 
     <dependencyManagement>
         <dependencies>
@@ -79,7 +80,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <!-- 指定该Main Class为全局的唯一入口 -->
-                    <mainClass>com.importexpress.CartApp</mainClass>
+                    <mainClass>com.importexpress.com.importexpress.message.MessageApp</mainClass>
 
                     <executable>true</executable>
                 </configuration>
