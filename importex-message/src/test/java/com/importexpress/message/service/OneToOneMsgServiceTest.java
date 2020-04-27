@@ -35,12 +35,12 @@ public class OneToOneMsgServiceTest {
     @Test
     public void readMessage1() {
         messageService.sendMsg(SiteEnum.KIDS,10001,10002,"hello world1");
-        Assert.isTrue(messageService.readMsg(SiteEnum.KIDS, 10002).size()>0);
+        Assert.isTrue(messageService.readUnReadMsg(SiteEnum.KIDS, 10002).size()>0);
     }
 
     @Test
     public void readMessage2() {
-        System.out.println(messageService.readMsg(SiteEnum.KIDS, 10001));
+        System.out.println(messageService.readUnReadMsg(SiteEnum.KIDS, 10001));
     }
 
 }

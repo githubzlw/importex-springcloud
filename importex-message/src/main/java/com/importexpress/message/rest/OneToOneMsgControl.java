@@ -24,7 +24,7 @@ import java.util.List;
 public class OneToOneMsgControl {
 
 
-    private OneToOneMsgService oneToOneMsgService;
+    private final OneToOneMsgService oneToOneMsgService;
 
     @Autowired
     public OneToOneMsgControl(OneToOneMsgService messageService) {
@@ -47,16 +47,31 @@ public class OneToOneMsgControl {
         }
     }
 
-    @GetMapping("/{site}/{userId}")
-    @ApiOperation("读取用户消息")
-    public CommonResult readMsg(@PathVariable(value = "site") SiteEnum site,
+    @GetMapping("/{site}/{userId}/unread")
+    @ApiOperation("读取用户未读消息")
+    public CommonResult readUnReadMsg(@PathVariable(value = "site") SiteEnum site,
                                 @PathVariable(value = "userId") long userId) {
 
         try{
-            List<MessageBean> messageBeans = oneToOneMsgService.readMsg(site, userId);
+            List<MessageBean> messageBeans = oneToOneMsgService.readUnReadMsg(site, userId);
             return CommonResult.success(messageBeans);
         }catch (Exception e){
-            log.error("readMsg",e);
+            log.error("readUnReadMsg",e);
+            return CommonResult.failed(e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/{site}/{userId}/readed")
+    @ApiOperation("读取用户已读消息")
+    public CommonResult readReadedMsg(@PathVariable(value = "site") SiteEnum site,
+                                      @PathVariable(value = "userId") long userId) {
+
+        try{
+            List<MessageBean> messageBeans = oneToOneMsgService.readReadedMsg(site, userId);
+            return CommonResult.success(messageBeans);
+        }catch (Exception e){
+            log.error("readReadedMsg",e);
             return CommonResult.failed(e.getMessage());
         }
 

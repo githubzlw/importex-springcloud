@@ -20,11 +20,18 @@ public interface OneToOneMsgService {
     void sendMsg(SiteEnum site, long fromUserId, long toUserId,String msg);
 
     /**
-     * 读取消息，并且保存消息到redis队列中
+     * 读取未读消息，并且保存消息到redis队列中
      * @param site
      * @param userId
      * @return
      */
-    List<MessageBean> readMsg(SiteEnum site, long userId);
+    List<MessageBean> readUnReadMsg(SiteEnum site, long userId);
 
+    /**
+     * 读取用户已读消息
+     * @param site
+     * @param userId
+     * @return
+     */
+    List<MessageBean> readReadedMsg(SiteEnum site, long userId);
 }
