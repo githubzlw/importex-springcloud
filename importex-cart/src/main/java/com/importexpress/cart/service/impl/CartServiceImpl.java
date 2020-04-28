@@ -201,11 +201,17 @@ public class CartServiceImpl implements CartService {
 
         if(site == SiteEnum.KIDS || site == SiteEnum.IMPORTX){
             //range_price
-            cartItem.setRpe(product.getRange_price_free_new());
+            if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
+                cartItem.setRpe(product.getRange_price_free_new());
+            }
             //feeprice
-            cartItem.setFp(product.getFree_price_new());
+            if(StringUtils.isNotEmpty(product.getFree_price_new())) {
+                cartItem.setFp(product.getFree_price_new());
+            }
             //sku
-            cartItem.setSku(product.getSku_new());
+            if(StringUtils.isNotEmpty(product.getSku_new())){
+                cartItem.setSku(product.getSku_new());
+            }
         }else{
             //range_price
             cartItem.setRpe(product.getRange_price());
