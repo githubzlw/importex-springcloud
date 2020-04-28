@@ -47,7 +47,9 @@ public class DataDealUtil {
     public static String changeAliPrice(String price) {
         double tempPrice = Double.parseDouble(price.trim());
         if (tempPrice > 0D) {
-            if (tempPrice < 10D) {
+            if(tempPrice < 0.1){
+                tempPrice = 0.2D;
+            } else if (tempPrice < 10D) {
                 tempPrice = tempPrice * 0.8;
             } else if (tempPrice < 30D) {
                 tempPrice = tempPrice * 0.875;
@@ -87,6 +89,9 @@ public class DataDealUtil {
     public static String changeTaoBaoPrice(String tempPrice) {
         double changePrice = (Double.parseDouble(tempPrice)
                 * RATE_1688_TAOBAO_PRICE) / EXCHANGE_RATE;
+        if(changePrice < 0.1D){
+            changePrice = 0.2D;
+        }
         return new BigDecimal(changePrice).setScale(2, BigDecimal.ROUND_HALF_UP).toString();
     }
 }
