@@ -567,6 +567,7 @@ public class CartServiceImpl implements CartService {
 
                 if(!cartItemOld.equals(cartItem)){
                     //有变化的情况
+                    log.info("changed cart find:old [{}], new [{}]",cartItemOld,cartItem);
                     count += this.updateCartItem(site, userId, cartItem);
                 }
             }
