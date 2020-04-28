@@ -610,8 +610,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 log.warn("json's error is not empty:[{}]，pid:[{}]", error, pid);
                 jsonObject = InvalidPid.of(Long.parseLong(pid), error);
             }
-            this.ali1688CacheService.setItemInfo(pid, jsonObject);
             checkPidInfo(pid, jsonObject);
+            this.ali1688CacheService.setItemInfo(pid, jsonObject);
 
             return jsonObject;
         } catch (IOException e) {

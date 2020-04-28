@@ -354,8 +354,9 @@ public class AliExpressServiceImpl implements AliExpressService {
                 log.warn("json's error is not empty:[{}]，pid:[{}]", error, pid);
                 jsonObject = InvalidPid.of(Long.parseLong(pid), error);
             }
-            this.cacheService.setItemInfo(pid, jsonObject);
+
             checkPidInfo(pid, jsonObject);
+            this.cacheService.setItemInfo(pid, jsonObject);
 
             return jsonObject;
         } catch (IOException e) {
