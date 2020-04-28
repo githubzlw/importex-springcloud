@@ -157,8 +157,24 @@ public class CartControl {
     public CommonResult refreshCart(@PathVariable(value = "site") SiteEnum site,
                                     @PathVariable(value = "userId") long userId) {
 
-        return
-                cartService.refreshCart(site, userId) == 1 ? CommonResult.success() : CommonResult.failed();
+        try{
+            return CommonResult.success(cartService.refreshCart(site, userId));
+        }catch(Exception e){
+            return CommonResult.failed(e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/{site}/refreshall")
+    @ApiOperation("刷新全部购物车")
+    public CommonResult refreshAllCart(@PathVariable(value = "site") SiteEnum site) {
+
+        try{
+            return CommonResult.success(cartService.refreshAllCarts(site));
+        }catch(Exception e){
+            return CommonResult.failed(e.getMessage());
+        }
+
     }
 
 }
