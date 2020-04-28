@@ -33,6 +33,7 @@ zuul:
     pay-service: /pay-service/**
     product-service: /product-service/**
     shopify-service: /shopify-service/**
+    message-service: /message-service/**
 
   ribbon:
     eager-load:
