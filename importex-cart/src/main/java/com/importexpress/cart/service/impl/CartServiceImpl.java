@@ -565,10 +565,12 @@ public class CartServiceImpl implements CartService {
 
                 if ("0".equals(product.getValid())) {
                     //下架商品
-                    cartItem.setSt(0);
-                    cartItem.setChk(0);
-                    count += this.updateCartItem(site, userId, cartItem);
-                    continue;
+                    if(cartItem.getSt() !=0 || cartItem.getChk() !=0){
+                        cartItem.setSt(0);
+                        cartItem.setChk(0);
+                        count += this.updateCartItem(site, userId, cartItem);
+                        continue;
+                    }
                 }
 
                 if(!cartItemOld.equals(cartItem)){
