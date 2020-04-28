@@ -68,7 +68,7 @@ public class OneToOneMsgServiceImpl implements OneToOneMsgService {
         String saveKey = getReadedMessageKey(site,userId);
 
         //read message from redis
-        List<MessageBean> lstMessageBean=getMsgBeanFromRedis(key);
+        List<MessageBean> lstMessageBean= PopMsgBeanFromRedis(key);
 
         Gson gson = new Gson();
         if(!lstMessageBean.isEmpty()) {
@@ -95,6 +95,50 @@ public class OneToOneMsgServiceImpl implements OneToOneMsgService {
     }
 
     /**
+     * 删除未读消息
+     * @param site
+     * @param userId
+     * @param count
+     * @return
+     */
+    @Override
+    public int removeUnReadMsg(SiteEnum site, long userId,long count) {
+
+        String key = getUnReadMessageKey(site,userId);
+        int sum = 0;
+        for(int i=0;i<count;i++){
+            String value = this.redisTemplate.opsForList().rightPop(key);
+            if(StringUtils.isNotEmpty(value)){
+                ++sum;
+            }
+        }
+        return sum;
+    }
+
+    /**
+     * pop MsgBeanFromRedis
+     * @param saveKey
+     * @return
+     */
+    private List<MessageBean> PopMsgBeanFromRedis(String saveKey) {
+        //read message from redis
+        List<MessageBean> lstMessageBean = new ArrayList<>();
+        Gson gson = new Gson();
+        String value;
+        MessageBean bean;
+        while (true) {
+            value = this.redisTemplate.opsForList().rightPop(saveKey);
+            if (StringUtils.isNotEmpty(value)) {
+                bean = gson.fromJson(value, MessageBean.class);
+                lstMessageBean.add(bean);
+            }else{
+                break;
+            }
+        }
+        return lstMessageBean;
+    }
+
+    /**
      * get MsgBeanFromRedis
      * @param saveKey
      * @return
@@ -103,10 +147,26 @@ public class OneToOneMsgServiceImpl implements OneToOneMsgService {
         //read message from redis
         List<MessageBean> lstMessageBean = new ArrayList<>();
         Gson gson = new Gson();
+        Long size = this.redisTemplate.opsForList().size(saveKey);
+        List<String> lstStr = this.redisTemplate.opsForList().range(saveKey, 0, size);
+        assert lstStr != null;
+        lstStr.forEach(item -> {
+            if (StringUtils.isNotEmpty(item)) {
+                lstMessageBean.add(gson.fromJson(item, MessageBean.class));
+            }
+        });
+
+        return lstMessageBean;
+    }
+
+    private List<MessageBean> removeMsgInRedis(String key,long timestamp) {
+        //read message from redis
+        List<MessageBean> lstMessageBean = new ArrayList<>();
+        Gson gson = new Gson();
         String value;
         MessageBean bean;
         while (true) {
-            value = this.redisTemplate.opsForList().rightPop(saveKey);
+            value = this.redisTemplate.opsForList().rightPop(key);
             if (StringUtils.isNotEmpty(value)) {
                 bean = gson.fromJson(value, MessageBean.class);
                 lstMessageBean.add(bean);
