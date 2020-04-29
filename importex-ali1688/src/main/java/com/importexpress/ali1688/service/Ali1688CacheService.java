@@ -243,6 +243,12 @@ public class Ali1688CacheService {
                 JSONObject.toJSONString(jsonObject), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
+    public void setItemInfoExpireTime(String pid, JSONObject jsonObject, int expireTime) {
+        Objects.requireNonNull(jsonObject);
+        this.redisTemplate.opsForValue().set(REDIS_TAOBAO_PID_PRE + pid,
+                JSONObject.toJSONString(jsonObject), expireTime, TimeUnit.HOURS);
+    }
+
     public JSONObject getItemInfo(String pid) {
         Objects.requireNonNull(pid);
 

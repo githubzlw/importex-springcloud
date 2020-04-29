@@ -626,6 +626,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         Objects.requireNonNull(jsonObject);
         JSONObject item = jsonObject.getJSONObject("item");
         if (null == item || !item.containsKey("num_iid")) {
+            // 保存2小时过期
+            this.ali1688CacheService.setItemInfoExpireTime(pid, jsonObject, 2);
             log.warn("itemInfos is null ,pid:[{}]", pid);
             throw new BizException(BizErrorCodeEnum.ITEM_IS_NULL);
         }

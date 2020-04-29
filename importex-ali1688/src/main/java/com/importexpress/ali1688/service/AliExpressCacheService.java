@@ -83,6 +83,12 @@ public class AliExpressCacheService {
                 JSONObject.toJSONString(jsonObject), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
     }
 
+    public void setItemInfoTime(String pid, JSONObject jsonObject, int expireTime) {
+        Objects.requireNonNull(jsonObject);
+        this.redisTemplate.opsForValue().set(REDIS_PID_PRE + pid,
+                JSONObject.toJSONString(jsonObject), expireTime, TimeUnit.HOURS);
+    }
+
     public JSONObject getItemInfo(String pid) {
         Objects.requireNonNull(pid);
 

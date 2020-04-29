@@ -371,6 +371,8 @@ public class AliExpressServiceImpl implements AliExpressService {
         Objects.requireNonNull(jsonObject);
         JSONObject item = jsonObject.getJSONObject("item");
         if (null == item || !item.containsKey("num_iid")) {
+            // 保存2小时
+            this.cacheService.setItemInfoTime(pid, jsonObject, 2);
             log.warn("itemInfos is null ,pid:[{}]", pid);
             throw new BizException(BizErrorCodeEnum.ITEM_IS_NULL);
         }
