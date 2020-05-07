@@ -291,9 +291,10 @@ public class SearchServiceImpl implements SearchService {
         }
         List<AssociateWrap> result = Lists.newArrayList();
         AssociateWrap wrap = null;
+        SearchParam param_ = new SearchParam();
         for(int i=0,length=exhaust.length;i<length&&result.size() <4;i++) {
-            param.setKeyword(KeywordCorrect.getKeyWord(exhaust[i]));
-            long countResult = serachCount(param);
+            param_.setKeyword(KeywordCorrect.getKeyWord(exhaust[i]));
+            long countResult = serachCount(param_);
             if(countResult > 4 && result.size() < 5) {
                 wrap = new AssociateWrap();
                 wrap.setCount(countResult);
