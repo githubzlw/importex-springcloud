@@ -106,7 +106,8 @@ public class ChangeCurrency {
     private static String calculationBefore(String price,double exchangeRate){
         price = StrUtils.isMatch(price,"(\\d+(\\.\\d+){0,1})")?price : "0";
         BigDecimal resultPrice = new BigDecimal(price);
-        resultPrice = resultPrice.divide(new BigDecimal(String.valueOf(exchangeRate)),2,BigDecimal.ROUND_HALF_UP);
+        resultPrice = resultPrice.multiply(new BigDecimal(String.valueOf(exchangeRate)))
+                .setScale(2,BigDecimal.ROUND_HALF_UP);
         return resultPrice.toString();
     }
     /**美元价格
@@ -114,7 +115,7 @@ public class ChangeCurrency {
      * @param exchangeRate
      * @return
      */
-    public static String priceToUSD(String price,double exchangeRate){
+    public static String priceFromUSD(String price,double exchangeRate){
         if(!StrUtils.isRangePrice(price)){
             return null;
         }
