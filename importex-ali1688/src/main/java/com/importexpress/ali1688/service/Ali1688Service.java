@@ -2,6 +2,7 @@ package com.importexpress.ali1688.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.model.PidQueue;
+import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.pojo.Ali1688Item;
 
 import java.io.IOException;
@@ -143,4 +144,11 @@ public interface Ali1688Service {
      * @return
      */
     int deleteIdInQueue(int id);
+
+    /**
+     * 获取淘宝商品详情
+     * @param pid
+     * @return
+     */
+    CommonResult getDetails(String pid);
 }

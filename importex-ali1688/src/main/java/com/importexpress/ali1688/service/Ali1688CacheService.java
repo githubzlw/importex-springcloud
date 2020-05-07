@@ -28,6 +28,7 @@ public class Ali1688CacheService {
     private static final String REDIS_SHOP_PRE = "ali:shopid:";
     private static final String REDIS_IMG_PRE = "ali:img:";
     private static final int REDIS_EXPIRE_DAYS = 7;
+    private static final String REDIS_TAOBAO_PID_PRE = "taobao:pid:";
     private StringRedisTemplate redisTemplate;
 
     @Autowired
@@ -235,5 +236,28 @@ public class Ali1688CacheService {
         return Pair.of(lstCountDesc, lstCountAll);
     }
 
+
+    public void setItemInfo(String pid, JSONObject jsonObject) {
+        Objects.requireNonNull(jsonObject);
+        this.redisTemplate.opsForValue().set(REDIS_TAOBAO_PID_PRE + pid,
+                JSONObject.toJSONString(jsonObject), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
+    }
+
+    public void setItemInfoExpireTime(String pid, JSONObject jsonObject, int expireTime) {
+        Objects.requireNonNull(jsonObject);
+        this.redisTemplate.opsForValue().set(REDIS_TAOBAO_PID_PRE + pid,
+                JSONObject.toJSONString(jsonObject), expireTime, TimeUnit.HOURS);
+    }
+
+    public JSONObject getItemInfo(String pid) {
+        Objects.requireNonNull(pid);
+
+        String value = this.redisTemplate.opsForValue().get(REDIS_TAOBAO_PID_PRE + pid);
+        if (StringUtils.isNotEmpty(value)) {
+            return JSONObject.parseObject(value);
+        } else {
+            return null;
+        }
+    }
 
 }

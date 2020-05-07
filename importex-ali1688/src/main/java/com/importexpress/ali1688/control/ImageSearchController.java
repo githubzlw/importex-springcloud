@@ -84,7 +84,12 @@ public class ImageSearchController {
                 log.info("file:[{}] is deleted",dest.getAbsolutePath());
             }
         }
+    }
 
+    @GetMapping("/details/{pid}")
+    @ResponseBody
+    public CommonResult getDetails(@PathVariable(name = "pid") String pid) {
+        return ali1688Service.getDetails(pid);
     }
 
 }
