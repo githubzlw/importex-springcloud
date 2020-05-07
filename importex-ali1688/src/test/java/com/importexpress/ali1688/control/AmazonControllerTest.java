@@ -1,46 +1,35 @@
 package com.importexpress.ali1688.control;
 
-
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.model.ItemDetails;
-import com.importexpress.ali1688.service.Ali1688CacheService;
-import com.importexpress.ali1688.service.Ali1688Service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 /**
- * @Author jack.luo
- * @create 2020/4/2 11:18
- * Description
+ * @author: JiangXW
+ * @version: v1.0
+ * @description: com.importexpress.ali1688.control
+ * @date:2020/5/6
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class ImageSearchControllerTest {
+public class AmazonControllerTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-
-
 
     private MockMvc mockMvc;
 
@@ -49,24 +38,11 @@ public class ImageSearchControllerTest {
         this.mockMvc = webAppContextSetup(this.webApplicationContext).build();
     }
 
-    @Test
-    public void test() throws Exception {
-
-        MockMultipartFile firstFile = new MockMultipartFile("file", "22.jpg", "image/jpeg", Files.readAllBytes(Paths.get("H:\\picture\\22.jpg")));
-
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        mockMvc.perform(MockMvcRequestBuilders.multipart("/searchimg/upload")
-                .file(firstFile)
-                .param("some-random", "4"))
-                .andExpect(status().is(200))
-                .andExpect(content().string("success"));
-    }
-
 
     @Test
     public void getDetails() throws Exception {
-        String pid = "613203343667";
-        MvcResult mvcResult = mockMvc.perform(get("/searchimg/details/" + pid))
+        String pid = "B0714BNR2W";
+        MvcResult mvcResult = mockMvc.perform(get("/amazon/details/" + pid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value("200"))
                 .andReturn();
@@ -79,6 +55,4 @@ public class ImageSearchControllerTest {
 
         System.err.println(JSONObject.toJSONString(itemDetails));
     }
-
-
 }
