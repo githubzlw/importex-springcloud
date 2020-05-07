@@ -34,4 +34,13 @@ public interface OneToOneMsgService {
      * @return
      */
     List<MessageBean> readReadedMsg(SiteEnum site, long userId);
+
+    /**
+     * 删除未读消息
+     * @param site
+     * @param userId
+     * @param count
+     * @return
+     */
+    int removeUnReadMsg(SiteEnum site, long userId, long count);
 }

@@ -145,7 +145,15 @@ public interface CartService {
      *
      * @param site
      * @param userId
-     * @return 1:刷新成功 0:刷新失败
+     * @return 刷新次数
      */
     int refreshCart(SiteEnum site, long userId);
+
+    /**
+     * 刷新全网站购物车（下架，价格，重量，图片）
+     *
+     * @param site
+     * @return 刷新次数
+     */
+    int refreshAllCarts(SiteEnum site);
 }

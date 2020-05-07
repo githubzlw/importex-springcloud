@@ -137,7 +137,7 @@ public class Cart {
                 ImmutableList<String> lst = ImmutableList.copyOf(item);
                 if (lst.size() == 2) {
                     String priceRange = lst.get(0);
-                    if (priceRange.indexOf('-') > -1) {
+                    if (priceRange.indexOf('-') > -1 && priceRange.indexOf('≥')==-1) {
                         //sample:[1-2 $ 3.68]
                         String[] split1 = priceRange.split("-");
                         Assert.isTrue(split1.length == 2, "The array length must be 2");

@@ -1,6 +1,8 @@
 package com.importexpress.search.service.base;
 
+import com.importexpress.search.common.ChangeCurrency;
 import com.importexpress.search.common.KeywordCorrect;
+import com.importexpress.search.pojo.Currency;
 import com.importexpress.search.pojo.SearchParam;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,13 +30,27 @@ public abstract class UriService {
 			sb_href.append("&filter=").append(param.getImportType());
 		}
 		if(StringUtils.isNotBlank(param.getMinPrice())){
-			sb_href.append("&price1=").append(param.getMinPrice());
+			String price = priceCurrency(param.getMinPrice(),param.getCurrency());
+
+			sb_href.append("&price1=").append(price);
 		}
 		if(StringUtils.isNotBlank(param.getMaxPrice())){
-			sb_href.append("&price2=").append(param.getMaxPrice());
+			String price = priceCurrency(param.getMaxPrice(),param.getCurrency());
+			sb_href.append("&price2=").append(price);
 		}
 		sb_href.append("&isFreeShip="+param.getFreeShipping());
 		return sb_href.toString();
+	}
+	/**价格区间美元切换为用户选择的货币
+	 * @param price
+	 * @param currency
+	 */
+	private static String  priceCurrency(String price,Currency currency){
+		//切换后货币
+		if(!"USD".equals(currency.getCurrency())){
+			price = ChangeCurrency.priceFromUSD(price,currency.getExchangeRate());
+		}
+		return price;
 	}
 
 }

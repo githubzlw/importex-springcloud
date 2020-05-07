@@ -77,4 +77,17 @@ public class OneToOneMsgControl {
 
     }
 
+    @GetMapping("/{site}/{userId}/rmunread")
+    @ApiOperation("删除未读消息")
+    public CommonResult removeUnReadMsg(@PathVariable(value = "site") SiteEnum site,
+                                      @PathVariable(value = "userId") long userId,@RequestParam int count) {
+
+        try{
+            return CommonResult.success(oneToOneMsgService.removeUnReadMsg(site, userId,count));
+        }catch (Exception e){
+            log.error("removeUnReadMsg",e);
+            return CommonResult.failed(e.getMessage());
+        }
+
+    }
 }

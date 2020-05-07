@@ -29,7 +29,15 @@ public class AliExpressController {
     @ResponseBody
     public CommonResult searchItem(Integer page, String keyword, String start_price, String end_price, String sort,
                                    @RequestParam(value = "isCache", required = false, defaultValue = "true") boolean isCache) {
-        return expressService.getItemByKeyWord(page, keyword,start_price, end_price, sort, isCache);
+        return expressService.getItemByKeyWord(page, keyword, start_price, end_price, sort, isCache);
     }
+
+
+    @GetMapping("/details/{pid}")
+    @ResponseBody
+    public CommonResult getDetails(@PathVariable(name = "pid") String pid) {
+        return expressService.getDetails(pid);
+    }
+
 
 }

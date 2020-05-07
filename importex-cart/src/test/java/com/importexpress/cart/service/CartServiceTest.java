@@ -326,6 +326,21 @@ public class CartServiceTest {
 
     }
 
+    @Test
+    public void cart14() {
+
+        Assert.assertEquals
+                (1, cartService.addCartItem(SITE, USER_ID, "573788831111:32161", 1));
+        Cart cart = cartService.getCart(SITE, USER_ID);
+        cart.new CalculatePrice().fillCartItemsPrice();
+
+        Assert.assertEquals
+                (1, cartService.delCartItem(SITE, USER_ID, "573788831111:32161"));
+
+
+
+    }
+
 
     @Test
     public void convert() {
@@ -385,6 +400,8 @@ public class CartServiceTest {
         this.cartService.delAllCartItem(SITE, USER_ID);
 
     }
+
+
 
 
 }

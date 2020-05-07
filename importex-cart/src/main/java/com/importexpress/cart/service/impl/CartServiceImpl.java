@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -129,6 +130,15 @@ public class CartServiceImpl implements CartService {
         return config.CART_PRE + ':' + site.toString().substring(0, 1).toLowerCase() + ':' + id;
     }
 
+    /**
+     * getCartKeys
+     * @param site
+     * @return
+     */
+    private String getCartKeys(SiteEnum site) {
+        return config.CART_PRE + ':' + site.toString().substring(0, 1).toLowerCase() + ":*";
+    }
+
 
     /**
      * getTouristKey
@@ -191,11 +201,17 @@ public class CartServiceImpl implements CartService {
 
         if(site == SiteEnum.KIDS || site == SiteEnum.IMPORTX){
             //range_price
-            cartItem.setRpe(product.getRange_price_free_new());
+            if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
+                cartItem.setRpe(product.getRange_price_free_new());
+            }
             //feeprice
-            cartItem.setFp(product.getFree_price_new());
+            if(StringUtils.isNotEmpty(product.getFree_price_new())) {
+                cartItem.setFp(product.getFree_price_new());
+            }
             //sku
-            cartItem.setSku(product.getSku_new());
+            if(StringUtils.isNotEmpty(product.getSku_new())){
+                cartItem.setSku(product.getSku_new());
+            }
         }else{
             //range_price
             cartItem.setRpe(product.getRange_price());
@@ -220,6 +236,19 @@ public class CartServiceImpl implements CartService {
             lstCartItem.add(new Gson().fromJson(json.toString(), CartItem.class));
         }
         return lstCartItem;
+    }
+
+    /**
+     * getAllUsersKey
+     * @param site
+     * @return
+     */
+    private List<String> getAllUsersKey(SiteEnum site) {
+
+        String usersCartKey = getCartKeys(site);
+        Set<String> keys = redisTemplate.keys(usersCartKey);
+        assert keys != null;
+        return keys.stream().map(key -> key.substring(key.lastIndexOf(':') + 1)).collect(Collectors.toList());
     }
 
     /**
@@ -514,33 +543,62 @@ public class CartServiceImpl implements CartService {
      *
      * @param site
      * @param userId
-     * @return 1:刷新成功 0:刷新失败
+     * @return 刷新次数
      */
     @Override
     public int refreshCart(SiteEnum site, long userId) {
-        int result = 0;
-        Cart cart = this.getCart(site, userId);
-        for (CartItem cartItem : cart.getItems()) {
+        int count=0;
+        try{
+            Cart cart = this.getCart(site, userId);
+            for (CartItem cartItem : cart.getItems()) {
 
-            Product product = productServiceFeign.findProduct(cartItem.getPid());
+                //备份bean
+                CartItem cartItemOld = new CartItem();
+                BeanUtils.copyProperties(cartItem, cartItemOld);
 
-            //刷新图片，价格，重量
-            fillOthersInfoToProduct(product, cartItem);
-            //改变价格
-            changePrice(site, product, cartItem);
+                Product product = productServiceFeign.findProduct(cartItem.getPid());
 
-            if ("0".equals(product.getValid())) {
-                //下架商品
-                cartItem.setSt(0);
-                cartItem.setChk(0);
-                if (SUCCESS == this.updateCartItem(site, userId, cartItem)) {
-                    result = 1;
-                } else {
-                    result = 0;
+                //刷新图片，价格，重量
+                fillOthersInfoToProduct(product, cartItem);
+                //改变价格
+                changePrice(site, product, cartItem);
+
+                if ("0".equals(product.getValid())) {
+                    //下架商品
+                    if(cartItem.getSt() !=0 || cartItem.getChk() !=0){
+                        cartItem.setSt(0);
+                        cartItem.setChk(0);
+                        count += this.updateCartItem(site, userId, cartItem);
+                        continue;
+                    }
+                }
+
+                if(!cartItemOld.equals(cartItem)){
+                    //有变化的情况
+                    log.info("changed cart find:userId：[{}], old [{}], new [{}]",userId,cartItemOld,cartItem);
+                    count += this.updateCartItem(site, userId, cartItem);
                 }
             }
+        }catch(Exception e){
+            log.warn("refreshCart",e);
+
         }
-        return result;
+        return count;
+    }
+
+    /**
+     * 刷新全网站购物车（下架，价格，重量，图片）
+     *
+     * @param site
+     * @return 刷新次数
+     */
+    @Override
+    public int refreshAllCarts(SiteEnum site) {
+
+        List<String> allUsersId = this.getAllUsersKey(site);
+
+        return allUsersId.stream().mapToInt(id -> this.refreshCart(site, Long.parseLong(id))).sum();
+
     }
 
     public static void main(String[] args){
