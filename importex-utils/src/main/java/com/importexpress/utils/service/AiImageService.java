@@ -3,6 +3,7 @@ package com.importexpress.utils.service;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @Author jack.luo
@@ -12,13 +13,20 @@ import java.io.IOException;
 public interface AiImageService {
 
     /**
-     * get token
+     * get yingshi token
      * @return
      * @throws IOException
      */
 
-    Pair<String, Long> getToken() throws IOException;
+    Pair<String, Long> getYingShiToken() throws IOException;
 
+
+    /**
+     * get baidu token
+     * @return Pair.of(accessToken, expireTime)
+     * @throws IOException
+     */
+    Pair<String, Long> getBaiduToken() throws IOException;
 
     /**
      * capture image
@@ -27,4 +35,13 @@ public interface AiImageService {
      * @throws IOException
      */
     String captureImage(String accessToken) throws IOException;
+
+    /**
+     * object Detect
+     * @param accessToken
+     * @param imgUrl
+     * @return
+     * @throws IOException
+     */
+    String objectDetect(String accessToken, String imgUrl) throws Exception;
 }

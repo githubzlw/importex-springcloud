@@ -21,4 +21,17 @@ public class Config {
     @Value("${yingshi.api.deviceSerial}")
     public String YINGSHI_API_DEVICESERIAL;
 
+    @Value("${baidu.api.url.token}")
+    public String BAIDU_API_URL_TOKEN;
+
+    @Value("${baidu.api.client_id}")
+    public String BAIDU_API_CLIENT_ID;
+
+    @Value("${baidu.api.client_secret}")
+    public String BAIDU_API_CLIENT_SECRET;
+
+    @Value("${baidu.api.url.object.detect}")
+    public String BAIDU_API_URL_OBJECT_DETECT;
+
+
 }
