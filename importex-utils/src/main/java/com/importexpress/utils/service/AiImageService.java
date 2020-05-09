@@ -2,6 +2,7 @@ package com.importexpress.utils.service;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 
@@ -44,4 +45,14 @@ public interface AiImageService {
      * @throws IOException
      */
     String objectDetect(String accessToken, String imgUrl) throws Exception;
+
+
+    /**
+     * 图片标识出红框
+     * @param downloadUrl
+     * @param rect
+     * @return
+     * @throws IOException
+     */
+    byte[] drawRect(String downloadUrl, Rectangle rect) throws IOException;
 }
