@@ -72,6 +72,27 @@ public class TemplateMailServiceImpl implements TemplateMailService {
             case CHECK:
                 mailBean = new CheckMailImpl().process(mailTemplateBean, thymeleafEngine);
                 break;
+            case COMPLAINT:
+                mailBean = new ComplaintMailImpl().process(mailTemplateBean, thymeleafEngine);
+                break;
+            case GOODS_CHANGE:
+                mailBean = new GoodsChangeImpl().process(mailTemplateBean, thymeleafEngine);
+                break;
+            case PURCHASE:
+                mailBean = new PurchaseImpl().process(mailTemplateBean, thymeleafEngine);
+                break;
+            case DISMANTLING_ORDER:
+                mailBean = new DismantlingOrderImpl().process(mailTemplateBean, thymeleafEngine);
+                break;
+            case REPLACEGOODS:
+                mailBean = new ReplaceGoodsImpl().process(mailTemplateBean, thymeleafEngine);
+                break;
+            case COUPON:
+                mailBean = new CouponImpl().process(mailTemplateBean, thymeleafEngine);
+                break;
+            case OUR_RECOMMENDATION:
+                mailBean = new OurRecommendationImpl().process(mailTemplateBean, thymeleafEngine);
+                break;
             default:
                 throw new IllegalArgumentException("mailTemplateBean.getTemplateType() is not support! " + mailTemplateBean.getMailBean().getTemplateType());
 

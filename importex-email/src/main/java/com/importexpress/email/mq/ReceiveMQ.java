@@ -37,7 +37,7 @@ public class ReceiveMQ {
     @RabbitListener(queues = Config.QUEUE_MAIL, containerFactory = "rabbitListenerContainerFactory")
     public void receiveMail(byte[] bytes) {
 
-        try{
+        try {
             log.info("received mq count:[{}]", count.incrementAndGet());
             String json = new String(bytes);
             log.info("received mq:[{}]", json);
@@ -47,21 +47,21 @@ public class ReceiveMQ {
             Objects.requireNonNull(mailBean);
             String templateType = mailBean.getString("templateType");
             MailTemplateBean mailTemplateBean;
-            switch (TemplateType.valueOf(templateType)){
+            switch (TemplateType.valueOf(templateType)) {
                 case WELCOME:
-                    mailTemplateBean=JSONObject.parseObject(json, WelcomeMailTemplateBean.class);
+                    mailTemplateBean = JSONObject.parseObject(json, WelcomeMailTemplateBean.class);
                     break;
                 case NEW_PASSWORD:
-                    mailTemplateBean=JSONObject.parseObject(json, NewPasswordMailTemplateBean.class);
+                    mailTemplateBean = JSONObject.parseObject(json, NewPasswordMailTemplateBean.class);
                     break;
                 case ACTIVATION:
-                    mailTemplateBean=JSONObject.parseObject(json, ActivationMailTemplateBean.class);
+                    mailTemplateBean = JSONObject.parseObject(json, ActivationMailTemplateBean.class);
                     break;
                 case ACCOUNT_UPDATE:
-                    mailTemplateBean=JSONObject.parseObject(json, AccountUpdateMailTemplateBean.class);
+                    mailTemplateBean = JSONObject.parseObject(json, AccountUpdateMailTemplateBean.class);
                     break;
                 case RECEIVED:
-                    mailTemplateBean=JSONObject.parseObject(json, ReceivedMailTemplateBean.class);
+                    mailTemplateBean = JSONObject.parseObject(json, ReceivedMailTemplateBean.class);
                     break;
                 case SHOPPING_CART_NO_CHANGE:
                 case SHOPPING_CART_UPDATE_PRICE:
@@ -75,14 +75,35 @@ public class ReceiveMQ {
                 case CHECK:
                     mailTemplateBean = JSONObject.parseObject(json, CheckMail.class);
                     break;
+                case COMPLAINT:
+                    mailTemplateBean = JSONObject.parseObject(json, ComplaintMail.class);
+                    break;
+                case GOODS_CHANGE:
+                    mailTemplateBean = JSONObject.parseObject(json, GoodsChangeMail.class);
+                    break;
+                case PURCHASE:
+                    mailTemplateBean = JSONObject.parseObject(json, PurchaseMail.class);
+                    break;
+                case DISMANTLING_ORDER:
+                    mailTemplateBean = JSONObject.parseObject(json, DismantlingOrderMail.class);
+                    break;
+                case REPLACEGOODS:
+                    mailTemplateBean = JSONObject.parseObject(json, ReplaceGoodsMail.class);
+                    break;
+                case COUPON:
+                    mailTemplateBean = JSONObject.parseObject(json, CouponMail.class);
+                    break;
+                case OUR_RECOMMENDATION:
+                    mailTemplateBean = JSONObject.parseObject(json, OurRecommendationMail.class);
+                    break;
                 default:
-                    throw new IllegalArgumentException("mailTemplateBean.getTemplateType() is not support! "+templateType);
+                    throw new IllegalArgumentException("mailTemplateBean.getTemplateType() is not support! " + templateType);
 
             }
 
             sendMailFactory.sendMail(templateMailService.processTemplate(mailTemplateBean));
-        }catch(Exception e){
-            log.error("receiveMail",e);
+        } catch (Exception e) {
+            log.error("receiveMail", e);
         }
     }
 
