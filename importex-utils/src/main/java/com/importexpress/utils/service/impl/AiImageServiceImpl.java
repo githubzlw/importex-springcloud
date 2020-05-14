@@ -21,7 +21,10 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 
 /**
  * @Author jack.luo
@@ -152,6 +155,33 @@ public class AiImageServiceImpl implements AiImageService {
 //        }
     }
 
+
+    @Override
+    public List<String> callCMD(String imgUrl){
+        try {
+
+//            String[] cmd = {"tar", "-cf", tarName, fileName};
+            byte[] imgData = downloadUrl(imgUrl);
+            Objects.requireNonNull(imgData);
+            UUID uuid = UUID.randomUUID();
+            String inputFile = config.SHELL_PATH + uuid + ".jpg";
+            Files.write(Paths.get(inputFile),imgData);
+            String cmd = config.SHELL_PATH +"squares " + uuid + ".jpg";
+            Process exec = Runtime.getRuntime().exec(cmd, null);
+            int status = exec.waitFor();
+            if(status != 0){
+                log.error("Failed to call shell's command and the return status's is: " + status);
+            }
+            String outputFile = config.SHELL_PATH + uuid + ".jpg.csv";
+            return Files.readAllLines(Paths.get(outputFile));
+        }
+        catch (Exception e){
+            log.error("callCMD",e);
+            return new ArrayList<>();
+        }
+    }
+
+
     private byte[] downloadUrl(String downloadUrl) throws IOException {
 
         OkHttpClient client = new OkHttpClient();
@@ -166,18 +196,25 @@ public class AiImageServiceImpl implements AiImageService {
     /**
      * 图片标识出红框
      * @param downloadUrl
-     * @param rect
+     * @param x
+     * @param y
      * @return
      * @throws IOException
      */
     @Override
-    public byte[] drawRect(String downloadUrl,Rectangle rect) throws IOException {
+    public byte[] drawPolygon(String downloadUrl,int[] x,int[] y) throws IOException {
 
         byte[] bytes = downloadUrl(downloadUrl);
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
         Graphics g = image.getGraphics();
+
+
+        Polygon po = new Polygon();
+        for (int i = 0; i < x.length; i++) {
+            po.addPoint(x[i], y[i]);
+        }
         g.setColor(Color.RED);
-        g.drawRect(rect.x,rect.y,rect.width,rect.height);
+        g.drawPolygon(po);
         g.dispose();
         ByteOutputStream out = new ByteOutputStream();
         ImageIO.write(image, "jpeg", out);

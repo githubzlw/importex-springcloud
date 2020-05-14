@@ -33,5 +33,6 @@ public class Config {
     @Value("${baidu.api.url.object.detect}")
     public String BAIDU_API_URL_OBJECT_DETECT;
 
-
+    @Value("${shell.path}")
+    public String SHELL_PATH;
 }

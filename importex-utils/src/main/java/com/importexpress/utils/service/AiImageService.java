@@ -50,9 +50,12 @@ public interface AiImageService {
     /**
      * 图片标识出红框
      * @param downloadUrl
-     * @param rect
+     * @param x
+     * @param y
      * @return
      * @throws IOException
      */
-    byte[] drawRect(String downloadUrl, Rectangle rect) throws IOException;
+    byte[] drawPolygon(String downloadUrl,int[] x,int[] y) throws IOException;
+
+    List<String> callCMD(String imgUrl);
 }
