@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 /**
  * @Author jack.luo
@@ -43,6 +43,7 @@ public class AiImageServiceImpl implements AiImageService {
 
     /**
      * get yingshi token
+     *
      * @return Pair.of(accessToken, expireTime)
      * @throws IOException
      */
@@ -53,9 +54,9 @@ public class AiImageServiceImpl implements AiImageService {
         maps.put("appKey", config.YINGSHI_API_APPKEY);
         maps.put("appSecret", config.YINGSHI_API_APPSECRET);
         JSONObject jsonObject = UrlUtil.getInstance().callUrlByPost(config.YINGSHI_API_URL_TOKEN, maps);
-        if(jsonObject !=null && "200".equals(jsonObject.getString("code"))){
+        if (jsonObject != null && "200".equals(jsonObject.getString("code"))) {
             JSONObject data = jsonObject.getJSONObject("data");
-            if(data!=null){
+            if (data != null) {
                 String accessToken = data.getString("accessToken");
                 Long expireTime = data.getLong("expireTime");
                 return Pair.of(accessToken, expireTime);
@@ -66,6 +67,7 @@ public class AiImageServiceImpl implements AiImageService {
 
     /**
      * get baidu token
+     *
      * @return Pair.of(accessToken, expireTime)
      * @throws IOException
      */
@@ -77,12 +79,12 @@ public class AiImageServiceImpl implements AiImageService {
         maps.put("client_id", config.BAIDU_API_CLIENT_ID);
         maps.put("client_secret", config.BAIDU_API_CLIENT_SECRET);
         JSONObject jsonObject = UrlUtil.getInstance().callUrlByPost(config.BAIDU_API_URL_TOKEN, maps);
-        if(jsonObject !=null  && StringUtils.isEmpty(jsonObject.getString("error_code")) ){
+        if (jsonObject != null && StringUtils.isEmpty(jsonObject.getString("error_code"))) {
             String accessToken = jsonObject.getString("access_token");
             Long expireTime = jsonObject.getLong("expires_in");
             return Pair.of(accessToken, expireTime);
-        }else{
-            log.error("call objectDetect url error,result:[{}]",jsonObject.toJSONString());
+        } else {
+            log.error("call objectDetect url error,result:[{}]", jsonObject.toJSONString());
         }
 
         return null;
@@ -90,6 +92,7 @@ public class AiImageServiceImpl implements AiImageService {
 
     /**
      * capture image
+     *
      * @param accessToken
      * @return
      * @throws IOException
@@ -102,9 +105,9 @@ public class AiImageServiceImpl implements AiImageService {
         maps.put("deviceSerial", config.YINGSHI_API_DEVICESERIAL);
         maps.put("channelNo", "1");
         JSONObject jsonObject = UrlUtil.getInstance().callUrlByPost(config.YINGSHI_API_URL_CAPTURE, maps);
-        if(jsonObject !=null && "200".equals(jsonObject.getString("code"))){
+        if (jsonObject != null && "200".equals(jsonObject.getString("code"))) {
             JSONObject data = jsonObject.getJSONObject("data");
-            if(data!=null){
+            if (data != null) {
                 return data.getString("picUrl");
             }
         }
@@ -113,6 +116,7 @@ public class AiImageServiceImpl implements AiImageService {
 
     /**
      * object Detect
+     *
      * @param accessToken
      * @param imgUrl
      * @return
@@ -155,32 +159,6 @@ public class AiImageServiceImpl implements AiImageService {
 //        }
     }
 
-
-    @Override
-    public List<String> callCMD(String imgUrl) throws IOException {
-
-            byte[] imgData = downloadUrl(imgUrl);
-            Objects.requireNonNull(imgData);
-            UUID uuid = UUID.randomUUID();
-            String inputFile = config.SHELL_PATH + uuid + ".jpg";
-            Files.write(Paths.get(inputFile),imgData);
-            String cmd = config.SHELL_PATH +"squares " + uuid + ".jpg";
-            Process exec = Runtime.getRuntime().exec(cmd, null);
-        int status = 0;
-        try {
-            status = exec.waitFor();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        if(status != 0){
-                log.error("Failed to call shell's command and the return status's is: " + status);
-            }
-            String outputFile = config.SHELL_PATH + uuid + ".jpg.csv";
-            return Files.readAllLines(Paths.get(outputFile));
-
-    }
-
-
     private byte[] downloadUrl(String downloadUrl) throws IOException {
 
         OkHttpClient client = new OkHttpClient();
@@ -189,11 +167,12 @@ public class AiImageServiceImpl implements AiImageService {
         if (!response.isSuccessful()) {
             throw new IOException("Failed to download file: " + response);
         }
-        return response.body()!=null ?  response.body().bytes() : null;
+        return response.body() != null ? response.body().bytes() : null;
     }
 
     /**
      * 图片标识出红框
+     *
      * @param downloadUrl
      * @param x
      * @param y
@@ -201,7 +180,7 @@ public class AiImageServiceImpl implements AiImageService {
      * @throws IOException
      */
     @Override
-    public byte[] drawPolygon(String downloadUrl,int[] x,int[] y) throws IOException {
+    public byte[] drawPolygon(String downloadUrl, int[] x, int[] y) throws IOException {
 
         byte[] bytes = downloadUrl(downloadUrl);
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
@@ -218,5 +197,36 @@ public class AiImageServiceImpl implements AiImageService {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write(image, "jpeg", out);
         return out.toByteArray();
+    }
+
+    /**
+     * call command
+     *
+     * @param imgUrl
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public List<String> callCMD(String imgUrl) throws IOException {
+
+        byte[] imgData = downloadUrl(imgUrl);
+        Objects.requireNonNull(imgData);
+        UUID uuid = UUID.randomUUID();
+        String inputFile = config.SHELL_PATH + uuid + ".jpg";
+        Files.write(Paths.get(inputFile), imgData);
+        String cmd = config.SHELL_PATH + "squares " + uuid + ".jpg";
+        Process exec = Runtime.getRuntime().exec(cmd, null);
+        int status = 0;
+        try {
+            status = exec.waitFor();
+        } catch (InterruptedException e) {
+            log.error("InterruptedException",e);
+        }
+        if (status != 0) {
+            log.error("Failed to call shell's command and the return status's is: " + status);
+        }
+        String outputFile = config.SHELL_PATH + uuid + ".jpg.csv";
+        return Files.readAllLines(Paths.get(outputFile));
+
     }
 }

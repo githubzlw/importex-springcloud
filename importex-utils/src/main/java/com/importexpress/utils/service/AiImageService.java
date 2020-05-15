@@ -57,5 +57,11 @@ public interface AiImageService {
      */
     byte[] drawPolygon(String downloadUrl,int[] x,int[] y) throws IOException;
 
+    /**
+     * call command
+     * @param imgUrl
+     * @return
+     * @throws IOException
+     */
     List<String> callCMD(String imgUrl) throws IOException;
 }
