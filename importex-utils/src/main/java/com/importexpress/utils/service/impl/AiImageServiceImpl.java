@@ -19,6 +19,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
@@ -214,8 +215,9 @@ public class AiImageServiceImpl implements AiImageService {
         UUID uuid = UUID.randomUUID();
         String inputFile = config.SHELL_PATH + uuid + ".jpg";
         Files.write(Paths.get(inputFile), imgData);
-        String cmd = config.SHELL_PATH + "squares " + uuid + ".jpg";
-        Process exec = Runtime.getRuntime().exec(cmd, null);
+        //String cmd = config.SHELL_PATH + "squares " + uuid + ".jpg";
+        //Process proc =Runtime.getRuntime().exec("./exefile");
+        Process exec = Runtime.getRuntime().exec("./squares "+ uuid + ".jpg", null,new File(config.SHELL_PATH));
         int status = 0;
         try {
             status = exec.waitFor();
