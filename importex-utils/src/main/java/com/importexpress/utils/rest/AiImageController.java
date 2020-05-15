@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -96,7 +97,7 @@ public class AiImageController {
 //        CommonResult commonResult = captureImage();
 //        String url = (String) commonResult.getData();
 //
-//        String token = redisTemplate.opsForValue().get(REDIS_KEY_BAIDU_TOKEN);
+//        String token = redisTemplate.opsForValueAiImageServiceImpl().get(REDIS_KEY_BAIDU_TOKEN);
 //        if(StringUtils.isEmpty(token)){
 //            Pair<String, Long> pair = aiImageService.getBaiduToken();
 //            token = pair.getLeft();
@@ -117,37 +118,38 @@ public class AiImageController {
     @GetMapping(value = "/image/show",produces = MediaType.IMAGE_JPEG_VALUE)
     @ResponseBody
     @ApiOperation("图片识别后显示")
-    public byte[] show() throws Exception {
+    public byte[] show()  {
 
         CommonResult commonResult = captureImage();
         String url = (String) commonResult.getData();
 
 
-        List<String> lstRect = aiImageService.callCMD(url);
+        try {
+            List<String> lstRect = aiImageService.callCMD(url);
+            if(lstRect !=null && lstRect.size() >0){
+        //            266,413,139,617,235,672,352,469
+        //            122,130,124,301,367,297,376,139
+                String str = lstRect.get(0);
+                String[] split = str.split(",");
+                Assert.isTrue(split.length ==8);
+                int[] x = new int[4];
+                x[0] = Integer.parseInt(split[0]);
+                x[1] = Integer.parseInt(split[2]);
+                x[2] = Integer.parseInt(split[4]);
+                x[3] = Integer.parseInt(split[6]);
+                int[] y = new int[4];
+                y[0] = Integer.parseInt(split[1]);
+                y[1] = Integer.parseInt(split[3]);
+                y[2] = Integer.parseInt(split[5]);
+                y[3] = Integer.parseInt(split[7]);
 
-        if(lstRect !=null && lstRect.size() >0){
-//            266,413,139,617,235,672,352,469
-//            122,130,124,301,367,297,376,139
-
-            String str = lstRect.get(0);
-            String[] split = str.split(",");
-            Assert.isTrue(split.length ==8);
-            int[] x = new int[4];
-            x[0] = Integer.parseInt(split[0]);
-            x[1] = Integer.parseInt(split[2]);
-            x[2] = Integer.parseInt(split[4]);
-            x[3] = Integer.parseInt(split[6]);
-            int[] y = new int[4];
-            y[0] = Integer.parseInt(split[1]);
-            y[1] = Integer.parseInt(split[3]);
-            y[2] = Integer.parseInt(split[5]);
-            y[3] = Integer.parseInt(split[7]);
-
-            return aiImageService.drawPolygon(url, x, y);
-        }else{
+                return aiImageService.drawPolygon(url, x, y);
+            }else{
+                return null;
+            }
+        } catch (IOException e) {
             return null;
         }
-
     }
 
 }

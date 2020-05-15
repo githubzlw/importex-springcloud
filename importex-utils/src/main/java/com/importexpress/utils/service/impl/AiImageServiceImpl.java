@@ -6,7 +6,6 @@ import com.importexpress.utils.service.AiImageService;
 import com.importexpress.utils.util.Base64Util;
 import com.importexpress.utils.util.Config;
 import com.importexpress.utils.util.HttpUtil;
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -19,6 +18,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.file.Files;
@@ -157,10 +157,8 @@ public class AiImageServiceImpl implements AiImageService {
 
 
     @Override
-    public List<String> callCMD(String imgUrl){
-        try {
+    public List<String> callCMD(String imgUrl) throws IOException {
 
-//            String[] cmd = {"tar", "-cf", tarName, fileName};
             byte[] imgData = downloadUrl(imgUrl);
             Objects.requireNonNull(imgData);
             UUID uuid = UUID.randomUUID();
@@ -168,17 +166,18 @@ public class AiImageServiceImpl implements AiImageService {
             Files.write(Paths.get(inputFile),imgData);
             String cmd = config.SHELL_PATH +"squares " + uuid + ".jpg";
             Process exec = Runtime.getRuntime().exec(cmd, null);
-            int status = exec.waitFor();
-            if(status != 0){
+        int status = 0;
+        try {
+            status = exec.waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if(status != 0){
                 log.error("Failed to call shell's command and the return status's is: " + status);
             }
             String outputFile = config.SHELL_PATH + uuid + ".jpg.csv";
             return Files.readAllLines(Paths.get(outputFile));
-        }
-        catch (Exception e){
-            log.error("callCMD",e);
-            return new ArrayList<>();
-        }
+
     }
 
 
@@ -216,8 +215,8 @@ public class AiImageServiceImpl implements AiImageService {
         g.setColor(Color.RED);
         g.drawPolygon(po);
         g.dispose();
-        ByteOutputStream out = new ByteOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         ImageIO.write(image, "jpeg", out);
-        return out.getBytes();
+        return out.toByteArray();
     }
 }
