@@ -23,6 +23,8 @@ import java.util.UUID;
 public class SerialPortServiceImpl implements SerialPortService {
 
     private static final String COM_PORT = "COM3";
+
+    private static SerialPort serialPort =null;
 //    private static final String COM_PORT_WRITER = "Com3Writer";
 //    private static final int SLEEP_MILLIS = 2000;
 //
@@ -31,9 +33,12 @@ public class SerialPortServiceImpl implements SerialPortService {
 
     @Override
     public void comWriter(String msg) {
-        final SerialPort serialPort;
+
         try {
-            serialPort = SerialTool.openSerialPort(COM_PORT);
+            if(serialPort ==null){
+                serialPort = SerialTool.openSerialPort(COM_PORT);
+                Thread.sleep(5000);
+            }
             SerialTool.sendData(serialPort, (msg+"\n").getBytes());
             log.info("read data from serial port:[{}]",SerialTool.readData(serialPort));
         } catch (Exception e) {
