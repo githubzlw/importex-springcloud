@@ -23,11 +23,18 @@ public class SerialPortController {
         this.serialPortService = serialPortService;
     }
 
-    @GetMapping("/com5Writer")
-    @ApiOperation("com5口通信")
-    public CommonResult com5Writer(@RequestParam String[] msgs) {
+    @GetMapping("/comWriter")
+    @ApiOperation("com口通信")
+    public CommonResult comWriter(@RequestParam String msg) {
 
-        serialPortService.com5Writer(msgs);
-        return CommonResult.success();
+        try{
+            //serialPortService.callCMD(msg);
+            serialPortService.comWriter(msg);
+            return CommonResult.success();
+        }catch (IllegalStateException ise){
+            return CommonResult.failed(ise.getMessage());
+        }
+
     }
+
 }
