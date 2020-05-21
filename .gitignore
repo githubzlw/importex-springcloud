@@ -103,5 +103,4 @@ importex-zuul/.settings/
 /importex-serialport/target/classes/
 /importex-message/target/classes/
 importex-message/target/
-importex-serialport/src/test/
 importex-serialport/target/
