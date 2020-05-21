@@ -35,7 +35,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
 
     /**操作之间间隔时间 */
-    public static final int MAX_SLEEP = 3000;
+    public static final int MAX_SLEEP = 5000;
 
     private final Config config;
 
@@ -160,7 +160,10 @@ public class SerialPortServiceImpl implements SerialPortService {
             serialPort = SerialTool.openSerialPort(config.SERIAL_PORT);
             Thread.sleep(MAX_SLEEP);
             try {
-                SerialTool.setListenerToSerialPort(serialPort, serialPortEvent -> log.info("serialEvent:[{}]",serialPortEvent.toString()));
+                SerialTool.setListenerToSerialPort(serialPort, serialPortEvent -> {
+                    log.info("serialEvent:[{},OldValue:{},NewValue:{}]", serialPortEvent.getEventType(),serialPortEvent.getOldValue(),serialPortEvent.getNewValue());
+
+                });
             } catch (TooManyListenersException e) {
                 throw new IllegalStateException("TooManyListenersException");
             }
