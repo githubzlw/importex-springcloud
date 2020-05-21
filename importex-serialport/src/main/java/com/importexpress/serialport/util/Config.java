@@ -13,4 +13,12 @@ public class Config {
     @Value("${MOVE_TO_CART_POSI}")
     public String MOVE_TO_CART_POSI;
 
+    @Value("${MAX_VALUE_X}")
+    public int MAX_VALUE_X;
+
+    @Value("${MAX_VALUE_Y}")
+    public int MAX_VALUE_Y;
+
+    @Value("${MAX_VALUE_Z}")
+    public int MAX_VALUE_Z;
 }

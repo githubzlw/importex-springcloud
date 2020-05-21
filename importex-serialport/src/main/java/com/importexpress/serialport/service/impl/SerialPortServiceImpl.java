@@ -62,7 +62,15 @@ public class SerialPortServiceImpl implements SerialPortService {
     public void sendData(int x, int y, int z, boolean isMagi) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         try {
-            //#000000#000000#000000#MAGOFF#360
+            if(x <0 || y <0 || z <0){
+                throw new IllegalArgumentException("input xyz is not right.");
+            }
+
+            if(x >config.MAX_VALUE_X || y >config.MAX_VALUE_Y || z >config.MAX_VALUE_Z){
+                throw new IllegalArgumentException("input xyz is not right.");
+            }
+
+            //sample: #000000#000000#000000#MAGOFF#360
             StringBuilder sb = new StringBuilder();
             sb.append('#').append(StringUtils.leftPad(String.valueOf(x),6,'0'));
             sb.append('#').append(StringUtils.leftPad(String.valueOf(y),6,'0'));
