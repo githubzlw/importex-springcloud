@@ -1,7 +1,9 @@
 package com.importexpress.serialport.service;
 
 
-import java.io.IOException;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
+import gnu.io.UnsupportedCommOperationException;
 
 /**
  * @author jack.luo
@@ -9,7 +11,23 @@ import java.io.IOException;
  */
 public interface SerialPortService {
 
-    void comWriter(String msg);
+    void sendData(String msg) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
-    void callCMD(String msg);
+    void sendData(int x, int y, int z, boolean isMagi) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+
+    void returnZeroPosi() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+
+    void setZeroPosi() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+
+    void execMagoff() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+
+    void execMagNet() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+
+    void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+
+    void moveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+
+    void closeSerial();
+
+//    void callCMD(String msg);
 }

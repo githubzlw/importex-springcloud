@@ -7,4 +7,10 @@ import org.springframework.context.annotation.Configuration;
 public class Config {
 
 
+    @Value("${SERIAL.PORT}")
+    public String SERIAL_PORT;
+
+    @Value("${MOVE_TO_CART_POSI}")
+    public String MOVE_TO_CART_POSI;
+
 }

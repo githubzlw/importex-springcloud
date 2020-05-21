@@ -1,6 +1,7 @@
 package com.importexpress.serialport.util;
 
 import gnu.io.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +11,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.TooManyListenersException;
 
+@Slf4j
 public class SerialTool {
     @SuppressWarnings("unchecked")
     public static List<String> getSerialPortList() {
@@ -58,7 +60,8 @@ public class SerialTool {
             SerialPort serialPort = (SerialPort) commPort;
             //设置串口参数（波特率，数据位8，停止位1，校验位无）
             serialPort.setSerialPortParams(parameter.getBaudRate(), parameter.getDataBits(), parameter.getStopBits(), parameter.getParity());
-            System.out.println("开启串口成功，串口名称：" + parameter.getSerialPortName());
+            log.info("开启串口成功，串口名称：" + parameter.getSerialPortName());
+
             return serialPort;
         } else {
             //是其他类型的端口
@@ -71,7 +74,7 @@ public class SerialTool {
     public static void closeSerialPort(SerialPort serialPort) {
         if (serialPort != null) {
             serialPort.close();
-            System.out.println("关闭了串口：" + serialPort.getName());
+            log.info("关闭了串口：" + serialPort.getName());
         }
     }
 
@@ -84,14 +87,14 @@ public class SerialTool {
             os.write(data);
             os.flush();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("sendData",e);
         } finally {
             try {
                 if (os != null) {
                     os.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("sendData",e);
             }
         }
     }
@@ -112,14 +115,14 @@ public class SerialTool {
                 bufflenth = is.available();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("readData",e);
         } finally {
             try {
                 if (is != null) {
                     is.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("readData",e);
             }
         }
         return bytes;
