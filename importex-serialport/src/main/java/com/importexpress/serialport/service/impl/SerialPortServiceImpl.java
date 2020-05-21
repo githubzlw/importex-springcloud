@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.TooManyListenersException;
 
 
@@ -51,7 +53,6 @@ public class SerialPortServiceImpl implements SerialPortService {
         try {
             openSerial();
             SerialTool.sendData(serialPort, (msg+"\n").getBytes());
-            ///log.info("read data from serial port:[{}]",SerialTool.readData(serialPort));
         } catch (Exception e) {
             throw e;
         }
@@ -74,8 +75,6 @@ public class SerialPortServiceImpl implements SerialPortService {
             sb.append("#360");
 
             sendData(sb.toString());
-
-            log.info("read data from serial port:[{}]",SerialTool.readData(serialPort));
         } catch (Exception e) {
             throw e;
         }
@@ -160,10 +159,33 @@ public class SerialPortServiceImpl implements SerialPortService {
             serialPort = SerialTool.openSerialPort(config.SERIAL_PORT);
             Thread.sleep(MAX_SLEEP);
             try {
+                serialPort.notifyOnDataAvailable(true);
                 SerialTool.setListenerToSerialPort(serialPort, serialPortEvent -> {
-                    log.info("serialEvent:[{},OldValue:{},NewValue:{}]", serialPortEvent.getEventType(),serialPortEvent.getOldValue(),serialPortEvent.getNewValue());
-
-                });
+                            if (serialPortEvent.getEventType() == SerialPortEvent.DATA_AVAILABLE) {
+                                // we get here if data has been received
+                                final StringBuilder sb = new StringBuilder();
+                                final byte[] readBuffer = new byte[20];
+                                try (InputStream inputStream = serialPort.getInputStream()){
+                                    do {
+                                        // read data from serial device
+                                        while (inputStream.available() > 0) {
+                                            final int bytes = inputStream.read(readBuffer);
+                                            sb.append(new String(readBuffer, 0, bytes));
+                                        }
+                                        try {
+                                            // add wait states around reading the stream, so that interrupted transmissions are
+                                            // merged
+                                            Thread.sleep(100);
+                                        } catch (InterruptedException e) {
+                                        }
+                                    } while (inputStream.available() > 0);
+                                    log.info("receivd data:[{}]",sb.toString());
+                                } catch (IOException e) {
+                                    log.error("Error receiving data on serial port", e);
+                                }
+                            }
+                        }
+                );
             } catch (TooManyListenersException e) {
                 throw new IllegalStateException("TooManyListenersException");
             }
