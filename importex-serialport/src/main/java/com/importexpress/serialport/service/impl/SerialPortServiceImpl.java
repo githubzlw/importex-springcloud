@@ -152,7 +152,10 @@ public class SerialPortServiceImpl implements SerialPortService {
      */
     @Override
     public void closeSerial() {
+        serialPort.notifyOnDataAvailable(false);
+        serialPort.removeEventListener();
         SerialTool.closeSerialPort(serialPort);
+        this.serialPort=null;
     }
 
     /**
