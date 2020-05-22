@@ -19,7 +19,9 @@ public enum SiteEnum {
     /**管接头网站*/
     E_PIPE(32,"https://www.pipe.com","E_PIPE"),
     /**电缆网站*/
-    LINE(64,"https://www.line.com","LINE");
+    LINE(64,"https://www.line.com","LINE"),
+    /**HS_CODE网站*/
+    S_HS_CODE(128,"https://www.HS_CODE.com","S_HS_CODE");
 
     private int code;
 
