@@ -38,4 +38,11 @@ public class SerialPortServiceImplTest{
             }
         });
     }
+
+    @Test
+    public void test() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
+
+        serialPortService.moveGoods(2000,2000,1000);
+        System.out.println("aaa");
+    }
 }

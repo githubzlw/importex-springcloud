@@ -29,15 +29,15 @@ public class SerialPortServiceImpl implements SerialPortService {
     /**普通的回到零点指令 */
     private static final String RETURN_ZERO_POSI = "#000000#000000#000000#000000#360";
 
-    /**释放物品（消磁） */
-    private static final String EXEC_MAGOFF = "#000000#000000#000000#MAGOFF#360";
-
-    /**吸取物品（吸磁） */
-    private static final String EXEC_MAGNET = "#000000#000000#000000#MAGNET#360";
+//    /**释放物品（消磁） */
+//    private static final String EXEC_MAGOFF = "#000000#000000#000000#MAGOFF#360";
+//
+//    /**吸取物品（吸磁） */
+//    private static final String EXEC_MAGNET = "#000000#000000#000000#MAGNET#360";
 
 
     /**操作之间间隔时间 */
-    public static final int MAX_SLEEP = 5000;
+    public static final int MAX_SLEEP = 2000;
 
     private final Config config;
 
@@ -109,16 +109,16 @@ public class SerialPortServiceImpl implements SerialPortService {
      * 释放物品（消磁）
      */
     @Override
-    public void execMagoff() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
-        sendData(EXEC_MAGOFF);
+    public void execMagoff(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
+        sendData(x,y,z,false);
     }
 
     /**
      * 吸取物品（吸磁）
      */
     @Override
-    public void execMagNet() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
-        sendData(EXEC_MAGNET);
+    public void execMagNet(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
+        sendData(x,y,z,true);
     }
 
     /**
@@ -128,8 +128,6 @@ public class SerialPortServiceImpl implements SerialPortService {
     public void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         sendData(config.MOVE_TO_CART_POSI);
-        Thread.sleep(MAX_SLEEP);
-        execMagoff();
     }
 
     /**
@@ -139,12 +137,15 @@ public class SerialPortServiceImpl implements SerialPortService {
     public void moveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         this.sendData(x,y,z,false);
-        Thread.sleep(MAX_SLEEP);
-        this.execMagNet();
+        Thread.sleep(MAX_SLEEP*5);
+        this.execMagNet(x,y,z);
         Thread.sleep(MAX_SLEEP);
         this.moveToCart();
+        Thread.sleep(MAX_SLEEP*5);
+        this.execMagoff(x,y,z);
         Thread.sleep(MAX_SLEEP);
         this.returnZeroPosi();
+        Thread.sleep(MAX_SLEEP*5);
     }
 
     /**
@@ -155,7 +156,7 @@ public class SerialPortServiceImpl implements SerialPortService {
         serialPort.notifyOnDataAvailable(false);
         serialPort.removeEventListener();
         SerialTool.closeSerialPort(serialPort);
-        this.serialPort=null;
+        serialPort=null;
     }
 
     /**

@@ -19,9 +19,9 @@ public interface SerialPortService {
 
     void setZeroPosi() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
-    void execMagoff() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+    void execMagoff(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
-    void execMagNet() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+    void execMagNet(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
     void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
