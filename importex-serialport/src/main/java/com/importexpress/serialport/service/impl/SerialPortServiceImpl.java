@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.TooManyListenersException;
+import java.util.concurrent.SynchronousQueue;
 
 
 /**
@@ -29,6 +30,8 @@ public class SerialPortServiceImpl implements SerialPortService {
     /**普通的回到零点指令 */
     private static final String RETURN_ZERO_POSI = "#000000#000000#000000#000000#360";
 
+    private static SynchronousQueue<Integer> synchronousQueue = new SynchronousQueue();
+
 //    /**释放物品（消磁） */
 //    private static final String EXEC_MAGOFF = "#000000#000000#000000#MAGOFF#360";
 //
@@ -37,7 +40,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
 
     /**操作之间间隔时间 */
-    public static final int MAX_SLEEP = 2000;
+    public static final int MAX_SLEEP = 3000;
 
     private final Config config;
 
@@ -114,6 +117,14 @@ public class SerialPortServiceImpl implements SerialPortService {
     }
 
     /**
+     * 托盘区释放物品（消磁）
+     */
+    @Override
+    public void execMagoff(String msg) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
+        sendData(msg);
+    }
+
+    /**
      * 吸取物品（吸磁）
      */
     @Override
@@ -122,12 +133,12 @@ public class SerialPortServiceImpl implements SerialPortService {
     }
 
     /**
-     * 移动到托盘并且释放掉物品
+     * 移动到托盘区
      */
     @Override
     public void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
-        sendData(config.MOVE_TO_CART_POSI);
+        sendData(config.MOVE_TO_CART_MAGNET_POSI);
     }
 
     /**
@@ -138,27 +149,41 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         //移动到指定地点
         this.sendData(x,y,z,false);
-        Thread.sleep(MAX_SLEEP*5);
 
         //吸取物品
-        this.execMagNet(x,y,z);
-        Thread.sleep(MAX_SLEEP);
+        if(synchronousQueue.take()==1){
+            log.debug("take 1");
+            this.execMagNet(x,y,z);
+        }
 
         //收缩Y
-        this.sendData(x,y,0,true);
-        Thread.sleep(MAX_SLEEP);
+        if(synchronousQueue.take()==1) {
+            log.debug("take 2");
+            this.sendData(x, y, 0, true);
+        }
 
         //移动到托盘区域
-        this.moveToCart();
-        Thread.sleep(MAX_SLEEP*5);
+        if(synchronousQueue.take()==1) {
+            log.debug("take 3");
+            this.moveToCart();
+        }
 
         //释放物品
-        this.execMagoff(x,y,z);
-        Thread.sleep(MAX_SLEEP);
+        if(synchronousQueue.take()==1) {
+            log.debug("take 4");
+            this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
+        }
 
         //回到零点
-        this.returnZeroPosi();
-        Thread.sleep(MAX_SLEEP*5);
+        if(synchronousQueue.take()==1) {
+            log.debug("take 5");
+            this.returnZeroPosi();
+        }
+
+        if(synchronousQueue.take()==1){
+            Thread.sleep(MAX_SLEEP*5);
+            return;
+        }
     }
 
     /**
@@ -204,7 +229,14 @@ public class SerialPortServiceImpl implements SerialPortService {
                                         } catch (InterruptedException e) {
                                         }
                                     } while (inputStream.available() > 0);
-                                    log.info("receivd data:[{}]",sb.toString());
+                                    log.debug("receivd data:[{}]",sb.toString());
+                                    try {
+                                        if(sb.toString().contains("LimitSwitch")){
+                                            log.debug("put queue");
+                                            synchronousQueue.put(1);
+                                        }
+                                    } catch (InterruptedException e) {
+                                    }
                                 } catch (IOException e) {
                                     log.error("Error receiving data on serial port", e);
                                 }
