@@ -136,14 +136,27 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void moveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
+        //移动到指定地点
         this.sendData(x,y,z,false);
         Thread.sleep(MAX_SLEEP*5);
+
+        //吸取物品
         this.execMagNet(x,y,z);
         Thread.sleep(MAX_SLEEP);
+
+        //收缩Y
+        this.sendData(x,y,0,true);
+        Thread.sleep(MAX_SLEEP);
+
+        //移动到托盘区域
         this.moveToCart();
         Thread.sleep(MAX_SLEEP*5);
+
+        //释放物品
         this.execMagoff(x,y,z);
         Thread.sleep(MAX_SLEEP);
+
+        //回到零点
         this.returnZeroPosi();
         Thread.sleep(MAX_SLEEP*5);
     }
