@@ -148,7 +148,13 @@ public class SerialPortServiceImpl implements SerialPortService {
     public void moveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         //移动到指定地点
-        this.sendData(x,y,z,false);
+        this.sendData(x,y,0,false);
+
+        //伸Z
+        if(synchronousQueue.take()==1) {
+            log.debug("take 0");
+            this.sendData(x, y, z, false);
+        }
 
         //吸取物品
         if(synchronousQueue.take()==1){
@@ -156,7 +162,7 @@ public class SerialPortServiceImpl implements SerialPortService {
             this.execMagNet(x,y,z);
         }
 
-        //收缩Y
+        //缩Z
         if(synchronousQueue.take()==1) {
             log.debug("take 2");
             this.sendData(x, y, 0, true);
@@ -181,8 +187,8 @@ public class SerialPortServiceImpl implements SerialPortService {
         }
 
         if(synchronousQueue.take()==1){
+            log.debug("take 6");
             Thread.sleep(MAX_SLEEP*5);
-            return;
         }
     }
 
