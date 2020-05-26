@@ -206,6 +206,7 @@ public class SerialPortServiceImpl implements SerialPortService {
      */
     private void openSerial() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, InterruptedException {
         if (serialPort == null) {
+            log.debug("begin open serial : [{}]",config.SERIAL_PORT);
             serialPort = SerialTool.openSerialPort(config.SERIAL_PORT);
             Thread.sleep(MAX_SLEEP);
             try {
