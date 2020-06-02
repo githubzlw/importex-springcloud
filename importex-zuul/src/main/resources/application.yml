@@ -35,6 +35,7 @@ zuul:
     shopify-service: /shopify-service/**
     message-service: /message-service/**
     serialport-service: /serialport-service/**
+    login-service: /login-service/**
 
   ribbon:
     eager-load:
