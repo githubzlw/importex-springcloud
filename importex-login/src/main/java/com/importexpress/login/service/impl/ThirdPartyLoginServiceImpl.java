@@ -68,13 +68,11 @@ public class ThirdPartyLoginServiceImpl implements ThirdPartyLoginService {
             String googleUserId = payload.getSubject();
             String googleEmail = payload.getEmail();
 
-            new ImmutablePair<>(googleUserId, googleEmail);
+            return new ImmutablePair<>(googleUserId, googleEmail);
 
         } catch (GeneralSecurityException | IOException e) {
             throw new IOException("googleAuth.GeneralSecurityException");
         }
-
-        return null;
 
     }
 
