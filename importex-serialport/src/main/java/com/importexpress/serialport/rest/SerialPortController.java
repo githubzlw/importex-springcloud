@@ -97,10 +97,10 @@ public class SerialPortController {
 
     @GetMapping("/execMagoff")
     @ApiOperation("释放物品（消磁）")
-    public CommonResult execMagoff() {
+    public CommonResult execMagoff(@RequestParam int x,@RequestParam int y,@RequestParam int z) {
 
         try{
-            serialPortService.execMagoff();
+            serialPortService.execMagoff(x,y,z);
             return CommonResult.success();
 
         }catch (NoSuchPortException ise){
@@ -114,10 +114,10 @@ public class SerialPortController {
 
     @GetMapping("/execMagNet")
     @ApiOperation("吸取物品（吸磁）")
-    public CommonResult execMagNet() {
+    public CommonResult execMagNet(@RequestParam int x,@RequestParam int y,@RequestParam int z) {
 
         try{
-            serialPortService.execMagNet();
+            serialPortService.execMagNet(x,y,z);
             return CommonResult.success();
 
         }catch (NoSuchPortException ise){

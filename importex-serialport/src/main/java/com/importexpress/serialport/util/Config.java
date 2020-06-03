@@ -10,8 +10,11 @@ public class Config {
     @Value("${SERIAL.PORT}")
     public String SERIAL_PORT;
 
-    @Value("${MOVE_TO_CART_POSI}")
-    public String MOVE_TO_CART_POSI;
+    @Value("${MOVE_TO_CART_MAGNET_POSI}")
+    public String MOVE_TO_CART_MAGNET_POSI;
+
+    @Value("${MOVE_TO_CART_MAGOFF_POSI}")
+    public String MOVE_TO_CART_MAGOFF_POSI;
 
     @Value("${MAX_VALUE_X}")
     public int MAX_VALUE_X;

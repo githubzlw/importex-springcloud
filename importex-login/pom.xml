@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>importex-serialport</artifactId>
+    <artifactId>importex-login</artifactId>
 
 
     <dependencyManagement>
@@ -43,9 +43,14 @@
             <version>${importex.latest.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.rxtx</groupId>
-            <artifactId>rxtx</artifactId>
-            <version>2.1.7</version>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-oauth2</artifactId>
+            <version>v1-rev143-1.23.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.auth</groupId>
+            <artifactId>google-auth-library-oauth2-http</artifactId>
+            <version>0.10.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -61,7 +66,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <!-- 指定该Main Class为全局的唯一入口 -->
-                    <mainClass>com.importexpress.serialport.SerialPortApp</mainClass>
+                    <mainClass>com.importexpress.login.LoginApp</mainClass>
 
                     <executable>true</executable>
                 </configuration>
