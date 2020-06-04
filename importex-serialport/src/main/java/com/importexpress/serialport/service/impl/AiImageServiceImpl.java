@@ -228,7 +228,7 @@ public class AiImageServiceImpl implements AiImageService {
         Files.write(Paths.get(inputFile), imgData);
         //String cmd = config.SHELL_PATH + "squares " + uuid + ".jpg";
         //Process proc =Runtime.getRuntime().exec("./exefile");
-        Process exec = Runtime.getRuntime().exec("opencv.exe "+ uuid + ".jpg", null,new File(config.SHELL_PATH));
+        Process exec = Runtime.getRuntime().exec("cmd /c opencv.exe "+ uuid + ".jpg", null,new File(config.SHELL_PATH));
         int status = 0;
         try {
             status = exec.waitFor();
