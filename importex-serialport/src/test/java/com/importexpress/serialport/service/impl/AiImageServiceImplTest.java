@@ -1,6 +1,6 @@
-package com.importexpress.utils.service.impl;
+package com.importexpress.serialport.service.impl;
 
-import com.importexpress.utils.service.AiImageService;
+import com.importexpress.serialport.service.AiImageService;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @Author jack.luo
@@ -19,7 +18,7 @@ import java.util.List;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class AiImageServiceImplTest{
+public class AiImageServiceImplTest {
 
     @Autowired
     private AiImageService aiImageService;
@@ -40,20 +39,5 @@ public class AiImageServiceImplTest{
         System.out.println(url);
     }
 
-    @Test
-    public void getBaiduToken() throws IOException {
-        Pair<String, Long> token = aiImageService.getBaiduToken();
-        Assert.notNull(token);
-        System.out.println(token);
-    }
 
-
-    @Test
-    public void objectDetect() throws Exception {
-        Pair<String, Long> token = aiImageService.getYingShiToken();
-        String url = aiImageService.captureImage(token.getLeft());
-
-        Pair<String, Long> baiduToken = aiImageService.getBaiduToken();
-        System.out.println(aiImageService.objectDetect(baiduToken.getLeft(), url));
-    }
 }

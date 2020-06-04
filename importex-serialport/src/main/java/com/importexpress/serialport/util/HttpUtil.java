@@ -1,4 +1,4 @@
-package com.importexpress.utils.util;
+package com.importexpress.serialport.util;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

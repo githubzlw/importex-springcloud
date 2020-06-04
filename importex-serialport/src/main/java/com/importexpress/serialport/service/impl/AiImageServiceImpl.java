@@ -1,11 +1,11 @@
-package com.importexpress.utils.service.impl;
+package com.importexpress.serialport.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.util.UrlUtil;
-import com.importexpress.utils.service.AiImageService;
-import com.importexpress.utils.util.Base64Util;
-import com.importexpress.utils.util.Config;
-import com.importexpress.utils.util.HttpUtil;
+import com.importexpress.serialport.service.AiImageService;
+import com.importexpress.serialport.util.Base64Util;
+import com.importexpress.serialport.util.Config;
+import com.importexpress.serialport.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -66,30 +66,30 @@ public class AiImageServiceImpl implements AiImageService {
         return null;
     }
 
-    /**
-     * get baidu token
-     *
-     * @return Pair.of(accessToken, expireTime)
-     * @throws IOException
-     */
-    @Override
-    public Pair<String, Long> getBaiduToken() throws IOException {
-
-        Map<String, String> maps = new HashMap<>();
-        maps.put("grant_type", "client_credentials");
-        maps.put("client_id", config.BAIDU_API_CLIENT_ID);
-        maps.put("client_secret", config.BAIDU_API_CLIENT_SECRET);
-        JSONObject jsonObject = UrlUtil.getInstance().callUrlByPost(config.BAIDU_API_URL_TOKEN, maps);
-        if (jsonObject != null && StringUtils.isEmpty(jsonObject.getString("error_code"))) {
-            String accessToken = jsonObject.getString("access_token");
-            Long expireTime = jsonObject.getLong("expires_in");
-            return Pair.of(accessToken, expireTime);
-        } else {
-            log.error("call objectDetect url error,result:[{}]", jsonObject.toJSONString());
-        }
-
-        return null;
-    }
+//    /**
+//     * get baidu token
+//     *
+//     * @return Pair.of(accessToken, expireTime)
+//     * @throws IOException
+//     */
+//    @Override
+//    public Pair<String, Long> getBaiduToken() throws IOException {
+//
+//        Map<String, String> maps = new HashMap<>();
+//        maps.put("grant_type", "client_credentials");
+//        maps.put("client_id", config.BAIDU_API_CLIENT_ID);
+//        maps.put("client_secret", config.BAIDU_API_CLIENT_SECRET);
+//        JSONObject jsonObject = UrlUtil.getInstance().callUrlByPost(config.BAIDU_API_URL_TOKEN, maps);
+//        if (jsonObject != null && StringUtils.isEmpty(jsonObject.getString("error_code"))) {
+//            String accessToken = jsonObject.getString("access_token");
+//            Long expireTime = jsonObject.getLong("expires_in");
+//            return Pair.of(accessToken, expireTime);
+//        } else {
+//            log.error("call objectDetect url error,result:[{}]", jsonObject.toJSONString());
+//        }
+//
+//        return null;
+//    }
 
     /**
      * capture image
@@ -115,50 +115,50 @@ public class AiImageServiceImpl implements AiImageService {
         return null;
     }
 
-    /**
-     * object Detect
-     *
-     * @param accessToken
-     * @param imgUrl
-     * @return
-     * @throws IOException
-     */
-    @Override
-    public String objectDetect(String accessToken, String imgUrl) throws Exception {
-
-//        List<Long> lstResult = new ArrayList<>(4);
-//        String filePath = "C:\\Users\\luohao\\Downloads\\goods1-1.jpg";
-        //byte[] imgData = FileUtil.readFileByBytes(filePath);
-        byte[] imgData = downloadUrl(imgUrl);
-        Objects.requireNonNull(imgData);
-//        FileOutputStream fos = new FileOutputStream("d:/tmp.jpg");
-//        fos.write(imgData);
-//        fos.close();
-        //byte[] imgData = FileUtil.readFileByBytes("d:\\goods1-1.jpg");
-
-        String imgParam = URLEncoder.encode(Base64Util.encode(imgData), "UTF-8");
-
-//        Map<String, String> maps = new HashMap<>();
-//        maps.put("access_token", accessToken);
-//        maps.put("image", imgParam);
-//        maps.put("with_face", "0");
-
-        String param = "image=" + imgParam + "&with_face=" + 0;
-        return HttpUtil.post(config.BAIDU_API_URL_OBJECT_DETECT, accessToken, param);
-
-//        JSONObject jsonObject = UrlUtil.getInstance().callUrlByPost(config.BAIDU_API_URL_OBJECT_DETECT, maps);
-//        if(jsonObject !=null && StringUtils.isEmpty(jsonObject.getString("error_code")) ){
-//            JSONObject result = jsonObject.getJSONObject("result");
-//            if(result!=null){
-//                lstResult.add(result.getLong("width"));
-//                lstResult.add(result.getLong("top"));
-//                lstResult.add(result.getLong("left"));
-//                lstResult.add(result.getLong("height"));
-//            }
-//        }else{
-//            log.error("call objectDetect url error,result:[{}]",jsonObject.toJSONString());
-//        }
-    }
+//    /**
+//     * object Detect
+//     *
+//     * @param accessToken
+//     * @param imgUrl
+//     * @return
+//     * @throws IOException
+//     */
+//    @Override
+//    public String objectDetect(String accessToken, String imgUrl) throws Exception {
+//
+////        List<Long> lstResult = new ArrayList<>(4);
+////        String filePath = "C:\\Users\\luohao\\Downloads\\goods1-1.jpg";
+//        //byte[] imgData = FileUtil.readFileByBytes(filePath);
+//        byte[] imgData = downloadUrl(imgUrl);
+//        Objects.requireNonNull(imgData);
+////        FileOutputStream fos = new FileOutputStream("d:/tmp.jpg");
+////        fos.write(imgData);
+////        fos.close();
+//        //byte[] imgData = FileUtil.readFileByBytes("d:\\goods1-1.jpg");
+//
+//        String imgParam = URLEncoder.encode(Base64Util.encode(imgData), "UTF-8");
+//
+////        Map<String, String> maps = new HashMap<>();
+////        maps.put("access_token", accessToken);
+////        maps.put("image", imgParam);
+////        maps.put("with_face", "0");
+//
+//        String param = "image=" + imgParam + "&with_face=" + 0;
+//        return HttpUtil.post(config.BAIDU_API_URL_OBJECT_DETECT, accessToken, param);
+//
+////        JSONObject jsonObject = UrlUtil.getInstance().callUrlByPost(config.BAIDU_API_URL_OBJECT_DETECT, maps);
+////        if(jsonObject !=null && StringUtils.isEmpty(jsonObject.getString("error_code")) ){
+////            JSONObject result = jsonObject.getJSONObject("result");
+////            if(result!=null){
+////                lstResult.add(result.getLong("width"));
+////                lstResult.add(result.getLong("top"));
+////                lstResult.add(result.getLong("left"));
+////                lstResult.add(result.getLong("height"));
+////            }
+////        }else{
+////            log.error("call objectDetect url error,result:[{}]",jsonObject.toJSONString());
+////        }
+//    }
 
     private byte[] downloadUrl(String downloadUrl) throws IOException {
 
@@ -175,29 +175,40 @@ public class AiImageServiceImpl implements AiImageService {
      * 图片标识出红框
      *
      * @param downloadUrl
-     * @param x
-     * @param y
+     * @param lstPolygon
      * @return
      * @throws IOException
      */
     @Override
-    public byte[] drawPolygon(String downloadUrl, int[] x, int[] y) throws IOException {
+    public byte[] drawPolygons(String downloadUrl, List<Polygon> lstPolygon) throws IOException {
 
         byte[] bytes = downloadUrl(downloadUrl);
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+
         Graphics g = image.getGraphics();
+        for(Polygon polygon:lstPolygon){
+            drawPolygon(polygon.xpoints, polygon.ypoints, g);
+        }
+        g.dispose();
 
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ImageIO.write(image, "jpeg", out);
+        return out.toByteArray();
+    }
 
+    /**
+     * 画出矩形
+     * @param x
+     * @param y
+     * @param g
+     */
+    private void drawPolygon(int[] x, int[] y, Graphics g) {
         Polygon po = new Polygon();
         for (int i = 0; i < x.length; i++) {
             po.addPoint(x[i], y[i]);
         }
         g.setColor(Color.RED);
         g.drawPolygon(po);
-        g.dispose();
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ImageIO.write(image, "jpeg", out);
-        return out.toByteArray();
     }
 
     /**
@@ -217,7 +228,7 @@ public class AiImageServiceImpl implements AiImageService {
         Files.write(Paths.get(inputFile), imgData);
         //String cmd = config.SHELL_PATH + "squares " + uuid + ".jpg";
         //Process proc =Runtime.getRuntime().exec("./exefile");
-        Process exec = Runtime.getRuntime().exec("./squares "+ uuid + ".jpg", null,new File(config.SHELL_PATH));
+        Process exec = Runtime.getRuntime().exec("opencv.exe "+ uuid + ".jpg", null,new File(config.SHELL_PATH));
         int status = 0;
         try {
             status = exec.waitFor();

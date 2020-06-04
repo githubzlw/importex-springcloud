@@ -1,4 +1,4 @@
-package com.importexpress.utils.util;
+package com.importexpress.serialport.util;
 
 /**
  * Base64 工具类

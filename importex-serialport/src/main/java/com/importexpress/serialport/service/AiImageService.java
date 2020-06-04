@@ -1,4 +1,4 @@
-package com.importexpress.utils.service;
+package com.importexpress.serialport.service;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -22,12 +22,12 @@ public interface AiImageService {
     Pair<String, Long> getYingShiToken() throws IOException;
 
 
-    /**
-     * get baidu token
-     * @return Pair.of(accessToken, expireTime)
-     * @throws IOException
-     */
-    Pair<String, Long> getBaiduToken() throws IOException;
+//    /**
+//     * get baidu token
+//     * @return Pair.of(accessToken, expireTime)
+//     * @throws IOException
+//     */
+//    Pair<String, Long> getBaiduToken() throws IOException;
 
     /**
      * capture image
@@ -37,14 +37,14 @@ public interface AiImageService {
      */
     String captureImage(String accessToken) throws IOException;
 
-    /**
-     * object Detect
-     * @param accessToken
-     * @param imgUrl
-     * @return
-     * @throws IOException
-     */
-    String objectDetect(String accessToken, String imgUrl) throws Exception;
+//    /**
+//     * object Detect
+//     * @param accessToken
+//     * @param imgUrl
+//     * @return
+//     * @throws IOException
+//     */
+//    String objectDetect(String accessToken, String imgUrl) throws Exception;
 
 
     /**
@@ -55,7 +55,7 @@ public interface AiImageService {
      * @return
      * @throws IOException
      */
-    byte[] drawPolygon(String downloadUrl,int[] x,int[] y) throws IOException;
+    byte[] drawPolygons(String downloadUrl, List<Polygon> lstPolygon) throws IOException;
 
     /**
      * call command
