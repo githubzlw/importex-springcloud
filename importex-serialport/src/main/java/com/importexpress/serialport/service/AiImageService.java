@@ -31,11 +31,10 @@ public interface AiImageService {
 
     /**
      * capture image
-     * @param accessToken
      * @return
      * @throws IOException
      */
-    String captureImage(String accessToken) throws IOException;
+    String captureImage() throws IOException;
 
 //    /**
 //     * object Detect
@@ -50,8 +49,6 @@ public interface AiImageService {
     /**
      * 图片标识出红框
      * @param downloadUrl
-     * @param x
-     * @param y
      * @return
      * @throws IOException
      */
@@ -64,4 +61,6 @@ public interface AiImageService {
      * @throws IOException
      */
     List<String> callCMD(String imgUrl) throws IOException;
+
+    boolean compareTwoList(List<String> lstFrom,List<String> lstTo);
 }

@@ -28,7 +28,7 @@ import java.util.List;
 @Api(tags = "AI图片处理接口")
 public class AiImageController {
 
-    private static String YINGSHI_TOKEN;
+
 
     private final AiImageService aiImageService;
 
@@ -40,11 +40,7 @@ public class AiImageController {
     @ApiOperation("抓取图片")
     public CommonResult captureImage() {
         try {
-            if(StringUtils.isEmpty(YINGSHI_TOKEN)){
-                Pair<String, Long> pair = aiImageService.getYingShiToken();
-                YINGSHI_TOKEN = pair.getLeft();
-            }
-            return CommonResult.success(aiImageService.captureImage(YINGSHI_TOKEN));
+            return CommonResult.success(aiImageService.captureImage());
         } catch (Exception e) {
             log.error("captureImage",e);
             return CommonResult.failed(e.getMessage());

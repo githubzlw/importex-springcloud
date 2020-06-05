@@ -3,9 +3,7 @@ package com.importexpress.serialport.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.util.UrlUtil;
 import com.importexpress.serialport.service.AiImageService;
-import com.importexpress.serialport.util.Base64Util;
 import com.importexpress.serialport.util.Config;
-import com.importexpress.serialport.util.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -21,11 +19,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @Author jack.luo
@@ -37,6 +35,8 @@ import java.util.*;
 public class AiImageServiceImpl implements AiImageService {
 
     private final Config config;
+
+    private static String YINGSHI_TOKEN;
 
     public AiImageServiceImpl(Config config) {
         this.config = config;
@@ -94,15 +94,19 @@ public class AiImageServiceImpl implements AiImageService {
     /**
      * capture image
      *
-     * @param accessToken
      * @return
      * @throws IOException
      */
     @Override
-    public String captureImage(String accessToken) throws IOException {
+    public String captureImage() throws IOException {
+
+        if(StringUtils.isEmpty(YINGSHI_TOKEN)){
+            Pair<String, Long> pair = this.getYingShiToken();
+            YINGSHI_TOKEN = pair.getLeft();
+        }
 
         Map<String, String> maps = new HashMap<>();
-        maps.put("accessToken", accessToken);
+        maps.put("accessToken", YINGSHI_TOKEN);
         maps.put("deviceSerial", config.YINGSHI_API_DEVICESERIAL);
         maps.put("channelNo", "1");
         JSONObject jsonObject = UrlUtil.getInstance().callUrlByPost(config.YINGSHI_API_URL_CAPTURE, maps);
@@ -242,4 +246,44 @@ public class AiImageServiceImpl implements AiImageService {
         return Files.readAllLines(Paths.get(outputFile));
 
     }
+
+    /**
+     *比较2个数组，to数组是否比from数组少1个，并且to数组的坐标是否都在from数组中（允许5%坐标误差）
+     * @param lstFrom
+     * @param lstTo
+     * @return
+     */
+    @Override
+    public boolean compareTwoList(List<String> lstFrom,List<String> lstTo){
+
+        if(lstFrom.size()-1==lstTo.size()){
+            //少了一个矩形物体，推测成功移动出去
+
+            //from数组合计
+            List<Integer> lstFromSum = new ArrayList<>();
+            lstFrom.forEach( item -> lstFromSum.add(
+                    Arrays.stream(item.split( "," )).mapToInt(Integer::parseInt).sum()));
+
+            //to数组合计
+            List<Integer> lstToSum = new ArrayList<>();
+            lstTo.forEach( item -> lstToSum.add(
+                    Arrays.stream(item.split( "," )).mapToInt(Integer::parseInt).sum()));
+
+            //计算数组包含
+            int countFind=0;
+            for (int intToSum : lstToSum) {
+                for (int intFromSum : lstFromSum) {
+                    if (intToSum <= intFromSum * 1.05 && intToSum >= intFromSum * 0.95) {
+                        //找到原图中物体(考虑误差增加5%)
+                        ++countFind;
+                        break;
+                    }
+                }
+            }
+
+            return countFind == lstToSum.size();
+        }
+        return false;
+    }
+
 }

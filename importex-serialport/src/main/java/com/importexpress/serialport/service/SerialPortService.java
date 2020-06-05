@@ -5,6 +5,8 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 
+import java.io.IOException;
+
 /**
  * @author jack.luo
  * @date 2020/05/18

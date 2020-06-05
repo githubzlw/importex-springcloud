@@ -6,10 +6,12 @@ import com.importexpress.serialport.util.SerialTool;
 import gnu.io.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.TooManyListenersException;
 import java.util.concurrent.SynchronousQueue;
 
@@ -46,8 +48,11 @@ public class SerialPortServiceImpl implements SerialPortService {
 
     private static SerialPort serialPort =null;
 
-    public SerialPortServiceImpl(Config config) {
+    private final AiImageServiceImpl aiImageService;
+
+    public SerialPortServiceImpl(Config config, AiImageServiceImpl aiImageService) {
         this.config = config;
+        this.aiImageService = aiImageService;
     }
 
     @Override
@@ -150,6 +155,13 @@ public class SerialPortServiceImpl implements SerialPortService {
         //移动到指定地点
         this.sendData(x,y,0,false);
 
+        String picUrlFrom = null;
+        try {
+            picUrlFrom = this.aiImageService.captureImage();
+        } catch (IOException e) {
+            log.error("moveGoods",e);
+        }
+
         //伸Z
         if(synchronousQueue.take()==1) {
             log.debug("take 0");
@@ -184,6 +196,20 @@ public class SerialPortServiceImpl implements SerialPortService {
         if(synchronousQueue.take()==1) {
             log.debug("take 5");
             this.returnZeroPosi();
+        }
+
+        //计算是否移动成功
+        try {
+            String picUrlTo = this.aiImageService.captureImage();
+            List<String> lstFrom = this.aiImageService.callCMD(picUrlFrom);
+            List<String> lstTo = this.aiImageService.callCMD(picUrlTo);
+            if(this.aiImageService.compareTwoList(lstFrom, lstTo)){
+                log.info("move succeed");
+            }else{
+                log.error("move failed");
+            }
+        } catch (IOException e) {
+            log.error("moveGoods",e);
         }
 
         if(synchronousQueue.take()==1){
