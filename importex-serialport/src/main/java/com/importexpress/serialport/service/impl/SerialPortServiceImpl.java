@@ -164,37 +164,37 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         //伸Z
         if(synchronousQueue.take()==1) {
-            log.debug("take 0");
+            log.debug("take 0(伸Z)");
             this.sendData(x, y, z, false);
         }
 
         //吸取物品
         if(synchronousQueue.take()==1){
-            log.debug("take 1");
+            log.debug("take 1(吸取物品)");
             this.execMagNet(x,y,z);
         }
 
         //缩Z
         if(synchronousQueue.take()==1) {
-            log.debug("take 2");
+            log.debug("take 2(缩Z)");
             this.sendData(x, y, 0, true);
         }
 
         //移动到托盘区域
         if(synchronousQueue.take()==1) {
-            log.debug("take 3");
+            log.debug("take 3(移动到托盘区域)");
             this.moveToCart();
         }
 
         //释放物品
         if(synchronousQueue.take()==1) {
-            log.debug("take 4");
+            log.debug("take 4(释放物品)");
             this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
         }
 
         //回到零点
         if(synchronousQueue.take()==1) {
-            log.debug("take 5");
+            log.debug("take 5(回到零点)");
             this.returnZeroPosi();
         }
 
@@ -204,16 +204,17 @@ public class SerialPortServiceImpl implements SerialPortService {
             List<String> lstFrom = this.aiImageService.callCMD(picUrlFrom);
             List<String> lstTo = this.aiImageService.callCMD(picUrlTo);
             if(this.aiImageService.compareTwoList(lstFrom, lstTo)){
-                log.info("move succeed");
+                log.info("aiImage result:move succeed");
             }else{
-                log.error("move failed");
+                log.error("aiImage result:move failed");
             }
         } catch (IOException e) {
             log.error("moveGoods",e);
         }
 
+        //执行完毕，返回
         if(synchronousQueue.take()==1){
-            log.debug("take 6");
+            log.debug("take 6(执行完毕，返回)");
             Thread.sleep(MAX_SLEEP*5);
         }
     }
@@ -259,7 +260,7 @@ public class SerialPortServiceImpl implements SerialPortService {
                                             // add wait states around reading the stream, so that interrupted transmissions are
                                             // merged
                                             Thread.sleep(100);
-                                        } catch (InterruptedException e) {
+                                        } catch (InterruptedException ignored) {
                                         }
                                     } while (inputStream.available() > 0);
                                     log.debug("receivd data:[{}]",sb.toString());
@@ -268,7 +269,7 @@ public class SerialPortServiceImpl implements SerialPortService {
                                             log.debug("put queue");
                                             synchronousQueue.put(1);
                                         }
-                                    } catch (InterruptedException e) {
+                                    } catch (InterruptedException ignored) {
                                     }
                                 } catch (IOException e) {
                                     log.error("Error receiving data on serial port", e);

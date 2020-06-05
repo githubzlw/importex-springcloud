@@ -5,8 +5,6 @@ import com.importexpress.serialport.service.AiImageService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -83,6 +81,21 @@ public class AiImageController {
         } catch (IOException e) {
             log.error("show",e);
             return null;
+        }
+    }
+
+    @GetMapping(value = "/image/showXYZ",produces = MediaType.IMAGE_JPEG_VALUE)
+    @ResponseBody
+    @ApiOperation("图片识别后显示矩形物体坐标")
+    public List<String> showXYZ()  {
+
+        try {
+            CommonResult commonResult = captureImage();
+            String url = (String) commonResult.getData();
+            return aiImageService.callCMD(url);
+        } catch (IOException e) {
+            log.error("show",e);
+            return new ArrayList<>();
         }
     }
 
