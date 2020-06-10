@@ -22,6 +22,7 @@ public class AliExpressCacheService {
     private static final String REDIS_KEYWORD_PRE = "ali:keyword:";
     private static final String REDIS_PID_PRE = "ali:pid:";
     private static final int REDIS_EXPIRE_DAYS = 7;
+    private static final int REDIS_EXPIRE_DAYS_TWO = 14;
     private final StringRedisTemplate redisTemplate;
 
     public AliExpressCacheService(StringRedisTemplate redisTemplate) {
@@ -80,7 +81,7 @@ public class AliExpressCacheService {
     public void setItemInfo(String pid, JSONObject jsonObject) {
         Objects.requireNonNull(jsonObject);
         this.redisTemplate.opsForValue().set(REDIS_PID_PRE + pid,
-                JSONObject.toJSONString(jsonObject), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
+                JSONObject.toJSONString(jsonObject), REDIS_EXPIRE_DAYS_TWO, TimeUnit.DAYS);
     }
 
     public void setItemInfoTime(String pid, JSONObject jsonObject, int expireTime) {

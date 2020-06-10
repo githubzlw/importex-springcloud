@@ -28,6 +28,7 @@ public class Ali1688CacheService {
     private static final String REDIS_SHOP_PRE = "ali:shopid:";
     private static final String REDIS_IMG_PRE = "ali:img:";
     private static final int REDIS_EXPIRE_DAYS = 7;
+    private static final int REDIS_EXPIRE_DAYS_TWO = 14;
     private static final String REDIS_TAOBAO_PID_PRE = "taobao:pid:";
     private StringRedisTemplate redisTemplate;
 
@@ -39,6 +40,7 @@ public class Ali1688CacheService {
 
     /**
      * 从缓存中读取pid数据
+     *
      * @param pid
      * @return
      */
@@ -54,6 +56,7 @@ public class Ali1688CacheService {
 
     /**
      * 缓存pid到redis
+     *
      * @param pid
      * @param value
      */
@@ -65,6 +68,7 @@ public class Ali1688CacheService {
 
     /**
      * 缓存图片搜索到redis
+     *
      * @param md5
      * @param value
      */
@@ -76,6 +80,7 @@ public class Ali1688CacheService {
 
     /**
      * 从缓存中读取图片搜索数据
+     *
      * @param md5
      * @return
      */
@@ -91,6 +96,7 @@ public class Ali1688CacheService {
 
     /**
      * getShop
+     *
      * @param shopId
      * @return
      */
@@ -107,6 +113,7 @@ public class Ali1688CacheService {
 
     /**
      * setShop
+     *
      * @param shopId
      * @param value
      */
@@ -119,6 +126,7 @@ public class Ali1688CacheService {
 
     /**
      * processNotExistItemInCache
+     *
      * @param isClear
      * @return
      */
@@ -240,7 +248,7 @@ public class Ali1688CacheService {
     public void setItemInfo(String pid, JSONObject jsonObject) {
         Objects.requireNonNull(jsonObject);
         this.redisTemplate.opsForValue().set(REDIS_TAOBAO_PID_PRE + pid,
-                JSONObject.toJSONString(jsonObject), REDIS_EXPIRE_DAYS, TimeUnit.DAYS);
+                JSONObject.toJSONString(jsonObject), REDIS_EXPIRE_DAYS_TWO, TimeUnit.DAYS);
     }
 
     public void setItemInfoExpireTime(String pid, JSONObject jsonObject, int expireTime) {
