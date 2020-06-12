@@ -3,6 +3,8 @@ package com.importexpress.cart.service;
 import com.importexpress.cart.pojo.Cart;
 import com.importexpress.comm.pojo.SiteEnum;
 
+import java.util.List;
+
 /**
  * @author jack.luo
  */
@@ -30,7 +32,14 @@ public interface CartService {
     int addCartItem(SiteEnum site, long userId, String itemId, long num);
 
     /**
-     * 获取
+     * 获取购物车数据
+     * @param site
+     * @return
+     */
+    List<Cart> getCart(SiteEnum site);
+
+    /**
+     * 获取购物车数据
      *
      * @param site
      * @param userId

@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.importexpress.cart.service.CartService.SUCCESS;
 
 
@@ -83,6 +85,15 @@ public class CartControl {
                                 @PathVariable(value = "userId") long userId) {
 
         Cart cart = cartService.getCart(site, userId);
+        return CommonResult.success(cart);
+
+    }
+
+    @GetMapping("/{site}/allcarts")
+    @ApiOperation("查询网站中所有用户的购物车商品")
+    public CommonResult getAllCarts(@PathVariable(value = "site") SiteEnum site) {
+
+        List<Cart> cart = cartService.getCart(site);
         return CommonResult.success(cart);
 
     }

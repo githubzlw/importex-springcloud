@@ -23,6 +23,8 @@ import java.util.stream.Collectors;
 @Data
 public class Cart {
 
+    private long userid;
+
     /**
      * 商品结果集
      */

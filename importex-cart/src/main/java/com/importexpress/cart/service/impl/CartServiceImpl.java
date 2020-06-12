@@ -10,6 +10,7 @@ import com.importexpress.cart.pojo.Cart;
 import com.importexpress.cart.pojo.CartItem;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.cart.util.Config;
+import com.importexpress.cart.util.RedisHelper;
 import com.importexpress.comm.pojo.Product;
 import com.importexpress.comm.pojo.SiteEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -337,6 +338,20 @@ public class CartServiceImpl implements CartService {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<Cart> getCart(SiteEnum site) {
+
+        List<Cart> lstCarts = new ArrayList<>();
+        List<String> letUsers = RedisHelper.keys(this.redisTemplate,getCartKeys(site));
+        for(String userId : letUsers){
+            long lngUserId = Long.parseLong(userId);
+            Cart cart = this.getCart(site, lngUserId);
+            cart.setUserid(lngUserId);
+            lstCarts.add(cart);
+        }
+        return lstCarts;
     }
 
     @Override
