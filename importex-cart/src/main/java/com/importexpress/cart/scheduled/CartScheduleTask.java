@@ -1,6 +1,5 @@
 package com.importexpress.cart.scheduled;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.importexpress.cart.pojo.Cart;
 import com.importexpress.cart.service.CartService;
@@ -14,15 +13,16 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.swing.event.ListSelectionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author jack.luo
+ */
 @Slf4j
 @Component
 @Configuration
@@ -39,7 +39,7 @@ public class CartScheduleTask {
     }
 
 
-    @Scheduled(cron = "0 0 0/6 * * ?")
+    @Scheduled(cron = "${cart.cron.exp}")
     public void saveAllCartsToFiles() throws IOException {
 
         List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS);
