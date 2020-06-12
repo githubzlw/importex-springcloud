@@ -39,6 +39,10 @@ public class CartScheduleTask {
     }
 
 
+    /**
+     * 定时任务，每天执行一次，将各个网站的所有购物车分别写入json文件，并且压缩成7z格式
+     * @throws IOException
+     */
     @Scheduled(cron = "${cart.cron.exp}")
     public void saveAllCartsToFiles() throws IOException {
 
@@ -54,10 +58,18 @@ public class CartScheduleTask {
             File resource = new File(fileName.toString());
             // compress multiple resources
             SevenZ.compress(fileName+".7z", resource);
+
+            boolean result = FileUtils.deleteQuietly(new File(fileName.toString()));
+            log.info("delete file:[{}] result:[{}]",fileName.toString(),result);
+
         }
 
     }
 
+    /**
+     * 解压7z文件（测试用）
+     * @throws IOException
+     */
     public void decompress() throws IOException {
 
         List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS);
@@ -68,6 +80,10 @@ public class CartScheduleTask {
 
     }
 
+    /**
+     * 读取json文件并且转成bean（测试用）
+     * @throws IOException
+     */
     public void readFileToBean() throws IOException {
 
         List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS);
