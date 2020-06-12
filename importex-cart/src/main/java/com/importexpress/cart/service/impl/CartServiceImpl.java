@@ -344,9 +344,9 @@ public class CartServiceImpl implements CartService {
     public List<Cart> getCart(SiteEnum site) {
 
         List<Cart> lstCarts = new ArrayList<>();
-        List<String> letUsers = RedisHelper.keys(this.redisTemplate,getCartKeys(site));
+        Set<String> letUsers = RedisHelper.scan(this.redisTemplate,getCartKeys(site));
         for(String userId : letUsers){
-            long lngUserId = Long.parseLong(userId);
+            long lngUserId = Long.parseLong(userId.substring(userId.lastIndexOf(':') + 1));
             Cart cart = this.getCart(site, lngUserId);
             cart.setUserid(lngUserId);
             lstCarts.add(cart);

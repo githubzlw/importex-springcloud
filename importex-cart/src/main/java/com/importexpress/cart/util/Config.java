@@ -9,4 +9,7 @@ public class Config {
     @Value("${CART_PRE}")
     public String CART_PRE;
 
+    @Value("${SAVE_CART_PATH}")
+    public String SAVE_CART_PATH;
+
 }
