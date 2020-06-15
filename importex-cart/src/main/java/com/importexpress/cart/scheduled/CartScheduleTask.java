@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.importexpress.cart.pojo.Cart;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.cart.util.Config;
+import com.importexpress.cart.util.SFtpUtil;
 import com.importexpress.cart.util.SevenZ;
 import com.importexpress.comm.pojo.SiteEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -33,9 +35,12 @@ public class CartScheduleTask {
 
     private final Config config;
 
-    public CartScheduleTask(CartService service, Config config) {
+    private final SFtpUtil sFtpUtil;
+
+    public CartScheduleTask(CartService service, Config config, SFtpUtil sFtpUtil) {
         this.service = service;
         this.config = config;
+        this.sFtpUtil = sFtpUtil;
     }
 
 
@@ -57,11 +62,19 @@ public class CartScheduleTask {
             // get multiple resources files to compress
             File resource = new File(fileName.toString());
             // compress multiple resources
-            SevenZ.compress(fileName+".7z", resource);
+            String fileName7z=fileName+".7z";
+            SevenZ.compress(fileName7z, resource);
 
             boolean result = FileUtils.deleteQuietly(new File(fileName.toString()));
             log.info("delete file:[{}] result:[{}]",fileName.toString(),result);
 
+            //sftp upload
+            int beginIndex = fileName7z.lastIndexOf('/');
+            if(beginIndex==-1){
+                //windows场合
+                beginIndex = fileName7z.lastIndexOf('\\');
+            }
+            sFtpUtil.uploadFile(fileName7z.substring(beginIndex+1));
         }
 
     }

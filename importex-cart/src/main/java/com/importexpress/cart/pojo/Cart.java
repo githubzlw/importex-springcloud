@@ -110,7 +110,11 @@ public class Cart {
 
             items.forEach(i -> {
                 if (collect.containsKey(i.getPid())) {
-                    i.setPri(calculatePrice(i, collect.get(i.getPid()).getSum()));
+                    try{
+                        i.setPri(calculatePrice(i, collect.get(i.getPid()).getSum()));
+                    }catch(NumberFormatException nfe){
+                        log.error("pid="+i.getPid(),nfe);
+                    }
                 }
             });
         }
