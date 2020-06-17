@@ -1,6 +1,7 @@
 package com.importexpress.cart.scheduled;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonWriter;
 import com.importexpress.cart.pojo.Cart;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.cart.util.Config;
@@ -15,8 +16,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -53,8 +56,8 @@ public class CartScheduleTask {
 
         List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS);
         for (SiteEnum site : siteEnums) {
-            List<Cart> cart = this.service.getCart(site);
-            String json = new Gson().toJson(cart);
+            List<Cart> carts = this.service.getCart(site);
+            String json = streamIntoJsonString(carts);
             StringBuilder fileName = getFileName(site);
             FileUtils.writeStringToFile(
                     new File(fileName.toString()),json);
@@ -77,6 +80,32 @@ public class CartScheduleTask {
             sFtpUtil.uploadFile(fileName7z.substring(beginIndex+1));
         }
 
+    }
+
+    /**
+     * 通过流的方式写入json（避免OutOfMemoryError)
+     * @param carts
+     * @return
+     */
+    private String streamIntoJsonString(List<Cart> carts) {
+        try {
+            Gson gson = new Gson();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.setIndent("  ");
+            writer.beginArray();
+            for (Cart cart : carts) {
+                gson.toJson(cart, Cart.class, writer);
+            }
+            writer.endArray();
+            writer.close();
+
+            return out.toString("UTF-8");
+        } catch (IOException e) {
+            log.error("streamIntoJsonString",e);
+        }
+
+        return null;
     }
 
     /**
