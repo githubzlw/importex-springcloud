@@ -38,12 +38,6 @@ public class CartScheduleTaskTest {
         task.decompress();
     }
 
-    @Test
-    public void deleteQuietly() throws IOException {
-        System.out.println(FileUtils.deleteQuietly(new File("d:\\p_carts_20200612.json")));
-    }
-
-
 
 
 }
