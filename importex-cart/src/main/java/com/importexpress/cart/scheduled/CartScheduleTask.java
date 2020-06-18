@@ -105,6 +105,7 @@ public class CartScheduleTask {
                 writer.endArray();
                 writer.close();
                 sb.append(out.toString("UTF-8"));
+                out.close();
             } catch (IOException ioe) {
                 log.error("streamIntoJsonString",ioe);
             }
