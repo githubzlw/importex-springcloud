@@ -1,5 +1,6 @@
 package com.importexpress.cart.scheduled;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.importexpress.cart.pojo.Cart;
@@ -16,10 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -88,24 +86,32 @@ public class CartScheduleTask {
      * @return
      */
     private String streamIntoJsonString(List<Cart> carts) {
-        try {
-            Gson gson = new Gson();
+
+
+        StringBuilder sb = new StringBuilder();
+        List<List<Cart>> parts = Lists.partition(carts, 1000);
+        parts.stream().forEach(list -> {
+
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
-            writer.setIndent("  ");
-            writer.beginArray();
-            for (Cart cart : carts) {
-                gson.toJson(cart, Cart.class, writer);
+            JsonWriter writer = null;
+            try {
+                Gson gson = new Gson();
+                writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
+                writer.setIndent("  ");
+                writer.beginArray();
+                for (Cart cart : list) {
+                    gson.toJson(cart, Cart.class, writer);
+                }
+                writer.endArray();
+                writer.close();
+                sb.append(out.toString("UTF-8"));
+            } catch (IOException ioe) {
+                log.error("streamIntoJsonString",ioe);
             }
-            writer.endArray();
-            writer.close();
+        });
 
-            return out.toString("UTF-8");
-        } catch (IOException e) {
-            log.error("streamIntoJsonString",e);
-        }
+        return sb.toString();
 
-        return null;
     }
 
     /**
