@@ -89,12 +89,13 @@ public class CartScheduleTask {
 
 
         StringBuilder sb = new StringBuilder();
-        List<List<Cart>> parts = Lists.partition(carts, 500);
+        List<List<Cart>> parts = Lists.partition(carts, 50);
         parts.stream().forEach(list -> {
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             JsonWriter writer = null;
             try {
+                log.debug("begin write json file ,size:[{}]",list.size());
                 Gson gson = new Gson();
                 writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
                 writer.setIndent("  ");
