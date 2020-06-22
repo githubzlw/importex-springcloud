@@ -92,10 +92,11 @@ public class CartScheduleTask {
         List<List<Cart>> parts = Lists.partition(carts, 500);
         parts.stream().forEach(list -> {
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayOutputStream out = null;
             JsonWriter writer = null;
             try {
                 log.debug("begin write json file ,size:[{}]",list.size());
+                out = new ByteArrayOutputStream();
                 Gson gson = new Gson();
                 writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
                 writer.setIndent("  ");
