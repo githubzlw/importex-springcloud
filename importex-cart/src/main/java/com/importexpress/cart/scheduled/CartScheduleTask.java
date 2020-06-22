@@ -92,22 +92,29 @@ public class CartScheduleTask {
         List<List<Cart>> parts = Lists.partition(carts, 500);
         parts.stream().forEach(list -> {
 
-            ByteArrayOutputStream out = null;
-            JsonWriter writer = null;
+            ByteArrayOutputStream out;
+            JsonWriter writer;
+            Gson gson;
             try {
                 log.debug("begin write json file ,size:[{}]",list.size());
                 out = new ByteArrayOutputStream();
-                Gson gson = new Gson();
+                gson = new Gson();
                 writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
                 writer.setIndent("  ");
                 writer.beginArray();
+
                 for (Cart cart : list) {
                     gson.toJson(cart, Cart.class, writer);
                 }
+
                 writer.endArray();
                 writer.close();
                 sb.append(out.toString("UTF-8"));
+
                 out.close();
+                gson =null;
+                out =null;
+                writer =null;
             } catch (IOException ioe) {
                 log.error("streamIntoJsonString",ioe);
             }
