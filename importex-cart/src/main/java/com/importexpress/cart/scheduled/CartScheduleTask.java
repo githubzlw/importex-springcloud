@@ -89,7 +89,7 @@ public class CartScheduleTask {
 
 
         StringBuilder sb = new StringBuilder();
-        List<List<Cart>> parts = Lists.partition(carts, 500);
+        List<List<Cart>> parts = Lists.partition(carts, 50);
         parts.stream().forEach(list -> {
 
             ByteArrayOutputStream out;
