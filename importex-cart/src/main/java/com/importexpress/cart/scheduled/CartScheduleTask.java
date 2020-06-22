@@ -86,43 +86,27 @@ public class CartScheduleTask {
      * @return
      */
     private String streamIntoJsonString(List<Cart> carts) {
-
-
-        StringBuilder sb = new StringBuilder();
-        List<List<Cart>> parts = Lists.partition(carts, 50);
-        parts.stream().forEach(list -> {
-
-            ByteArrayOutputStream out;
-            JsonWriter writer;
-            Gson gson;
-            try {
-                log.debug("begin write json file ,size:[{}]",list.size());
-                out = new ByteArrayOutputStream();
-                gson = new Gson();
-                writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
-                writer.setIndent("  ");
-                writer.beginArray();
-
-                for (Cart cart : list) {
-                    gson.toJson(cart, Cart.class, writer);
-                }
-
-                writer.endArray();
-                writer.close();
-                sb.append(out.toString("UTF-8"));
-
-                out.close();
-                gson =null;
-                out =null;
-                writer =null;
-            } catch (IOException ioe) {
-                log.error("streamIntoJsonString",ioe);
+        try {
+            Gson gson = new Gson();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            JsonWriter writer = new JsonWriter(new OutputStreamWriter(out, "UTF-8"));
+            writer.setIndent("  ");
+            writer.beginArray();
+            for (Cart cart : carts) {
+                gson.toJson(cart, Cart.class, writer);
             }
-        });
+            writer.endArray();
+            writer.close();
+            String result = out.toString("UTF-8");
+            out.close();
+            return result;
+        } catch (IOException e) {
+            log.error("streamIntoJsonString",e);
+        }
 
-        return sb.toString();
-
+        return null;
     }
+
 
     /**
      * 解压7z文件（测试用）
