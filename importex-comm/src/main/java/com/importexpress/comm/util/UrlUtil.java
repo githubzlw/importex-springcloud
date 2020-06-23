@@ -267,14 +267,18 @@ public class UrlUtil {
      * @return
      * @throws IOException
      */
-    public JSONObject doPostForImgUpload(String url, String tp, String fileName) throws IOException {
+    public JSONObject doPostForImgUpload(String url, String tp, String fileName, String key,String secret) throws IOException {
         log.info("url:{} tp:{} fileName:{}",url,tp,fileName);
 
         File file=new File(fileName);
+        // .addFormDataPart("imgcode", file.getName(),
+        //                        RequestBody.create(MediaType.parse("image/jpeg"), file))
+        RequestBody body = RequestBody.create(MediaType.parse("image/*"), file);
         RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("fname", file.getName(),
-                        RequestBody.create(MediaType.parse("image/jpeg"), file))
-                .addFormDataPart("tp", tp)
+                .addFormDataPart("imgcode", file.getName(), body)
+                .addFormDataPart("key", key)
+                .addFormDataPart("secret", secret)
+                .addFormDataPart("api_name", "upload_img")
                 .build();
 
         Request request = new Request.Builder()
@@ -288,8 +292,10 @@ public class UrlUtil {
 
             throw new IOException("doPostForImgUpload's response is not successful");
         }
+        String rs = response.body().string();
+        System.err.println(rs);
         return response.body() != null ?
-                JSON.parseObject(response.body().string()) : null;
+                JSON.parseObject(rs) : null;
     }
 
     /**

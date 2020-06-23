@@ -76,6 +76,7 @@ public class ImageSearchController {
 
             return CommonResult.success(jsonObject);
         } catch (IOException e) {
+            e.printStackTrace();
             log.error(e.toString(), e);
             return CommonResult.failed(e.toString());
         }finally {
