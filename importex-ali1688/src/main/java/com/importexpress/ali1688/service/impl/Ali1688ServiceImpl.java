@@ -61,6 +61,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      */
     private final static String IMG_UPLOAD_TAOBAO_API = "%staobao/demo/img_upload.php";
 
+
+     /**
+     * img_upload API URL
+     */
+    private final static String IMG_UPLOAD_TAOBAO_API_1 = "%staobao/api_call.php";
+
     /**
      * image search API URL
      */
@@ -275,11 +281,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         String url=null;
 
         try {
-            JSONObject jsonObject = UrlUtil.getInstance().doPostForImgUpload(String.format(IMG_UPLOAD_TAOBAO_API, config.API_HOST), "taobao", file);
+            JSONObject jsonObject = UrlUtil.getInstance().doPostForImgUpload(String.format(IMG_UPLOAD_TAOBAO_API_1, config.API_HOST), "taobao", file,config.API_KEY, config.API_SECRET);
             if (jsonObject != null) {
                 //sample:  tfsid -> https://img.alicdn.com/imgextra/i4/2601011849/O1CN01Ob6weI1PWsusJC7Xt_!!2601011849.jpg
                 log.info("result:[{}]", jsonObject);
-                url = jsonObject.getString("tfsid");
+                url = jsonObject.getJSONObject("items").getJSONObject("item").getString("name");
+                // url = jsonObject.getString("tfsid");
             }
         }catch(IllegalStateException ise) {
             log.warn("file size is error", ise);
