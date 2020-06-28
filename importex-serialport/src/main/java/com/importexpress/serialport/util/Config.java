@@ -25,6 +25,8 @@ public class Config {
     @Value("${MAX_VALUE_Z}")
     public int MAX_VALUE_Z;
 
+    @Value("${STEP_VALUE}")
+    public int STEP_VALUE;
 
     @Value("${yingshi.api.url.token}")
     public String YINGSHI_API_URL_TOKEN;

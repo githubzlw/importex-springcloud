@@ -12,6 +12,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 /**
@@ -44,5 +48,21 @@ public class SerialPortServiceImplTest{
 
         serialPortService.moveGoods(2000,2000,1000);
         System.out.println("aaa");
+    }
+
+    @Test
+    public void findGoodsByGrid() throws Exception {
+
+        Map<String, String> hmGoods = new HashMap<>();
+        serialPortService.findGoodsByGrid(hmGoods);
+    }
+
+    @Test
+    public  void readGoodsId() throws IOException {
+        for(int i=0;i<100;i++){
+            String tmp = serialPortService.readGoodsId();
+            System.out.println(tmp);
+        }
+
     }
 }

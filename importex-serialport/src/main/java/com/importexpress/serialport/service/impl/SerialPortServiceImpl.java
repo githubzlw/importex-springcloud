@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.TooManyListenersException;
+import java.util.*;
 import java.util.concurrent.SynchronousQueue;
 
 
@@ -283,7 +282,55 @@ public class SerialPortServiceImpl implements SerialPortService {
         }
     }
 
+    /**
+     * 地毯式扫描货物
+     * @param hmGoods
+     */
+    @Override
+    public Map<String,Integer> findGoodsByGrid(Map<String, String> hmGoods)  {
 
+        int stepGap=config.STEP_VALUE;
+        int count=0;
+
+        Map<String, Integer> result = new HashMap<>(hmGoods.size());
+        if(hmGoods.size()==0){
+            return result;
+        }
+        for(int x=0;x*stepGap<=config.MAX_VALUE_X;x++){
+            for(int y=0;y*stepGap<=config.MAX_VALUE_X;y++){
+                log.debug("x:[{}],y:[{}]",x*stepGap,y*stepGap);
+                ++count;
+                try {
+                    ///this.sendData(x*stepGap,y*stepGap,config.MAX_VALUE_Z,false);
+                    String strGoodsId = this.readGoodsId();
+                    String strDest = hmGoods.get(strGoodsId);
+                    if(StringUtils.isNotEmpty(strDest)){
+                        //匹配到了需要搬动的货物
+                        ///this.moveGoods(x*stepGap,y*stepGap,config.MAX_VALUE_Z);
+                        result.put(strGoodsId, 1);
+                        if(result.size()==hmGoods.size()){
+                            //全部找到指定的货物,提前退出程序
+                            log.info("move count:[{}]",count);
+                            return result;
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("findGoodsByGrid",e);
+                    return result;
+                }
+            }
+        }
+        log.info("move count:[{}]",count);
+
+        return result;
+    }
+
+    @Override
+    public String readGoodsId() throws IOException {
+        //TODO 扫描条形码
+        String[] random = {"20200619144110070","20200624093705854"};
+        return random[new Random().nextInt(random.length)];
+    }
 
 
 //    @Override

@@ -6,6 +6,8 @@ import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author jack.luo
@@ -32,6 +34,10 @@ public interface SerialPortService {
     void moveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
     void closeSerial();
+
+    Map<String,Integer> findGoodsByGrid(Map<String, String> hmGoods) ;
+
+    String readGoodsId() throws IOException;
 
 //    void callCMD(String msg);
 }

@@ -1,5 +1,6 @@
 package com.importexpress.serialport.rest;
 
+import com.google.common.base.Splitter;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.service.SerialPortService;
 import gnu.io.NoSuchPortException;
@@ -7,9 +8,15 @@ import gnu.io.PortInUseException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * @author jack.luo
@@ -180,6 +187,23 @@ public class SerialPortController {
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
+    }
+
+    @GetMapping("/findGoodsByGrid")
+    @ApiOperation("地毯式扫描货物 sample: 20200619144110070:1_1,20200624093705854:1_2,20200628132548686:1_5")
+    public CommonResult findGoodsByGrid(@RequestParam String params) {
+
+        String[] split = params.split(",");
+        Map<String, String> map = new HashMap<>(split.length);
+        for(String str : split){
+            String[] kv = str.split(":");
+            if(kv.length == 2){
+                map.put(kv[0], kv[1]);
+            }
+        }
+        return CommonResult.success(serialPortService.findGoodsByGrid(map));
+
+
     }
 
 }
