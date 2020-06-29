@@ -1,21 +1,19 @@
 package com.importexpress.serialport.rest;
 
-import com.google.common.base.Splitter;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.service.SerialPortService;
+import com.importexpress.serialport.util.Config;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -28,8 +26,11 @@ public class SerialPortController {
 
     private final SerialPortService serialPortService;
 
-    public SerialPortController(SerialPortService serialPortService) {
+    private final Config config;
+
+    public SerialPortController(SerialPortService serialPortService, Config config) {
         this.serialPortService = serialPortService;
+        this.config = config;
     }
 
     @GetMapping("/sendData")
@@ -189,9 +190,9 @@ public class SerialPortController {
         }
     }
 
-    @GetMapping("/findGoodsByGrid")
-    @ApiOperation("地毯式扫描货物 sample: 20200619144110070:1_1,20200624093705854:1_2,20200628132548686:1_5")
-    public CommonResult findGoodsByGrid(@RequestParam String params) {
+    @GetMapping("/moveGoodsByFinder")
+    @ApiOperation("移动货物 sample: 20200619144110070:1_1,20200624093705854:1_2,20200628132548686:1_5")
+    public CommonResult moveGoodsByFinder(@RequestParam String params) {
 
         String[] split = params.split(",");
         Map<String, String> map = new HashMap<>(split.length);
@@ -201,8 +202,21 @@ public class SerialPortController {
                 map.put(kv[0], kv[1]);
             }
         }
-        return CommonResult.success(serialPortService.findGoodsByGrid(map));
+        return CommonResult.success(serialPortService.moveGoodsByFinder(map));
 
+    }
+
+
+    @GetMapping("/getAllGoods")
+    @ApiOperation("读取指定日期的库存列表")
+    public CommonResult getAllGoods(@RequestParam String yyyyMMdd) {
+
+        try {
+            String json = serialPortService.getAllGoodsFromJsonFile(yyyyMMdd);
+            return CommonResult.success(json);
+        } catch (IOException e) {
+            return CommonResult.failed(e.getMessage());
+        }
 
     }
 

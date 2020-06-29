@@ -57,4 +57,8 @@ public class Config {
 
     @Value("${shell.path}")
     public String SHELL_PATH;
+
+    @Value("${SAVE_FINDER_PATH}")
+    public String SAVE_FINDER_PATH;
+
 }

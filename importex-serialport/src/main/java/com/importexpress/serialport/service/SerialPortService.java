@@ -1,12 +1,14 @@
 package com.importexpress.serialport.service;
 
 
+import com.importexpress.serialport.bean.GoodsBean;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import gnu.io.UnsupportedCommOperationException;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -35,9 +37,15 @@ public interface SerialPortService {
 
     void closeSerial();
 
-    Map<String,Integer> findGoodsByGrid(Map<String, String> hmGoods) ;
+    Map<String,Integer> moveGoodsByFinder(Map<String, String> hmGoods) ;
 
-    String readGoodsId() throws IOException;
+    String getAllGoodsFromJsonFile(String yyyyMMdd) throws IOException;
+
+    StringBuilder getJsonFileName(String yyyyMMdd);
+
+    String readGoodsId(Map<Integer, Integer> mapTmp);
+
+    List<GoodsBean> findAllGoodsByGrid();
 
 //    void callCMD(String msg);
 }

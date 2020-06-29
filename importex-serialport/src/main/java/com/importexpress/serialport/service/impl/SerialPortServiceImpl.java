@@ -1,16 +1,22 @@
 package com.importexpress.serialport.service.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.importexpress.serialport.bean.GoodsBean;
 import com.importexpress.serialport.service.SerialPortService;
 import com.importexpress.serialport.util.Config;
 import com.importexpress.serialport.util.SerialTool;
 import gnu.io.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.SynchronousQueue;
 
@@ -283,53 +289,113 @@ public class SerialPortServiceImpl implements SerialPortService {
     }
 
     /**
-     * 地毯式扫描货物
+     * 移动货物（前期已经地毯式扫描过货物，取得了货物坐标）
      * @param hmGoods
      */
     @Override
-    public Map<String,Integer> findGoodsByGrid(Map<String, String> hmGoods)  {
-
-        int stepGap=config.STEP_VALUE;
-        int count=0;
+    public Map<String,Integer> moveGoodsByFinder(Map<String, String> hmGoods)  {
 
         Map<String, Integer> result = new HashMap<>(hmGoods.size());
         if(hmGoods.size()==0){
             return result;
         }
+
+        String json = null;
+        try {
+            json = getAllGoodsFromJsonFile(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+
+            List<GoodsBean> lstGoodsBean =new Gson().fromJson(json,new TypeToken<List<GoodsBean>>(){}.getType());
+            for(GoodsBean goodsBean : lstGoodsBean){
+                if(hmGoods.get(goodsBean.getGoodsId()) !=null){
+                    //匹配到需要搬动的货物
+                    ///this.moveGoods(goodsBean.getX(),goodsBean.getY(),config.MAX_VALUE_Z);
+                    result.put(goodsBean.getGoodsId(), 1);
+                }
+            }
+        } catch (Exception e) {
+            log.error("moveGoodsByFinder",e);
+        }
+
+        return result;
+    }
+
+    /**
+     * 读取指定日期的json文件（定时任务生成）
+     * @param yyyyMMdd
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public String getAllGoodsFromJsonFile(String yyyyMMdd) throws IOException {
+
+        StringBuilder fileName = getJsonFileName(yyyyMMdd);
+        return FileUtils.readFileToString(new File(fileName.toString()));
+
+    }
+
+    /**
+     * 获取json文件名称
+     * @param yyyyMMdd
+     * @return
+     */
+    @Override
+    public StringBuilder getJsonFileName(String yyyyMMdd) {
+        StringBuilder fileName = new StringBuilder();
+
+        fileName.append(config.SAVE_FINDER_PATH);
+        fileName.append("finder_").append(yyyyMMdd).append(".json");
+        return fileName;
+    }
+
+
+    /**
+     * 条形码读取
+     * @param mapTmp
+     * @return
+     */
+    @Override
+    public String readGoodsId(Map<Integer, Integer> mapTmp) {
+        //TODO 扫描条形码
+        String[] random = {"20200619144110070","20200624093705854"};
+        int index = new Random().nextInt(random.length);
+        if(mapTmp.get(index)==null){
+            mapTmp.put(index, 1);
+            return random[index];
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * 地毯式扫描货物(定时任务执行），进行入库操作准备
+     */
+    @Override
+    public List<GoodsBean> findAllGoodsByGrid()  {
+
+        int stepGap=config.STEP_VALUE;
+        int count=0;
+        List<GoodsBean> lstFinderGoods = new ArrayList<>();
+        Map<Integer, Integer> mapTmp = new HashMap<>();
         for(int x=0;x*stepGap<=config.MAX_VALUE_X;x++){
             for(int y=0;y*stepGap<=config.MAX_VALUE_X;y++){
                 log.debug("x:[{}],y:[{}]",x*stepGap,y*stepGap);
                 ++count;
                 try {
                     ///this.sendData(x*stepGap,y*stepGap,config.MAX_VALUE_Z,false);
-                    String strGoodsId = this.readGoodsId();
-                    String strDest = hmGoods.get(strGoodsId);
-                    if(StringUtils.isNotEmpty(strDest)){
-                        //匹配到了需要搬动的货物
-                        ///this.moveGoods(x*stepGap,y*stepGap,config.MAX_VALUE_Z);
-                        result.put(strGoodsId, 1);
-                        if(result.size()==hmGoods.size()){
-                            //全部找到指定的货物,提前退出程序
-                            log.info("move count:[{}]",count);
-                            return result;
-                        }
+                    String strGoodsId = this.readGoodsId(mapTmp);
+                    if(StringUtils.isNotEmpty(strGoodsId)){
+                        log.info("find goods (x,y):[{},{}]",x*stepGap,y*stepGap);
+                        lstFinderGoods.add(
+                                GoodsBean.builder().x(x * stepGap).y(y * stepGap).goodsId(strGoodsId).build());
                     }
                 } catch (Exception e) {
-                    log.error("findGoodsByGrid",e);
-                    return result;
+                    log.error("findAllGoodsByGrid",e);
                 }
             }
         }
         log.info("move count:[{}]",count);
 
-        return result;
-    }
-
-    @Override
-    public String readGoodsId() throws IOException {
-        //TODO 扫描条形码
-        String[] random = {"20200619144110070","20200624093705854"};
-        return random[new Random().nextInt(random.length)];
+        return lstFinderGoods;
     }
 
 

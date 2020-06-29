@@ -51,18 +51,11 @@ public class SerialPortServiceImplTest{
     }
 
     @Test
-    public void findGoodsByGrid() throws Exception {
+    public void findGoodsByGrid() {
 
         Map<String, String> hmGoods = new HashMap<>();
-        serialPortService.findGoodsByGrid(hmGoods);
+        serialPortService.moveGoodsByFinder(hmGoods);
     }
 
-    @Test
-    public  void readGoodsId() throws IOException {
-        for(int i=0;i<100;i++){
-            String tmp = serialPortService.readGoodsId();
-            System.out.println(tmp);
-        }
 
-    }
 }
