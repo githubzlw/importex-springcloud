@@ -86,6 +86,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         String strSendData = buildSendString(x, y, z, MAGI, isMagi);
         sendData(strSendData);
+        synchronousQueue.take();
     }
 
     /**
@@ -103,6 +104,8 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         String strSendData = buildSendString(x, y, z,LIGHT,false);
         sendData(strSendData);
+        String take = synchronousLightQueue.take();
+        log.info("take:[{}]",take);
         return strSendData;
     }
 
@@ -162,6 +165,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void returnZeroPosi() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(RETURN_ZERO_POSI);
+        synchronousQueue.take();
     }
 
     /**
@@ -170,6 +174,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void setZeroPosi() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(ZERO_POSI);
+        synchronousQueue.take();
     }
 
 
@@ -179,6 +184,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagoff(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(x,y,z,false);
+        synchronousQueue.take();
     }
 
     /**
@@ -187,6 +193,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagoff(String msg) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(msg);
+        synchronousQueue.take();
     }
 
     /**
@@ -195,6 +202,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagNet(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(x,y,z,true);
+        synchronousQueue.take();
     }
 
     /**
@@ -204,6 +212,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     public void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         sendData(config.MOVE_TO_CART_MAGNET_POSI);
+        synchronousQueue.take();
     }
 
     /**
