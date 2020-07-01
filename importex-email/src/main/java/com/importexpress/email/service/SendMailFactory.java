@@ -1,15 +1,13 @@
 package com.importexpress.email.service;
 
 import com.importexpress.comm.pojo.MailBean;
-import com.importexpress.comm.pojo.TemplateType;
+import com.importexpress.comm.pojo.MailTemplateBean;
 import com.importexpress.email.config.Config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,7 +15,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -32,10 +29,8 @@ public class SendMailFactory {
             = DateTimeFormatter.ofPattern("YYMMdd_HHmmss_SSS");
     private final Config config;
     private final SendMail mail;
-    private final SpringTemplateEngine thymeleafEngine;
 
-    public SendMailFactory(SpringTemplateEngine thymeleafEngine, Config config, @Qualifier("SendMailAmzImpl") SendMail mail) {
-        this.thymeleafEngine = thymeleafEngine;
+    public SendMailFactory(Config config, @Qualifier("SendMailAmzImpl") SendMail mail) {
         this.config = config;
         this.mail = mail;
     }
@@ -50,12 +45,13 @@ public class SendMailFactory {
 
         checkMailBean(mailBean);
 
-        if (StringUtils.isBlank(mailBean.getBody())) {
-            //邮件模板填充方式
-            mailBean.setBody(getHtmlContent(mailBean.getModel(), mailBean.getTemplateType()));
-        } else {
-            saveHtml(mailBean.getSubject(), mailBean.getBody());
+        String fileName;
+        if(mailBean.getTemplateType() !=null){
+            fileName = mailBean.getSiteEnum().toString().toLowerCase() + "_" + mailBean.getTemplateType().toString();
+        }else{
+            fileName = mailBean.getSubject();
         }
+        saveHtml(fileName, mailBean.getBody());
 
         if (!mailBean.isTest()) {
             //是否实际发送邮件
@@ -75,39 +71,8 @@ public class SendMailFactory {
         if (mailBean.getType() != 1 && mailBean.getType() != 2) {
             throw new IllegalArgumentException("type is invalid");
         }
-        if (StringUtils.isNotEmpty(mailBean.getBody())) {
-            if (mailBean.getModel() != null && mailBean.getModel().size() > 0) {
-                throw new IllegalArgumentException("model and body is invalid");
-            }
-        } else {
-            if (mailBean.getModel() == null || mailBean.getModel().size() == 0) {
-                throw new IllegalArgumentException("model and body is invalid");
-            }
-        }
     }
 
-
-    /**
-     * getHtmlContent
-     *
-     * @param model
-     * @param templateType
-     * @return
-     */
-    private String getHtmlContent(Map<String, Object> model, TemplateType templateType) {
-
-        String result = "";
-        if (model != null) {
-            Context context = new Context();
-            for (Map.Entry<String, Object> param : model.entrySet()) {
-                context.setVariable(param.getKey(), param.getValue());
-            }
-            result = thymeleafEngine.process(templateType.toString(), context);
-            log.debug(result);
-            saveHtml(templateType.toString(), result);
-        }
-        return result;
-    }
 
     /**
      * 保存邮件内容到文件

@@ -1,5 +1,5 @@
 logging:
-  file: logs/zuul.log
+  file: logs/zuul/zuul.log
   level:
     com.importexpress: info
 
@@ -18,11 +18,25 @@ eureka:
       defaultZone:   http://127.0.0.1:18000/eureka
     registry-fetch-interval-seconds: 5
 zuul:
+  debug:
+    request: true  #如果设置了这个，默认所有的请求都会debug
+  include-debug-header: true
+
   prefix: /api
   retryable: true
   routes:
-    utils-service: /utils-service/**
     ali1688-service: /ali-service/**
+    cart-service: /cart-service/**
+    utils-service: /utils-service/**
+    search-service: /search-service/**
+    email-service: /email-service/**
+    pay-service: /pay-service/**
+    product-service: /product-service/**
+    shopify-service: /shopify-service/**
+    message-service: /message-service/**
+    serialport-service: /serialport-service/**
+    login-service: /login-service/**
+
   ribbon:
     eager-load:
       enabled: true

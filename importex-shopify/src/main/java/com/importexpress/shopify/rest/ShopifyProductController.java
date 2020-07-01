@@ -123,7 +123,7 @@ public class ShopifyProductController {
     /**
      * shopify铺货
      *
-     * @param ids
+     * @param idsconfig
      * @param site
      * @param shopName
      */

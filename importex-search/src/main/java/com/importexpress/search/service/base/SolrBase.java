@@ -30,7 +30,6 @@ public abstract class SolrBase {
 		solrParams.set("facet.mincount", facet.getFacetMincount());
 	}
 
-
 	/**设置row
 	 * @param param
 	 * @param solrParams
@@ -39,6 +38,9 @@ public abstract class SolrBase {
 		int page = Math.max(1,param.getPage());
 		param.setPage(page);
 		int rows = Math.max(param.getPageSize(),1);
+		if(param.isMobile()){
+			rows = Math.max(param.getBackRows(),rows);
+		}
 		param.setPageSize(rows);
 		setRows((page - 1) * rows,rows,solrParams);
 	}

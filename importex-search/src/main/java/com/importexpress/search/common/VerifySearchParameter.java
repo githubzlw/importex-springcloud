@@ -275,26 +275,4 @@ public class VerifySearchParameter {
         return param;
     }
 
-    /**价格区间切换为美元货币
-     * @param param
-     */
-    private static void  priceCurrency(SearchParam param){
-        if(StringUtils.isBlank(param.getMinPrice()) && StringUtils.isBlank(param.getMaxPrice())){
-            return ;
-        }
-        Currency currency = param.getCurrency();
-        //切换后货币
-
-        if(!"USD".equals(currency.getCurrency())){
-            String minPrice = param.getMinPrice();
-            minPrice = ChangeCurrency.priceToUSD(minPrice,currency.getExchangeRate());
-            param.setMinPrice(minPrice);
-
-            String maxPrice = param.getMaxPrice();
-            maxPrice = ChangeCurrency.priceToUSD(maxPrice,currency.getExchangeRate());
-            param.setMaxPrice(maxPrice);
-        }
-    }
-
-
 }

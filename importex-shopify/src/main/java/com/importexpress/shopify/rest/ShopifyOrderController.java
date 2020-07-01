@@ -29,9 +29,9 @@ import java.util.Map;
  * @date:2019/11/28
  */
 @Slf4j
-@RestController
-@RequestMapping("/shopify")
-@Api(tags = "shopify订单调用接口")
+//@RestController
+//@RequestMapping("/shopify")
+//@Api(tags = "shopify订单调用接口")
 public class ShopifyOrderController {
 
 

@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.importexpress.cart.service.CartService.SUCCESS;
 
 
@@ -87,6 +89,15 @@ public class CartControl {
 
     }
 
+    @GetMapping("/{site}/allcarts")
+    @ApiOperation("查询网站中所有用户的购物车商品")
+    public CommonResult getAllCarts(@PathVariable(value = "site") SiteEnum site) {
+
+        List<Cart> cart = cartService.getCart(site);
+        return CommonResult.success(cart);
+
+    }
+
     @PatchMapping("/{site}/{userId}/check_all")
     @ApiOperation("勾选/反勾选全部商品")
     public CommonResult checkAll(@PathVariable(value = "site") SiteEnum site,
@@ -157,8 +168,24 @@ public class CartControl {
     public CommonResult refreshCart(@PathVariable(value = "site") SiteEnum site,
                                     @PathVariable(value = "userId") long userId) {
 
-        return
-                cartService.refreshCart(site, userId) == 1 ? CommonResult.success() : CommonResult.failed();
+        try{
+            return CommonResult.success(cartService.refreshCart(site, userId));
+        }catch(Exception e){
+            return CommonResult.failed(e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/{site}/refreshall")
+    @ApiOperation("刷新全部购物车")
+    public CommonResult refreshAllCart(@PathVariable(value = "site") SiteEnum site) {
+
+        try{
+            return CommonResult.success(cartService.refreshAllCarts(site));
+        }catch(Exception e){
+            return CommonResult.failed(e.getMessage());
+        }
+
     }
 
 }

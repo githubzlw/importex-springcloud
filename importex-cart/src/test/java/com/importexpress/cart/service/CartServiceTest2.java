@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -87,4 +88,11 @@ public class CartServiceTest2 {
     }
 
 
+    @Test
+    public void cart5() {
+        List<Cart> cart = cartService.getCart(SITE);
+        Assert.assertTrue(cart!=null);
+        Assert.assertTrue(cart.size()>0);
+
+    }
 }

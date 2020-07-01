@@ -2,8 +2,6 @@ package com.importexpress.comm.pojo;
 
 import lombok.*;
 
-import java.util.Map;
-
 /**
  * @author jack.luo
  * @date 2019/9/5
@@ -32,12 +30,7 @@ public class MailBean {
     /**
      * body
      */
-    public String body;
-
-    /**
-     * 填充键值
-     */
-    private Map<String, Object> model;
+    private String body;
 
     /**
      * 邮件类型
@@ -47,7 +40,7 @@ public class MailBean {
     /**
      * 1:线上请求    2:线下请求
      */
-    public int type = 1;
+    private int type = 1;
 
     /**
      * true:测试模板（不实际发送邮件）

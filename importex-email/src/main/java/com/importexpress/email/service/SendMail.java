@@ -6,6 +6,6 @@ import com.importexpress.comm.pojo.MailBean;
 public interface SendMail {
 
 
-    void sendMail(MailBean mailBean) throws IllegalStateException;
+    void sendMail(MailBean mailBean);
 
 }

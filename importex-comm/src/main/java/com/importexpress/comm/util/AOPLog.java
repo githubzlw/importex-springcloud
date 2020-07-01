@@ -18,7 +18,7 @@ public class AOPLog {
     /**
      * 超过此时间显示警告
      */
-    private static final long MAX_TIME = 5000;
+    private static final long MAX_TIME = 3000;
 
     /**
      * 日志记录

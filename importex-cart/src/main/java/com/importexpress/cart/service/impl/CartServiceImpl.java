@@ -10,12 +10,14 @@ import com.importexpress.cart.pojo.Cart;
 import com.importexpress.cart.pojo.CartItem;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.cart.util.Config;
+import com.importexpress.cart.util.RedisHelper;
 import com.importexpress.comm.pojo.Product;
 import com.importexpress.comm.pojo.SiteEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -129,6 +131,15 @@ public class CartServiceImpl implements CartService {
         return config.CART_PRE + ':' + site.toString().substring(0, 1).toLowerCase() + ':' + id;
     }
 
+    /**
+     * getCartKeys
+     * @param site
+     * @return
+     */
+    private String getCartKeys(SiteEnum site) {
+        return config.CART_PRE + ':' + site.toString().substring(0, 1).toLowerCase() + ":*";
+    }
+
 
     /**
      * getTouristKey
@@ -191,11 +202,17 @@ public class CartServiceImpl implements CartService {
 
         if(site == SiteEnum.KIDS || site == SiteEnum.IMPORTX){
             //range_price
-            cartItem.setRpe(product.getRange_price_free_new());
+            if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
+                cartItem.setRpe(product.getRange_price_free_new());
+            }
             //feeprice
-            cartItem.setFp(product.getFree_price_new());
+            if(StringUtils.isNotEmpty(product.getFree_price_new())) {
+                cartItem.setFp(product.getFree_price_new());
+            }
             //sku
-            cartItem.setSku(product.getSku_new());
+            if(StringUtils.isNotEmpty(product.getSku_new())){
+                cartItem.setSku(product.getSku_new());
+            }
         }else{
             //range_price
             cartItem.setRpe(product.getRange_price());
@@ -223,6 +240,19 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
+     * getAllUsersKey
+     * @param site
+     * @return
+     */
+    private List<String> getAllUsersKey(SiteEnum site) {
+
+        String usersCartKey = getCartKeys(site);
+        Set<String> keys = redisTemplate.keys(usersCartKey);
+        assert keys != null;
+        return keys.stream().map(key -> key.substring(key.lastIndexOf(':') + 1)).collect(Collectors.toList());
+    }
+
+    /**
      * fillOthers
      *
      * @param product
@@ -238,10 +268,7 @@ public class CartServiceImpl implements CartService {
         StringBuilder sb = new StringBuilder();
         ImmutableList<String> lst = ImmutableList.copyOf(Splitter.on("], [").split(enType));
         for (String item : lst) {
-            if("[]".equals(item)){
-                //无规格情况下，用主图替代
-                cartItem.setImg(product.getCustom_main_image());
-            }
+
             String cleanStr = CharMatcher.anyOf(str3).removeFrom(item).trim();
             if (StringUtils.contains(cleanStr, str4 + cartItem.getSid1() + ",")
                     || StringUtils.contains(cleanStr, str4 + cartItem.getSid2() + ",")) {
@@ -251,9 +278,6 @@ public class CartServiceImpl implements CartService {
                 if (StringUtils.isNotEmpty(strImg)) {
                     //fill img path
                     cartItem.setImg(strImg);
-                }else{
-                    //图片为空的情况下用主图替代
-                    cartItem.setImg(product.getCustom_main_image());
                 }
                 //fill type
                 beginIndex = cleanStr.indexOf(str1);
@@ -265,12 +289,18 @@ public class CartServiceImpl implements CartService {
                 sb.append(cleanStr, beginIndex + str1.length(), endPosi).append("@");
             }
         }
+
+        if(StringUtils.isEmpty(cartItem.getImg())){
+            //无规格情况下，用主图替代
+            cartItem.setImg(product.getCustom_main_image());
+        }
+
         //设置规格
         cartItem.setTn(sb.toString().trim());
 
         if (str3.equals(product.getWprice())) {
             ImmutablePair<Float, Long> weiAndPri = getWeiAndPri(product.getSku(), cartItem);
-            Assert.isTrue(weiAndPri != null, "weiAndPri is null.cartItem=" + cartItem);
+            Assert.isTrue(weiAndPri != null, "weiAndPri is null. product.getSku()="+product.getSku() + ",cartItem=" + cartItem);
             cartItem.setWei(weiAndPri.getLeft());
             cartItem.setPri(weiAndPri.getRight());
         }else{
@@ -308,6 +338,20 @@ public class CartServiceImpl implements CartService {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<Cart> getCart(SiteEnum site) {
+
+        List<Cart> lstCarts = new ArrayList<>();
+        Set<String> letUsers = RedisHelper.scan(this.redisTemplate,getCartKeys(site));
+        for(String userId : letUsers){
+            long lngUserId = Long.parseLong(userId.substring(userId.lastIndexOf(':') + 1));
+            Cart cart = this.getCart(site, lngUserId);
+            cart.setUserid(lngUserId);
+            lstCarts.add(cart);
+        }
+        return lstCarts;
     }
 
     @Override
@@ -514,32 +558,70 @@ public class CartServiceImpl implements CartService {
      *
      * @param site
      * @param userId
-     * @return 1:刷新成功 0:刷新失败
+     * @return 刷新次数
      */
     @Override
     public int refreshCart(SiteEnum site, long userId) {
-        int result = 0;
-        Cart cart = this.getCart(site, userId);
-        for (CartItem cartItem : cart.getItems()) {
+        int count=0;
+        try{
+            Cart cart = this.getCart(site, userId);
+            for (CartItem cartItem : cart.getItems()) {
 
-            Product product = productServiceFeign.findProduct(cartItem.getPid());
+                //备份bean
+                CartItem cartItemOld = new CartItem();
+                BeanUtils.copyProperties(cartItem, cartItemOld);
 
-            //刷新图片，价格，重量
-            fillOthersInfoToProduct(product, cartItem);
-            //改变价格
-            changePrice(site, product, cartItem);
+                Product product = productServiceFeign.findProduct(cartItem.getPid());
 
-            if ("0".equals(product.getValid())) {
-                //下架商品
-                cartItem.setSt(0);
-                cartItem.setChk(0);
-                if (SUCCESS == this.updateCartItem(site, userId, cartItem)) {
-                    result = 1;
-                } else {
-                    result = 0;
+                //刷新图片，价格，重量
+                fillOthersInfoToProduct(product, cartItem);
+                //改变价格
+                changePrice(site, product, cartItem);
+
+                if ("0".equals(product.getValid())) {
+                    //下架商品
+                    if(cartItem.getSt() !=0 || cartItem.getChk() !=0){
+                        cartItem.setSt(0);
+                        cartItem.setChk(0);
+                        count += this.updateCartItem(site, userId, cartItem);
+                        continue;
+                    }
+                }
+
+                if(!cartItemOld.equals(cartItem)){
+                    //有变化的情况
+                    log.info("changed cart find:userId：[{}], old [{}], new [{}]",userId,cartItemOld,cartItem);
+                    count += this.updateCartItem(site, userId, cartItem);
                 }
             }
+        }catch(Exception e){
+            log.warn("refreshCart",e);
+
         }
-        return result;
+        return count;
+    }
+
+    /**
+     * 刷新全网站购物车（下架，价格，重量，图片）
+     *
+     * @param site
+     * @return 刷新次数
+     */
+    @Override
+    public int refreshAllCarts(SiteEnum site) {
+
+        List<String> allUsersId = this.getAllUsersKey(site);
+
+        return allUsersId.stream().mapToInt(id -> this.refreshCart(site, Long.parseLong(id))).sum();
+
+    }
+
+    public static void main(String[] args){
+        String sku = "[{\"specId\":\"3738129308109\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"3.71\",\"skuCalPrice\":\"3.71\",\"freeSkuPrice\":\"4.29\",\"skuMultiCurrencyDisplayPrice\":\"3.71\",\"actSkuMultiCurrencyDisplayPrice\":\"3.71\",\"skuMultiCurrencyCalPrice\":\"3.71\",\"actSkuMultiCurrencyCalPrice\":\"3.71\",\"costPrice\":\"20.0\",\"availQuantity\":678,\"isActivity\":true,\"inventory\":678},\"skuPropIds\":\"32167\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:32167\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308109\"},{\"specId\":\"3738129308113\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"3.53\",\"skuCalPrice\":\"3.53\",\"freeSkuPrice\":\"4.10\",\"skuMultiCurrencyDisplayPrice\":\"3.53\",\"actSkuMultiCurrencyDisplayPrice\":\"3.53\",\"skuMultiCurrencyCalPrice\":\"3.53\",\"actSkuMultiCurrencyCalPrice\":\"3.53\",\"costPrice\":\"19.0\",\"availQuantity\":0,\"isActivity\":true,\"inventory\":0},\"skuPropIds\":\"321614\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:321614\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308113\"},{\"specId\":\"3738129308111\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"1.67\",\"skuCalPrice\":\"1.67\",\"freeSkuPrice\":\"2.14\",\"skuMultiCurrencyDisplayPrice\":\"1.67\",\"actSkuMultiCurrencyDisplayPrice\":\"1.67\",\"skuMultiCurrencyCalPrice\":\"1.67\",\"actSkuMultiCurrencyCalPrice\":\"1.67\",\"costPrice\":\"9.0\",\"availQuantity\":0,\"isActivity\":true,\"inventory\":0},\"skuPropIds\":\"32169\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:32169\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308111\"},{\"specId\":\"3738129308115\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"5.20\",\"skuCalPrice\":\"5.20\",\"freeSkuPrice\":\"5.86\",\"skuMultiCurrencyDisplayPrice\":\"5.20\",\"actSkuMultiCurrencyDisplayPrice\":\"5.20\",\"skuMultiCurrencyCalPrice\":\"5.20\",\"actSkuMultiCurrencyCalPrice\":\"5.20\",\"costPrice\":\"28.0\",\"availQuantity\":0,\"isActivity\":true,\"inventory\":0},\"skuPropIds\":\"321613\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:321613\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308115\"},{\"specId\":\"3738129308103\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"0.85\",\"skuCalPrice\":\"0.85\",\"freeSkuPrice\":\"1.28\",\"skuMultiCurrencyDisplayPrice\":\"0.85\",\"actSkuMultiCurrencyDisplayPrice\":\"0.85\",\"skuMultiCurrencyCalPrice\":\"0.85\",\"actSkuMultiCurrencyCalPrice\":\"0.85\",\"costPrice\":\"4.6\",\"availQuantity\":8060,\"isActivity\":true,\"inventory\":8060},\"skuPropIds\":\"32161\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:32161\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308103\"},{\"specId\":\"3738129308104\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"0.85\",\"skuCalPrice\":\"0.85\",\"freeSkuPrice\":\"1.28\",\"skuMultiCurrencyDisplayPrice\":\"0.85\",\"actSkuMultiCurrencyDisplayPrice\":\"0.85\",\"skuMultiCurrencyCalPrice\":\"0.85\",\"actSkuMultiCurrencyCalPrice\":\"0.85\",\"costPrice\":\"4.6\",\"availQuantity\":6465,\"isActivity\":true,\"inventory\":6465},\"skuPropIds\":\"32162\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:32162\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308104\"},{\"specId\":\"3738129308105\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"1.11\",\"skuCalPrice\":\"1.11\",\"freeSkuPrice\":\"1.55\",\"skuMultiCurrencyDisplayPrice\":\"1.11\",\"actSkuMultiCurrencyDisplayPrice\":\"1.11\",\"skuMultiCurrencyCalPrice\":\"1.11\",\"actSkuMultiCurrencyCalPrice\":\"1.11\",\"costPrice\":\"6.0\",\"availQuantity\":6793,\"isActivity\":true,\"inventory\":6793},\"skuPropIds\":\"32163\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:32163\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308105\"},{\"specId\":\"3738129308112\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"1.67\",\"skuCalPrice\":\"1.67\",\"freeSkuPrice\":\"2.14\",\"skuMultiCurrencyDisplayPrice\":\"1.67\",\"actSkuMultiCurrencyDisplayPrice\":\"1.67\",\"skuMultiCurrencyCalPrice\":\"1.67\",\"actSkuMultiCurrencyCalPrice\":\"1.67\",\"costPrice\":\"9.0\",\"availQuantity\":2782,\"isActivity\":true,\"inventory\":2782},\"skuPropIds\":\"321610\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:321610\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308112\"},{\"specId\":\"3738129308108\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"2.38\",\"skuCalPrice\":\"2.38\",\"freeSkuPrice\":\"2.88\",\"skuMultiCurrencyDisplayPrice\":\"2.38\",\"actSkuMultiCurrencyDisplayPrice\":\"2.38\",\"skuMultiCurrencyCalPrice\":\"2.38\",\"actSkuMultiCurrencyCalPrice\":\"2.38\",\"costPrice\":\"12.8\",\"availQuantity\":4005,\"isActivity\":true,\"inventory\":4005},\"skuPropIds\":\"32166\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:32166\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308108\"},{\"specId\":\"3738129308106\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"1.11\",\"skuCalPrice\":\"1.11\",\"freeSkuPrice\":\"1.55\",\"skuMultiCurrencyDisplayPrice\":\"1.11\",\"actSkuMultiCurrencyDisplayPrice\":\"1.11\",\"skuMultiCurrencyCalPrice\":\"1.11\",\"actSkuMultiCurrencyCalPrice\":\"1.11\",\"costPrice\":\"6.0\",\"availQuantity\":5364,\"isActivity\":true,\"inventory\":5364},\"skuPropIds\":\"32164\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:32164\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308106\"},{\"specId\":\"3738129308116\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"5.20\",\"skuCalPrice\":\"5.20\",\"freeSkuPrice\":\"5.86\",\"skuMultiCurrencyDisplayPrice\":\"5.20\",\"actSkuMultiCurrencyDisplayPrice\":\"5.20\",\"skuMultiCurrencyCalPrice\":\"5.20\",\"actSkuMultiCurrencyCalPrice\":\"5.20\",\"costPrice\":\"28.0\",\"availQuantity\":3499,\"isActivity\":true,\"inventory\":3499},\"skuPropIds\":\"321611\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:321611\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308116\"},{\"specId\":\"3738129308107\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"2.38\",\"skuCalPrice\":\"2.38\",\"freeSkuPrice\":\"2.88\",\"skuMultiCurrencyDisplayPrice\":\"2.38\",\"actSkuMultiCurrencyDisplayPrice\":\"2.38\",\"skuMultiCurrencyCalPrice\":\"2.38\",\"actSkuMultiCurrencyCalPrice\":\"2.38\",\"costPrice\":\"12.8\",\"availQuantity\":5612,\"isActivity\":true,\"inventory\":5612},\"skuPropIds\":\"32165\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:32165\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308107\"},{\"specId\":\"3738129308110\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"3.71\",\"skuCalPrice\":\"3.71\",\"freeSkuPrice\":\"4.29\",\"skuMultiCurrencyDisplayPrice\":\"3.71\",\"actSkuMultiCurrencyDisplayPrice\":\"3.71\",\"skuMultiCurrencyCalPrice\":\"3.71\",\"actSkuMultiCurrencyCalPrice\":\"3.71\",\"costPrice\":\"20.0\",\"availQuantity\":1692,\"isActivity\":true,\"inventory\":1692},\"skuPropIds\":\"32168\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:32168\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308110\"},{\"specId\":\"3738129308114\",\"fianlWeight\":\"0.03\",\"skuVal\":{\"actSkuCalPrice\":\"3.53\",\"skuCalPrice\":\"3.53\",\"freeSkuPrice\":\"4.10\",\"skuMultiCurrencyDisplayPrice\":\"3.53\",\"actSkuMultiCurrencyDisplayPrice\":\"3.53\",\"skuMultiCurrencyCalPrice\":\"3.53\",\"actSkuMultiCurrencyCalPrice\":\"3.53\",\"costPrice\":\"19.0\",\"availQuantity\":2979,\"isActivity\":true,\"inventory\":2979},\"skuPropIds\":\"321612\",\"volumeWeight\":\"0.03\",\"skuAttr\":\"3216:321612\",\"wholesalePrice\":\"[≥1 $ 4.6-28.0]\",\"skuId\":\"3738129308114\"}]";
+        CartItem cartItem = new CartItem();
+        cartItem.setPid(573130192364L);
+        cartItem.setSid1(321612);
+//        ImmutablePair<Float, Long> weiAndPri = getWeiAndPri(sku, cartItem);
+//        System.out.printf("weiAndPri=%s", weiAndPri);
     }
 }

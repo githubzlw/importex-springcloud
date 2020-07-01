@@ -3,6 +3,8 @@ package com.importexpress.utils.rest;
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.utils.service.IpService;
+import com.importexpress.utils.util.GeoIpUtils;
+import com.maxmind.geoip2.record.Country;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
@@ -27,6 +29,7 @@ public class IpController {
 
     private IpService ipService;
 
+
     private StringRedisTemplate redisTemplate;
 
     @Autowired
@@ -45,21 +48,42 @@ public class IpController {
         if (StringUtils.isNotEmpty(result)) {
             return CommonResult.success(result);
         } else {
-            //from url read
             try {
-                JSONObject json = this.ipService.queryIp(ip);
-                if (!"success".equals(json.getString("status"))) {
-                    return CommonResult.failed("ip search result is fault");
-                } else {
-                    String country = json.getString("countryCode");
-                    this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, country);
-                    return CommonResult.success(country);
+                //本地数据库搜索ip
+                Country country = GeoIpUtils.getInstance().getCountry(ip);
+                String countryCode;
+                String countryName;
+                if(country !=null){
+                    countryCode = country.getIsoCode();
+                    countryName = country.getName();
+                }else{
+                    //线上搜索ip
+                    JSONObject json = this.ipService.queryIp(ip);
+                    countryCode = json.getString("country_code");
+                    countryName = json.getString("country_name");
+                    if (StringUtils.isEmpty(countryCode) || StringUtils.isEmpty(countryName)) {
+                      throw new IOException("ip lookup failed");
+                    }
                 }
-            } catch (IOException e) {
+                result = countryCode + ":" + countryName;
+                this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, result);
+                return CommonResult.success(result);
+            } catch (Exception e) {
                 return CommonResult.failed(e.getMessage());
             }
         }
+    }
 
+    @GetMapping("/clearcache")
+    @ApiOperation("clearCache")
+    public CommonResult clearCache() {
+
+        Boolean isOK = this.redisTemplate.delete(REDIS_HASH_IP);
+        if(isOK!=null && isOK){
+            return CommonResult.success();
+        }else{
+            return CommonResult.failed();
+        }
     }
 
 }

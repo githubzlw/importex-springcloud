@@ -56,6 +56,11 @@
             <version>1.14.0</version>
         </dependency>
         <dependency>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>5.38.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.importexpress.parent</groupId>
             <artifactId>importex-comm</artifactId>
             <version>${importex.latest.version}</version>

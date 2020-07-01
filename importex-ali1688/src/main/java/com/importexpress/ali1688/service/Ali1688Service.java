@@ -2,6 +2,7 @@ package com.importexpress.ali1688.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.model.PidQueue;
+import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.pojo.Ali1688Item;
 
 import java.io.IOException;
@@ -43,7 +44,7 @@ public interface Ali1688Service {
      * @param file
      * @return
      */
-    String uploadImgToTaobao(String file);
+    String uploadImgToTaobao(String file) throws IOException;
 
     /**
      * 从缓存中获取图片搜索结果
@@ -66,7 +67,7 @@ public interface Ali1688Service {
      * @param imgUrl
      * @return
      */
-    JSONObject searchImgFromTaobao(String imgUrl);
+    JSONObject searchImgFromTaobao(String imgUrl) throws IOException;
 
     /**
      * 清除redis缓存里面下架商品
@@ -143,4 +144,11 @@ public interface Ali1688Service {
      * @return
      */
     int deleteIdInQueue(int id);
+
+    /**
+     * 获取淘宝商品详情
+     * @param pid
+     * @return
+     */
+    CommonResult getDetails(String pid);
 }

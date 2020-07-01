@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.importexpress.comm.pojo.Ali1688Item;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
+import org.springframework.lang.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -287,6 +288,92 @@ public class UrlUtil {
 
             throw new IOException("doPostForImgUpload's response is not successful");
         }
+        return response.body() != null ?
+                JSON.parseObject(response.body().string()) : null;
+    }
+
+    /**
+     * callUrlByPut
+     * @param url
+     * @param params
+     * @return
+     * @throws IOException
+     */
+    public JSONObject callUrlByPut(String url, Map<String, String> params) throws IOException {
+        FormBody.Builder builder = new FormBody.Builder();
+        params.forEach((k, v) -> {
+            if (v != null) builder.add(k, v);
+        });
+        FormBody body = builder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .put(body)
+                .build();
+
+        return executeCall(url, request);
+
+    }
+
+    /**
+     * callUrlByPost
+     * @param url
+     * @param params
+     * @return
+     * @throws IOException
+     */
+    public JSONObject callUrlByPost(String url, Map<String, String> params) throws IOException {
+
+        FormBody.Builder builder = new FormBody.Builder();
+        params.forEach((k, v) -> {
+            if (v != null) builder.add(k, v);
+        });
+        FormBody body = builder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+
+        return executeCall(url, request);
+
+    }
+
+    /**
+     * call url by retry times
+     * @param url
+     * @param request
+     * @return
+     * @throws IOException
+     */
+    @Nullable
+    private JSONObject executeCall(String url, Request request) throws IOException {
+        Response response =null;
+        try{
+            response = client.newCall(request).execute();
+        }catch(IOException ioe){
+            //重试15次（每次1秒）
+            try {
+                int count=0;
+                while(true){
+                    Thread.sleep(1000);
+                    try {
+                        response = client.newCall(request).execute();
+                    } catch (IOException e) {
+                        log.warn("do retry ,times=[{}]",count);
+                    }
+                    if(count>15){
+                        break;
+                    }
+                    ++count;
+                }
+            } catch (InterruptedException e) {
+            }
+        }
+
+        if (response==null || !response.isSuccessful()) {
+            log.error("url:[{}]", url);
+            throw new IOException("call url is not successful");
+        }
+
         return response.body() != null ?
                 JSON.parseObject(response.body().string()) : null;
     }

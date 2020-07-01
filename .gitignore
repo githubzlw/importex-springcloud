@@ -100,3 +100,9 @@ importex-utils/.settings/
 importex-zuul/.classpath
 importex-zuul/.project
 importex-zuul/.settings/
+/importex-serialport/target/classes/
+/importex-message/target/classes/
+importex-message/target/
+importex-serialport/target/
+/importex-login/target/classes/
+importex-login/target/

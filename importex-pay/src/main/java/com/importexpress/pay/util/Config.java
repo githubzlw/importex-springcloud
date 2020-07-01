@@ -12,12 +12,20 @@ public class Config {
     @Value("${PAYPAL.MODE}")
     public String paypalMode;
 
-
     @Value("${PAYPAL.CLIENT_ID}")
     public String PaypalClientId;
 
     @Value("${PAYPAL.CLIENT_SECRET}")
     public String PaypalClientSecret;
+
+    @Value("${STRIPE.MODE}")
+    public String stripeMode;
+
+    @Value("${STRIPE.PK_KEY}")
+    public String stripePk;
+
+    @Value("${STRIPE.SK_KEY}")
+    public String stripeSk;
 
     @Value("${rabbitmq.host}")
     public String rabbitmqHost;
