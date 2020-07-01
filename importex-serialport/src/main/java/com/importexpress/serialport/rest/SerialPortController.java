@@ -1,6 +1,7 @@
 package com.importexpress.serialport.rest;
 
 import com.importexpress.comm.domain.CommonResult;
+import com.importexpress.serialport.bean.GoodsBean;
 import com.importexpress.serialport.service.SerialPortService;
 import com.importexpress.serialport.util.Config;
 import gnu.io.NoSuchPortException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -230,6 +232,20 @@ public class SerialPortController {
             }else{
                 return CommonResult.success(false);
             }
+        } catch (Exception e) {
+            return CommonResult.failed(e.getMessage());
+        }
+
+    }
+
+    @GetMapping("/findAllGoodsByGrid")
+    @ApiOperation("地毯式扫描货物(手动执行，测试用)，进行入库操作准备")
+    public CommonResult findAllGoodsByGrid() {
+
+        try {
+            List<GoodsBean> lstGoodsBean = serialPortService.findAllGoodsByGrid();
+            return CommonResult.success(lstGoodsBean);
+
         } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }

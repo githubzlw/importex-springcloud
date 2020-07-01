@@ -48,10 +48,10 @@ public class FinderScheduleTask {
 
         String json = new Gson().toJson(lstGoodsBean);
 
-        StringBuilder fileName =
+        String fileName =
                 this.service.getJsonFileName(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
         FileUtils.writeStringToFile(
-                new File(fileName.toString()),json);
+                new File(fileName),json);
 
         log.info("save finder json file({}) succeed. ",fileName);
     }
