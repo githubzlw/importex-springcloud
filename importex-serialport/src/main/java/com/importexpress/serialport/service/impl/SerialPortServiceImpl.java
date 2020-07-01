@@ -100,13 +100,18 @@ public class SerialPortServiceImpl implements SerialPortService {
      * @throws UnsupportedCommOperationException
      */
     @Override
-    public String readLight(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
+    public boolean readLight(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         String strSendData = buildSendString(x, y, z,LIGHT,false);
         sendData(strSendData);
-        String take = synchronousLightQueue.take();
-        log.info("take:[{}]",take);
-        return strSendData;
+
+        String strReturnData = synchronousLightQueue.take();
+        log.info("take:[{}]",strReturnData);
+        if(strReturnData.contains(strSendData)){
+            log.debug("光电识别结果返回:[{}]",strReturnData);
+            return strReturnData.endsWith("001");
+        }
+        return false;
     }
 
     /**
@@ -450,13 +455,8 @@ public class SerialPortServiceImpl implements SerialPortService {
                 ++count;
                 try {
 
-                    String strSendData=this.readLight(x*stepGap,y*stepGap,config.MAX_VALUE_Z);
-                    String strReturnData = synchronousLightQueue.take();
-                    if(strReturnData.contains(strSendData)){
-                        log.debug("光电识别结果返回:[{}]",strReturnData);
-                        if(strReturnData.endsWith("000")){
-                            continue;
-                        }
+                    if(!this.readLight(x*stepGap,y*stepGap,config.MAX_VALUE_Z)){
+                        continue;
                     }
 
                     String strGoodsId = this.readGoodsId(mapTmp);

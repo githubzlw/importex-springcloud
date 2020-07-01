@@ -220,4 +220,21 @@ public class SerialPortController {
 
     }
 
+    @GetMapping("/readLight")
+    @ApiOperation("读取光电信号")
+    public CommonResult readLight(@RequestParam int x,@RequestParam int y,@RequestParam int z) {
+
+        try {
+            if(serialPortService.readLight(x,y,z)){
+                return CommonResult.success(true);
+            }else{
+                return CommonResult.success(false);
+            }
+        } catch (Exception e) {
+            return CommonResult.failed(e.getMessage());
+        }
+
+    }
+
+
 }
