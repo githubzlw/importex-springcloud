@@ -41,9 +41,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     /**普通的回到零点指令 */
     private static final String RETURN_ZERO_POSI = "#000000#000000#000000#000000#360";
 
-//    /**读取光电信号判断是否有物体 */
-//    private static final String READ_LIGHT_DATA = "#000000#000000#000000#LIGHT#360";
-
+    /** 同步queue*/
     private static SynchronousQueue<Integer> synchronousQueue = new SynchronousQueue();
 
     /** 光电操作同步queue*/
@@ -59,17 +57,33 @@ public class SerialPortServiceImpl implements SerialPortService {
     /**操作之间间隔时间 */
     public static final int MAX_SLEEP = 3000;
 
+    /**读取配置 */
     private final Config config;
 
+    /**串口 */
     private static SerialPort serialPort =null;
 
+    /**图片识别service */
     private final AiImageServiceImpl aiImageService;
 
+    /**
+     * 构造函数
+     * @param config
+     * @param aiImageService
+     */
     public SerialPortServiceImpl(Config config, AiImageServiceImpl aiImageService) {
         this.config = config;
         this.aiImageService = aiImageService;
     }
 
+    /**
+     * 直接发送指令
+     * @param msg
+     * @throws PortInUseException
+     * @throws NoSuchPortException
+     * @throws InterruptedException
+     * @throws UnsupportedCommOperationException
+     */
     @Override
     public void sendData(String msg) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
@@ -81,6 +95,17 @@ public class SerialPortServiceImpl implements SerialPortService {
         }
     }
 
+    /**
+     * 直接发送指令
+     * @param x
+     * @param y
+     * @param z
+     * @param isMagi
+     * @throws PortInUseException
+     * @throws NoSuchPortException
+     * @throws InterruptedException
+     * @throws UnsupportedCommOperationException
+     */
     @Override
     public void sendData(int x, int y, int z, boolean isMagi) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
@@ -401,8 +426,8 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public String getAllGoodsFromJsonFile(String yyyyMMdd) throws IOException {
 
-        StringBuilder fileName = getJsonFileName(yyyyMMdd);
-        return FileUtils.readFileToString(new File(fileName.toString()));
+        String fileName = getJsonFileName(yyyyMMdd);
+        return FileUtils.readFileToString(new File(fileName));
 
     }
 
@@ -412,12 +437,12 @@ public class SerialPortServiceImpl implements SerialPortService {
      * @return
      */
     @Override
-    public StringBuilder getJsonFileName(String yyyyMMdd) {
+    public String getJsonFileName(String yyyyMMdd) {
         StringBuilder fileName = new StringBuilder();
 
         fileName.append(config.SAVE_FINDER_PATH);
         fileName.append("finder_").append(yyyyMMdd).append(".json");
-        return fileName;
+        return fileName.toString();
     }
 
 

@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken;
 import com.importexpress.serialport.bean.ActionTypeEnum;
 import com.importexpress.serialport.bean.GoodsBean;
 import com.importexpress.serialport.service.SerialPort2Service;
-import com.importexpress.serialport.service.SerialPortService;
 import com.importexpress.serialport.util.Config;
 import com.importexpress.serialport.util.SerialTool;
 import gnu.io.*;
