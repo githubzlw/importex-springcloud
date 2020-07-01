@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.importexpress.serialport.bean.ActionTypeEnum;
 import com.importexpress.serialport.bean.GoodsBean;
+import com.importexpress.serialport.service.SerialPort2Service;
 import com.importexpress.serialport.service.SerialPortService;
 import com.importexpress.serialport.util.Config;
 import com.importexpress.serialport.util.SerialTool;
@@ -33,7 +34,7 @@ import static com.importexpress.serialport.bean.ActionTypeEnum.MAGI;
  */
 @Service
 @Slf4j
-public class SerialPortServiceImpl implements SerialPortService {
+public class SerialPort2ServiceImpl implements SerialPort2Service {
 
     /**当前位置设为零位 */
     private static final String ZERO_POSI = "#000000#000000#000000#X0Y0Z0#360";
@@ -65,7 +66,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
     private final AiImageServiceImpl aiImageService;
 
-    public SerialPortServiceImpl(Config config, AiImageServiceImpl aiImageService) {
+    public SerialPort2ServiceImpl(Config config, AiImageServiceImpl aiImageService) {
         this.config = config;
         this.aiImageService = aiImageService;
     }
@@ -299,8 +300,8 @@ public class SerialPortServiceImpl implements SerialPortService {
      */
     private void openSerial() throws NoSuchPortException, PortInUseException, UnsupportedCommOperationException, InterruptedException {
         if (serialPort == null) {
-            log.debug("begin open serial : [{}]",config.SERIAL_PORT);
-            serialPort = SerialTool.openSerialPort(config.SERIAL_PORT);
+            log.debug("begin open serial : [{}]",config.SERIAL_PORT2);
+            serialPort = SerialTool.openSerialPort(config.SERIAL_PORT2);
             Thread.sleep(MAX_SLEEP);
             try {
                 serialPort.notifyOnDataAvailable(true);
@@ -467,42 +468,5 @@ public class SerialPortServiceImpl implements SerialPortService {
     }
 
 
-//    @Override
-//    public void callCMD(String msg) {
-//
-//        Process process = null;
-//        try {
-//            process = Runtime.getRuntime().exec("python serial2.py", null,new File("D:\\work"));
-//        } catch (IOException e) {
-//            log.error("callCMD",e);
-//            throw new IllegalStateException("callCMD error");
-//        }
-//        int status = 0;
-//        try {
-////            OutputStream output = process.getOutputStream();
-////            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(output));
-////            writer.write(msg);
-////            writer.flush();
-////            writer.close();
-////            output.close();
-//
-//            InputStream is = process.getInputStream();
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                log.info(line);
-//            }
-//            status = process.waitFor();
-//            is.close();
-//            reader.close();
-//            process.destroy();
-//        } catch (Exception e) {
-//            log.error("callCMD",e);
-//        }
-//        if (status != 0) {
-//            log.error("Failed to call shell's command and the return status's is: " + status);
-//        }
-//
-//    }
 
 }
