@@ -41,18 +41,20 @@ public class SerialPortServiceImpl implements SerialPortService {
     /**普通的回到零点指令 */
     private static final String RETURN_ZERO_POSI = "#000000#000000#000000#000000#360";
 
+    /** 同步queues使用的存放内容*/
+    private static final int PUT_ONE = 10000;
+
     /** 同步queue*/
-    private static SynchronousQueue<Integer> synchronousQueue = new SynchronousQueue();
+    private static final SynchronousQueue<Integer> synchronousQueue = new SynchronousQueue<>();
 
     /** 光电操作同步queue*/
-    private static SynchronousQueue<String> synchronousLightQueue = new SynchronousQueue();
+    private static final SynchronousQueue<String> synchronousLightQueue = new SynchronousQueue<>();
 
 //    /**释放物品（消磁） */
 //    private static final String EXEC_MAGOFF = "#000000#000000#000000#MAGOFF#360";
 //
 //    /**吸取物品（吸磁） */
 //    private static final String EXEC_MAGNET = "#000000#000000#000000#MAGNET#360";
-
 
     /**操作之间间隔时间 */
     public static final int MAX_SLEEP = 3000;
@@ -111,7 +113,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         String strSendData = buildSendString(x, y, z, MAGI, isMagi);
         sendData(strSendData);
-        synchronousQueue.take();
+        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -146,47 +148,41 @@ public class SerialPortServiceImpl implements SerialPortService {
      * @param z
      * @param type
      * @param isMagi
-     * @throws PortInUseException
-     * @throws NoSuchPortException
-     * @throws InterruptedException
-     * @throws UnsupportedCommOperationException
      */
-    private String buildSendString(int x, int y, int z, ActionTypeEnum type, boolean isMagi) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
-        try {
-            if(x <0 || y <0 || z <0){
-                throw new IllegalArgumentException("input xyz is not right.");
-            }
+    private String buildSendString(int x, int y, int z, ActionTypeEnum type, boolean isMagi) {
 
-            if(x >config.MAX_VALUE_X || y >config.MAX_VALUE_Y || z >config.MAX_VALUE_Z){
-                throw new IllegalArgumentException("input xyz is not right.");
-            }
-
-            //sample: #000000#000000#000000#MAGOFF#360
-            StringBuilder sb = new StringBuilder();
-            sb.append('#').append(StringUtils.leftPad(String.valueOf(x),6,'0'));
-            sb.append('#').append(StringUtils.leftPad(String.valueOf(y),6,'0'));
-            sb.append('#').append(StringUtils.leftPad(String.valueOf(z),6,'0'));
-
-            switch(type){
-                case MAGI:
-                    if(isMagi){
-                        sb.append("#MAGNET");
-                    }else{
-                        sb.append("#MAGOFF");
-                    }
-                    break;
-                case LIGHT:
-                    sb.append("#LIGHT");
-                    break;
-                default:
-                    throw new IllegalArgumentException("type is invalid");
-            }
-            sb.append("#360");
-
-            return sb.toString();
-        } catch (Exception e) {
-            throw e;
+        if(x <0 || y <0 || z <0){
+            throw new IllegalArgumentException("input xyz is not right.");
         }
+
+        if(x >config.MAX_VALUE_X || y >config.MAX_VALUE_Y || z >config.MAX_VALUE_Z){
+            throw new IllegalArgumentException("input xyz is not right.");
+        }
+
+        //sample: #000000#000000#000000#MAGOFF#360
+        StringBuilder sb = new StringBuilder();
+        sb.append('#').append(StringUtils.leftPad(String.valueOf(x),6,'0'));
+        sb.append('#').append(StringUtils.leftPad(String.valueOf(y),6,'0'));
+        sb.append('#').append(StringUtils.leftPad(String.valueOf(z),6,'0'));
+
+        switch(type){
+            case MAGI:
+                if(isMagi){
+                    sb.append("#MAGNET");
+                }else{
+                    sb.append("#MAGOFF");
+                }
+                break;
+            case LIGHT:
+                sb.append("#LIGHT");
+                break;
+            default:
+                throw new IllegalArgumentException("type is invalid");
+        }
+        sb.append("#360");
+
+        return sb.toString();
+
     }
 
     /**
@@ -195,7 +191,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void returnZeroPosi() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(RETURN_ZERO_POSI);
-        synchronousQueue.take();
+        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -204,7 +200,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void setZeroPosi() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(ZERO_POSI);
-        synchronousQueue.take();
+        assert synchronousQueue.take()==PUT_ONE;
     }
 
 
@@ -214,7 +210,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagoff(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(x,y,z,false);
-        synchronousQueue.take();
+        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -223,7 +219,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagoff(String msg) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(msg);
-        synchronousQueue.take();
+        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -232,7 +228,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagNet(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(x,y,z,true);
-        synchronousQueue.take();
+        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -242,7 +238,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     public void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         sendData(config.MOVE_TO_CART_MAGNET_POSI);
-        synchronousQueue.take();
+        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -254,68 +250,62 @@ public class SerialPortServiceImpl implements SerialPortService {
         //移动到指定地点
         this.sendData(x,y,0,false);
 
-        String picUrlFrom = null;
-        try {
-            picUrlFrom = this.aiImageService.captureImage();
-        } catch (IOException e) {
-            log.error("moveGoods",e);
-        }
+//        String picUrlFrom = null;
+//        try {
+//            picUrlFrom = this.aiImageService.captureImage();
+//        } catch (IOException e) {
+//            log.error("moveGoods",e);
+//        }
 
         //伸Z
-        if(synchronousQueue.take()==1) {
-            log.debug("take 0(伸Z)");
-            this.sendData(x, y, z, false);
-        }
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("take 0(伸Z)");
+        this.sendData(x, y, z, false);
 
         //吸取物品
-        if(synchronousQueue.take()==1){
-            log.debug("take 1(吸取物品)");
-            this.execMagNet(x,y,z);
-        }
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("take 1(吸取物品)");
+        this.execMagNet(x,y,z);
+
 
         //缩Z
-        if(synchronousQueue.take()==1) {
-            log.debug("take 2(缩Z)");
-            this.sendData(x, y, 0, true);
-        }
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("take 2(缩Z)");
+        this.sendData(x, y, 0, true);
 
         //移动到托盘区域
-        if(synchronousQueue.take()==1) {
-            log.debug("take 3(移动到托盘区域)");
-            this.moveToCart();
-        }
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("take 3(移动到托盘区域)");
+        this.moveToCart();
 
         //释放物品
-        if(synchronousQueue.take()==1) {
-            log.debug("take 4(释放物品)");
-            this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
-        }
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("take 4(释放物品)");
+        this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
 
         //回到零点
-        if(synchronousQueue.take()==1) {
-            log.debug("take 5(回到零点)");
-            this.returnZeroPosi();
-        }
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("take 5(回到零点)");
+        this.returnZeroPosi();
 
-        //计算是否移动成功
-        try {
-            String picUrlTo = this.aiImageService.captureImage();
-            List<String> lstFrom = this.aiImageService.callCMD(picUrlFrom);
-            List<String> lstTo = this.aiImageService.callCMD(picUrlTo);
-            if(this.aiImageService.compareTwoList(lstFrom, lstTo)){
-                log.info("aiImage result:move succeed");
-            }else{
-                log.error("aiImage result:move failed");
-            }
-        } catch (IOException e) {
-            log.error("moveGoods",e);
-        }
+//        //计算是否移动成功
+//        try {
+//            String picUrlTo = this.aiImageService.captureImage();
+//            List<String> lstFrom = this.aiImageService.callCMD(picUrlFrom);
+//            List<String> lstTo = this.aiImageService.callCMD(picUrlTo);
+//            if(this.aiImageService.compareTwoList(lstFrom, lstTo)){
+//                log.info("aiImage result:move succeed");
+//            }else{
+//                log.error("aiImage result:move failed");
+//            }
+//        } catch (IOException e) {
+//            log.error("moveGoods",e);
+//        }
 
         //执行完毕，返回
-        if(synchronousQueue.take()==1){
-            log.debug("take 6(执行完毕，返回)");
-            Thread.sleep(MAX_SLEEP*5);
-        }
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("take 6(执行完毕，返回)");
+        Thread.sleep(MAX_SLEEP*5);
     }
 
     /**
@@ -366,7 +356,7 @@ public class SerialPortServiceImpl implements SerialPortService {
                                     try {
                                         if(sb.toString().contains("LimitSwitch")){
                                             log.debug("put queue");
-                                            synchronousQueue.put(1);
+                                            synchronousQueue.put(PUT_ONE);
                                         }else if(sb.toString().contains("LIGHT")){
                                             //光电操作
                                             log.debug("put light queue");
