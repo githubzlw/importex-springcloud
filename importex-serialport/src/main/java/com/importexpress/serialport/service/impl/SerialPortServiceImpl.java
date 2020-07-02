@@ -460,12 +460,13 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public List<GoodsBean> findAllGoodsByGrid()  {
 
+        long start = System.currentTimeMillis();
         int stepGap=config.STEP_VALUE;
         int count=0;
         List<GoodsBean> lstFinderGoods = new ArrayList<>();
         Map<Integer, Integer> mapTmp = new HashMap<>();
-        for(int x=0;x*stepGap<=config.MAX_VALUE_X;x++){
-            for(int y=0;y*stepGap<=config.MAX_VALUE_X;y++){
+        for(int x=1;x*stepGap<=config.MAX_VALUE_X;x++){
+            for(int y=1;y*stepGap<=config.MAX_VALUE_X;y++){
                 log.debug("x:[{}],y:[{}]",x*stepGap,y*stepGap);
                 ++count;
                 try {
@@ -485,7 +486,8 @@ public class SerialPortServiceImpl implements SerialPortService {
                 }
             }
         }
-        log.info("move count:[{}]",count);
+        log.info("move count:[{}],spend time:[{}]s",count,(System.currentTimeMillis() - start)/1000);
+
 
         //回到零位
         try {
