@@ -487,6 +487,13 @@ public class SerialPortServiceImpl implements SerialPortService {
         }
         log.info("move count:[{}]",count);
 
+        //回到零位
+        try {
+            this.setZeroPosi();
+        } catch (Exception e) {
+            log.error("setZeroPosi",e);
+        }
+
         return lstFinderGoods;
     }
 
