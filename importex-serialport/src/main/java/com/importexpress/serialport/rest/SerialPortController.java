@@ -3,7 +3,6 @@ package com.importexpress.serialport.rest;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.GoodsBean;
 import com.importexpress.serialport.service.SerialPortService;
-import com.importexpress.serialport.util.Config;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import io.swagger.annotations.Api;
@@ -28,11 +27,11 @@ public class SerialPortController {
 
     private final SerialPortService serialPortService;
 
-    private final Config config;
 
-    public SerialPortController(SerialPortService serialPortService, Config config) {
+
+    public SerialPortController(SerialPortService serialPortService) {
         this.serialPortService = serialPortService;
-        this.config = config;
+
     }
 
     @GetMapping("/sendData")
@@ -193,7 +192,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/moveGoodsByFinder")
-    @ApiOperation("移动货物 sample: 20200619144110070:1_1,20200624093705854:1_2,20200628132548686:1_5")
+    @ApiOperation("移动货物 sample: 20200619144110070:1@1-1,20200624093705854:1@1_2,20200628132548686:1@1_5")
     public CommonResult moveGoodsByFinder(@RequestParam String params) {
 
         String[] split = params.split(",");
@@ -204,6 +203,7 @@ public class SerialPortController {
                 map.put(kv[0], kv[1]);
             }
         }
+
         return CommonResult.success(serialPortService.moveGoodsByFinder(map));
 
     }

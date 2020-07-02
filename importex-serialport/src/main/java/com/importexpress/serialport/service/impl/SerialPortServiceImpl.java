@@ -2,8 +2,10 @@ package com.importexpress.serialport.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.ActionTypeEnum;
 import com.importexpress.serialport.bean.GoodsBean;
+import com.importexpress.serialport.service.SerialPort2Service;
 import com.importexpress.serialport.service.SerialPortService;
 import com.importexpress.serialport.util.Config;
 import com.importexpress.serialport.util.SerialTool;
@@ -68,14 +70,16 @@ public class SerialPortServiceImpl implements SerialPortService {
     /**图片识别service */
     private final AiImageServiceImpl aiImageService;
 
+    private final SerialPort2Service serialPort2Service;
     /**
      * 构造函数
      * @param config
      * @param aiImageService
      */
-    public SerialPortServiceImpl(Config config, AiImageServiceImpl aiImageService) {
+    public SerialPortServiceImpl(Config config, AiImageServiceImpl aiImageService, SerialPort2Service serialPort2Service) {
         this.config = config;
         this.aiImageService = aiImageService;
+        this.serialPort2Service = serialPort2Service;
     }
 
     /**
@@ -394,10 +398,18 @@ public class SerialPortServiceImpl implements SerialPortService {
 
             List<GoodsBean> lstGoodsBean =new Gson().fromJson(json,new TypeToken<List<GoodsBean>>(){}.getType());
             for(GoodsBean goodsBean : lstGoodsBean){
-                if(hmGoods.get(goodsBean.getGoodsId()) !=null){
+                String value = hmGoods.get(goodsBean.getGoodsId());
+                if(StringUtils.isNotEmpty(value)){
                     //匹配到需要搬动的货物
-                    ///this.moveGoods(goodsBean.getX(),goodsBean.getY(),config.MAX_VALUE_Z);
-                    result.put(goodsBean.getGoodsId(), 1);
+                    String[] split = value.split("@");
+                    assert split.length ==2;
+                    CommonResult commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
+                    if(commonResult.getCode()==CommonResult.SUCCESS){
+                        this.moveGoods(goodsBean.getX(),goodsBean.getY(),config.MAX_VALUE_Z);
+                        result.put(goodsBean.getGoodsId(), 1);
+                    }else{
+                        log.error("serialPort2Service.outOfStock return result is error");
+                    }
                 }
             }
         } catch (Exception e) {
