@@ -40,22 +40,7 @@ public class OutOfStockController {
 
     @GetMapping("/outOfStock/{turnTable}/{box}/{number}")
     @ApiOperation("调用出库指令")
-    public CommonResult outOfStock(@PathVariable(name = "turnTable")int turnTable, @PathVariable(name = "box")int box, @PathVariable(name = "number")int number){
-        StringBuffer appenUrl = new StringBuffer();
-        appenUrl.append(turnTable);
-        appenUrl.append("_");
-        appenUrl.append(box);
-        appenUrl.append("=");
-        appenUrl.append(number);
-        try{
-            serialPort2Service.sendData(String.valueOf(appenUrl));
-            return CommonResult.success();
-        }catch (NoSuchPortException ise){
-            return CommonResult.failed("No Such Port");
-        }catch (PortInUseException ise){
-            return CommonResult.failed("Port In Use");
-        }catch (Exception e){
-            return CommonResult.failed(e.getMessage());
-        }
+    public CommonResult outOfStock(@PathVariable(name = "turnTable")String turnTable, @PathVariable(name = "box")String box, @PathVariable(name = "number")String number){
+        return serialPort2Service.outOfStock(turnTable,box,number);
     }
 }

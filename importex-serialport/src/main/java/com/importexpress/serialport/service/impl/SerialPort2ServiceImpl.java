@@ -2,6 +2,7 @@ package com.importexpress.serialport.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.ActionTypeEnum;
 import com.importexpress.serialport.bean.GoodsBean;
 import com.importexpress.serialport.service.SerialPort2Service;
@@ -332,6 +333,10 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
                                             //光电操作
                                             log.debug("put light queue");
                                             synchronousLightQueue.put(sb.toString());
+                                        }else {
+                                            //出库操作获取串口信息
+                                            log.debug("put out of stock queue");
+                                            synchronousLightQueue.put(sb.toString());
                                         }
                                     } catch (InterruptedException ignored) {
                                     }
@@ -465,7 +470,33 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
 
         return lstFinderGoods;
     }
-
-
+    @Override
+    public CommonResult outOfStock(String turnTable, String box, String number){
+        StringBuffer appenUrl = new StringBuffer();
+        appenUrl.append(turnTable);
+        appenUrl.append("_");
+        appenUrl.append(box);
+        appenUrl.append("=");
+        appenUrl.append(number);
+        log.info(String.valueOf(appenUrl));
+        try{
+            sendData(String.valueOf(appenUrl));
+            String strReturnData = synchronousLightQueue.take();
+            log.info("take:[{}]",strReturnData);
+            if(strReturnData.contains("Success")){
+                log.debug("执行结果:[{}]",strReturnData);
+                return CommonResult.success(strReturnData);
+            }else {
+                log.error("error",strReturnData);
+                return CommonResult.failed(strReturnData);
+            }
+        }catch (NoSuchPortException ise){
+            return CommonResult.failed("No Such Port");
+        }catch (PortInUseException ise){
+            return CommonResult.failed("Port In Use");
+        }catch (Exception e){
+            return CommonResult.failed(e.getMessage());
+        }
+    }
 
 }
