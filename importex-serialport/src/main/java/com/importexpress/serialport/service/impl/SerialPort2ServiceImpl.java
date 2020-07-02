@@ -498,5 +498,27 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
             return CommonResult.failed(e.getMessage());
         }
     }
-
+    @Override
+    public CommonResult getNearSignal(){
+        try{
+            //获取接近开关信号，
+            sendData("000");
+            String strReturnData = synchronousLightQueue.take();
+            log.info("take:[{}]",strReturnData);
+            if(strReturnData.contains("Success")){
+                log.debug("执行结果:[{}]",strReturnData);
+                String[] split = strReturnData.split("#");
+                return CommonResult.success(split[1]);
+            }else {
+                log.error("error",strReturnData);
+                return CommonResult.failed(strReturnData);
+            }
+        }catch (NoSuchPortException ise){
+            return CommonResult.failed("No Such Port");
+        }catch (PortInUseException ise){
+            return CommonResult.failed("Port In Use");
+        }catch (Exception e){
+            return CommonResult.failed(e.getMessage());
+        }
+    }
 }

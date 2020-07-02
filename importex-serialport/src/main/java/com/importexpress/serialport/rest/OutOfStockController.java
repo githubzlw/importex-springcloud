@@ -40,8 +40,14 @@ public class OutOfStockController {
 
     // /outOfStock/001/001/001 1号转盘，1号仓库口，数量1
     @GetMapping("/outOfStock/{turnTable}/{box}/{number}")
-    @ApiOperation("调用出库指令")
+    @ApiOperation("调用出库指令 outOfStock/001/001/001 1号转盘，1号仓库口，数量1")
     public CommonResult outOfStock(@PathVariable(name = "turnTable")String turnTable, @PathVariable(name = "box")String box, @PathVariable(name = "number")String number){
         return serialPort2Service.outOfStock(turnTable,box,number);
+    }
+
+    @GetMapping("outOfStock/getNearSignal")
+    @ApiOperation("获取接近信号：000 无接触，001 有接触")
+    public CommonResult getNearSignal(){
+       return serialPort2Service.getNearSignal();
     }
 }
