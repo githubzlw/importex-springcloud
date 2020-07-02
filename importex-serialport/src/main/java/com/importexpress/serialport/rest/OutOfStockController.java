@@ -38,6 +38,7 @@ public class OutOfStockController {
     @Autowired
     SerialPort2Service serialPort2Service;
 
+    // /outOfStock/001/001/001 1号转盘，1号仓库口，数量1
     @GetMapping("/outOfStock/{turnTable}/{box}/{number}")
     @ApiOperation("调用出库指令")
     public CommonResult outOfStock(@PathVariable(name = "turnTable")String turnTable, @PathVariable(name = "box")String box, @PathVariable(name = "number")String number){
