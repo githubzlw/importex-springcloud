@@ -401,7 +401,7 @@ public class SerialPortServiceImpl implements SerialPortService {
                 String value = hmGoods.get(goodsBean.getGoodsId());
                 if(StringUtils.isNotEmpty(value)){
                     //匹配到需要搬动的货物
-                    String[] split = value.split("@");
+                    String[] split = value.split("-");
                     assert split.length ==2;
                     CommonResult commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
                     if(commonResult.getCode()==CommonResult.SUCCESS){

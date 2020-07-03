@@ -192,7 +192,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/moveGoodsByFinder")
-    @ApiOperation("移动货物 sample: 20200619144110070:1@1-1,20200624093705854:1@1_2,20200628132548686:1@1_5")
+    @ApiOperation("移动货物 sample: 20200619144110070:1-1,20200624093705854:1_2,20200628132548686:1_5")
     public CommonResult moveGoodsByFinder(@RequestParam String params) {
 
         String[] split = params.split(",");
