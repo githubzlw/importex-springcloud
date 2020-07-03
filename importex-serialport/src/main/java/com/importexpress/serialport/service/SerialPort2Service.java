@@ -50,4 +50,6 @@ public interface SerialPort2Service {
     List<GoodsBean> findAllGoodsByGrid();
 
     CommonResult outOfStock(String turnTable, String box, String number);
+
+    CommonResult getNearSignal();
 }
