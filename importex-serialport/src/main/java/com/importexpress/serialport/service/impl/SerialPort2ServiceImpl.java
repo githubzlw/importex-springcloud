@@ -472,6 +472,32 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
     }
     @Override
     public CommonResult outOfStock(String turnTable, String box, String number){
+        if(!"000".equals(number)){
+            //取货转盘
+            switch (box){
+                case "001":
+                    box = "004";
+                    break;
+                case "002":
+                    box = "005";
+                    break;
+                case "003":
+                    box = "006";
+                    break;
+                case "004":
+                    box = "001";
+                    break;
+                case "005":
+                    box = "002";
+                    break;
+                case "006":
+                    box = "003";
+                    break;
+                default:
+                    break;
+
+            }
+        }
         StringBuffer appenUrl = new StringBuffer();
         appenUrl.append(turnTable);
         appenUrl.append("_");
