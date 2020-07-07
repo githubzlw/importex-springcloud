@@ -50,4 +50,10 @@ public class OutOfStockController {
     public CommonResult getNearSignal(){
        return serialPort2Service.getNearSignal();
     }
+
+    @GetMapping("outOfStock/getLightSignal")
+    @ApiOperation("获取接近信号：000 无，001 有")
+    public CommonResult getLightSignal(){
+        return serialPort2Service.getLightSignal();
+    }
 }

@@ -52,4 +52,6 @@ public interface SerialPort2Service {
     CommonResult outOfStock(String turnTable, String box, String number);
 
     CommonResult getNearSignal();
+
+    CommonResult getLightSignal();
 }
