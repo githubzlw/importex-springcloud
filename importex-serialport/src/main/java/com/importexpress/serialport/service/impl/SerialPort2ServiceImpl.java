@@ -525,7 +525,7 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
     public CommonResult getLightSignal(){
         try{
             //获取接近开关信号，
-            sendData("000");
+            sendData("0000");
             String strReturnData = synchronousLightQueue.take();
             log.info("take:[{}]",strReturnData);
             if(strReturnData.contains("Success")){
