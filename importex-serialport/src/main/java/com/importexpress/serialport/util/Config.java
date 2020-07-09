@@ -37,6 +37,9 @@ public class Config {
     @Value("${MAX_VALUE_Z}")
     public int MAX_VALUE_Z;
 
+    @Value("${GOODS_MOVE_VALUE_Z}")
+    public int GOODS_MOVE_VALUE_Z;
+
     @Value("${STEP_VALUE}")
     public int STEP_VALUE;
 

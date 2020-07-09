@@ -66,10 +66,13 @@ public class SerialPortServiceImpl implements SerialPortService {
 //    private static final String EXEC_MAGNET = "#000000#000000#000000#MAGNET#000";
 
     /**操作之间间隔时间 */
-    public static final int MAX_SLEEP = 3000;
+    private static final int MAX_SLEEP = 3000;
 
     /**出库商品再入库的空位置的最大数量 */
-    public static final int RETURN_MOVE_SIZE = 10;
+    private static final int RETURN_MOVE_SIZE = 10;
+
+    /**退货区货物列表 */
+    private static final String FILE_RETURN_MOVE = "returnMove.txt";
 
     /**读取配置 */
     private final Config config;
@@ -465,10 +468,43 @@ public class SerialPortServiceImpl implements SerialPortService {
                     assert split.length ==2;
                     CommonResult commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
                     if(commonResult.getCode()==CommonResult.SUCCESS){
-                        this.moveGoods(goodsBean.getX(),goodsBean.getY(),config.MAX_VALUE_Z);
+                        this.moveGoods(goodsBean.getX(),goodsBean.getY(),config.GOODS_MOVE_VALUE_Z);
                         result.put(goodsBean.getGoodsId(), 1);
                     }else{
                         log.error("serialPort2Service.outOfStock return result is error");
+                    }
+                }else {
+                    //从退货区再查询
+
+                    List<ReturnMoveBean> lstBean;
+                    File file = new File(config.SAVE_FINDER_PATH + FILE_RETURN_MOVE);
+                    if(file.exists()) {
+                        String strReturnMove = FileUtils.readFileToString(file);
+                        lstBean =
+                                new Gson().fromJson(strReturnMove, new TypeToken<List<ReturnMoveBean>>() {
+                                }.getType());
+                        for(ReturnMoveBean item : lstBean){
+                            if(goodsBean.getGoodsId().equals(item.getGoodsId())){
+                                //找到货物
+                                String[] split = value.split("-");
+                                assert split.length ==2;
+                                CommonResult commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
+                                if(commonResult.getCode()==CommonResult.SUCCESS){
+                                    int x = config.RETURN_VALUE_X;
+                                    int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex()+1);
+                                    this.moveGoods(x,y,config.GOODS_MOVE_VALUE_Z);
+                                    //清空此位置
+                                    item.setGoodsId(null);
+                                    item.setHave(false);
+                                    result.put(goodsBean.getGoodsId(), 1);
+                                    break;
+                                }else{
+                                    log.error("serialPort2Service.outOfStock return result is error");
+                                }
+                            }
+                        }
+                        //保存json到文件
+                        saveReturnMoveFile(lstBean, file);
                     }
                 }
             }
@@ -480,6 +516,17 @@ public class SerialPortServiceImpl implements SerialPortService {
     }
 
     /**
+     * save json to return_move.txt file
+     * @param lstBean
+     * @param file
+     * @throws IOException
+     */
+    private void saveReturnMoveFile(List<ReturnMoveBean> lstBean, File file) throws IOException {
+        String saveJson = new Gson().toJson(lstBean);
+        FileUtils.writeStringToFile(file, saveJson);
+    }
+
+    /**
      * 出库商品再入库
      *
      */
@@ -488,7 +535,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         try {
 
-            File file = new File(config.SAVE_FINDER_PATH + "returnMove.txt");
+            File file = new File(config.SAVE_FINDER_PATH + FILE_RETURN_MOVE);
             String strReturnMove;
             List<ReturnMoveBean> lstBean;
             if(file.exists()){
@@ -513,11 +560,13 @@ public class SerialPortServiceImpl implements SerialPortService {
                     int x = config.RETURN_VALUE_X;
                     int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex()+1);
                     CommonResult commonResult = serialPort2Service.outOfStock(turnTable, box, "0");
+                    //CommonResult commonResult = CommonResult.success();
                     if(commonResult.getCode()==CommonResult.SUCCESS){
                         //移动货物
-                        this.returnMoveGoods(x,y,config.MAX_VALUE_Z);
+                        this.returnMoveGoods(x,y,config.GOODS_MOVE_VALUE_Z);
                         item.setHave(true);
                         item.setGoodsId(goodsId);
+                        break;
                     }else{
                         log.error("serialPort2Service.outOfStock return result is error");
                         return -2;
@@ -526,8 +575,7 @@ public class SerialPortServiceImpl implements SerialPortService {
             }
 
             //保存json到文件
-            String json = new Gson().toJson(lstBean);
-            FileUtils.writeStringToFile(file,json);
+            saveReturnMoveFile(lstBean, file);
 
         } catch (Exception e) {
             log.error("moveGoodsByFinder",e);

@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class SerialPortServiceImplTest{
+public class SerialPortServiceTest {
 
     @Autowired
     private SerialPortService serialPortService;
@@ -55,6 +55,12 @@ public class SerialPortServiceImplTest{
 
         Map<String, String> hmGoods = new HashMap<>();
         serialPortService.moveGoodsByFinder(hmGoods);
+    }
+
+    @Test
+    public void returnMoveGoodsByFinder() {
+
+        serialPortService.returnMoveGoodsByFinder("1", "2-1", "123456789");
     }
 
 
