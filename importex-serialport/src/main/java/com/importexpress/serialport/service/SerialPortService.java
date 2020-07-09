@@ -117,7 +117,7 @@ public interface SerialPortService {
      * @param mapTmp
      * @return
      */
-    String readGoodsId(Map<Integer, Integer> mapTmp);
+    String readGoodsId();
 
     /**
      * 地毯式扫描货物(定时任务执行），进行入库操作准备

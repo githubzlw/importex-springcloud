@@ -460,11 +460,10 @@ public class SerialPortServiceImpl implements SerialPortService {
 
     /**
      * 条形码读取
-     * @param mapTmp
      * @return
      */
     @Override
-    public String readGoodsId(Map<Integer, Integer> mapTmp) {
+    public String readGoodsId() {
         try {
             this.sendData(DO_SCAN);
             String result = synchronousScanQueue.take();//6970194002330#SCAN#360
@@ -508,7 +507,7 @@ public class SerialPortServiceImpl implements SerialPortService {
                         continue;
                     }
 
-                    String strGoodsId = this.readGoodsId(mapTmp);
+                    String strGoodsId = this.readGoodsId();
                     if(StringUtils.isNotEmpty(strGoodsId)){
                         log.info("find goods (x,y):[{},{}]",x*stepGap,y*stepGap);
                         lstFinderGoods.add(
