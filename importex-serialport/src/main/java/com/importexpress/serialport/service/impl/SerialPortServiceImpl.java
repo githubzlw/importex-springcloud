@@ -39,13 +39,13 @@ import static com.importexpress.serialport.bean.ActionTypeEnum.MAGI;
 public class SerialPortServiceImpl implements SerialPortService {
 
     /**当前位置设为零位 */
-    private static final String ZERO_POSI = "#000000#000000#000000#X0Y0Z0#360";
+    private static final String ZERO_POSI = "#000000#000000#000000#X0Y0Z0#000";
 
     /**普通的回到零点指令 */
-    private static final String RETURN_ZERO_POSI = "#000000#000000#000000#000000#360";
+    private static final String RETURN_ZERO_POSI = "#000000#000000#000000#000000#000";
 
     /**条形码扫描 */
-    private static final String DO_SCAN = "#000000#000000#000000#SCAN#360";
+    private static final String DO_SCAN = "#000000#000000#000000#SCAN#000";
 
     /** 同步queues使用的存放内容*/
     private static final int PUT_ONE = 10000;
