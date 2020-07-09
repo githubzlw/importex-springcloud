@@ -108,6 +108,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         try {
             openSerial();
+            log.info("sendData:{}",msg);
             SerialTool.sendData(serialPort, (msg+"\n").getBytes());
         } catch (Exception e) {
             throw e;
