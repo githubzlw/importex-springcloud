@@ -43,6 +43,9 @@ public class SerialPortServiceImpl implements SerialPortService {
     /**普通的回到零点指令 */
     private static final String RETURN_ZERO_POSI = "#000000#000000#000000#000000#360";
 
+    /**条形码扫描 */
+    private static final String DO_SCAN = "#000000#000000#000000#SCAN#360";
+
     /** 同步queues使用的存放内容*/
     private static final int PUT_ONE = 10000;
 
@@ -51,6 +54,9 @@ public class SerialPortServiceImpl implements SerialPortService {
 
     /** 光电操作同步queue*/
     private static final SynchronousQueue<String> synchronousLightQueue = new SynchronousQueue<>();
+
+    /** 条形码扫描同步queue*/
+    private static final SynchronousQueue<String> synchronousScanQueue = new SynchronousQueue<>();
 
 //    /**释放物品（消磁） */
 //    private static final String EXEC_MAGOFF = "#000000#000000#000000#MAGOFF#360";
@@ -365,6 +371,10 @@ public class SerialPortServiceImpl implements SerialPortService {
                                             //光电操作
                                             log.debug("put light queue");
                                             synchronousLightQueue.put(sb.toString());
+                                        }else if(sb.toString().contains("SCAN")){
+                                            //条形码扫描
+                                            log.debug("put scan queue");
+                                            synchronousScanQueue.put(sb.toString());
                                         }
                                     } catch (InterruptedException ignored) {
                                     }
@@ -455,15 +465,26 @@ public class SerialPortServiceImpl implements SerialPortService {
      */
     @Override
     public String readGoodsId(Map<Integer, Integer> mapTmp) {
-        //TODO 扫描条形码
-        String[] random = {"20200619144110070","20200624093705854"};
-        int index = new Random().nextInt(random.length);
-        if(mapTmp.get(index)==null){
-            mapTmp.put(index, 1);
-            return random[index];
-        }else{
-            return null;
+        try {
+            this.sendData(DO_SCAN);
+            String result = synchronousScanQueue.take();//6970194002330#SCAN#360
+            log.info("条形码扫描结果:{}",result);
+            String[] split = result.split("#");
+            assert split.length == 3;
+            return split[0];
+        } catch (Exception e) {
+            log.error("readGoodsId",e);
+            return "";
         }
+//
+//        String[] random = {"20200619144110070","20200624093705854"};
+//        int index = new Random().nextInt(random.length);
+//        if(mapTmp.get(index)==null){
+//            mapTmp.put(index, 1);
+//            return random[index];
+//        }else{
+//            return null;
+//        }
     }
 
     /**
