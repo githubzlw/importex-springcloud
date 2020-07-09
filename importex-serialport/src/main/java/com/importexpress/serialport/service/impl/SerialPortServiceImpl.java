@@ -362,6 +362,7 @@ public class SerialPortServiceImpl implements SerialPortService {
                                         } catch (InterruptedException ignored) {
                                         }
                                     } while (inputStream.available() > 0);
+
                                     log.debug("receivd data:[{}]",sb.toString());
                                     try {
                                         if(sb.toString().contains("LimitSwitch")){
@@ -475,15 +476,7 @@ public class SerialPortServiceImpl implements SerialPortService {
             log.error("readGoodsId",e);
             return "";
         }
-//
-//        String[] random = {"20200619144110070","20200624093705854"};
-//        int index = new Random().nextInt(random.length);
-//        if(mapTmp.get(index)==null){
-//            mapTmp.put(index, 1);
-//            return random[index];
-//        }else{
-//            return null;
-//        }
+
     }
 
     /**
@@ -496,7 +489,6 @@ public class SerialPortServiceImpl implements SerialPortService {
         int stepGap=config.STEP_VALUE;
         int count=0;
         List<GoodsBean> lstFinderGoods = new ArrayList<>();
-        Map<Integer, Integer> mapTmp = new HashMap<>();
         for(int x=1;x*stepGap<=config.MAX_VALUE_X;x++){
             for(int y=1;y*stepGap<=config.MAX_VALUE_X;y++){
                 log.debug("x:[{}],y:[{}]",x*stepGap,y*stepGap);
@@ -519,7 +511,6 @@ public class SerialPortServiceImpl implements SerialPortService {
             }
         }
         log.info("move count:[{}],spend time:[{}]s",count,(System.currentTimeMillis() - start)/1000);
-
 
         //回到零位
         try {

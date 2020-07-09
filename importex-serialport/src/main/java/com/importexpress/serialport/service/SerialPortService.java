@@ -114,7 +114,6 @@ public interface SerialPortService {
 
     /**
      * 条形码读取
-     * @param mapTmp
      * @return
      */
     String readGoodsId();

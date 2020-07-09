@@ -258,8 +258,7 @@ public class SerialPortController {
     public CommonResult readGoodsId() {
 
         try {
-            String goodsId= serialPortService.readGoodsId();
-            return CommonResult.success(goodsId);
+            return CommonResult.success(serialPortService.readGoodsId());
 
         } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
