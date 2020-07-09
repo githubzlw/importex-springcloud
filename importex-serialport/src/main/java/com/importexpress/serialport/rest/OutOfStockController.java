@@ -56,4 +56,9 @@ public class OutOfStockController {
     public CommonResult getLightSignal(){
         return serialPort2Service.getLightSignal();
     }
+    @GetMapping("outOfStock/initStep")
+    @ApiOperation("转盘归零：000 失败，001 成功")
+    public CommonResult initStep(){
+        return serialPort2Service.initStep();
+    }
 }
