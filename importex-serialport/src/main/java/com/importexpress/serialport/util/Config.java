@@ -19,6 +19,15 @@ public class Config {
     @Value("${MOVE_TO_CART_MAGOFF_POSI}")
     public String MOVE_TO_CART_MAGOFF_POSI;
 
+    @Value("${CART_X}")
+    public int CART_X;
+
+    @Value("${CART_Y}")
+    public int CART_Y;
+
+    @Value("${CART_Z}")
+    public int CART_Z;
+
     @Value("${MAX_VALUE_X}")
     public int MAX_VALUE_X;
 
@@ -30,6 +39,15 @@ public class Config {
 
     @Value("${STEP_VALUE}")
     public int STEP_VALUE;
+
+    @Value("${RETURN_VALUE_X}")
+    public int RETURN_VALUE_X;
+
+    @Value("${RETURN_VALUE_Y}")
+    public int RETURN_VALUE_Y;
+
+    @Value("${RETURN_STEP_VALUE}")
+    public int RETURN_STEP_VALUE;
 
     @Value("${yingshi.api.url.token}")
     public String YINGSHI_API_URL_TOKEN;

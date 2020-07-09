@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.ActionTypeEnum;
 import com.importexpress.serialport.bean.GoodsBean;
+import com.importexpress.serialport.bean.ReturnMoveBean;
 import com.importexpress.serialport.service.SerialPort2Service;
 import com.importexpress.serialport.service.SerialPortService;
 import com.importexpress.serialport.util.Config;
@@ -66,6 +67,9 @@ public class SerialPortServiceImpl implements SerialPortService {
 
     /**操作之间间隔时间 */
     public static final int MAX_SLEEP = 3000;
+
+    /**出库商品再入库的空位置的最大数量 */
+    public static final int RETURN_MOVE_SIZE = 10;
 
     /**读取配置 */
     private final Config config;
@@ -319,6 +323,51 @@ public class SerialPortServiceImpl implements SerialPortService {
     }
 
     /**
+     * 移动物品从托盘区放到仓库区,再回到零点
+     */
+    @Override
+    public void returnMoveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
+
+        //移动到托盘区域
+        log.debug("移动到托盘区域");
+        this.moveToCart();
+
+        //伸Z
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("伸Z");
+        this.sendData(config.CART_X, config.CART_Y, config.CART_Z, false);
+
+        //吸取物品
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("吸取物品");
+        this.execMagNet(config.CART_X, config.CART_Y, config.CART_Z);
+
+        //缩Z
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("缩Z");
+        this.sendData(config.CART_X, config.CART_Y, 0, true);
+
+        //移动到指定地点
+        assert synchronousQueue.take() == PUT_ONE;
+        this.sendData(x,y,0,true);
+
+        //释放物品
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("释放物品");
+        this.execMagoff(x,y,0);
+
+        //回到零点
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("回到零点");
+        this.returnZeroPosi();
+
+        //执行完毕，返回
+        assert synchronousQueue.take() == PUT_ONE;
+        log.debug("执行完毕，返回");
+        Thread.sleep(MAX_SLEEP*5);
+    }
+
+    /**
      * 关闭串口（长时间不用需要关闭）
      */
     @Override
@@ -428,6 +477,57 @@ public class SerialPortServiceImpl implements SerialPortService {
         }
 
         return result;
+    }
+
+    /**
+     * 出库商品再入库
+     *
+     */
+    @Override
+    public int returnMoveGoodsByFinder(String turnTable, String box, String goodsId)  {
+
+        try {
+
+            File file = new File(config.SAVE_FINDER_PATH + "returnMove.txt");
+            String strReturnMove;
+            List<ReturnMoveBean> lstBean;
+            if(file.exists()){
+                strReturnMove =FileUtils.readFileToString(file);
+                lstBean =
+                        new Gson().fromJson(strReturnMove,new TypeToken<List<ReturnMoveBean>>(){}.getType());
+            }else{
+                //初次
+                lstBean = new ArrayList<>();
+                ReturnMoveBean item;
+                for(int i = 0; i< RETURN_MOVE_SIZE; i++){
+                    item = new ReturnMoveBean();
+                    item.setIndex(i);
+                    lstBean.add(item);
+                }
+            }
+
+            //查找空位,找到后移动物体
+            for(ReturnMoveBean item : lstBean){
+                if(!item.isHave()){
+                    //找到空位
+                    int x = config.RETURN_VALUE_X;
+                    int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex()+1);
+                    CommonResult commonResult = serialPort2Service.outOfStock(turnTable, box, "0");
+                    if(commonResult.getCode()==CommonResult.SUCCESS){
+                        this.returnMoveGoods(x,y,config.MAX_VALUE_Z);
+                    }else{
+                        log.error("serialPort2Service.outOfStock return result is error");
+                        return -2;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            log.error("moveGoodsByFinder",e);
+            return -1;
+        }
+
+        return 0;
     }
 
     /**

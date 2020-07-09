@@ -86,6 +86,8 @@ public interface SerialPortService {
      */
     void moveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
+    void returnMoveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+
     /**
      * 关闭串口（长时间不用需要关闭）
      */
@@ -96,6 +98,15 @@ public interface SerialPortService {
      * @param hmGoods
      */
     Map<String,Integer> moveGoodsByFinder(Map<String, String> hmGoods) ;
+
+    /**
+     * 出库商品再入库
+     * @param turnTable
+     * @param box
+     * @param goodsId
+     * @return
+     */
+    int returnMoveGoodsByFinder(String turnTable, String box, String goodsId);
 
     /**
      * 读取指定日期的json文件（定时任务生成）

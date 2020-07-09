@@ -192,24 +192,6 @@ public class SerialPortController {
         }
     }
 
-    @GetMapping("/moveGoodsByFinder")
-    @ApiOperation("移动货物 sample: 20200619144110070:1-1,20200624093705854:1_2,20200628132548686:1_5")
-    public CommonResult moveGoodsByFinder(@RequestParam String params) {
-
-        String[] split = params.split(",");
-        Map<String, String> map = new HashMap<>(split.length);
-        for(String str : split){
-            String[] kv = str.split(":");
-            if(kv.length == 2){
-                map.put(kv[0], kv[1]);
-            }
-        }
-
-        return CommonResult.success(serialPortService.moveGoodsByFinder(map));
-
-    }
-
-
     @GetMapping("/getAllGoods")
     @ApiOperation("读取指定日期的库存列表")
     public CommonResult getAllGoods(@RequestParam String yyyyMMdd) {
@@ -221,6 +203,40 @@ public class SerialPortController {
             return CommonResult.failed(e.getMessage());
         }
 
+    }
+
+    @GetMapping("/moveGoodsByFinder")
+    @ApiOperation("出库 sample: 20200619144110070:1-1,20200624093705854:1_2,20200628132548686:1_5")
+    public CommonResult moveGoodsByFinder(@RequestParam String params) {
+
+        Map<String, String> map = ofMap(params);
+
+        return CommonResult.success(serialPortService.moveGoodsByFinder(map));
+
+    }
+
+    @GetMapping("/returnMoveGoodsByFinder")
+    @ApiOperation("出库商品再入库")
+    public CommonResult returnMoveGoodsByFinder(@RequestParam String turnTable,@RequestParam String box,@RequestParam String goodsId) {
+
+        int result = serialPortService.returnMoveGoodsByFinder(turnTable, box, goodsId);
+        if(result ==0){
+            return CommonResult.success();
+        }else{
+            return CommonResult.failed();
+        }
+    }
+
+    private Map<String, String> ofMap(@RequestParam String params) {
+        String[] split = params.split(",");
+        Map<String, String> map = new HashMap<>(split.length);
+        for (String str : split) {
+            String[] kv = str.split(":");
+            if (kv.length == 2) {
+                map.put(kv[0], kv[1]);
+            }
+        }
+        return map;
     }
 
     @GetMapping("/readLight")
