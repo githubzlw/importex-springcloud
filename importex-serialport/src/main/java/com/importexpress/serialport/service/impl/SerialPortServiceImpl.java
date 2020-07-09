@@ -193,7 +193,7 @@ public class SerialPortServiceImpl implements SerialPortService {
             default:
                 throw new IllegalArgumentException("type is invalid");
         }
-        sb.append("#360");
+        sb.append("#000");
 
         return sb.toString();
 
