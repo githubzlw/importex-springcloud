@@ -60,10 +60,10 @@ public class SerialPortServiceImpl implements SerialPortService {
     private static final SynchronousQueue<String> synchronousScanQueue = new SynchronousQueue<>();
 
 //    /**释放物品（消磁） */
-//    private static final String EXEC_MAGOFF = "#000000#000000#000000#MAGOFF#360";
+//    private static final String EXEC_MAGOFF = "#000000#000000#000000#MAGOFF#000";
 //
 //    /**吸取物品（吸磁） */
-//    private static final String EXEC_MAGNET = "#000000#000000#000000#MAGNET#360";
+//    private static final String EXEC_MAGNET = "#000000#000000#000000#MAGNET#000";
 
     /**操作之间间隔时间 */
     public static final int MAX_SLEEP = 3000;
@@ -173,7 +173,7 @@ public class SerialPortServiceImpl implements SerialPortService {
             throw new IllegalArgumentException("input xyz is not right.");
         }
 
-        //sample: #000000#000000#000000#MAGOFF#360
+        //sample: #000000#000000#000000#MAGOFF#000
         StringBuilder sb = new StringBuilder();
         sb.append('#').append(StringUtils.leftPad(String.valueOf(x),6,'0'));
         sb.append('#').append(StringUtils.leftPad(String.valueOf(y),6,'0'));
@@ -574,7 +574,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     public String readGoodsId() {
         try {
             this.sendData(DO_SCAN);
-            String result = synchronousScanQueue.take();//6970194002330#SCAN#360
+            String result = synchronousScanQueue.take();//6970194002330#SCAN#000
             log.info("条形码扫描结果:{}",result);
             String[] split = result.split("#");
             assert split.length == 3;
