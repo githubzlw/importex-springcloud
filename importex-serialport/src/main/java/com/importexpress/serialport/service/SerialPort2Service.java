@@ -54,4 +54,6 @@ public interface SerialPort2Service {
     CommonResult getNearSignal();
 
     CommonResult getLightSignal();
+
+    CommonResult initStep();
 }
