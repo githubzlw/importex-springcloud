@@ -514,13 +514,20 @@ public class SerialPortServiceImpl implements SerialPortService {
                     int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex()+1);
                     CommonResult commonResult = serialPort2Service.outOfStock(turnTable, box, "0");
                     if(commonResult.getCode()==CommonResult.SUCCESS){
+                        //移动货物
                         this.returnMoveGoods(x,y,config.MAX_VALUE_Z);
+                        item.setHave(true);
+                        item.setGoodsId(goodsId);
                     }else{
                         log.error("serialPort2Service.outOfStock return result is error");
                         return -2;
                     }
                 }
             }
+
+            //保存json到文件
+            String json = new Gson().toJson(lstBean);
+            FileUtils.writeStringToFile(file,json);
 
         } catch (Exception e) {
             log.error("moveGoodsByFinder",e);
