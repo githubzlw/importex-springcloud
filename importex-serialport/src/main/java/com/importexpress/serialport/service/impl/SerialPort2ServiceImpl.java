@@ -472,6 +472,9 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
     }
     @Override
     public CommonResult outOfStock(String turnTable, String box, String number){
+        turnTable = parseParam(turnTable);
+        box = parseParam(box);
+        number = parseParam(number);
         if(!"000".equals(number)){
             //取货转盘
             switch (box){
@@ -592,5 +595,24 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
+    }
+
+    public String parseParam(String param){
+        int length = param.length();
+        switch (length){
+            case 1:
+                param = "00"+param;
+                break;
+            case 2:
+                param = "0"+param;
+                break;
+            case 3:
+                break;
+            default:
+                param = "001";
+                break;
+        }
+
+        return param;
     }
 }
