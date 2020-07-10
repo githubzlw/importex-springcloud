@@ -131,7 +131,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         String strSendData = buildSendString(x, y, z, MAGI, isMagi);
         sendData(strSendData);
-        assert synchronousQueue.take()==PUT_ONE;
+        //assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -276,35 +276,40 @@ public class SerialPortServiceImpl implements SerialPortService {
 //        }
 
         //伸Z
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("take 0(伸Z)");
-        this.sendData(x, y, z, false);
+        if(synchronousQueue.take() == PUT_ONE){
+            log.debug("take 0(伸Z)");
+            this.sendData(x, y, z, false);
+        }
 
         //吸取物品
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("take 1(吸取物品)");
-        this.execMagNet(x,y,z);
-
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("take 1(吸取物品)");
+            this.execMagNet(x, y, z);
+        }
 
         //缩Z
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("take 2(缩Z)");
-        this.sendData(x, y, 0, true);
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("take 2(缩Z)");
+            this.sendData(x, y, 0, true);
+        }
 
         //移动到托盘区域
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("take 3(移动到托盘区域)");
-        this.moveToCart();
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("take 3(移动到托盘区域)");
+            this.moveToCart();
+        }
 
         //释放物品
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("take 4(释放物品)");
-        this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("take 4(释放物品)");
+            this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
+        }
 
         //回到零点
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("take 5(回到零点)");
-        this.returnZeroPosi();
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("take 5(回到零点)");
+            this.returnZeroPosi();
+        }
 
 //        //计算是否移动成功
 //        try {
@@ -321,9 +326,10 @@ public class SerialPortServiceImpl implements SerialPortService {
 //        }
 
         //执行完毕，返回
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("take 6(执行完毕，返回)");
-        Thread.sleep(MAX_SLEEP*5);
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("take 6(执行完毕，返回)");
+            Thread.sleep(MAX_SLEEP * 5);
+        }
     }
 
     /**
@@ -337,38 +343,45 @@ public class SerialPortServiceImpl implements SerialPortService {
         this.moveToCart();
 
         //伸Z
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("伸Z");
-        this.sendData(config.CART_X, config.CART_Y, config.CART_Z, false);
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("伸Z");
+            this.sendData(config.CART_X, config.CART_Y, config.CART_Z, false);
+        }
 
         //吸取物品
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("吸取物品");
-        this.execMagNet(config.CART_X, config.CART_Y, config.CART_Z);
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("吸取物品");
+            this.execMagNet(config.CART_X, config.CART_Y, config.CART_Z);
+        }
 
         //缩Z
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("缩Z");
-        this.sendData(config.CART_X, config.CART_Y, 0, true);
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("缩Z");
+            this.sendData(config.CART_X, config.CART_Y, 0, true);
+        }
 
         //移动到指定地点
-        assert synchronousQueue.take() == PUT_ONE;
-        this.sendData(x,y,0,true);
+        if(synchronousQueue.take() == PUT_ONE) {
+            this.sendData(x, y, 0, true);
+        }
 
         //释放物品
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("释放物品");
-        this.execMagoff(x,y,0);
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("释放物品");
+            this.execMagoff(x, y, 0);
+        }
 
         //回到零点
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("回到零点");
-        this.returnZeroPosi();
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("回到零点");
+            this.returnZeroPosi();
+        }
 
         //执行完毕，返回
-        assert synchronousQueue.take() == PUT_ONE;
-        log.debug("执行完毕，返回");
-        Thread.sleep(MAX_SLEEP*5);
+        if(synchronousQueue.take() == PUT_ONE) {
+            log.debug("执行完毕，返回");
+            Thread.sleep(MAX_SLEEP * 5);
+        }
     }
 
     /**
@@ -416,10 +429,10 @@ public class SerialPortServiceImpl implements SerialPortService {
                                         }
                                     } while (inputStream.available() > 0);
 
-                                    log.debug("receivd data:[{}]",sb.toString());
+                                    log.debug("received data:[{}]",sb.toString());
                                     try {
                                         if(sb.toString().contains("LimitSwitch")){
-                                            log.debug("put queue");
+                                            log.debug("put LimitSwitch queue");
                                             synchronousQueue.put(PUT_ONE);
                                         }else if(sb.toString().contains("LIGHT")){
                                             //光电操作
@@ -449,7 +462,7 @@ public class SerialPortServiceImpl implements SerialPortService {
      * @param hmGoods
      */
     @Override
-    public Map<String,Integer> moveGoodsByFinder(Map<String, String> hmGoods)  {
+    public Map<String,Integer> moveGoodsByFinder(Map<String, String> hmGoods) throws IOException {
 
         Map<String, Integer> result = new HashMap<>(hmGoods.size());
         if(hmGoods.size()==0){
@@ -465,14 +478,15 @@ public class SerialPortServiceImpl implements SerialPortService {
                 String value = hmGoods.get(goodsBean.getGoodsId());
                 if(StringUtils.isNotEmpty(value)){
                     //匹配到需要搬动的货物
-                    String[] split = value.split("-");
+                    log.debug("匹配到需要搬动的货物,value={}",goodsBean);
+                    String[] split = value.split("_");
                     assert split.length ==2;
                     CommonResult commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
                     if(commonResult.getCode()==CommonResult.SUCCESS){
-                        this.moveGoods(goodsBean.getX(),goodsBean.getY(),config.GOODS_MOVE_VALUE_Z);
+                        this.moveGoods(goodsBean.getX(),goodsBean.getY(),goodsBean.getY());
                         result.put(goodsBean.getGoodsId(), 1);
                     }else{
-                        log.error("serialPort2Service.outOfStock return result is error");
+                        throw new IOException("serialPort2Service.outOfStock return result is error");
                     }
                 }else {
                     //从退货区再查询
@@ -511,6 +525,7 @@ public class SerialPortServiceImpl implements SerialPortService {
             }
         } catch (Exception e) {
             log.error("moveGoodsByFinder",e);
+            throw new IOException(e.getMessage());
         }
 
         return result;

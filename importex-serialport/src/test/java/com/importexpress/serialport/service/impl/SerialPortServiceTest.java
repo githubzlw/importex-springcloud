@@ -51,7 +51,7 @@ public class SerialPortServiceTest {
     }
 
     @Test
-    public void findGoodsByGrid() {
+    public void findGoodsByGrid() throws IOException {
 
         Map<String, String> hmGoods = new HashMap<>();
         serialPortService.moveGoodsByFinder(hmGoods);

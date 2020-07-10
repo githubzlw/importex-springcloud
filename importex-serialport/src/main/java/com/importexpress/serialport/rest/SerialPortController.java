@@ -211,7 +211,11 @@ public class SerialPortController {
 
         Map<String, String> map = ofMap(params);
 
-        return CommonResult.success(serialPortService.moveGoodsByFinder(map));
+        try {
+            return CommonResult.success(serialPortService.moveGoodsByFinder(map));
+        } catch (IOException e) {
+            return CommonResult.failed(e.getMessage());
+        }
 
     }
 

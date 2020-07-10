@@ -97,7 +97,7 @@ public interface SerialPortService {
      * 移动货物（前期已经地毯式扫描过货物，取得了货物坐标）
      * @param hmGoods
      */
-    Map<String,Integer> moveGoodsByFinder(Map<String, String> hmGoods) ;
+    Map<String,Integer> moveGoodsByFinder(Map<String, String> hmGoods) throws IOException;
 
     /**
      * 出库商品再入库

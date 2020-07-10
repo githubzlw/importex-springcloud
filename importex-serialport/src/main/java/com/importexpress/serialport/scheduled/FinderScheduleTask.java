@@ -41,7 +41,7 @@ public class FinderScheduleTask {
      * 定时任务，每天执行一次
      * @throws IOException
      */
-    @Scheduled(cron = "${finder.cron.exp}")
+    ///@Scheduled(cron = "${finder.cron.exp}")
     public void saveFinderToFiles() throws IOException {
 
         List<GoodsBean> lstGoodsBean = this.service.findAllGoodsByGrid();
