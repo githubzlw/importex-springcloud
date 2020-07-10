@@ -574,7 +574,7 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
     public CommonResult initStep(){
         try{
             //获取轮盘初始化
-            sendData("0000");
+            sendData("00000");
             String strReturnData = synchronousLightQueue.take();
             log.info("take:[{}]",strReturnData);
             if(strReturnData.contains("Success")){
