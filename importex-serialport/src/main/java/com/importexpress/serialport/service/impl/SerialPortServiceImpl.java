@@ -483,8 +483,13 @@ public class SerialPortServiceImpl implements SerialPortService {
                     assert split.length ==2;
                     CommonResult commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
                     if(commonResult.getCode()==CommonResult.SUCCESS){
-                        this.moveGoods(goodsBean.getX(),goodsBean.getY(),goodsBean.getY());
-                        result.put(goodsBean.getGoodsId(), 1);
+                        this.moveGoods(goodsBean.getX(),goodsBean.getY(),goodsBean.getZ());
+                        commonResult = serialPort2Service.initStep();
+                        if(commonResult.getCode()==CommonResult.SUCCESS) {
+                            result.put(goodsBean.getGoodsId(), 1);
+                        }else{
+                            throw new IOException("serialPort2Service.initStep return result is error");
+                        }
                     }else{
                         throw new IOException("serialPort2Service.outOfStock return result is error");
                     }

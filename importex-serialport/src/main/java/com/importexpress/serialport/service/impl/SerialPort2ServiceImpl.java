@@ -472,6 +472,7 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
     }
     @Override
     public CommonResult outOfStock(String turnTable, String box, String number){
+
         turnTable = parseParam(turnTable);
         box = parseParam(box);
         number = parseParam(number);
