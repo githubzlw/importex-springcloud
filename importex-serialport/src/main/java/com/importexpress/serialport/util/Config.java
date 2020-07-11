@@ -13,12 +13,6 @@ public class Config {
     @Value("${SERIAL.PORT2}")
     public String SERIAL_PORT2;
 
-    @Value("${MOVE_TO_CART_MAGNET_POSI}")
-    public String MOVE_TO_CART_MAGNET_POSI;
-
-    @Value("${MOVE_TO_CART_MAGOFF_POSI}")
-    public String MOVE_TO_CART_MAGOFF_POSI;
-
     @Value("${CART_X}")
     public int CART_X;
 

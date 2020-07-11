@@ -237,7 +237,6 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagoff(String msg) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(msg);
-        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -255,8 +254,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
-        sendData(config.MOVE_TO_CART_MAGNET_POSI);
-        assert synchronousQueue.take()==PUT_ONE;
+        sendData(buildSendString(config.CART_X,config.CART_Y,config.CART_Z, MAGI,true));
     }
 
     /**
@@ -302,7 +300,7 @@ public class SerialPortServiceImpl implements SerialPortService {
         //释放物品
         if(synchronousQueue.take() == PUT_ONE) {
             log.debug("take 4(释放物品)");
-            this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
+            this.execMagoff(buildSendString(config.CART_X,config.CART_Y,config.CART_Z, MAGI,false));
         }
 
         //回到零点
