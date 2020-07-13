@@ -16,7 +16,7 @@ public final class SerialParameter {
 
     public SerialParameter(String serialPortName){
         this.serialPortName = serialPortName;
-        this.baudRate = 9600;
+        this.baudRate = 115200;
         this.dataBits = SerialPort.DATABITS_8;
         this.stopBits = SerialPort.STOPBITS_1;
         this.parity = SerialPort.PARITY_NONE;

@@ -462,18 +462,18 @@ public class SerialPortServiceImpl implements SerialPortService {
                                         }
                                     } while (inputStream.available() > 0);
 
-                                    log.debug("received data:[{}]",sb.toString());
+                                    log.info("received data:[{}]",sb.toString());
                                     try {
                                         if(sb.toString().contains("LimitSwitch")){
-                                            log.debug("put LimitSwitch queue");
+                                            log.info("put LimitSwitch queue");
                                             synchronousQueue.put(PUT_ONE);
                                         }else if(sb.toString().contains("LIGHT")){
                                             //光电操作
-                                            log.debug("put light queue");
+                                            log.info("put light queue");
                                             synchronousLightQueue.put(sb.toString());
                                         }else if(sb.toString().contains("SCAN")){
                                             //条形码扫描
-                                            log.debug("put scan queue");
+                                            log.info("put scan queue");
                                             synchronousScanQueue.put(sb.toString());
                                         }
                                     } catch (InterruptedException ignored) {
@@ -675,7 +675,6 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public String readGoodsId() {
         try {
-            //TODO
             this.sendData(DO_SCAN);
             String result = synchronousScanQueue.take();//6970194002330#SCAN#000
             log.info("条形码扫描结果:{}",result);
