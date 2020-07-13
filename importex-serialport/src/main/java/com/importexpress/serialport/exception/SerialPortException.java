@@ -13,7 +13,7 @@ public class SerialPortException extends RuntimeException{
     /** 出库操作中，待放入的托盘的货架有物体*/
     public final static int SERIAL_PORT_EXCEPTION_HAVE_GOODS = 1001;
 
-    /** 出库操作中，物体从仓库区吊起失败*/
+    /** 物体吊起失败*/
     public final static int SERIAL_PORT_EXCEPTION_PULL_GOODS = 1002;
 
     /** 出库操作中，托盘区的孔中已经有物体存在*/
@@ -21,6 +21,9 @@ public class SerialPortException extends RuntimeException{
 
     /** 出库操作中，托盘区的孔中没有物体*/
     public final static int SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS = 1004;
+
+    /** 出库商品再入库操作中，托盘区的孔中没有物体*/
+    public final static int SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS_RETURN = 1005;
 
     private final int code;
 
@@ -37,13 +40,16 @@ public class SerialPortException extends RuntimeException{
                 this.msg = "出库操作中，待放入的托盘的货架有物体";
                 break;
             case SERIAL_PORT_EXCEPTION_PULL_GOODS:
-                this.msg = "出库操作中，物体从仓库区吊起失败";
+                this.msg = "物体吊起失败";
                 break;
             case SERIAL_PORT_EXCEPTION_EXISTS_GOODS:
                 this.msg = "出库操作中，托盘区的孔中已经有物体存在";
                 break;
             case SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS:
                 this.msg = "出库操作中，托盘区的孔中没有物体";
+                break;
+            case SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS_RETURN:
+                this.msg = "出库商品再入库操作中，托盘区的孔中没有物体";
                 break;
             default:
                 this.msg = "";

@@ -261,6 +261,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     public void moveGoods(int x, int y, int z,String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         //移动到指定地点
+        log.debug("移动到指定地点");
         this.sendData(x,y,0,false);
 
 //        String picUrlFrom = null;
@@ -279,6 +280,7 @@ public class SerialPortServiceImpl implements SerialPortService {
         //扫描条形码核对物体时候一致
         String readGoodsId = this.readGoodsId();
         if(!goodsId.equals(readGoodsId)){
+            log.debug("扫描条形码核对物体时候一致");
             throw new SerialPortException(SERIAL_PORT_EXCEPTION_NOT_SAME);
         }
 
@@ -296,6 +298,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         //判断是否吊起成功
         if(!this.readLight(x,y,0)){
+            log.debug("判断是否吊起成功");
             throw new SerialPortException(SERIAL_PORT_EXCEPTION_PULL_GOODS);
         }
 
@@ -307,6 +310,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         //判断托盘区的孔中是否为空
         if(this.serialPort2Service.getNearSignal()){
+            log.debug("判断托盘区的孔中是否为空");
             throw new SerialPortException(SERIAL_PORT_EXCEPTION_EXISTS_GOODS);
         }
 
@@ -318,6 +322,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         //判断托盘区的孔中是否有物体
         if(!this.serialPort2Service.getNearSignal()){
+            log.debug("判断托盘区的孔中是否有物体");
             throw new SerialPortException(SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS);
         }
 
@@ -358,6 +363,12 @@ public class SerialPortServiceImpl implements SerialPortService {
         log.debug("移动到托盘区域");
         this.moveToCart();
 
+        //判断托盘区的孔中是否有物体
+        if(!this.serialPort2Service.getNearSignal()){
+            log.debug("判断托盘区的孔中是否有物体");
+            throw new SerialPortException(SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS_RETURN);
+        }
+
         //伸Z
         if(synchronousQueue.take() == PUT_ONE) {
             log.debug("伸Z");
@@ -374,6 +385,12 @@ public class SerialPortServiceImpl implements SerialPortService {
         if(synchronousQueue.take() == PUT_ONE) {
             log.debug("缩Z");
             this.sendData(config.CART_X, config.CART_Y, 0, true);
+        }
+
+        //判断是否吊起成功
+        if(!this.readLight(x,y,0)){
+            log.debug("判断是否吊起成功");
+            throw new SerialPortException(SERIAL_PORT_EXCEPTION_PULL_GOODS);
         }
 
         //移动到指定地点
