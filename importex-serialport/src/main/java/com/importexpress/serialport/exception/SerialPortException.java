@@ -52,6 +52,6 @@ public class SerialPortException extends RuntimeException{
 
     @Override
     public String toString(){
-        return "code:" + code + ";msg:" + msg;
+        return code + ":" + msg;
     }
 }

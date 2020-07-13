@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Config {
 
-    public final static String QUEUE_SERIAL_PORT = "serial_port";
+    public final static String QUEUE_SERIAL_PORT = "serial-port-alert";
 
     @Value("${SERIAL.PORT}")
     public String SERIAL_PORT;
