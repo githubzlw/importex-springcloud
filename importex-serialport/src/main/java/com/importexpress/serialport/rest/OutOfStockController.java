@@ -61,4 +61,9 @@ public class OutOfStockController {
     public boolean initStep(){
         return serialPort2Service.initStep();
     }
+    @GetMapping("/moveTurnTable/{steps}/{box}")
+    @ApiOperation("移动转盘 /moveTurnTable/{steps}/{box} steps 转盘走多少步，一步0.0045°，最多1w步，超过会不走了，box 推几次")
+    public boolean moveTurnTable(@PathVariable(name = "steps")String steps, @PathVariable(name = "box")String box){
+        return serialPort2Service.moveTurnTable(steps,box);
+    }
 }

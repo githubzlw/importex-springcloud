@@ -56,4 +56,6 @@ public interface SerialPort2Service {
     boolean getLightSignal();
 
     boolean initStep();
+
+    boolean moveTurnTable(String steps, String box);
 }

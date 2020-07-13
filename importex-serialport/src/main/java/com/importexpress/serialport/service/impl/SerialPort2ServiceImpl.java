@@ -623,4 +623,36 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
         }
         return param;
     }
+
+    @Override
+    public boolean moveTurnTable(String steps,String box){
+        StringBuilder sb = new StringBuilder();
+        sb.append(StringUtils.leftPad(steps,5,'0'));
+        sb.append("_");
+        sb.append(StringUtils.leftPad(box,4,'0'));
+        try{
+            //获取轮盘初始化
+            sendData(String.valueOf(sb));
+            String strReturnData = synchronousLightQueue.take();
+            log.info("take:[{}]",strReturnData);
+            if(strReturnData.contains("Success")){
+                log.debug("执行结果:[{}]",strReturnData);
+                //有物体
+                return true;
+            }else {
+                log.error("error",strReturnData);
+                //没有物体
+                return false;
+            }
+        }catch (NoSuchPortException ise){
+            log.error("No Such Port",ise);
+            return false;
+        }catch (PortInUseException ise){
+            log.error("Port In Use",ise);
+            return false;
+        }catch (Exception e){
+            log.error("error",e.getMessage());
+            return false;
+        }
+    }
 }
