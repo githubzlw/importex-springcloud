@@ -84,7 +84,7 @@ public interface SerialPortService {
     /**
      * 移动物品到托盘区并且释放,再回到零点
      */
-    void moveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+    void moveGoods(int x, int y, int z,String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
     void returnMoveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 

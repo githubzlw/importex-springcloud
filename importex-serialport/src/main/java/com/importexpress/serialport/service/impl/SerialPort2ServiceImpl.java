@@ -204,7 +204,7 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
     @Override
     public void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
-        sendData(config.MOVE_TO_CART_MAGNET_POSI);
+        //sendData(config.MOVE_TO_CART_MAGNET_POSI);
     }
 
     /**
@@ -250,7 +250,7 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
         //释放物品
         if(synchronousQueue.take()==1) {
             log.debug("take 4(释放物品)");
-            this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
+            //this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
         }
 
         //回到零点

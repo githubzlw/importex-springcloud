@@ -6,10 +6,12 @@ import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.ActionTypeEnum;
 import com.importexpress.serialport.bean.GoodsBean;
 import com.importexpress.serialport.bean.ReturnMoveBean;
+import com.importexpress.serialport.exception.SerialPortException;
 import com.importexpress.serialport.service.SerialPort2Service;
 import com.importexpress.serialport.service.SerialPortService;
 import com.importexpress.serialport.util.Config;
 import com.importexpress.serialport.util.SerialTool;
+import com.sun.xml.internal.bind.v2.TODO;
 import gnu.io.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -26,6 +28,8 @@ import java.util.concurrent.SynchronousQueue;
 
 import static com.importexpress.serialport.bean.ActionTypeEnum.LIGHT;
 import static com.importexpress.serialport.bean.ActionTypeEnum.MAGI;
+import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_HAVE_GOODS;
+import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_NOT_SAME;
 
 
 /**
@@ -131,7 +135,6 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         String strSendData = buildSendString(x, y, z, MAGI, isMagi);
         sendData(strSendData);
-        //assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -209,7 +212,6 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void returnZeroPosi() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(RETURN_ZERO_POSI);
-        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -218,7 +220,6 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void setZeroPosi() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(ZERO_POSI);
-        assert synchronousQueue.take()==PUT_ONE;
     }
 
 
@@ -228,7 +229,6 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagoff(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(x,y,z,false);
-        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -237,7 +237,6 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagoff(String msg) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(msg);
-        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -246,7 +245,6 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void execMagNet(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
         sendData(x,y,z,true);
-        assert synchronousQueue.take()==PUT_ONE;
     }
 
     /**
@@ -255,15 +253,14 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
-        sendData(config.MOVE_TO_CART_MAGNET_POSI);
-        assert synchronousQueue.take()==PUT_ONE;
+        sendData(buildSendString(config.CART_X,config.CART_Y,config.CART_Z, MAGI,true));
     }
 
     /**
      * 移动物品到托盘区并且释放,再回到零点
      */
     @Override
-    public void moveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
+    public void moveGoods(int x, int y, int z,String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         //移动到指定地点
         this.sendData(x,y,0,false);
@@ -277,37 +274,56 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         //伸Z
         if(synchronousQueue.take() == PUT_ONE){
-            log.debug("take 0(伸Z)");
+            log.debug("伸Z");
             this.sendData(x, y, z, false);
+        }
+
+        //扫描条形码核对物体时候一致
+        String readGoodsId = this.readGoodsId();
+        if(!goodsId.equals(readGoodsId)){
+            throw new SerialPortException(SERIAL_PORT_EXCEPTION_NOT_SAME);
         }
 
         //吸取物品
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("take 1(吸取物品)");
+            log.debug("吸取物品");
             this.execMagNet(x, y, z);
         }
 
+        //判断是否吸取成功
+        //TODO
+
         //缩Z
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("take 2(缩Z)");
+            log.debug("缩Z");
             this.sendData(x, y, 0, true);
         }
 
         //移动到托盘区域
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("take 3(移动到托盘区域)");
+            log.debug("移动到托盘区域");
             this.moveToCart();
+        }
+
+        //判断托盘区的孔中是否为空 TODO
+        //serialPort2Service.getNearSignal()
+        boolean result = false;
+        if(result) {
+            throw new SerialPortException(SERIAL_PORT_EXCEPTION_HAVE_GOODS);
         }
 
         //释放物品
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("take 4(释放物品)");
-            this.execMagoff(config.MOVE_TO_CART_MAGOFF_POSI);
+            log.debug("释放物品");
+            this.execMagoff(buildSendString(config.CART_X,config.CART_Y,config.CART_Z, MAGI,false));
         }
+
+        //判断托盘区的孔中是否有物体
+        //TODO
 
         //回到零点
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("take 5(回到零点)");
+            log.debug("回到零点");
             this.returnZeroPosi();
         }
 
@@ -327,7 +343,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         //执行完毕，返回
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("take 6(执行完毕，返回)");
+            log.debug("执行完毕，返回");
             Thread.sleep(MAX_SLEEP * 5);
         }
     }
@@ -483,7 +499,7 @@ public class SerialPortServiceImpl implements SerialPortService {
                     assert split.length ==2;
                     boolean commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
                     if(commonResult){
-                        this.moveGoods(goodsBean.getX(),goodsBean.getY(),goodsBean.getZ());
+                        this.moveGoods(goodsBean.getX(),goodsBean.getY(),goodsBean.getZ(),goodsBean.getGoodsId());
                         commonResult = serialPort2Service.initStep();
                         if(commonResult) {
                             result.put(goodsBean.getGoodsId(), 1);
@@ -512,7 +528,7 @@ public class SerialPortServiceImpl implements SerialPortService {
                                 if(commonResult){
                                     int x = config.RETURN_VALUE_X;
                                     int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex()+1);
-                                    this.moveGoods(x,y,config.GOODS_MOVE_VALUE_Z);
+                                    this.moveGoods(x,y,config.GOODS_MOVE_VALUE_Z,item.getGoodsId());
                                     //清空此位置
                                     item.setGoodsId(null);
                                     item.setHave(false);
@@ -642,6 +658,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public String readGoodsId() {
         try {
+            //TODO
             this.sendData(DO_SCAN);
             String result = synchronousScanQueue.take();//6970194002330#SCAN#000
             log.info("条形码扫描结果:{}",result);
