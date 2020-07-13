@@ -481,11 +481,11 @@ public class SerialPortServiceImpl implements SerialPortService {
                     log.debug("匹配到需要搬动的货物,value={}",goodsBean);
                     String[] split = value.split("_");
                     assert split.length ==2;
-                    CommonResult commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
-                    if(commonResult.getCode()==CommonResult.SUCCESS){
+                    boolean commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
+                    if(commonResult){
                         this.moveGoods(goodsBean.getX(),goodsBean.getY(),goodsBean.getZ());
                         commonResult = serialPort2Service.initStep();
-                        if(commonResult.getCode()==CommonResult.SUCCESS) {
+                        if(commonResult) {
                             result.put(goodsBean.getGoodsId(), 1);
                         }else{
                             throw new IOException("serialPort2Service.initStep return result is error");
@@ -508,8 +508,8 @@ public class SerialPortServiceImpl implements SerialPortService {
                                 //找到货物
                                 String[] split = value.split("-");
                                 assert split.length ==2;
-                                CommonResult commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
-                                if(commonResult.getCode()==CommonResult.SUCCESS){
+                                boolean commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
+                                if(commonResult){
                                     int x = config.RETURN_VALUE_X;
                                     int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex()+1);
                                     this.moveGoods(x,y,config.GOODS_MOVE_VALUE_Z);
@@ -580,9 +580,9 @@ public class SerialPortServiceImpl implements SerialPortService {
                     //找到空位
                     int x = config.RETURN_VALUE_X;
                     int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex()+1);
-                    CommonResult commonResult = serialPort2Service.outOfStock(turnTable, box, "0");
+                    boolean commonResult = serialPort2Service.outOfStock(turnTable, box, "0");
                     //CommonResult commonResult = CommonResult.success();
-                    if(commonResult.getCode()==CommonResult.SUCCESS){
+                    if(commonResult){
                         //移动货物
                         this.returnMoveGoods(x,y,config.GOODS_MOVE_VALUE_Z);
                         item.setHave(true);

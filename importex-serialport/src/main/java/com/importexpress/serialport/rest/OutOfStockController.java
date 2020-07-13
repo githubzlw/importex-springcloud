@@ -41,24 +41,24 @@ public class OutOfStockController {
     // /outOfStock/001/001/001 1号转盘，1号仓库口，数量1
     @GetMapping("/outOfStock/{turnTable}/{box}/{number}")
     @ApiOperation("调用出库指令 outOfStock/001/001/001 1号转盘，1号仓库口，数量1")
-    public CommonResult outOfStock(@PathVariable(name = "turnTable")String turnTable, @PathVariable(name = "box")String box, @PathVariable(name = "number")String number){
+    public boolean outOfStock(@PathVariable(name = "turnTable")String turnTable, @PathVariable(name = "box")String box, @PathVariable(name = "number")String number){
         return serialPort2Service.outOfStock(turnTable,box,number);
     }
 
     @GetMapping("outOfStock/getNearSignal")
-    @ApiOperation("获取接近信号：000 无接触，001 有接触")
-    public CommonResult getNearSignal(){
+    @ApiOperation("获取接近信号：fales 无，true 有")
+    public boolean getNearSignal(){
        return serialPort2Service.getNearSignal();
     }
 
     @GetMapping("outOfStock/getLightSignal")
-    @ApiOperation("获取接近信号：000 无，001 有")
-    public CommonResult getLightSignal(){
+    @ApiOperation("获取接近信号：fales 无，true 有")
+    public boolean getLightSignal(){
         return serialPort2Service.getLightSignal();
     }
     @GetMapping("outOfStock/initStep")
-    @ApiOperation("转盘归零：000 失败，001 成功")
-    public CommonResult initStep(){
+    @ApiOperation("转盘归零：fales 失败，true 成功")
+    public boolean initStep(){
         return serialPort2Service.initStep();
     }
 }

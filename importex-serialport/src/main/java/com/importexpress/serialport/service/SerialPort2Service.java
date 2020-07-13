@@ -49,11 +49,11 @@ public interface SerialPort2Service {
 
     List<GoodsBean> findAllGoodsByGrid();
 
-    CommonResult outOfStock(String turnTable, String box, String number);
+    boolean outOfStock(String turnTable, String box, String number);
 
-    CommonResult getNearSignal();
+    boolean getNearSignal();
 
-    CommonResult getLightSignal();
+    boolean getLightSignal();
 
-    CommonResult initStep();
+    boolean initStep();
 }

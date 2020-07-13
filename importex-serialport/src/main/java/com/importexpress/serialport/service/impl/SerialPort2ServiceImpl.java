@@ -471,7 +471,7 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
         return lstFinderGoods;
     }
     @Override
-    public CommonResult outOfStock(String turnTable, String box, String number){
+    public boolean outOfStock(String turnTable, String box, String number){
 
         turnTable = parseParam(turnTable);
         box = parseParam(box);
@@ -515,21 +515,26 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
             log.info("take:[{}]",strReturnData);
             if(strReturnData.contains("Success")){
                 log.debug("执行结果:[{}]",strReturnData);
-                return CommonResult.success(strReturnData);
+                //有物体
+                return true;
             }else {
                 log.error("error",strReturnData);
-                return CommonResult.failed(strReturnData);
+                //没有物体
+                return false;
             }
         }catch (NoSuchPortException ise){
-            return CommonResult.failed("No Such Port");
+            log.error("No Such Port",ise);
+            return false;
         }catch (PortInUseException ise){
-            return CommonResult.failed("Port In Use");
+            log.error("Port In Use",ise);
+            return false;
         }catch (Exception e){
-            return CommonResult.failed(e.getMessage());
+            log.error("error",e.getMessage());
+            return false;
         }
     }
     @Override
-    public CommonResult getNearSignal(){
+    public boolean getNearSignal(){
         try{
             //获取接近开关信号，
             sendData("000");
@@ -537,45 +542,53 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
             log.info("take:[{}]",strReturnData);
             if(strReturnData.contains("Success")){
                 log.debug("执行结果:[{}]",strReturnData);
-                String[] split = strReturnData.split("#");
-                return CommonResult.success(split[1]);
+                //有物体
+                return true;
             }else {
                 log.error("error",strReturnData);
-                return CommonResult.failed(strReturnData);
+                //没有物体
+                return false;
             }
         }catch (NoSuchPortException ise){
-            return CommonResult.failed("No Such Port");
+            log.error("No Such Port",ise);
+            return false;
         }catch (PortInUseException ise){
-            return CommonResult.failed("Port In Use");
+            log.error("Port In Use",ise);
+            return false;
         }catch (Exception e){
-            return CommonResult.failed(e.getMessage());
+            log.error("error",e.getMessage());
+            return false;
         }
     }
     @Override
-    public CommonResult getLightSignal(){
+    public boolean getLightSignal(){
         try{
-            //获取接近开关信号，
+            //获取光电开关信号，
             sendData("0000");
             String strReturnData = synchronousLightQueue.take();
             log.info("take:[{}]",strReturnData);
             if(strReturnData.contains("Success")){
                 log.debug("执行结果:[{}]",strReturnData);
-                String[] split = strReturnData.split("#");
-                return CommonResult.success(split[1]);
+                //有物体
+                return true;
             }else {
                 log.error("error",strReturnData);
-                return CommonResult.failed(strReturnData);
+                //没有物体
+                return false;
             }
         }catch (NoSuchPortException ise){
-            return CommonResult.failed("No Such Port");
+            log.error("No Such Port",ise);
+            return false;
         }catch (PortInUseException ise){
-            return CommonResult.failed("Port In Use");
+            log.error("Port In Use",ise);
+            return false;
         }catch (Exception e){
-            return CommonResult.failed(e.getMessage());
+            log.error("error",e.getMessage());
+            return false;
         }
     }
     @Override
-    public CommonResult initStep(){
+    public boolean initStep(){
         try{
             //获取轮盘初始化
             sendData("00000");
@@ -583,37 +596,31 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
             log.info("take:[{}]",strReturnData);
             if(strReturnData.contains("Success")){
                 log.debug("执行结果:[{}]",strReturnData);
-                String[] split = strReturnData.split("#");
-                return CommonResult.success(split[1]);
+                //有物体
+                return true;
             }else {
                 log.error("error",strReturnData);
-                return CommonResult.failed(strReturnData);
+                //没有物体
+                return false;
             }
         }catch (NoSuchPortException ise){
-            return CommonResult.failed("No Such Port");
+            log.error("No Such Port",ise);
+            return false;
         }catch (PortInUseException ise){
-            return CommonResult.failed("Port In Use");
+            log.error("Port In Use",ise);
+            return false;
         }catch (Exception e){
-            return CommonResult.failed(e.getMessage());
+            log.error("error",e.getMessage());
+            return false;
         }
     }
 
     public String parseParam(String param){
-        int length = param.length();
-        switch (length){
-            case 1:
-                param = "00"+param;
-                break;
-            case 2:
-                param = "0"+param;
-                break;
-            case 3:
-                break;
-            default:
-                param = "001";
-                break;
+        if(org.apache.commons.lang3.StringUtils.isNotBlank(param)){
+            param = StringUtils.leftPad(param,3,'0');
+        }else {
+            param = "001";
         }
-
         return param;
     }
 }
