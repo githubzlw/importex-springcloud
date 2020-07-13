@@ -161,7 +161,7 @@ public class SerialPortController {
     public CommonResult moveGoods(@RequestParam int x,@RequestParam int y,@RequestParam int z) {
 
         try{
-            serialPortService.moveGoods(x,y,z);
+            serialPortService.moveGoods(x,y,z,"123456");
             return CommonResult.success();
 
         }catch (NoSuchPortException ise){

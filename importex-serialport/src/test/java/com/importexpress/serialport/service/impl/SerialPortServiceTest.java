@@ -1,6 +1,7 @@
 package com.importexpress.serialport.service.impl;
 
 
+import com.importexpress.serialport.exception.SerialPortException;
 import com.importexpress.serialport.service.SerialPortService;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
@@ -27,6 +28,7 @@ import java.util.stream.IntStream;
 @SpringBootTest
 public class SerialPortServiceTest {
 
+    public static final String GOODS_ID = "123456789";
     @Autowired
     private SerialPortService serialPortService;
 
@@ -36,7 +38,7 @@ public class SerialPortServiceTest {
         IntStream.range(0,99).forEach( i -> {
             try {
                 System.out.println(i);
-                serialPortService.moveGoods(2000,2000,1000);
+                serialPortService.moveGoods(2000,2000,1000,GOODS_ID);
             } catch (Exception e) {
                 Assert.isTrue(false);
             }
@@ -46,7 +48,7 @@ public class SerialPortServiceTest {
     @Test
     public void test() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
-        serialPortService.moveGoods(2000,2000,1000);
+        serialPortService.moveGoods(2000,2000,1000,GOODS_ID);
         System.out.println("aaa");
     }
 
@@ -60,7 +62,7 @@ public class SerialPortServiceTest {
     @Test
     public void returnMoveGoodsByFinder() {
 
-        serialPortService.returnMoveGoodsByFinder("1", "2-1", "123456789");
+        serialPortService.returnMoveGoodsByFinder("1", "2-1", GOODS_ID);
     }
 
 

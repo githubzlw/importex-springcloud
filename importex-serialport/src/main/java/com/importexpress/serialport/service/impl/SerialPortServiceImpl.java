@@ -2,7 +2,6 @@ package com.importexpress.serialport.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.ActionTypeEnum;
 import com.importexpress.serialport.bean.GoodsBean;
 import com.importexpress.serialport.bean.ReturnMoveBean;
@@ -11,7 +10,7 @@ import com.importexpress.serialport.service.SerialPort2Service;
 import com.importexpress.serialport.service.SerialPortService;
 import com.importexpress.serialport.util.Config;
 import com.importexpress.serialport.util.SerialTool;
-import com.sun.xml.internal.bind.v2.TODO;
+
 import gnu.io.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -28,8 +27,7 @@ import java.util.concurrent.SynchronousQueue;
 
 import static com.importexpress.serialport.bean.ActionTypeEnum.LIGHT;
 import static com.importexpress.serialport.bean.ActionTypeEnum.MAGI;
-import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_HAVE_GOODS;
-import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_NOT_SAME;
+import static com.importexpress.serialport.exception.SerialPortException.*;
 
 
 /**
@@ -290,13 +288,15 @@ public class SerialPortServiceImpl implements SerialPortService {
             this.execMagNet(x, y, z);
         }
 
-        //判断是否吸取成功
-        //TODO
-
         //缩Z
         if(synchronousQueue.take() == PUT_ONE) {
             log.debug("缩Z");
             this.sendData(x, y, 0, true);
+        }
+
+        //判断是否吊起成功
+        if(!this.readLight(x,y,0)){
+            throw new SerialPortException(SERIAL_PORT_EXCEPTION_PULL_GOODS);
         }
 
         //移动到托盘区域
@@ -305,11 +305,9 @@ public class SerialPortServiceImpl implements SerialPortService {
             this.moveToCart();
         }
 
-        //判断托盘区的孔中是否为空 TODO
-        //serialPort2Service.getNearSignal()
-        boolean result = false;
-        if(result) {
-            throw new SerialPortException(SERIAL_PORT_EXCEPTION_HAVE_GOODS);
+        //判断托盘区的孔中是否为空
+        if(this.serialPort2Service.getNearSignal()){
+            throw new SerialPortException(SERIAL_PORT_EXCEPTION_EXISTS_GOODS);
         }
 
         //释放物品
@@ -319,7 +317,9 @@ public class SerialPortServiceImpl implements SerialPortService {
         }
 
         //判断托盘区的孔中是否有物体
-        //TODO
+        if(!this.serialPort2Service.getNearSignal()){
+            throw new SerialPortException(SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS);
+        }
 
         //回到零点
         if(synchronousQueue.take() == PUT_ONE) {

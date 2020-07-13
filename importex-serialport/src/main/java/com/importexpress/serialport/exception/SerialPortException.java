@@ -13,10 +13,18 @@ public class SerialPortException extends RuntimeException{
     /** 出库操作中，待放入的托盘的货架有物体*/
     public final static int SERIAL_PORT_EXCEPTION_HAVE_GOODS = 1001;
 
+    /** 出库操作中，物体从仓库区吊起失败*/
+    public final static int SERIAL_PORT_EXCEPTION_PULL_GOODS = 1002;
 
+    /** 出库操作中，托盘区的孔中已经有物体存在*/
+    public final static int SERIAL_PORT_EXCEPTION_EXISTS_GOODS = 1003;
 
-    private int code;
-    private String msg;
+    /** 出库操作中，托盘区的孔中没有物体*/
+    public final static int SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS = 1004;
+
+    private final int code;
+
+    private final String msg;
 
 
     public SerialPortException(int code){
@@ -28,17 +36,22 @@ public class SerialPortException extends RuntimeException{
             case SERIAL_PORT_EXCEPTION_HAVE_GOODS:
                 this.msg = "出库操作中，待放入的托盘的货架有物体";
                 break;
+            case SERIAL_PORT_EXCEPTION_PULL_GOODS:
+                this.msg = "出库操作中，物体从仓库区吊起失败";
+                break;
+            case SERIAL_PORT_EXCEPTION_EXISTS_GOODS:
+                this.msg = "出库操作中，托盘区的孔中已经有物体存在";
+                break;
+            case SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS:
+                this.msg = "出库操作中，托盘区的孔中没有物体";
+                break;
             default:
                 this.msg = "";
         }
     }
 
-    public SerialPortException(String code,String msg){
-        this.msg = msg;
-    }
-
     @Override
     public String toString(){
-        return "code:" + code + " msg:" + msg;
+        return "code:" + code + ";msg:" + msg;
     }
 }
