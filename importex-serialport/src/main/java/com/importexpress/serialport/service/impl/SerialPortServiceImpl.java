@@ -358,39 +358,48 @@ public class SerialPortServiceImpl implements SerialPortService {
      * 移动物品从托盘区放到仓库区,再回到零点
      */
     @Override
-    public void returnMoveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
+    public void returnMoveGoods(int x, int y, int z,String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         //移动到托盘区域
-        log.debug("移动到托盘区域");
         this.moveToCart();
+        log.info("开始移动到托盘区域");
 
         //判断托盘区的孔中是否有物体
         if(!this.serialPort2Service.getNearSignal()){
-            log.debug("判断托盘区的孔中是否有物体");
+            log.info("判断托盘区的孔中是否有物体");
             throw new SerialPortException(SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS_RETURN);
         }
 
         //伸Z
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("伸Z");
+            log.info("开始伸Z");
             this.sendData(config.CART_X, config.CART_Y, config.CART_Z, false);
         }
 
         //吸取物品
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("吸取物品");
+
+            log.info("开始条形码扫描");
+            //扫描条形码核对物体时候一致
+            String readGoodsId = this.readGoodsId();
+            if(!goodsId.equals(readGoodsId)){
+                log.warn("扫描条形码核对物体时候发现不一致:{}:{}",goodsId,readGoodsId);
+                throw new SerialPortException(SERIAL_PORT_EXCEPTION_NOT_SAME);
+            }
+
+            log.info("开始吸取物品");
             this.execMagNet(config.CART_X, config.CART_Y, config.CART_Z);
         }
 
         //缩Z
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("缩Z");
+            log.info("开始缩Z");
             this.sendData(config.CART_X, config.CART_Y, 0, true);
         }
 
         //判断是否吊起成功
         if(!this.readLight(x,y,0)){
-            log.debug("判断是否吊起成功");
+            log.info("判断是否吊起成功");
             throw new SerialPortException(SERIAL_PORT_EXCEPTION_PULL_GOODS);
         }
 
@@ -401,19 +410,19 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         //释放物品
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("释放物品");
+            log.info("开始释放物品");
             this.execMagoff(x, y, 0);
         }
 
         //回到零点
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("回到零点");
+            log.info("开始回到零点");
             this.returnZeroPosi();
         }
 
         //执行完毕，返回
         if(synchronousQueue.take() == PUT_ONE) {
-            log.debug("执行完毕，返回");
+            log.info("执行完毕，返回");
             Thread.sleep(MAX_SLEEP * 5);
         }
     }
@@ -614,11 +623,9 @@ public class SerialPortServiceImpl implements SerialPortService {
                     //找到空位
                     int x = config.RETURN_VALUE_X;
                     int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex()+1);
-                    boolean commonResult = serialPort2Service.outOfStock(turnTable, box, "0");
-                    //CommonResult commonResult = CommonResult.success();
-                    if(commonResult){
+                    if(serialPort2Service.outOfStock(turnTable, box, "0")){
                         //移动货物
-                        this.returnMoveGoods(x,y,config.GOODS_MOVE_VALUE_Z);
+                        this.returnMoveGoods(x,y,config.GOODS_MOVE_VALUE_Z,item.getGoodsId());
                         item.setHave(true);
                         item.setGoodsId(goodsId);
                         break;

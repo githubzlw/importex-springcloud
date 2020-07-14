@@ -86,7 +86,7 @@ public interface SerialPortService {
      */
     void moveGoods(int x, int y, int z,String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
-    void returnMoveGoods(int x, int y, int z) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+    void returnMoveGoods(int x, int y, int z,String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
     /**
      * 关闭串口（长时间不用需要关闭）
