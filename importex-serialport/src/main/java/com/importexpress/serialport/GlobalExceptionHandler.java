@@ -14,11 +14,11 @@ class GlobalExceptionHandler {
 
     private final SendMQ sendMQ;
 
-    @Autowired
-    SerialPort2Service serialPort2Service;
+    private final SerialPort2Service serialPort2Service;
 
-    public GlobalExceptionHandler(SendMQ mq) {
+    public GlobalExceptionHandler(SendMQ mq, SerialPort2Service serialPort2Service) {
         this.sendMQ = mq;
+        this.serialPort2Service = serialPort2Service;
     }
 
     @ExceptionHandler(value = SerialPortException.class)
@@ -27,6 +27,7 @@ class GlobalExceptionHandler {
         log.error("SerialPortException handler:", e);
         //点亮报警灯
         serialPort2Service.warningLight(true);
+        //send mq
         sendMQ.sendWarningMsgToMQ(e.toString());
 
     }
