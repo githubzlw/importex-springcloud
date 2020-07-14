@@ -28,7 +28,8 @@ public class SerialPortException extends RuntimeException{
     private final int code;
 
     private final String msg;
-
+    /** 转盘操作失败*/
+    public final static int SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR = 1006;
 
     public SerialPortException(int code){
         this.code = code;
@@ -50,6 +51,9 @@ public class SerialPortException extends RuntimeException{
                 break;
             case SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS_RETURN:
                 this.msg = "出库商品再入库操作中，托盘区的孔中没有物体";
+                break;
+            case SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR:
+                this.msg = "转盘操作失败";
                 break;
             default:
                 this.msg = "";

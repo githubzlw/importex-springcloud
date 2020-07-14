@@ -5,6 +5,7 @@ import com.google.gson.reflect.TypeToken;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.ActionTypeEnum;
 import com.importexpress.serialport.bean.GoodsBean;
+import com.importexpress.serialport.exception.SerialPortException;
 import com.importexpress.serialport.service.SerialPort2Service;
 import com.importexpress.serialport.util.Config;
 import com.importexpress.serialport.util.SerialTool;
@@ -24,6 +25,8 @@ import java.util.concurrent.SynchronousQueue;
 
 import static com.importexpress.serialport.bean.ActionTypeEnum.LIGHT;
 import static com.importexpress.serialport.bean.ActionTypeEnum.MAGI;
+import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_NOT_SAME;
+import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR;
 
 
 /**
@@ -519,8 +522,7 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
                 return true;
             }else {
                 log.error("error",strReturnData);
-                //没有物体
-                return false;
+                throw new SerialPortException(SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR);
             }
         }catch (NoSuchPortException ise){
             log.error("No Such Port",ise);
