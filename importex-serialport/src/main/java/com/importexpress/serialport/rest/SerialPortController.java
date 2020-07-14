@@ -37,7 +37,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/sendData")
-    @ApiOperation("发送字符串数据到串口")
+    @ApiOperation("发送字符串数据到串口（远程调用）")
     public CommonResult sendData(@RequestParam String msg) {
 
         try{
@@ -55,7 +55,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/sendDataXYZ")
-    @ApiOperation("发送xyz数据到串口")
+    @ApiOperation("发送xyz数据到串口（调试用）")
     public CommonResult sendData(@RequestParam int x,@RequestParam int y,@RequestParam int z,@RequestParam boolean isMagi) {
 
         try{
@@ -72,7 +72,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/returnZeroPosi")
-    @ApiOperation("回到零点")
+    @ApiOperation("回到零点（调试用）")
     public CommonResult returnZeroPosi() {
 
         try{
@@ -90,7 +90,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/setZeroPosi")
-    @ApiOperation("当前位置设为零位")
+    @ApiOperation("当前位置设为零位（调试用）")
     public CommonResult setZeroPosi() {
 
         try{
@@ -107,7 +107,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/execMagoff")
-    @ApiOperation("释放物品（消磁）")
+    @ApiOperation("释放物品（消磁）（调试用）")
     public CommonResult execMagoff(@RequestParam int x,@RequestParam int y,@RequestParam int z) {
 
         try{
@@ -124,7 +124,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/execMagNet")
-    @ApiOperation("吸取物品（吸磁）")
+    @ApiOperation("吸取物品（吸磁）（调试用）")
     public CommonResult execMagNet(@RequestParam int x,@RequestParam int y,@RequestParam int z) {
 
         try{
@@ -140,25 +140,25 @@ public class SerialPortController {
         }
     }
 
-    @GetMapping("/moveToCart")
-    @ApiOperation("移动到托盘并且释放掉物品")
-    public CommonResult moveToCart() {
-
-        try{
-            serialPortService.moveToCart();
-            return CommonResult.success();
-
-        }catch (NoSuchPortException ise){
-            return CommonResult.failed("No Such Port");
-        }catch (PortInUseException ise){
-            return CommonResult.failed("Port In Use");
-        }catch (Exception e){
-            return CommonResult.failed(e.getMessage());
-        }
-    }
+//    @GetMapping("/moveToCart")
+//    @ApiOperation("移动到托盘并且释放掉物品")
+//    public CommonResult moveToCart() {
+//
+//        try{
+//            serialPortService.moveToCart();
+//            return CommonResult.success();
+//
+//        }catch (NoSuchPortException ise){
+//            return CommonResult.failed("No Such Port");
+//        }catch (PortInUseException ise){
+//            return CommonResult.failed("Port In Use");
+//        }catch (Exception e){
+//            return CommonResult.failed(e.getMessage());
+//        }
+//    }
 
     @GetMapping("/moveGoods")
-    @ApiOperation("移动物品到托盘区并且释放,再回到零点")
+    @ApiOperation("移动物品到托盘区并且释放,再回到零点（调试用）")
     public CommonResult moveGoods(@RequestParam int x,@RequestParam int y,@RequestParam int z,@RequestParam String goodsId) {
 
         try{
@@ -196,7 +196,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/getAllGoods")
-    @ApiOperation("读取指定日期的库存列表")
+    @ApiOperation("读取指定日期的库存列表（远程调用）")
     public CommonResult getAllGoods(@RequestParam String yyyyMMdd) {
 
         try {
@@ -209,7 +209,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/moveGoodsByFinder")
-    @ApiOperation("出库 sample: 20200619144110070:1-1,20200624093705854:1_2,20200628132548686:1_5")
+    @ApiOperation("商品出库操作（远程调用） sample: 20200619144110070:1-1,20200624093705854:1_2,20200628132548686:1_5")
     public CommonResult moveGoodsByFinder(@RequestParam String params) {
 
         Map<String, String> map = ofMap(params);
@@ -223,7 +223,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/returnMoveGoodsByFinder")
-    @ApiOperation("出库商品再入库")
+    @ApiOperation("出库商品再入库（远超调用）")
     public CommonResult returnMoveGoodsByFinder(@RequestParam String turnTable,@RequestParam String box,@RequestParam String goodsId) {
 
         int result = serialPortService.returnMoveGoodsByFinder(turnTable, box, goodsId);
@@ -247,7 +247,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/readLight")
-    @ApiOperation("读取光电信号")
+    @ApiOperation("读取光电信号（调试用）")
     public CommonResult readLight(@RequestParam int x,@RequestParam int y,@RequestParam int z) {
 
         try {
@@ -263,7 +263,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/findAllGoodsByGrid")
-    @ApiOperation("地毯式扫描货物(手动执行，测试用)，进行入库操作准备")
+    @ApiOperation("地毯式扫描货物（调试用），进行入库操作准备")
     public CommonResult findAllGoodsByGrid() {
 
         try {
@@ -277,7 +277,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/readGoodsId")
-    @ApiOperation("条形码读取")
+    @ApiOperation("条形码读取（调试用）")
     public CommonResult readGoodsId() {
 
         try {
