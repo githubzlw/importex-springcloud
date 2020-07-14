@@ -400,14 +400,16 @@ public class SerialPortServiceImpl implements SerialPortService {
             this.sendData(config.CART_X, config.CART_Y, 0, true);
         }
 
-        //判断是否吊起成功
-        if(!this.readLight(x,y,0)){
-            log.info("判断是否吊起成功");
-            throw new SerialPortException(SERIAL_PORT_EXCEPTION_PULL_GOODS);
-        }
-
         //移动到指定地点
         if(synchronousQueue.take() == PUT_ONE) {
+
+            //判断是否吊起成功
+            if(!this.readLight(x,y,0)){
+                log.info("判断是否吊起成功");
+                throw new SerialPortException(SERIAL_PORT_EXCEPTION_PULL_GOODS);
+            }
+
+            log.info("开始移动到指定地点");
             this.sendData(x, y, 0, true);
         }
 

@@ -4,6 +4,7 @@ import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.exception.SerialPortException;
 import com.importexpress.serialport.mq.SendMQ;
 import com.importexpress.serialport.service.SerialPort2Service;
+import com.importexpress.serialport.service.SerialPortService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -15,10 +16,13 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private final SendMQ sendMQ;
 
+    private final SerialPortService serialPortService;
+
     private final SerialPort2Service serialPort2Service;
 
-    public GlobalExceptionHandler(SendMQ mq, SerialPort2Service serialPort2Service) {
+    public GlobalExceptionHandler(SendMQ mq, SerialPortService serialPortService, SerialPort2Service serialPort2Service) {
         this.sendMQ = mq;
+        this.serialPortService = serialPortService;
         this.serialPort2Service = serialPort2Service;
     }
 
@@ -30,6 +34,8 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         serialPort2Service.warningLight(true);
         //send mq
         sendMQ.sendWarningMsgToMQ(e.toString());
+        //回到零点
+        serialPortService.returnZeroPosi();
 
         return CommonResult.failed(e.toString());
 
