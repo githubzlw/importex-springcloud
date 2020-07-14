@@ -2,6 +2,7 @@ package com.importexpress.serialport.rest;
 
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.GoodsBean;
+import com.importexpress.serialport.exception.SerialPortException;
 import com.importexpress.serialport.service.SerialPortService;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
@@ -71,7 +72,7 @@ public class SerialPortController {
     }
 
     @GetMapping("/returnZeroPosi")
-    @ApiOperation("普通的回到零点指令")
+    @ApiOperation("回到零点")
     public CommonResult returnZeroPosi() {
 
         try{
@@ -158,16 +159,18 @@ public class SerialPortController {
 
     @GetMapping("/moveGoods")
     @ApiOperation("移动物品到托盘区并且释放,再回到零点")
-    public CommonResult moveGoods(@RequestParam int x,@RequestParam int y,@RequestParam int z) {
+    public CommonResult moveGoods(@RequestParam int x,@RequestParam int y,@RequestParam int z,@RequestParam String goodsId) {
 
         try{
-            serialPortService.moveGoods(x,y,z,"123456");
+            serialPortService.moveGoods(x,y,z,goodsId);
             return CommonResult.success();
 
         }catch (NoSuchPortException ise){
             return CommonResult.failed("No Such Port");
         }catch (PortInUseException ise){
             return CommonResult.failed("Port In Use");
+        }catch (SerialPortException spe){
+            throw spe;
         }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }

@@ -35,6 +35,7 @@ public class SerialPortException extends RuntimeException{
     public final static int SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR = 1006;
 
     public SerialPortException(int code){
+        super(String.valueOf(code));
         this.code = code;
         switch (code){
             case SERIAL_PORT_EXCEPTION_NOT_SAME:
@@ -61,7 +62,6 @@ public class SerialPortException extends RuntimeException{
             default:
                 this.msg = "";
         }
-
     }
 
     @Override
