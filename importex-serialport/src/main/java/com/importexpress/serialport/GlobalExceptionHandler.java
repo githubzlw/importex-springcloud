@@ -29,7 +29,6 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(value = SerialPortException.class)
     public CommonResult serialPortExceptionHandler(SerialPortException e) throws Exception {
 
-        log.error("SerialPortException handler:", e);
         //点亮报警灯
         serialPort2Service.warningLight(true);
         //send mq
