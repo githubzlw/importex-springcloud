@@ -1,5 +1,8 @@
 package com.importexpress.serialport.exception;
 
+import com.importexpress.serialport.service.SerialPort2Service;
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * @Author jack.luo
  * @create 2020/7/11 13:30
@@ -30,7 +33,8 @@ public class SerialPortException extends RuntimeException{
     private final String msg;
     /** 转盘操作失败*/
     public final static int SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR = 1006;
-
+    @Autowired
+    SerialPort2Service serialPort2Service;
     public SerialPortException(int code){
         this.code = code;
         switch (code){
@@ -58,6 +62,8 @@ public class SerialPortException extends RuntimeException{
             default:
                 this.msg = "";
         }
+        //点亮报警灯
+        serialPort2Service.warningLight(true);
     }
 
     @Override
