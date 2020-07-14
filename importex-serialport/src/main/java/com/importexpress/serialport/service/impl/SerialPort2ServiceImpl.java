@@ -69,6 +69,8 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
 
     private final AiImageServiceImpl aiImageService;
 
+    /**警报灯开 */
+    private static final String WARNING_LIGHT = "WARNINGON";
     public SerialPort2ServiceImpl(Config config, AiImageServiceImpl aiImageService) {
         this.config = config;
         this.aiImageService = aiImageService;
@@ -635,6 +637,34 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
         try{
             //获取轮盘初始化
             sendData(String.valueOf(sb));
+            String strReturnData = synchronousLightQueue.take();
+            log.info("take:[{}]",strReturnData);
+            if(strReturnData.contains("Success")){
+                log.debug("执行结果:[{}]",strReturnData);
+                //有物体
+                return true;
+            }else {
+                log.error("error",strReturnData);
+                //没有物体
+                return false;
+            }
+        }catch (NoSuchPortException ise){
+            log.error("No Such Port",ise);
+            return false;
+        }catch (PortInUseException ise){
+            log.error("Port In Use",ise);
+            return false;
+        }catch (Exception e){
+            log.error("error",e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public boolean warningLight(boolean onOrOff){
+        try{
+            //获取轮盘初始化
+            sendData(WARNING_LIGHT);
             String strReturnData = synchronousLightQueue.take();
             log.info("take:[{}]",strReturnData);
             if(strReturnData.contains("Success")){

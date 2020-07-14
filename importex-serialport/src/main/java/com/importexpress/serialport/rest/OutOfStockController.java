@@ -5,13 +5,12 @@ import com.importexpress.serialport.service.SerialPort2Service;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -63,7 +62,18 @@ public class OutOfStockController {
     }
     @GetMapping("/moveTurnTable/{steps}/{box}")
     @ApiOperation("移动转盘 /moveTurnTable/{steps}/{box} steps 转盘走多少步，一步0.0045°，最多1w步，超过会不走了，box 推几次")
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "path", name = "steps", value = "转盘走多少步，一步0.0045°，最多1w步，超过会不走了", required = true, dataType = "String"),
+            @ApiImplicitParam(paramType = "path", name = "box", value = "推杆推几次 0：不推", required = true, dataType = "String"),
+    })
     public boolean moveTurnTable(@PathVariable(name = "steps")String steps, @PathVariable(name = "box")String box){
         return serialPort2Service.moveTurnTable(steps,box);
+    }
+
+    @GetMapping("/warningLight")
+    @ApiOperation("点亮，关闭报警灯")
+    @ApiImplicitParam(paramType = "query",name = "state",required = true,dataType = "boolean",value = "打开或者关闭报警灯")
+    public boolean warningLight(@RequestParam(name = "state")boolean state){
+        return serialPort2Service.warningLight(state);
     }
 }

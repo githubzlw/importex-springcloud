@@ -58,4 +58,6 @@ public interface SerialPort2Service {
     boolean initStep();
 
     boolean moveTurnTable(String steps, String box);
+
+    boolean warningLight(boolean onOrOff);
 }
