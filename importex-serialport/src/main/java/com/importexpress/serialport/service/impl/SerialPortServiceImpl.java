@@ -297,38 +297,41 @@ public class SerialPortServiceImpl implements SerialPortService {
             this.sendData(x, y, 0, true);
         }
 
-        //判断是否吊起成功
-        if(!this.readLight(x,y,0)){
-            log.warn("吊起物体失败");
-            throw new SerialPortException(SERIAL_PORT_EXCEPTION_PULL_GOODS);
-        }
-
         //移动到托盘区域
         if(synchronousQueue.take() == PUT_ONE) {
+
+            //判断是否吊起成功
+            if(!this.readLight(x,y,0)){
+                log.warn("吊起物体失败");
+                throw new SerialPortException(SERIAL_PORT_EXCEPTION_PULL_GOODS);
+            }
+
             log.info("开始移动到托盘区域");
             this.moveToCart();
         }
 
-        //判断托盘区的孔中是否为空
-        if(this.serialPort2Service.getNearSignal()){
-            log.info("判断托盘区的孔中是否为空");
-            throw new SerialPortException(SERIAL_PORT_EXCEPTION_EXISTS_GOODS);
-        }
-
         //释放物品
         if(synchronousQueue.take() == PUT_ONE) {
+
+            //判断托盘区的孔中是否为空
+            if(this.serialPort2Service.getNearSignal()){
+                log.info("判断托盘区的孔中是否为空");
+                throw new SerialPortException(SERIAL_PORT_EXCEPTION_EXISTS_GOODS);
+            }
+
             log.info("开始释放物品");
             this.execMagoff(buildSendString(config.CART_X,config.CART_Y,config.CART_Z, MAGI,false));
         }
 
-        //判断托盘区的孔中是否有物体
-        if(!this.serialPort2Service.getNearSignal()){
-            log.warn("释放物品到托盘区失败");
-            throw new SerialPortException(SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS);
-        }
-
         //回到零点
         if(synchronousQueue.take() == PUT_ONE) {
+
+            //判断托盘区的孔中是否有物体
+            if(!this.serialPort2Service.getNearSignal()){
+                log.warn("释放物品到托盘区失败");
+                throw new SerialPortException(SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS);
+            }
+
             log.info("开始回到零点");
             this.returnZeroPosi();
         }
