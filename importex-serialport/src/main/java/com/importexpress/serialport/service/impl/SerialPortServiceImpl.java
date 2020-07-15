@@ -63,6 +63,12 @@ public class SerialPortServiceImpl implements SerialPortService {
      */
     private static final SynchronousQueue<String> synchronousQueue = new SynchronousQueue<>();
 
+    /** 光电操作同步queue*/
+    private static final SynchronousQueue<String> synchronousLightQueue = new SynchronousQueue<>();
+
+    /** 条形码扫描同步queue*/
+    private static final SynchronousQueue<String> synchronousScanQueue = new SynchronousQueue<>();
+
     /**
      * 操作之间间隔时间
      */
@@ -158,7 +164,7 @@ public class SerialPortServiceImpl implements SerialPortService {
         String strSendData = buildSendString(x, y, z, LIGHT, false);
         sendData(strSendData);
 
-        String strReturnData = synchronousQueue.take();
+        String strReturnData = synchronousLightQueue.take();
         log.info("take:[{}]", strReturnData);
         if (strReturnData.contains(strSendData)) {
             log.debug("光电识别结果返回:[{}]", strReturnData);
@@ -587,11 +593,11 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         this.sendData(DO_SCAN);
         //sample: 6970194002330#SCAN#000
-        String result = synchronousQueue.take();
+        String result = synchronousScanQueue.take();
         if ("000#SCAN#404".equals(result)) {
             //读取失败,重读一次
             this.sendData(DO_SCAN);
-            result = synchronousQueue.take();
+            result = synchronousScanQueue.take();
         }
         log.info("条形码扫描结果:{}", result);
         String[] split = result.split("#");
@@ -732,11 +738,11 @@ public class SerialPortServiceImpl implements SerialPortService {
                                         } else if (sb.toString().contains("LIGHT")) {
                                             //光电操作
                                             log.info("put light queue");
-                                            synchronousQueue.put(sb.toString());
+                                            synchronousLightQueue.put(sb.toString());
                                         } else if (sb.toString().contains("SCAN")) {
                                             //条形码扫描
                                             log.info("put scan queue");
-                                            synchronousQueue.put(sb.toString());
+                                            synchronousScanQueue.put(sb.toString());
                                         }
                                     } catch (InterruptedException ignored) {
                                     }
