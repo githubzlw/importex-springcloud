@@ -726,7 +726,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
                                     log.info("received data:[{}]", sb.toString());
                                     try {
-                                        if (sb.toString().contains("LimitSwitch")) {
+                                        if (sb.toString().contains("LimitSwitch") && !sb.toString().contains("Position:")) {
                                             log.info("put LimitSwitch queue");
                                             synchronousQueue.put(PUT_ONE);
                                         } else if (sb.toString().contains("LIGHT")) {
