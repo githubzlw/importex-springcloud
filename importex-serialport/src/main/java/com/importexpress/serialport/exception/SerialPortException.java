@@ -34,6 +34,11 @@ public class SerialPortException extends RuntimeException{
     /** 转盘操作失败*/
     public final static int SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR = 1006;
 
+    /** 转盘操作失败*/
+    public final static int SERIAL_PORT_EXCEPTION_INPUT_LIGHT = 1007;
+
+    /** 转盘操作失败*/
+    public final static int SERIAL_PORT_EXCEPTION_OUTPUT_LIGHT = 1008;
     public SerialPortException(int code){
         super(String.valueOf(code));
         this.code = code;
@@ -58,6 +63,12 @@ public class SerialPortException extends RuntimeException{
                 break;
             case SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR:
                 this.msg = "转盘操作失败";
+                break;
+            case SERIAL_PORT_EXCEPTION_INPUT_LIGHT:
+                this.msg = "获取装入信号失败";
+                break;
+            case SERIAL_PORT_EXCEPTION_OUTPUT_LIGHT:
+                this.msg = "获取推出信号失败";
                 break;
             default:
                 this.msg = "";

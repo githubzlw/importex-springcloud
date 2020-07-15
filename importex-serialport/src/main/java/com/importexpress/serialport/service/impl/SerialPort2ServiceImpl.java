@@ -25,8 +25,7 @@ import java.util.concurrent.SynchronousQueue;
 
 import static com.importexpress.serialport.bean.ActionTypeEnum.LIGHT;
 import static com.importexpress.serialport.bean.ActionTypeEnum.MAGI;
-import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_NOT_SAME;
-import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR;
+import static com.importexpress.serialport.exception.SerialPortException.*;
 
 
 /**
@@ -71,6 +70,8 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
 
     /**警报灯开 */
     private static final String WARNING_LIGHT = "WARNINGON";
+    /**警报灯关 */
+    private static final String WARNING_LIGHT_OF = "WARNINGOF";
     public SerialPort2ServiceImpl(Config config, AiImageServiceImpl aiImageService) {
         this.config = config;
         this.aiImageService = aiImageService;
@@ -547,11 +548,12 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
             if(strReturnData.contains("Success")){
                 log.debug("执行结果:[{}]",strReturnData);
                 //有物体
+                if(strReturnData.contains("000")){
+                    return false;
+                }
                 return true;
             }else {
-                log.error("error",strReturnData);
-                //没有物体
-                return false;
+                throw new SerialPortException(SERIAL_PORT_EXCEPTION_INPUT_LIGHT);
             }
         }catch (NoSuchPortException ise){
             log.error("No Such Port",ise);
@@ -574,11 +576,13 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
             if(strReturnData.contains("Success")){
                 log.debug("执行结果:[{}]",strReturnData);
                 //有物体
+                if(strReturnData.contains("000")){
+                    return false;
+                }
                 return true;
             }else {
                 log.error("error",strReturnData);
-                //没有物体
-                return false;
+                throw new SerialPortException(SERIAL_PORT_EXCEPTION_INPUT_LIGHT);
             }
         }catch (NoSuchPortException ise){
             log.error("No Such Port",ise);
@@ -662,9 +666,14 @@ public class SerialPort2ServiceImpl implements SerialPort2Service {
 
     @Override
     public boolean warningLight(boolean onOrOff){
-        try{
+        try {
             //获取轮盘初始化
-            sendData(WARNING_LIGHT);
+            if(onOrOff){
+                sendData(WARNING_LIGHT);
+            }else {
+                sendData(WARNING_LIGHT_OF);
+            }
+
             String strReturnData = synchronousLightQueue.take();
             log.info("take:[{}]",strReturnData);
             if(strReturnData.contains("Success")){
