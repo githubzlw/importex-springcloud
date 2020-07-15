@@ -53,7 +53,7 @@ public class SerialPortServiceTest {
     }
 
     @Test
-    public void findGoodsByGrid() throws IOException {
+    public void findGoodsByGrid() throws PortInUseException, UnsupportedCommOperationException, NoSuchPortException, InterruptedException, IOException {
 
         Map<String, String> hmGoods = new HashMap<>();
         serialPortService.moveGoodsByFinder(hmGoods);
