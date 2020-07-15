@@ -8,7 +8,6 @@ import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.experimental.var;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -281,7 +280,7 @@ public class SerialPortController {
     public CommonResult readGoodsId() {
 
         try {
-            return CommonResult.success(serialPortService.readGoodsId());
+            return CommonResult.success(serialPortService.readScan());
 
         } catch (Exception e) {
             return CommonResult.failed(e.getMessage());

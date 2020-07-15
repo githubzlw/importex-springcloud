@@ -18,6 +18,7 @@ public interface SerialPortService {
 
     /**
      * 直接发送指令
+     *
      * @param msg
      * @throws PortInUseException
      * @throws NoSuchPortException
@@ -28,6 +29,7 @@ public interface SerialPortService {
 
     /**
      * 直接发送指令
+     *
      * @param x
      * @param y
      * @param z
@@ -41,6 +43,7 @@ public interface SerialPortService {
 
     /**
      * 读取光电信号
+     *
      * @param x
      * @param y
      * @param z
@@ -84,9 +87,9 @@ public interface SerialPortService {
     /**
      * 移动物品到托盘区并且释放,再回到零点
      */
-    void moveGoods(int x, int y, int z,String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+    void moveGoods(int x, int y, int z, String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
-    void returnMoveGoods(int x, int y, int z,String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+    void returnMoveGoods(int x, int y, int z, String goodsId) throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
     /**
      * 关闭串口（长时间不用需要关闭）
@@ -95,12 +98,14 @@ public interface SerialPortService {
 
     /**
      * 移动货物（前期已经地毯式扫描过货物，取得了货物坐标）
+     *
      * @param hmGoods
      */
-    Map<String,Integer> moveGoodsByFinder(Map<String, String> hmGoods) throws IOException;
+    Map<String, Integer> moveGoodsByFinder(Map<String, String> hmGoods) throws IOException;
 
     /**
      * 出库商品再入库
+     *
      * @param turnTable
      * @param box
      * @param goodsId
@@ -110,6 +115,7 @@ public interface SerialPortService {
 
     /**
      * 读取指定日期的json文件（定时任务生成）
+     *
      * @param yyyyMMdd
      * @return
      * @throws IOException
@@ -118,6 +124,7 @@ public interface SerialPortService {
 
     /**
      * 获取json文件名称
+     *
      * @param yyyyMMdd
      * @return
      */
@@ -125,14 +132,19 @@ public interface SerialPortService {
 
     /**
      * 条形码读取
+     *
      * @return
+     * @throws PortInUseException
+     * @throws NoSuchPortException
+     * @throws InterruptedException
+     * @throws UnsupportedCommOperationException
      */
-    String readGoodsId();
+    String readScan() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
     /**
      * 地毯式扫描货物(定时任务执行），进行入库操作准备
      */
     List<GoodsBean> findAllGoodsByGrid();
 
-//    void callCMD(String msg);
+    void callCMD(String msg);
 }
