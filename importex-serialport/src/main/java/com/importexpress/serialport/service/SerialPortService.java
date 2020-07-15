@@ -101,7 +101,7 @@ public interface SerialPortService {
      *
      * @param hmGoods
      */
-    Map<String, Integer> moveGoodsByFinder(Map<String, String> hmGoods) throws IOException;
+    Map<String, Integer> moveGoodsByFinder(Map<String, String> hmGoods) throws IOException, PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
     /**
      * 出库商品再入库

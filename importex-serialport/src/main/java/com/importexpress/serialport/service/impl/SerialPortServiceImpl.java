@@ -417,7 +417,7 @@ public class SerialPortServiceImpl implements SerialPortService {
      * @param hmGoods
      */
     @Override
-    public Map<String, Integer> moveGoodsByFinder(Map<String, String> hmGoods) throws IOException {
+    public Map<String, Integer> moveGoodsByFinder(Map<String, String> hmGoods) throws IOException, PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
         Map<String, Integer> result = new HashMap<>(hmGoods.size());
         if (hmGoods.size() == 0) {
@@ -425,69 +425,66 @@ public class SerialPortServiceImpl implements SerialPortService {
         }
 
         String json = null;
-        try {
-            json = getAllGoodsFromJsonFile(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
 
-            List<GoodsBean> lstGoodsBean = new Gson().fromJson(json, new TypeToken<List<GoodsBean>>() {
-            }.getType());
-            for (GoodsBean goodsBean : lstGoodsBean) {
-                String value = hmGoods.get(goodsBean.getGoodsId());
-                if (StringUtils.isNotEmpty(value)) {
-                    //匹配到需要搬动的货物
-                    log.debug("匹配到需要搬动的货物,value={}", goodsBean);
-                    String[] split = value.split("_");
-                    assert split.length == 2;
-                    boolean commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
+        json = getAllGoodsFromJsonFile(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+
+        List<GoodsBean> lstGoodsBean = new Gson().fromJson(json, new TypeToken<List<GoodsBean>>() {
+        }.getType());
+        for (GoodsBean goodsBean : lstGoodsBean) {
+            String value = hmGoods.get(goodsBean.getGoodsId());
+            if (StringUtils.isNotEmpty(value)) {
+                //匹配到需要搬动的货物
+                log.debug("匹配到需要搬动的货物,value={}", goodsBean);
+                String[] split = value.split("_");
+                assert split.length == 2;
+                boolean commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
+                if (commonResult) {
+                    this.moveGoods(goodsBean.getX(), goodsBean.getY(), goodsBean.getZ(), goodsBean.getGoodsId());
+                    commonResult = serialPort2Service.initStep();
                     if (commonResult) {
-                        this.moveGoods(goodsBean.getX(), goodsBean.getY(), goodsBean.getZ(), goodsBean.getGoodsId());
-                        commonResult = serialPort2Service.initStep();
-                        if (commonResult) {
-                            result.put(goodsBean.getGoodsId(), 1);
-                        } else {
-                            throw new IOException("serialPort2Service.initStep return result is error");
-                        }
+                        result.put(goodsBean.getGoodsId(), 1);
                     } else {
-                        throw new IOException("serialPort2Service.outOfStock return result is error");
+                        throw new IOException("serialPort2Service.initStep return result is error");
                     }
                 } else {
-                    //从退货区再查询
+                    throw new IOException("serialPort2Service.outOfStock return result is error");
+                }
+            } else {
+                //从退货区再查询
 
-                    List<ReturnMoveBean> lstBean;
-                    File file = new File(config.SAVE_FINDER_PATH + FILE_RETURN_MOVE);
-                    if (file.exists()) {
-                        String strReturnMove = FileUtils.readFileToString(file);
-                        lstBean =
-                                new Gson().fromJson(strReturnMove, new TypeToken<List<ReturnMoveBean>>() {
-                                }.getType());
-                        for (ReturnMoveBean item : lstBean) {
-                            if (goodsBean.getGoodsId().equals(item.getGoodsId())) {
-                                //找到货物
-                                String[] split = value.split("-");
-                                assert split.length == 2;
-                                boolean commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
-                                if (commonResult) {
-                                    int x = config.RETURN_VALUE_X;
-                                    int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex() + 1);
-                                    this.moveGoods(x, y, config.GOODS_MOVE_VALUE_Z, item.getGoodsId());
-                                    //清空此位置
-                                    item.setGoodsId(null);
-                                    item.setHave(false);
-                                    result.put(goodsBean.getGoodsId(), 1);
-                                    break;
-                                } else {
-                                    log.error("serialPort2Service.outOfStock return result is error");
-                                }
+                List<ReturnMoveBean> lstBean;
+                File file = new File(config.SAVE_FINDER_PATH + FILE_RETURN_MOVE);
+                if (file.exists()) {
+                    String strReturnMove = FileUtils.readFileToString(file);
+                    lstBean =
+                            new Gson().fromJson(strReturnMove, new TypeToken<List<ReturnMoveBean>>() {
+                            }.getType());
+                    for (ReturnMoveBean item : lstBean) {
+                        if (goodsBean.getGoodsId().equals(item.getGoodsId())) {
+                            //找到货物
+                            String[] split = value.split("-");
+                            assert split.length == 2;
+                            boolean commonResult = serialPort2Service.outOfStock(split[0], split[1], "0");
+                            if (commonResult) {
+                                int x = config.RETURN_VALUE_X;
+                                int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex() + 1);
+                                this.moveGoods(x, y, config.GOODS_MOVE_VALUE_Z, item.getGoodsId());
+                                //清空此位置
+                                item.setGoodsId(null);
+                                item.setHave(false);
+                                result.put(goodsBean.getGoodsId(), 1);
+                                break;
+                            } else {
+                                log.error("serialPort2Service.outOfStock return result is error");
                             }
                         }
-                        //保存json到文件
-                        saveReturnMoveFile(lstBean, file);
                     }
+                    //保存json到文件
+                    saveReturnMoveFile(lstBean, file);
                 }
             }
-        } catch (Exception e) {
-            log.error("moveGoodsByFinder", e);
-            throw new IOException(e.getMessage());
         }
+
 
         return result;
     }

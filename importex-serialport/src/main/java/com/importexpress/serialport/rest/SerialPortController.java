@@ -215,7 +215,13 @@ public class SerialPortController {
 
         try {
             return CommonResult.success(serialPortService.moveGoodsByFinder(map));
-        } catch (IOException e) {
+        }catch (NoSuchPortException ise){
+            return CommonResult.failed("No Such Port");
+        }catch (PortInUseException ise){
+            return CommonResult.failed("Port In Use");
+        }catch (SerialPortException spe){
+            throw spe;
+        }catch (Exception e){
             return CommonResult.failed(e.getMessage());
         }
 
