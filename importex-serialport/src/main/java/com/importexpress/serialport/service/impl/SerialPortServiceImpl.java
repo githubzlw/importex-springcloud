@@ -525,7 +525,7 @@ public class SerialPortServiceImpl implements SerialPortService {
                     int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex() + 1);
                     if (serialPort2Service.outOfStock(turnTable, box, "0")) {
                         //移动货物
-                        this.returnMoveGoods(x, y, config.GOODS_MOVE_VALUE_Z, item.getGoodsId());
+                        this.returnMoveGoods(x, y, config.GOODS_MOVE_VALUE_Z, goodsId);
                         item.setHave(true);
                         item.setGoodsId(goodsId);
                         break;
@@ -592,11 +592,13 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         this.sendData(DO_SCAN);
         //sample: 6970194002330#SCAN#000
-        String result = synchronousScanQueue.poll(10, TimeUnit.SECONDS);
+        log.info("begin ");
+        String result = synchronousScanQueue.poll(30, TimeUnit.SECONDS);
+        log.info("end ");
         if ("000#SCAN#404".equals(result)) {
             //读取失败,重读一次
             this.sendData(DO_SCAN);
-            result = synchronousScanQueue.poll(10, TimeUnit.SECONDS);
+            result = synchronousScanQueue.poll(30, TimeUnit.SECONDS);
         }
         log.info("条形码扫描结果:{}", result);
         if(StringUtils.isEmpty(result)){
