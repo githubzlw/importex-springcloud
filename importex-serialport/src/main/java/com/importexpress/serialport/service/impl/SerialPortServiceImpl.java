@@ -601,13 +601,13 @@ public class SerialPortServiceImpl implements SerialPortService {
             result = synchronousScanQueue.poll(30, TimeUnit.SECONDS);
         }
         log.info("条形码扫描结果:{}", result);
-        if(StringUtils.isEmpty(result)){
-            throw new SerialPortException(SERIAL_PORT_EXCEPTION_SCAN);
+        if(StringUtils.isEmpty(result) || StringUtils.contains(result,"404")){
+            return StringUtils.EMPTY;
+        }else{
+            String[] split = result.split("#");
+            assert split.length == 3;
+            return "000".equals(split[0]) ? StringUtils.EMPTY : split[0];
         }
-        String[] split = result.split("#");
-        assert split.length == 3;
-
-        return "000".equals(split[0]) ? StringUtils.EMPTY : split[0];
 
     }
 
