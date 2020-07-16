@@ -598,6 +598,9 @@ public class SerialPortServiceImpl implements SerialPortService {
             result = synchronousScanQueue.poll(10, TimeUnit.SECONDS);
         }
         log.info("条形码扫描结果:{}", result);
+        if(StringUtils.isEmpty(result)){
+            throw new SerialPortException(SERIAL_PORT_EXCEPTION_SCAN);
+        }
         String[] split = result.split("#");
         assert split.length == 3;
 

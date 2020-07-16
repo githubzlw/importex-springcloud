@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class SerialPortException extends RuntimeException{
 
+    private final int code;
+
+    private final String msg;
+
     /** 扫描的条形码和实际要搬动的物体不一致*/
     public final static int SERIAL_PORT_EXCEPTION_NOT_SAME = 1000;
 
@@ -28,9 +32,6 @@ public class SerialPortException extends RuntimeException{
     /** 出库商品再入库操作中，托盘区的孔中没有物体*/
     public final static int SERIAL_PORT_EXCEPTION_NOT_EXISTS_GOODS_RETURN = 1005;
 
-    private final int code;
-
-    private final String msg;
     /** 转盘操作失败*/
     public final static int SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR = 1006;
 
@@ -39,6 +40,11 @@ public class SerialPortException extends RuntimeException{
 
     /** 转盘操作失败*/
     public final static int SERIAL_PORT_EXCEPTION_OUTPUT_LIGHT = 1008;
+
+    /** 扫描的条形码失败*/
+    public final static int SERIAL_PORT_EXCEPTION_SCAN = 1009;
+
+
     public SerialPortException(int code){
         super(String.valueOf(code));
         this.code = code;
@@ -69,6 +75,9 @@ public class SerialPortException extends RuntimeException{
                 break;
             case SERIAL_PORT_EXCEPTION_OUTPUT_LIGHT:
                 this.msg = "获取推出信号失败";
+                break;
+            case SERIAL_PORT_EXCEPTION_SCAN:
+                this.msg = "扫描的条形码失败";
                 break;
             default:
                 this.msg = "";
