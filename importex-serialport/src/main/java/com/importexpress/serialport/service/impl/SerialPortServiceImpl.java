@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 
 import static com.importexpress.serialport.bean.ActionTypeEnum.LIGHT;
 import static com.importexpress.serialport.bean.ActionTypeEnum.MAGI;
@@ -61,13 +62,13 @@ public class SerialPortServiceImpl implements SerialPortService {
     /**
      * 同步queue
      */
-    private static final SynchronousQueue<String> synchronousQueue = new SynchronousQueue<>();
+    private final SynchronousQueue<String> synchronousQueue = new SynchronousQueue<>();
 
     /** 光电操作同步queue*/
-    private static final SynchronousQueue<String> synchronousLightQueue = new SynchronousQueue<>();
+    private final SynchronousQueue<String> synchronousLightQueue = new SynchronousQueue<>();
 
     /** 条形码扫描同步queue*/
-    private static final SynchronousQueue<String> synchronousScanQueue = new SynchronousQueue<>();
+    private final SynchronousQueue<String> synchronousScanQueue = new SynchronousQueue<>();
 
     /**
      * 操作之间间隔时间
@@ -590,11 +591,11 @@ public class SerialPortServiceImpl implements SerialPortService {
 
         this.sendData(DO_SCAN);
         //sample: 6970194002330#SCAN#000
-        String result = synchronousScanQueue.take();
+        String result = synchronousScanQueue.poll(10, TimeUnit.SECONDS);
         if ("000#SCAN#404".equals(result)) {
             //读取失败,重读一次
             this.sendData(DO_SCAN);
-            result = synchronousScanQueue.take();
+            result = synchronousScanQueue.poll(10, TimeUnit.SECONDS);
         }
         log.info("条形码扫描结果:{}", result);
         String[] split = result.split("#");
