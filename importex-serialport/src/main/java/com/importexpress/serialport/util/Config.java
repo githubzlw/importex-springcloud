@@ -20,8 +20,11 @@ public class Config {
     @Value("${CART_Y}")
     public int CART_Y;
 
-    @Value("${CART_Z}")
-    public int CART_Z;
+    @Value("${CART_Z_1}")
+    public int CART_Z_1;
+
+    @Value("${CART_Z_2}")
+    public int CART_Z_2;
 
     @Value("${MAX_VALUE_X}")
     public int MAX_VALUE_X;

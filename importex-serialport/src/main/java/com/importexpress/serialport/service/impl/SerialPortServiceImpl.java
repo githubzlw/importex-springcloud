@@ -220,7 +220,7 @@ public class SerialPortServiceImpl implements SerialPortService {
     @Override
     public void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
-        sendData(buildSendString(config.CART_X, config.CART_Y, config.CART_Z, MAGI, true));
+        sendData(buildSendString(config.CART_X, config.CART_Y, config.CART_Z_1, MAGI, true));
     }
 
     /**
@@ -289,7 +289,7 @@ public class SerialPortServiceImpl implements SerialPortService {
             }
 
             log.info("开始释放物品");
-            this.execMagoff(buildSendString(config.CART_X, config.CART_Y, config.CART_Z, MAGI, false));
+            this.execMagoff(buildSendString(config.CART_X, config.CART_Y, config.CART_Z_1, MAGI, false));
         }
 
         //回到零点
@@ -345,7 +345,7 @@ public class SerialPortServiceImpl implements SerialPortService {
         //伸Z
         if (PUT_ONE.equals(synchronousQueue.take())) {
             log.info("开始伸Z");
-            this.sendData(config.CART_X, config.CART_Y, config.CART_Z, false);
+            this.sendData(config.CART_X, config.CART_Y, config.CART_Z_2, false);
         }
 
         //吸取物品
@@ -360,7 +360,7 @@ public class SerialPortServiceImpl implements SerialPortService {
             }
 
             log.info("开始吸取物品");
-            this.execMagNet(config.CART_X, config.CART_Y, config.CART_Z);
+            this.execMagNet(config.CART_X, config.CART_Y, config.CART_Z_2);
         }
 
         //缩Z
