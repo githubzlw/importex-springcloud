@@ -538,7 +538,8 @@ public class SerialPortServiceImpl implements SerialPortService {
 
             //保存json到文件
             saveReturnMoveFile(lstBean, file);
-
+        }catch (SerialPortException spe){
+            throw spe;
         } catch (Exception e) {
             log.error("moveGoodsByFinder", e);
             return -1;
