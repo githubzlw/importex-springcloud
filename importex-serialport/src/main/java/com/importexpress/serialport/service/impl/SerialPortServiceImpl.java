@@ -295,6 +295,7 @@ public class SerialPortServiceImpl implements SerialPortService {
         //回到零点
         if (PUT_ONE.equals(synchronousQueue.take())) {
 
+            Thread.sleep(5000);
             //判断托盘区的孔中是否有物体
             if (!this.serialPort2Service.getNearSignal()) {
                 log.warn("释放物品到托盘区失败");
@@ -736,7 +737,7 @@ public class SerialPortServiceImpl implements SerialPortService {
 
                                     log.info("received data:[{}]", sb.toString());
                                     try {
-                                        if (sb.toString().contains("success,finish")) {
+                                        if (sb.toString().equals("success,finish")) {
                                             log.info("put finish queue");
                                             synchronousQueue.put(PUT_ONE);
                                         } else if (sb.toString().contains("LIGHT")) {
