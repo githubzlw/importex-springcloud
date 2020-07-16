@@ -1,6 +1,7 @@
 package com.importexpress.cart.rest;
 
 import com.importexpress.cart.pojo.Cart;
+import com.importexpress.cart.scheduled.CartScheduleTask;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.pojo.SiteEnum;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.importexpress.cart.service.CartService.SUCCESS;
@@ -28,10 +30,13 @@ public class CartControl {
 
     private CartService cartService;
 
+    private final CartScheduleTask cartScheduleTask;
+
     @Autowired
-    public CartControl(CartService shoppingCartService) {
+    public CartControl(CartService shoppingCartService, CartScheduleTask cartScheduleTask) {
 
         this.cartService = shoppingCartService;
+        this.cartScheduleTask = cartScheduleTask;
     }
 
     @PostMapping("/{site}/{userId}/{itemId}")
@@ -186,6 +191,12 @@ public class CartControl {
             return CommonResult.failed(e.getMessage());
         }
 
+    }
+
+    @GetMapping("/saveAllCartsToFiles")
+    @ApiOperation("手动执行定时任务：saveAllCartsToFiles")
+    public void saveAllCartsToFiles() throws IOException {
+        cartScheduleTask.saveAllCartsToFiles();
     }
 
 }
