@@ -60,7 +60,7 @@ public class SerialPortServiceTest {
     }
 
     @Test
-    public void returnMoveGoodsByFinder() {
+    public void returnMoveGoodsByFinder() throws PortInUseException, UnsupportedCommOperationException, NoSuchPortException, InterruptedException, IOException {
 
         serialPortService.returnMoveGoodsByFinder("1", "2-1", GOODS_ID);
     }
