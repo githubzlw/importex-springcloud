@@ -20,8 +20,7 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static com.importexpress.serialport.bean.ActionTypeEnum.LIGHT;
 import static com.importexpress.serialport.bean.ActionTypeEnum.MAGI;
@@ -98,6 +97,8 @@ public class SerialPortServiceImpl implements SerialPortService {
     private final AiImageServiceImpl aiImageService;
 
     private final SerialPort2Service serialPort2Service;
+
+    private static Future<List<GoodsBean>> future;
 
     /**
      * 构造函数
@@ -605,46 +606,75 @@ public class SerialPortServiceImpl implements SerialPortService {
     }
 
     /**
+     * 地毯式扫描中途取消
+     */
+    @Override
+    public boolean cancelFindAllGoodsByGrid() {
+        if(future != null && !future.isCancelled()){
+            return future.cancel(true);
+        }else{
+            return true;
+        }
+    }
+
+
+    /**
      * 地毯式扫描货物(定时任务执行），进行入库操作准备
      */
     @Override
     public List<GoodsBean> findAllGoodsByGrid() {
 
-        long start = System.currentTimeMillis();
-        int stepGap = config.STEP_VALUE;
-        int count = 0;
-        List<GoodsBean> lstFinderGoods = new ArrayList<>();
-        for (int x = 1; x * stepGap <= config.MAX_VALUE_X; x++) {
-            for (int y = 1; y * stepGap <= config.MAX_VALUE_X; y++) {
-                log.debug("x:[{}],y:[{}]", x * stepGap, y * stepGap);
-                ++count;
-                try {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        future = executorService.submit(() -> {
 
-                    if (!this.readLight(x * stepGap, y * stepGap, config.MAX_VALUE_Z)) {
-                        continue;
-                    }
+            long start = System.currentTimeMillis();
+            int stepGap = config.STEP_VALUE;
+            int count = 0;
+            List<GoodsBean> lstFinderGoods = new ArrayList<>();
+            for (int x = 1; x * stepGap <= config.MAX_VALUE_X; x++) {
+                for (int y = 1; y * stepGap <= config.MAX_VALUE_X; y++) {
+                    log.debug("x:[{}],y:[{}]", x * stepGap, y * stepGap);
+                    ++count;
+                    try {
 
-                    String strGoodsId = this.readScan();
-                    if (StringUtils.isNotEmpty(strGoodsId)) {
-                        log.info("find goods (x,y):[{},{}]", x * stepGap, y * stepGap);
-                        lstFinderGoods.add(
-                                GoodsBean.builder().x(x * stepGap).y(y * stepGap).goodsId(strGoodsId).build());
+                        if (!this.readLight(x * stepGap, y * stepGap, config.MAX_VALUE_Z)) {
+                            continue;
+                        }
+
+                        String strGoodsId = this.readScan();
+                        if (StringUtils.isNotEmpty(strGoodsId)) {
+                            log.info("find goods (x,y):[{},{}]", x * stepGap, y * stepGap);
+                            lstFinderGoods.add(
+                                    GoodsBean.builder().x(x * stepGap).y(y * stepGap).goodsId(strGoodsId).build());
+                        }
+                    } catch (Exception e) {
+                        log.error("findAllGoodsByGrid", e);
                     }
-                } catch (Exception e) {
-                    log.error("findAllGoodsByGrid", e);
                 }
             }
-        }
-        log.info("move count:[{}],spend time:[{}]s", count, (System.currentTimeMillis() - start) / 1000);
+            log.info("move count:[{}],spend time:[{}]s", count, (System.currentTimeMillis() - start) / 1000);
 
-        //回到零位
+            //回到零位
+            try {
+                this.setZeroPosi();
+            } catch (Exception e) {
+                log.error("setZeroPosi", e);
+            }
+
+            return lstFinderGoods;
+        });
+
         try {
-            this.setZeroPosi();
-        } catch (Exception e) {
-            log.error("setZeroPosi", e);
+            executorService.shutdown();
+            List<GoodsBean> goodsBeans = future.get();
+            future =null;
+            return goodsBeans;
+        } catch (InterruptedException e) {
+            log.error("InterruptedException",e);
+            return new ArrayList<>();
+        } catch (ExecutionException e) {
+            throw new SerialPortException(SERIAL_PORT_EXCEPTION_FIND_BY_GRID);
         }
-
-        return lstFinderGoods;
     }
 
     /**

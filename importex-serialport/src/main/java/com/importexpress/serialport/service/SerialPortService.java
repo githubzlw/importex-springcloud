@@ -140,6 +140,8 @@ public interface SerialPortService {
      */
     String readScan() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
+    boolean cancelFindAllGoodsByGrid();
+
     /**
      * 地毯式扫描货物(定时任务执行），进行入库操作准备
      */

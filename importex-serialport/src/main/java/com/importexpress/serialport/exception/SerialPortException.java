@@ -47,6 +47,8 @@ public class SerialPortException extends RuntimeException{
     /** 转盘区域出错*/
     public final static int SERIAL_PORT_EXCEPTION_OUT_OF_STOCK = 1010;
 
+    /** 地毯式扫描出错*/
+    public final static int SERIAL_PORT_EXCEPTION_FIND_BY_GRID = 1011;
 
     public SerialPortException(int code){
         super(String.valueOf(code));
@@ -84,6 +86,9 @@ public class SerialPortException extends RuntimeException{
                 break;
             case SERIAL_PORT_EXCEPTION_OUT_OF_STOCK:
                 this.msg = "转盘区域出错";
+                break;
+            case SERIAL_PORT_EXCEPTION_FIND_BY_GRID:
+                this.msg = "地毯式扫描出错";
                 break;
             default:
                 this.msg = "";

@@ -270,6 +270,13 @@ public class SerialPortController {
 
     }
 
+    @GetMapping("/cancelFindAllGoodsByGrid")
+    @ApiOperation("地毯式扫描中途取消")
+    public CommonResult cancelFindAllGoodsByGrid() {
+
+        return CommonResult.success(serialPortService.cancelFindAllGoodsByGrid());
+    }
+
     @GetMapping("/findAllGoodsByGrid")
     @ApiOperation("地毯式扫描货物（调试用），进行入库操作准备")
     public CommonResult findAllGoodsByGrid() {
