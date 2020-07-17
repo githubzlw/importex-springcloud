@@ -610,9 +610,18 @@ public class SerialPortServiceImpl implements SerialPortService {
      */
     @Override
     public boolean cancelFindAllGoodsByGrid() {
-        if(future != null && !future.isCancelled()){
-            return future.cancel(true);
+        if(future != null){
+            boolean cancel = future.cancel(true);
+            try {
+                if(cancel) {
+                    this.returnZeroPosi();
+                }
+            } catch (Exception e) {
+                log.error("returnZeroPosi",e);
+            }
+            return cancel;
         }else{
+            log.warn("future is null");
             return true;
         }
     }
@@ -641,12 +650,17 @@ public class SerialPortServiceImpl implements SerialPortService {
                             continue;
                         }
 
-                        String strGoodsId = this.readScan();
+                        //String strGoodsId = this.readScan();
+                        String strGoodsId = null;
+                        //TODO
                         if (StringUtils.isNotEmpty(strGoodsId)) {
                             log.info("find goods (x,y):[{},{}]", x * stepGap, y * stepGap);
                             lstFinderGoods.add(
                                     GoodsBean.builder().x(x * stepGap).y(y * stepGap).goodsId(strGoodsId).build());
                         }
+                    } catch(InterruptedException ie){
+                        log.warn("cancel task");
+                        throw ie;
                     } catch (Exception e) {
                         log.error("findAllGoodsByGrid", e);
                     }
@@ -669,8 +683,9 @@ public class SerialPortServiceImpl implements SerialPortService {
             List<GoodsBean> goodsBeans = future.get();
             future =null;
             return goodsBeans;
-        } catch (InterruptedException e) {
-            log.error("InterruptedException",e);
+        } catch (InterruptedException | CancellationException e) {
+            log.error("Cancel",e);
+            future =null;
             return new ArrayList<>();
         } catch (ExecutionException e) {
             throw new SerialPortException(SERIAL_PORT_EXCEPTION_FIND_BY_GRID);
