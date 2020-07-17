@@ -17,6 +17,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
 /**
@@ -65,5 +69,20 @@ public class SerialPortServiceTest {
         serialPortService.returnMoveGoodsByFinder("1", "2-1", GOODS_ID);
     }
 
+    @Test
+    public void submit() throws ExecutionException, InterruptedException {
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future future = executorService.submit(() -> {
+            System.out.println("begin");
+            Thread.sleep(3000);
+            System.out.println("end");
+            return "abcc";
+        });
+        executorService.shutdown();
+        System.out.println(future.isCancelled());
+        Thread.sleep(1000);
+        future.cancel(true);
+        //System.out.println(future.get());
+    }
 
 }
