@@ -109,9 +109,8 @@ public interface SerialPortService {
      * @param turnTable
      * @param box
      * @param goodsId
-     * @return
      */
-    int returnMoveGoodsByFinder(String turnTable, String box, String goodsId);
+    void returnMoveGoodsByFinder(String turnTable, String box, String goodsId) throws IOException, PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
     /**
      * 读取指定日期的json文件（定时任务生成）

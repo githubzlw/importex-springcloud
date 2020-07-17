@@ -5,6 +5,8 @@ import com.importexpress.serialport.exception.SerialPortException;
 import com.importexpress.serialport.mq.SendMQ;
 import com.importexpress.serialport.service.SerialPort2Service;
 import com.importexpress.serialport.service.SerialPortService;
+import gnu.io.NoSuchPortException;
+import gnu.io.PortInUseException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -39,4 +41,33 @@ class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return CommonResult.failed(e.toString());
 
     }
+
+    @ExceptionHandler(value = PortInUseException.class)
+    public CommonResult portInUseExceptionHandler(SerialPortException e) throws Exception {
+
+        //点亮报警灯
+        serialPort2Service.warningLight(true);
+        //send mq
+        sendMQ.sendWarningMsgToMQ("com端口被占用");
+        //回到零点
+        serialPortService.returnZeroPosi();
+
+        return CommonResult.failed(e.toString());
+
+    }
+
+    @ExceptionHandler(value = NoSuchPortException.class)
+    public CommonResult noSuchPortException(SerialPortException e) throws Exception {
+
+        //点亮报警灯
+        serialPort2Service.warningLight(true);
+        //send mq
+        sendMQ.sendWarningMsgToMQ("没有这个com端口");
+        //回到零点
+        serialPortService.returnZeroPosi();
+
+        return CommonResult.failed(e.toString());
+
+    }
+
 }

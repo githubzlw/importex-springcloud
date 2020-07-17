@@ -6,6 +6,7 @@ import com.importexpress.serialport.exception.SerialPortException;
 import com.importexpress.serialport.service.SerialPortService;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;
+import gnu.io.UnsupportedCommOperationException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -229,13 +230,15 @@ public class SerialPortController {
 
     @GetMapping("/returnMoveGoodsByFinder")
     @ApiOperation("出库商品再入库（远超调用）")
-    public CommonResult returnMoveGoodsByFinder(@RequestParam String turnTable,@RequestParam String box,@RequestParam String goodsId) {
+    public CommonResult returnMoveGoodsByFinder(@RequestParam String turnTable,@RequestParam String box,@RequestParam String goodsId) throws PortInUseException, NoSuchPortException {
 
-        int result = serialPortService.returnMoveGoodsByFinder(turnTable, box, goodsId);
-        if(result ==0){
+        try {
+            serialPortService.returnMoveGoodsByFinder(turnTable, box, goodsId);
             return CommonResult.success();
-        }else{
-            return CommonResult.failed();
+        } catch (IOException | InterruptedException | UnsupportedCommOperationException e) {
+            return CommonResult.failed(e.getMessage());
+        } catch (PortInUseException | NoSuchPortException e) {
+            throw e;
         }
     }
 

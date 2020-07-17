@@ -44,6 +44,9 @@ public class SerialPortException extends RuntimeException{
     /** 扫描的条形码失败*/
     public final static int SERIAL_PORT_EXCEPTION_SCAN = 1009;
 
+    /** 转盘区域出错*/
+    public final static int SERIAL_PORT_EXCEPTION_OUT_OF_STOCK = 1010;
+
 
     public SerialPortException(int code){
         super(String.valueOf(code));
@@ -78,6 +81,9 @@ public class SerialPortException extends RuntimeException{
                 break;
             case SERIAL_PORT_EXCEPTION_SCAN:
                 this.msg = "扫描的条形码失败";
+                break;
+            case SERIAL_PORT_EXCEPTION_OUT_OF_STOCK:
+                this.msg = "转盘区域出错";
                 break;
             default:
                 this.msg = "";

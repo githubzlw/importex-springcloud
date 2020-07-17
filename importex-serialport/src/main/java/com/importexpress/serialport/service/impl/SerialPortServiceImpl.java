@@ -495,58 +495,50 @@ public class SerialPortServiceImpl implements SerialPortService {
      * 出库商品再入库
      */
     @Override
-    public int returnMoveGoodsByFinder(String turnTable, String box, String goodsId) {
+    public void returnMoveGoodsByFinder(String turnTable, String box, String goodsId) throws IOException, PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
 
-        try {
 
-            File file = new File(config.SAVE_FINDER_PATH + FILE_RETURN_MOVE);
-            String strReturnMove;
-            List<ReturnMoveBean> lstBean;
-            if (file.exists()) {
-                strReturnMove = FileUtils.readFileToString(file);
-                lstBean =
-                        new Gson().fromJson(strReturnMove, new TypeToken<List<ReturnMoveBean>>() {
-                        }.getType());
-            } else {
-                //初次
-                lstBean = new ArrayList<>();
-                ReturnMoveBean item;
-                for (int i = 0; i < RETURN_MOVE_SIZE; i++) {
-                    item = new ReturnMoveBean();
-                    item.setIndex(i);
-                    lstBean.add(item);
-                }
+
+        File file = new File(config.SAVE_FINDER_PATH + FILE_RETURN_MOVE);
+        String strReturnMove;
+        List<ReturnMoveBean> lstBean;
+        if (file.exists()) {
+            strReturnMove = FileUtils.readFileToString(file);
+            lstBean =
+                    new Gson().fromJson(strReturnMove, new TypeToken<List<ReturnMoveBean>>() {
+                    }.getType());
+        } else {
+            //初次
+            lstBean = new ArrayList<>();
+            ReturnMoveBean item;
+            for (int i = 0; i < RETURN_MOVE_SIZE; i++) {
+                item = new ReturnMoveBean();
+                item.setIndex(i);
+                lstBean.add(item);
             }
-
-            //查找空位,找到后移动物体
-            for (ReturnMoveBean item : lstBean) {
-                if (!item.isHave()) {
-                    //找到空位
-                    int x = config.RETURN_VALUE_X;
-                    int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex() + 1);
-                    if (serialPort2Service.outOfStock(turnTable, box, "0")) {
-                        //移动货物
-                        this.returnMoveGoods(x, y, config.GOODS_MOVE_VALUE_Z, goodsId);
-                        item.setHave(true);
-                        item.setGoodsId(goodsId);
-                        break;
-                    } else {
-                        log.error("serialPort2Service.outOfStock return result is error");
-                        return -2;
-                    }
-                }
-            }
-
-            //保存json到文件
-            saveReturnMoveFile(lstBean, file);
-        }catch (SerialPortException spe){
-            throw spe;
-        } catch (Exception e) {
-            log.error("moveGoodsByFinder", e);
-            return -1;
         }
 
-        return 0;
+        //查找空位,找到后移动物体
+        for (ReturnMoveBean item : lstBean) {
+            if (!item.isHave()) {
+                //找到空位
+                int x = config.RETURN_VALUE_X;
+                int y = config.RETURN_VALUE_Y * config.RETURN_STEP_VALUE * (item.getIndex() + 1);
+                if (serialPort2Service.outOfStock(turnTable, box, "0")) {
+                    //移动货物
+                    this.returnMoveGoods(x, y, config.GOODS_MOVE_VALUE_Z, goodsId);
+                    item.setHave(true);
+                    item.setGoodsId(goodsId);
+                    break;
+                } else {
+                    throw new SerialPortException(SERIAL_PORT_EXCEPTION_OUT_OF_STOCK);
+                }
+            }
+        }
+
+        //保存json到文件
+        saveReturnMoveFile(lstBean, file);
+
     }
 
     /**
