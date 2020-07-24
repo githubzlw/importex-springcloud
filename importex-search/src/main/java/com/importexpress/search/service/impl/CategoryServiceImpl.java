@@ -101,10 +101,12 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		if(StringUtils.isBlank(param.getNewArrivalDate())){
 			return lstDate;
 		}
-		lstDate.stream().forEach(l->{
+		List<CategoryWrap> dates = Lists.newArrayList();
+		dates.addAll(lstDate);
+		dates.stream().forEach(l->{
 			l.setSelected(l.getName().equalsIgnoreCase(param.getNewArrivalDate()) ? 1 : 0);
 		});
-		return lstDate;
+		return dates;
 	}
 
 	/**
