@@ -166,9 +166,6 @@ public class CartServiceImpl implements CartService {
         cartItem.setSi(product.getShop_id());
         cartItem.setSn(product.getShop_enname());
         cartItem.setName(product.getEnname());
-        float finalWeight = NumberUtils.toFloat(product.getFinal_weight());
-        float volumeWeight = NumberUtils.toFloat(product.getVolume_weight());
-        cartItem.setWei(volumeWeight > finalWeight?volumeWeight:finalWeight);
         cartItem.setWpri(product.getWprice());
         cartItem.setNum(num);
         cartItem.setSid1(NumberUtils.toLong(split[1]));
@@ -307,7 +304,9 @@ public class CartServiceImpl implements CartService {
             cartItem.setPri(weiAndPri.getRight());
         }else{
             //单个重量
-            cartItem.setWei(Float.valueOf(product.getFinal_weight()));
+            float finalWeight = NumberUtils.toFloat(product.getFinal_weight());
+            float volumeWeight = NumberUtils.toFloat(product.getVolume_weight());
+            cartItem.setWei(volumeWeight > finalWeight?volumeWeight:finalWeight);
         }
     }
 
