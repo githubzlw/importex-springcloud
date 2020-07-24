@@ -1,5 +1,6 @@
 package com.importexpress.cart.scheduled;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.importexpress.cart.pojo.Cart;
@@ -16,10 +17,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -99,14 +97,16 @@ public class CartScheduleTask {
             }
             writer.endArray();
             writer.close();
-
-            return out.toString("UTF-8");
+            String result = out.toString("UTF-8");
+            out.close();
+            return result;
         } catch (IOException e) {
             log.error("streamIntoJsonString",e);
         }
 
         return null;
     }
+
 
     /**
      * 解压7z文件（测试用）

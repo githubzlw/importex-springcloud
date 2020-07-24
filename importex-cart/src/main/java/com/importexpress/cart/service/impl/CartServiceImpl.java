@@ -166,7 +166,6 @@ public class CartServiceImpl implements CartService {
         cartItem.setSi(product.getShop_id());
         cartItem.setSn(product.getShop_enname());
         cartItem.setName(product.getEnname());
-        cartItem.setWei(NumberUtils.toFloat(product.getWeight()));
         cartItem.setWpri(product.getWprice());
         cartItem.setNum(num);
         cartItem.setSid1(NumberUtils.toLong(split[1]));
@@ -305,7 +304,9 @@ public class CartServiceImpl implements CartService {
             cartItem.setPri(weiAndPri.getRight());
         }else{
             //单个重量
-            cartItem.setWei(Float.valueOf(product.getFinal_weight()));
+            float finalWeight = NumberUtils.toFloat(product.getFinal_weight());
+            float volumeWeight = NumberUtils.toFloat(product.getVolume_weight());
+            cartItem.setWei(volumeWeight > finalWeight?volumeWeight:finalWeight);
         }
     }
 
@@ -328,11 +329,13 @@ public class CartServiceImpl implements CartService {
                     if (cartItem.getItemId().equals(cartItem.getPid() + ":" + map.get(key).replace(',', ':'))) {
                         //找到规格
                         //重新设置重量
-                        Float wei = NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
+                        float finalWeight = NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
+                        float volumeWeight = NumberUtils.toFloat(String.valueOf(map.get("volumeWeight")));
+                        float wei =volumeWeight > finalWeight?volumeWeight:finalWeight;
                         //重新设置价格
                         Map<String, String> skuVal = new Gson().fromJson(String.valueOf(map.get("skuVal")), type);
                         Long price = Math.round(NumberUtils.toDouble(String.valueOf(skuVal.get("skuCalPrice"))) * 100);
-                        return ImmutablePair.of(wei, price);
+                        return ImmutablePair.of(Float.valueOf(wei), price);
                     }
                 }
             }

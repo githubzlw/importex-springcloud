@@ -6,15 +6,25 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class Config {
 
+    public final static String QUEUE_SERIAL_PORT = "serial-port-alert";
 
     @Value("${SERIAL.PORT}")
     public String SERIAL_PORT;
 
-    @Value("${MOVE_TO_CART_MAGNET_POSI}")
-    public String MOVE_TO_CART_MAGNET_POSI;
+    @Value("${SERIAL.PORT2}")
+    public String SERIAL_PORT2;
 
-    @Value("${MOVE_TO_CART_MAGOFF_POSI}")
-    public String MOVE_TO_CART_MAGOFF_POSI;
+    @Value("${CART_X}")
+    public int CART_X;
+
+    @Value("${CART_Y}")
+    public int CART_Y;
+
+    @Value("${CART_Z_1}")
+    public int CART_Z_1;
+
+    @Value("${CART_Z_2}")
+    public int CART_Z_2;
 
     @Value("${MAX_VALUE_X}")
     public int MAX_VALUE_X;
@@ -25,6 +35,20 @@ public class Config {
     @Value("${MAX_VALUE_Z}")
     public int MAX_VALUE_Z;
 
+    @Value("${GOODS_MOVE_VALUE_Z}")
+    public int GOODS_MOVE_VALUE_Z;
+
+    @Value("${STEP_VALUE}")
+    public int STEP_VALUE;
+
+    @Value("${RETURN_VALUE_X}")
+    public int RETURN_VALUE_X;
+
+    @Value("${RETURN_VALUE_Y}")
+    public int RETURN_VALUE_Y;
+
+    @Value("${RETURN_STEP_VALUE}")
+    public int RETURN_STEP_VALUE;
 
     @Value("${yingshi.api.url.token}")
     public String YINGSHI_API_URL_TOKEN;
@@ -55,4 +79,8 @@ public class Config {
 
     @Value("${shell.path}")
     public String SHELL_PATH;
+
+    @Value("${SAVE_FINDER_PATH}")
+    public String SAVE_FINDER_PATH;
+
 }

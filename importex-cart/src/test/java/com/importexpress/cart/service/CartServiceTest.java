@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.importexpress.cart.pojo.Cart;
+import com.importexpress.cart.pojo.CartItem;
 import com.importexpress.comm.pojo.SiteEnum;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.Instant;
+import java.util.List;
 
 
 /**
@@ -402,6 +404,20 @@ public class CartServiceTest {
     }
 
 
+    /**
+     * 体积重量测试
+     */
+    @Test
+    public void cart15() {
 
+        Assert.assertEquals
+                (1, cartService.addCartItem(SITE, USER_ID, "615252349161:32161", 1));
+        Cart cart = cartService.getCart(SITE, USER_ID);
+        List<CartItem> items = cart.getItems();
+        cartService.delAllCartItem(SITE, USER_ID);
+        Assert.assertEquals(0.38,items.get(0).getWei(),0.001);
+
+
+    }
 
 }

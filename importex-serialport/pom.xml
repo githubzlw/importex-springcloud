@@ -38,6 +38,10 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.importexpress.parent</groupId>
             <artifactId>importex-comm</artifactId>
             <version>${importex.latest.version}</version>
@@ -46,6 +50,10 @@
             <groupId>org.rxtx</groupId>
             <artifactId>rxtx</artifactId>
             <version>2.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
