@@ -199,7 +199,13 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 				wrap.setCount(value.getCount());
 				wrap.setId(categoryBean.getCatid());
 				wrap.setLevel(categoryBean.getLevel());
-				wrap.setName(categoryBean.getName());
+				if(param.getSite() == 2){
+					String name = categoryBean.getName();
+					name = name.replace("Children's","").replace("Children","");
+					wrap.setName(name);
+				}else{
+					wrap.setName(categoryBean.getName());
+				}
 				String[] categoryPaths = categoryBean.getPath().split(",");
 				wrap.setUrl(catid.equals(param.getCatid()) ? "" : url + catid);
 				wrap.setParentCategory(categoryPaths.length >1?categoryPaths[categoryPaths.length-2] : "0");
