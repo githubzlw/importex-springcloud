@@ -199,7 +199,7 @@ public class CartServiceImpl implements CartService {
      */
     private void changePrice(SiteEnum site, Product product, CartItem cartItem) {
 
-        if(site == SiteEnum.KIDS || site == SiteEnum.IMPORTX){
+        if(site == SiteEnum.KIDS || site == SiteEnum.PETS || site == SiteEnum.IMPORTX){
             //range_price
             if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
                 cartItem.setRpe(product.getRange_price_free_new());
