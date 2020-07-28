@@ -304,9 +304,10 @@ public class CartServiceImpl implements CartService {
             cartItem.setPri(weiAndPri.getRight());
         }else{
             //单个重量
-            float finalWeight = NumberUtils.toFloat(product.getFinal_weight());
-            float volumeWeight = NumberUtils.toFloat(product.getVolume_weight());
-            cartItem.setWei(volumeWeight > finalWeight?volumeWeight:finalWeight);
+//            float finalWeight = NumberUtils.toFloat(product.getFinal_weight());
+//            float volumeWeight = NumberUtils.toFloat(product.getVolume_weight());
+//            cartItem.setWei(volumeWeight > finalWeight?volumeWeight:finalWeight);
+            cartItem.setWei(NumberUtils.toFloat(product.getFinal_weight()));
         }
     }
 
@@ -329,9 +330,10 @@ public class CartServiceImpl implements CartService {
                     if (cartItem.getItemId().equals(cartItem.getPid() + ":" + map.get(key).replace(',', ':'))) {
                         //找到规格
                         //重新设置重量
-                        float finalWeight = NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
-                        float volumeWeight = NumberUtils.toFloat(String.valueOf(map.get("volumeWeight")));
-                        float wei =volumeWeight > finalWeight?volumeWeight:finalWeight;
+//                        float finalWeight = NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
+//                        float volumeWeight = NumberUtils.toFloat(String.valueOf(map.get("volumeWeight")));
+//                        float wei =volumeWeight > finalWeight?volumeWeight:finalWeight;
+                        float wei =NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
                         //重新设置价格
                         Map<String, String> skuVal = new Gson().fromJson(String.valueOf(map.get("skuVal")), type);
                         Long price = Math.round(NumberUtils.toDouble(String.valueOf(skuVal.get("skuCalPrice"))) * 100);
