@@ -54,7 +54,13 @@ public class CartScheduleTask {
 
         List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS);
         for (SiteEnum site : siteEnums) {
-            List<Cart> carts = this.service.getCart(site);
+            List<Cart> carts = null;
+            try {
+                carts = this.service.getCart(site);
+            } catch (Exception e) {
+                log.error("saveAllCartsToFiles",e);
+                continue;
+            }
             String json = streamIntoJsonString(carts);
             StringBuilder fileName = getFileName(site);
             FileUtils.writeStringToFile(
