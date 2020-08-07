@@ -33,7 +33,7 @@ public class CartServiceTest2 {
      * addCart
      */
     @Test
-    public void cart1() {
+    public void cart1() throws Exception {
             Assert.assertEquals
                     (1, cartService.addCartItem(SITE, USER_ID, "1005786125:32166", 1));
         Cart cart = cartService.getCart(SITE, USER_ID);
@@ -49,7 +49,7 @@ public class CartServiceTest2 {
     }
 
     @Test
-    public void cart3() {
+    public void cart3() throws Exception {
         Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(getItemIds().length+1,cart.getItems().size());
 
@@ -89,7 +89,7 @@ public class CartServiceTest2 {
 
 
     @Test
-    public void cart5() {
+    public void cart5() throws Exception {
         List<Cart> cart = cartService.getCart(SITE);
         Assert.assertTrue(cart!=null);
         Assert.assertTrue(cart.size()>0);
