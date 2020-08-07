@@ -159,12 +159,12 @@ public class Cart {
                         }
                     }
                 } else {
-                    log.error("wprice is rong,wprice:{}", cartItem.getWpri());
+                    log.warn("wprice is rong,wprice:{}", cartItem.getWpri());
                     throw new NumberFormatException("wprice error");
                 }
             }
-            log.error("wprice is rong,wprice:{},pid:{}", cartItem.getWpri(), cartItem.getPid());
-            throw new NumberFormatException("wprice error");
+            log.warn("wprice is rong,wprice:{},pid:{}", cartItem.getWpri(), cartItem.getPid());
+            return 0;
         }
     }
 
