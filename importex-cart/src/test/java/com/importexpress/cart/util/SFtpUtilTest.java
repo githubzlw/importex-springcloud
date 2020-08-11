@@ -26,5 +26,9 @@ public class SFtpUtilTest {
         sFtpUtil.uploadFile("d:\\p_carts_20200612.json");
     }
 
-
+    @Test
+    public void aa() throws IOException {
+        String abc = " a b  c ";
+        System.out.printf("reseult=["+abc.replaceAll("\\s+", " ").trim()+"]");
+    }
 }

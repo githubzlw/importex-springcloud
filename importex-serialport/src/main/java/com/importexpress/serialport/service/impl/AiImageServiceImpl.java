@@ -186,6 +186,19 @@ public class AiImageServiceImpl implements AiImageService {
     public byte[] drawPolygons(String downloadUrl, List<Polygon> lstPolygon) throws IOException {
 
         byte[] bytes = downloadUrl(downloadUrl);
+        return drawPolygons(bytes, lstPolygon);
+    }
+
+    /**
+     * 图片标识出红框
+     * @param bytes
+     * @param lstPolygon
+     * @return
+     * @throws IOException
+     */
+    @Override
+    public byte[] drawPolygons(byte[] bytes, List<Polygon> lstPolygon) throws IOException {
+
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
 
         Graphics g = image.getGraphics();
