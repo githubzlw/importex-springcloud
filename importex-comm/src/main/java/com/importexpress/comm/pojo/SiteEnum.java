@@ -21,7 +21,7 @@ public enum SiteEnum {
     /**电缆网站*/
     LINE(64,"https://www.line.com","LINE"),
     /**HS_CODE网站*/
-    S_HS_CODE(128,"http://www.HS_CODE.com","S_HS_CODE");
+    S_HS_CODE(128,"http://img.import-express.com:8080","S_HS_CODE");
 
     private int code;
 
