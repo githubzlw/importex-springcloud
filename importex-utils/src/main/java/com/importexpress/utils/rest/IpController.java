@@ -52,21 +52,29 @@ public class IpController {
                 //本地数据库搜索ip
                 Country country = GeoIpUtils.getInstance().getCountry(ip);
                 String countryCode;
-                String countryName;
                 if(country !=null){
                     countryCode = country.getIsoCode();
-                    countryName = country.getName();
+                    if("CA".equalsIgnoreCase(countryCode)){
+                        //加拿大单独处理
+                        JSONObject json = this.ipService.queryIp(ip);
+                        String countryCodeByNet = json.getString("country_code");
+                        if (countryCode.equalsIgnoreCase(countryCodeByNet) ) {
+                            result = countryCode;
+                        }else{
+                            log.warn("两种方式查询的加拿大IP地址不一样。");
+                            result = countryCodeByNet;
+                        }
+                    }
                 }else{
                     //线上搜索ip
                     JSONObject json = this.ipService.queryIp(ip);
                     countryCode = json.getString("country_code");
-                    countryName = json.getString("country_name");
-                    if (StringUtils.isEmpty(countryCode) || StringUtils.isEmpty(countryName)) {
-                      throw new IOException("ip lookup failed");
+                    if (StringUtils.isEmpty(countryCode) ) {
+                        return CommonResult.failed("ip lookup failed");
                     }
                 }
-                result = countryCode + ":" + countryName;
-                this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, result);
+
+                this.redisTemplate.opsForHash().put(REDIS_HASH_IP, ip, countryCode);
                 return CommonResult.success(result);
             } catch (Exception e) {
                 return CommonResult.failed(e.getMessage());
