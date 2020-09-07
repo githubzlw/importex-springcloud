@@ -1,8 +1,6 @@
 package com.importexpress.search.common;
 
 import com.google.common.collect.Maps;
-import com.importexpress.comm.util.StrUtils;
-import com.importexpress.search.pojo.CategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.service.DCService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +8,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Map;
 
 @Slf4j

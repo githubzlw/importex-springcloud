@@ -1,15 +1,14 @@
 package com.importexpress.utils.util;
 
-import java.io.InputStream;
-import java.net.InetAddress;
-
-import lombok.extern.slf4j.Slf4j;
-
 import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.model.CountryResponse;
 import com.maxmind.geoip2.record.Country;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+
+import java.io.InputStream;
+import java.net.InetAddress;
 
 /**
  * @author jack.luo

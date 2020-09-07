@@ -1,15 +1,12 @@
 package com.importexpress.search.util;
 
 import com.google.common.collect.Lists;
-import com.importexpress.comm.util.StrUtils;
-import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.Product;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.util.*;
+
+import java.util.List;
+import java.util.Random;
 
 @Slf4j
 @Component

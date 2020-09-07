@@ -2,7 +2,6 @@ package com.importexpress.serialport.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.ActionTypeEnum;
 import com.importexpress.serialport.bean.GoodsBean;
 import com.importexpress.serialport.exception.SerialPortException;
@@ -25,7 +24,8 @@ import java.util.concurrent.SynchronousQueue;
 
 import static com.importexpress.serialport.bean.ActionTypeEnum.LIGHT;
 import static com.importexpress.serialport.bean.ActionTypeEnum.MAGI;
-import static com.importexpress.serialport.exception.SerialPortException.*;
+import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_INPUT_LIGHT;
+import static com.importexpress.serialport.exception.SerialPortException.SERIAL_PORT_EXCEPTION_TURN_TABLE_ERROR;
 
 
 /**

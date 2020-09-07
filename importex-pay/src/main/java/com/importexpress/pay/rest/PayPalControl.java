@@ -8,7 +8,6 @@ import com.importexpress.pay.service.enumc.PayPalPaymentIntentEnum;
 import com.importexpress.pay.service.enumc.PayPalPaymentMethodEnum;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
-import com.paypal.base.rest.PayPalRESTException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

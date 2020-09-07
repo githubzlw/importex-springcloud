@@ -1,9 +1,6 @@
 package com.importexpress.serialport.rest;
 
-import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.service.SerialPort2Service;
-import gnu.io.NoSuchPortException;
-import gnu.io.PortInUseException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

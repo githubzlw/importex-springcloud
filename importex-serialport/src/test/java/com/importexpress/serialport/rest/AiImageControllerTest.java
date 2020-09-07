@@ -1,7 +1,6 @@
 package com.importexpress.serialport.rest;
 
 
-import com.alibaba.fastjson.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

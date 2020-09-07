@@ -1,7 +1,6 @@
 package com.importexpress.email.service;
 
 
-import com.google.common.collect.ImmutableMap;
 import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.SiteEnum;
 import org.junit.Test;

@@ -1,6 +1,5 @@
 package com.importexpress.ali1688.util;
 
-import com.importexpress.ali1688.model.ItemDetails;
 import org.apache.commons.lang3.StringUtils;
 
 import java.math.BigDecimal;

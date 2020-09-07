@@ -2,7 +2,6 @@ package com.importexpress.search.service;
 
 import com.importexpress.search.pojo.SearchParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public interface DCService {

@@ -1,6 +1,9 @@
 package com.importexpress.comm.pojo;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author jack.luo

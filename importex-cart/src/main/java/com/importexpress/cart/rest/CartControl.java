@@ -1,6 +1,5 @@
 package com.importexpress.cart.rest;
 
-import com.importexpress.cart.pojo.Cart;
 import com.importexpress.cart.scheduled.CartScheduleTask;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.comm.domain.CommonResult;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 import static com.importexpress.cart.service.CartService.SUCCESS;
 

@@ -5,12 +5,9 @@ import com.importexpress.search.pojo.Currency;
 import com.importexpress.search.pojo.SearchParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.bouncycastle.asn1.x500.style.RFC4519Style;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 搜索参数处理

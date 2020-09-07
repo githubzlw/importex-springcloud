@@ -7,6 +7,7 @@ import com.importexpress.search.util.DoubleUtil;
 import com.importexpress.search.util.Utility;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
+
 import java.text.DecimalFormat;
 import java.util.List;
 

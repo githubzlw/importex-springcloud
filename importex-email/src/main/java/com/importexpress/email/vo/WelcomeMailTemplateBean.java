@@ -1,6 +1,5 @@
 package com.importexpress.email.vo;
 
-import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.MailTemplateBean;
 import lombok.Data;
 

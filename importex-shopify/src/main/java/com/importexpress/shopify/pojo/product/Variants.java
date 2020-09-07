@@ -3,9 +3,9 @@
  */
 package com.importexpress.shopify.pojo.product;
 
-import java.util.List;
-
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * Auto-generated: 2019-02-28 10:40:44
