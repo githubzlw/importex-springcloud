@@ -50,9 +50,9 @@ public class DataDealUtil {
             if(tempPrice < 0.1){
                 tempPrice = 0.2D;
             } else if (tempPrice < 10D) {
-                tempPrice = tempPrice * 0.8;
+                tempPrice = tempPrice * 0.9;
             } else if (tempPrice < 30D) {
-                tempPrice = tempPrice * 0.875;
+                tempPrice = tempPrice * 0.9;
             } else if (tempPrice < 100D) {
                 tempPrice = tempPrice * 0.95;
             }
