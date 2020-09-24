@@ -52,7 +52,7 @@ public class CartScheduleTask {
     @Scheduled(cron = "${cart.cron.exp}")
     public void saveAllCartsToFiles() throws IOException {
 
-        List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS);
+        List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS,SiteEnum.E_PIPE,SiteEnum.LINE);
         for (SiteEnum site : siteEnums) {
             List<Cart> carts = this.service.getCart(site);
             String json = streamIntoJsonString(carts);
@@ -81,7 +81,7 @@ public class CartScheduleTask {
     }
 
     /**
-     * 通过流的方式写入json（避免OutOfMemoryError)
+     * 通过流的方式写入json（避免OOM)
      * @param carts
      * @return
      */
