@@ -54,28 +54,34 @@ public class CartScheduleTask {
 
         List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS,SiteEnum.E_PIPE,SiteEnum.LINE);
         for (SiteEnum site : siteEnums) {
-            List<Cart> carts = this.service.getCart(site);
-            String json = streamIntoJsonString(carts);
-            StringBuilder fileName = getFileName(site);
-            FileUtils.writeStringToFile(
-                    new File(fileName.toString()),json);
+            try {
+                log.info("begin run site:{}",site.getName());
+                List<Cart> carts = this.service.getCart(site);
+                String json = streamIntoJsonString(carts);
+                carts.clear();
+                StringBuilder fileName = getFileName(site);
+                FileUtils.writeStringToFile(
+                        new File(fileName.toString()), json);
 
-            // get multiple resources files to compress
-            File resource = new File(fileName.toString());
-            // compress multiple resources
-            String fileName7z=fileName+".7z";
-            SevenZ.compress(fileName7z, resource);
+                // get multiple resources files to compress
+                File resource = new File(fileName.toString());
+                // compress multiple resources
+                String fileName7z = fileName + ".7z";
+                SevenZ.compress(fileName7z, resource);
 
-            boolean result = FileUtils.deleteQuietly(new File(fileName.toString()));
-            log.info("delete file:[{}] result:[{}]",fileName.toString(),result);
+                boolean result = FileUtils.deleteQuietly(new File(fileName.toString()));
+                log.info("delete file:[{}] result:[{}]", fileName.toString(), result);
 
-            //sftp upload
-            int beginIndex = fileName7z.lastIndexOf('/');
-            if(beginIndex==-1){
-                //windows场合
-                beginIndex = fileName7z.lastIndexOf('\\');
+                //sftp upload
+                int beginIndex = fileName7z.lastIndexOf('/');
+                if (beginIndex == -1) {
+                    //windows场合
+                    beginIndex = fileName7z.lastIndexOf('\\');
+                }
+                sFtpUtil.uploadFile(fileName7z.substring(beginIndex + 1));
+            }catch(Exception e){
+                log.error("catch exception,when run:"+site.getName(),e);
             }
-            sFtpUtil.uploadFile(fileName7z.substring(beginIndex+1));
         }
 
     }
