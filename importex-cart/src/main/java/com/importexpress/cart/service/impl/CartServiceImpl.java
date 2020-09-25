@@ -74,6 +74,7 @@ public class CartServiceImpl implements CartService {
             Assert.isTrue(split.length >= 2, "The itemId invalid:" + itemId);
             Assert.isTrue(StringUtils.isNotEmpty(split[0]), "The itemId invalid:" + itemId);
             Product product = productServiceFeign.findProduct(Long.parseLong(split[0]));
+            Objects.requireNonNull(product);
             CartItem cartItem = product2CartItem(site,product, num, split);
             //查找同pid商品做排序处理
             List<CartItem> lstCartItem = getCartItems(site, userId);
