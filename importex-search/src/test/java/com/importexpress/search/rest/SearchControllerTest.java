@@ -267,4 +267,22 @@ public class SearchControllerTest {
         System.out.println("associateKey:"+result.getData().toString());
     }
 
+
+    @Test
+    public void getSearchMongo() throws  Exception{
+        SearchParam param = new SearchParam();
+      /*  param.setKeyword("coat");
+        param.setSite(2);
+        param.setPage(1);
+        param.setUserType(1);*/
+        String requestJson = JSONObject.toJSONString(param);
+        String contentAsString = mockMvc.perform(post("/search/productsB2C")
+                .contentType(MediaType.APPLICATION_JSON).content(requestJson))
+                .andReturn().getResponse().getContentAsString();
+
+        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
+        Assert.assertEquals(200,result.getCode());
+        System.out.println("搜索结果:"+result.getData().toString());
+    }
+
 }
