@@ -10,6 +10,7 @@ import com.importexpress.search.pojo.*;
 import com.importexpress.search.service.*;
 import com.importexpress.search.util.ExhaustUtils;
 import com.importexpress.search.util.Utility;
+import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -17,6 +18,7 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
+import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -601,14 +603,16 @@ public class SearchServiceImpl implements SearchService {
         return isDefault;
     }
 
-    /**请求solr解析产品列表
+    /**请求mongo解析产品列表
      * @param param
      * @return
      */
     private  SearchResultWrap productsFromMongo(SearchParam param){
         SearchResultWrap wrap = new SearchResultWrap();
+
+
         //请求mongo获取产品列表
-        List<com.importexpress.search.mongo.Product> productList = mongoHelp.findProductByCatid(param.getCatid(),param.getPage(), param.getPageSize());
+        List<com.importexpress.search.mongo.Product> productList = mongoHelp.findProductByCatid(param,param.getPage(), param.getPageSize());
 
         //拼接参数
         if (productList == null) {
@@ -709,7 +713,7 @@ public class SearchServiceImpl implements SearchService {
             /**
              * 添加伪静态化链接
              */
-            String goods_url = UriCompose.pseudoStaticUrl(
+            String goods_url = UriCompose.pseudoStaticUrlB2C(
                     itemId, product.getName(), catid1, catid2, 1);
             product.setUrl(goods_url.replaceAll("\\%", ""));
 
@@ -769,7 +773,7 @@ public class SearchServiceImpl implements SearchService {
             return solrResult;
         }
 
-        solrResult.setRecordCount(mongoHelp.findProductByCatidCount(param.getCatid()));
+        solrResult.setRecordCount(mongoHelp.findProductByCatidCount(param));
 
         List<Product> itemList = mongoDocToProduct(productList, param);
         solrResult.setItemList(itemList);
