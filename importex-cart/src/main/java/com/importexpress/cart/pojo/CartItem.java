@@ -150,6 +150,10 @@ public class CartItem {
     private long ut;
 
     /**
+     * match source
+     */
+    private  int ms = 0;
+    /**
      * 得到唯一ID标识购物车商品
      * @return
      */
