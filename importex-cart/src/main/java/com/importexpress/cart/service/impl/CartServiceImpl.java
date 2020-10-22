@@ -163,6 +163,7 @@ public class CartServiceImpl implements CartService {
     private CartItem product2CartItem(SiteEnum site,Product product, long num, String[] split) {
 
         CartItem cartItem = new CartItem();
+        cartItem.setMs(NumberUtils.toInt(product.getMatchSource()));
         cartItem.setPid(product.getPid());
         cartItem.setSi(product.getShop_id());
         cartItem.setSn(product.getShop_enname());
