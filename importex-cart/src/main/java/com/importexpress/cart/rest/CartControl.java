@@ -166,6 +166,11 @@ public class CartControl {
                                    @RequestParam Long userId,
                                    @RequestParam Long touristId) {
 
+        if(touristId !=null && touristId < 900000000000L){
+            //非游客ID
+            return CommonResult.failed("touristId is invalid.");
+        }
+
         int result = cartService.mergeCarts(site, userId, touristId);
         if (result == SUCCESS) {
             return CommonResult.success();

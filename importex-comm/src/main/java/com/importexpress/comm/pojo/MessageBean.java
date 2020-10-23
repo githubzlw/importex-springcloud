@@ -9,7 +9,10 @@ import lombok.Data;
  */
 @Data
 public final class MessageBean {
+
     private long sender;
+
     private String msg;
+
     private long timestamp;
 }
