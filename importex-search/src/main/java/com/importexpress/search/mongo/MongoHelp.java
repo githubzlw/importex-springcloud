@@ -17,6 +17,7 @@ import org.bson.json.JsonWriterSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -52,32 +53,60 @@ MongoHelp {
 
     public List<Product> findProductByCatid(SearchParam param, int page, int pageSize){
 
-        Query query ;
-        if(StringUtils.isNotBlank(param.getCatid())){
-            if(StringUtils.isNotBlank(param.getMinPrice()) && StrUtils.isMatch(param.getMinPrice(), "(\\d+(\\.\\d+){0,1)")){
-                if(StringUtils.isNotBlank(param.getMaxPrice()) && StrUtils.isMatch(param.getMaxPrice(), "(\\d+(\\.\\d+){0,1)")){
+        Query query = null;
+        if(param.getFreeShipping() == 0){
+            if(StringUtils.isNotBlank(param.getCatid())){
+                if(StringUtils.isNotBlank(param.getMinPrice()) ){
+                    if(StringUtils.isNotBlank(param.getMaxPrice())){
+                        query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.price < "+ param.getMaxPrice() +" && this.final_weight > 0.5"));
+                    }
+                    else{
+                        query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                                .and("$where").is("this.price > "+param.getMinPrice() + " && this.final_weight > 0.5"));
+                    }
+                }
+                else if(StringUtils.isNotBlank(param.getMaxPrice())){
                     query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                        .and("price").gte(param.getMinPrice()).and("price").lte(param.getMaxPrice()));
+                            .and("$where").is("this.price < " + param.getMaxPrice()+" && this.final_weight > 0.5"));
                 }
                 else{
-                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                            .and("price").gte(param.getMinPrice()));
+                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8").and("$where").is("this.final_weight > 0.5"));
                 }
-            }
-            else if(StringUtils.isNotBlank(param.getMaxPrice()) && StrUtils.isMatch(param.getMaxPrice(), "(\\d+(\\.\\d+){0,1)")){
-                query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                        .and("price").lte(param.getMaxPrice()));
-            }
-            else{
-                query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8"));
-            }
 
-        } else {
-            query = new Query(Criteria.where("matchSource").is("8"));
+            } else {
+                query = new Query(Criteria.where("matchSource").is("8").and("$where").is("this.final_weight > 0.5"));
 
+            }
+        }
+        else{
+            if(StringUtils.isNotBlank(param.getCatid())){
+                if(StringUtils.isNotBlank(param.getMinPrice()) ){
+                    if(StringUtils.isNotBlank(param.getMaxPrice())){
+                        query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.price < "+ param.getMaxPrice() +" && this.final_weight < 0.5"));
+                    }
+                    else{
+                        query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.final_weight < 0.5"));
+                    }
+                }
+                else if(StringUtils.isNotBlank(param.getMaxPrice())){
+                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                            .and("$where").is("&& this.price < "+ param.getMaxPrice() + " && this.final_weight < 0.5"));
+                }
+                else{
+                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8").and("$where").is("this.final_weight < 0.5"));
+                }
+
+            } else {
+                query = new Query(Criteria.where("matchSource").is("8").and("$where").is("this.final_weight < 0.5"));
+
+            }
         }
 
-        if(param.getSort().indexOf("bbPrice") > -1) {
+
+       if(param.getSort().indexOf("bbPrice") > -1) {
             if("bbPrice-desc".equals(param.getSort())){
                 query.with(new Sort(new Sort.Order(Sort.Direction.DESC, "price")));
             }
@@ -100,33 +129,74 @@ MongoHelp {
 
     public Long findProductByCatidCount(SearchParam param){
 
-        Query query;
-        if(StringUtils.isNotBlank(param.getCatid())){
-            if(StringUtils.isNotBlank(param.getMinPrice()) && StrUtils.isMatch(param.getMinPrice(), "(\\d+(\\.\\d+){0,1)")){
-                if(StringUtils.isNotBlank(param.getMaxPrice()) && StrUtils.isMatch(param.getMaxPrice(), "(\\d+(\\.\\d+){0,1)")){
+        Query query = null;
+        if(param.getFreeShipping() == 0){
+            if(StringUtils.isNotBlank(param.getCatid())){
+                if(StringUtils.isNotBlank(param.getMinPrice()) ){
+                    if(StringUtils.isNotBlank(param.getMaxPrice())){
+                        query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.price < "+ param.getMaxPrice() +" && this.final_weight > 0.5"));
+                    }
+                    else{
+                        query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                                .and("$where").is("this.price > "+param.getMinPrice() + " && this.final_weight > 0.5"));
+                    }
+                }
+                else if(StringUtils.isNotBlank(param.getMaxPrice())){
                     query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                            .and("price").gte(param.getMinPrice()).and("price").lte(param.getMaxPrice()));
+                            .and("$where").is("this.price < " + param.getMaxPrice()+" && this.final_weight > 0.5"));
                 }
                 else{
-                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                            .and("price").gte(param.getMinPrice()));
+                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8").and("$where").is("this.final_weight > 0.5"));
                 }
-            }
-            else if(StringUtils.isNotBlank(param.getMaxPrice()) && StrUtils.isMatch(param.getMaxPrice(), "(\\d+(\\.\\d+){0,1)")){
-                query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                        .and("price").lte(param.getMaxPrice()));
-            }
-            else{
-                query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8"));
-            }
 
-        } else {
-            query = new Query(Criteria.where("matchSource").is("8"));
+            } else {
+                query = new Query(Criteria.where("matchSource").is("8").and("$where").is("this.final_weight > 0.5"));
 
+            }
         }
+        else{
+            if(StringUtils.isNotBlank(param.getCatid())){
+                if(StringUtils.isNotBlank(param.getMinPrice()) ){
+                    if(StringUtils.isNotBlank(param.getMaxPrice())){
+                        query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.price < "+ param.getMaxPrice() +" && this.final_weight < 0.5"));
+                    }
+                    else{
+                        query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.final_weight < 0.5"));
+                    }
+                }
+                else if(StringUtils.isNotBlank(param.getMaxPrice())){
+                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
+                            .and("$where").is("&& this.price < "+ param.getMaxPrice() + " && this.final_weight < 0.5"));
+                }
+                else{
+                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8").and("$where").is("this.final_weight < 0.5"));
+                }
 
+            } else {
+                query = new Query(Criteria.where("matchSource").is("8").and("$where").is("this.final_weight < 0.5"));
+
+            }
+        }
         return mongoTemplate.count(query, Product.class);
     }
+
+/*
+
+    public List findCatidGroup(List<String> catidList){
+        Aggregation customerAgg = Aggregation.newAggregation(
+                Aggregation.project("catid1","category_name"),
+                Aggregation.match(Criteria.where("catid1").in(catidList)),
+                Aggregation.unwind("orders"),
+                Aggregation.group("catid1").first("catid1").as("catid").count().as("num")
+
+        );
+        List<CatidGroup> catidGroupList = mongoTemplate.aggregate(customerAgg,"catidList",CatidGroup.class);
+        return
+    }
+*/
 
 
 }
