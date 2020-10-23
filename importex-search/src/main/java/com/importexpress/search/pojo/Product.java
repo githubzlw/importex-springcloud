@@ -122,4 +122,6 @@ public class Product implements Serializable {
 	 */
 	@ApiModelProperty(value="商品库存标识  0没有库存  1有库存  hot")
 	private int isStock;
+
+	private String final_weight;
 }

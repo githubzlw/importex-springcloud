@@ -1,5 +1,6 @@
 package com.importexpress.search.mongo;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.product.mongo.MongoProduct;
@@ -18,12 +19,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.LongStream;
 
 /**
@@ -50,7 +54,6 @@ MongoHelp {
     }
 
 
-
     public List<Product> findProductByCatid(SearchParam param, int page, int pageSize){
 
         Query query = null;
@@ -59,23 +62,23 @@ MongoHelp {
                 if(StringUtils.isNotBlank(param.getMinPrice()) ){
                     if(StringUtils.isNotBlank(param.getMaxPrice())){
                         query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.price < "+ param.getMaxPrice() +" && this.final_weight > 0.5"));
+                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.price < "+ param.getMaxPrice()));
                     }
                     else{
                         query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                                .and("$where").is("this.price > "+param.getMinPrice() + " && this.final_weight > 0.5"));
+                                .and("$where").is("this.price > "+param.getMinPrice()));
                     }
                 }
                 else if(StringUtils.isNotBlank(param.getMaxPrice())){
                     query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                            .and("$where").is("this.price < " + param.getMaxPrice()+" && this.final_weight > 0.5"));
+                            .and("$where").is("this.price < " + param.getMaxPrice()));
                 }
                 else{
-                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8").and("$where").is("this.final_weight > 0.5"));
+                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8"));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("$where").is("this.final_weight > 0.5"));
+                query = new Query(Criteria.where("matchSource").is("8"));
 
             }
         }
@@ -135,23 +138,23 @@ MongoHelp {
                 if(StringUtils.isNotBlank(param.getMinPrice()) ){
                     if(StringUtils.isNotBlank(param.getMaxPrice())){
                         query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.price < "+ param.getMaxPrice() +" && this.final_weight > 0.5"));
+                                .and("$where").is("this.price > "+ param.getMinPrice() +" && this.price < "+ param.getMaxPrice()));
                     }
                     else{
                         query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                                .and("$where").is("this.price > "+param.getMinPrice() + " && this.final_weight > 0.5"));
+                                .and("$where").is("this.price > "+param.getMinPrice()));
                     }
                 }
                 else if(StringUtils.isNotBlank(param.getMaxPrice())){
                     query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8")
-                            .and("$where").is("this.price < " + param.getMaxPrice()+" && this.final_weight > 0.5"));
+                            .and("$where").is("this.price < " + param.getMaxPrice()));
                 }
                 else{
-                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8").and("$where").is("this.final_weight > 0.5"));
+                    query = new Query(Criteria.where("catid1").is(param.getCatid()).and("matchSource").is("8"));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("$where").is("this.final_weight > 0.5"));
+                query = new Query(Criteria.where("matchSource").is("8"));
 
             }
         }
@@ -183,20 +186,27 @@ MongoHelp {
         return mongoTemplate.count(query, Product.class);
     }
 
-/*
 
-    public List findCatidGroup(List<String> catidList){
+
+
+    public  List<CatidGroup> findCatidGroup(List<String> catidList){
+
+        List<CatidGroup> catidGroupList = new ArrayList<>();
         Aggregation customerAgg = Aggregation.newAggregation(
-                Aggregation.project("catid1","category_name"),
+                Aggregation.project("catid1","category_name","num"),
                 Aggregation.match(Criteria.where("catid1").in(catidList)),
-                Aggregation.unwind("orders"),
-                Aggregation.group("catid1").first("catid1").as("catid").count().as("num")
-
+                Aggregation.group("catid1").first("catid1").as("catid").first("category_name").as("category_name")
+                        .count().as("num")
         );
-        List<CatidGroup> catidGroupList = mongoTemplate.aggregate(customerAgg,"catidList",CatidGroup.class);
-        return
+        AggregationResults<CatidGroup> outputTypeCount1 =
+                mongoTemplate.aggregate(customerAgg, "product", CatidGroup.class);
+
+        for (Iterator<CatidGroup> iterator = outputTypeCount1.iterator(); iterator.hasNext(); ) {
+            CatidGroup obj = iterator.next();
+            catidGroupList.add(obj);
+        }
+        return catidGroupList;
     }
-*/
 
 
 }

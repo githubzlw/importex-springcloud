@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.product.mongo.MongoProduct;
 import com.importexpress.search.common.*;
+import com.importexpress.search.mongo.CatidGroup;
 import com.importexpress.search.mongo.MongoHelp;
 import com.importexpress.search.pojo.*;
 import com.importexpress.search.service.*;
@@ -754,6 +755,7 @@ public class SearchServiceImpl implements SearchService {
             if (changeCurrency) {
                 ChangeCurrency.chang(product, param.getCurrency());
             }
+            product.setFinal_weight(solrDocument.getFinal_weight());
             products.add(product);
         }
         return products;
@@ -870,5 +872,38 @@ public class SearchServiceImpl implements SearchService {
 
     }
 
+
+
+    @Override
+    public List<CatidGroup> getCatidGroup() {
+
+        //mongo结果
+        List list = new ArrayList();
+
+        list.add("122584001");
+        list.add("9210034");
+        list.add("9110035");
+        list.add("9210036");
+        list.add("121802003");
+        list.add("9110037");
+        list.add("9110038");
+        list.add("9110039");
+        list.add("122586001");
+        list.add("121840001");
+        list.add("9210040");
+        list.add("9110041");
+        list.add("9110042");
+        list.add("9110043");
+        list.add("9210044");
+        list.add("9110045");
+        list.add("9110046");
+        list.add("121786003");
+        list.add("121776006");
+
+        List<CatidGroup> catidGroupList = mongoHelp.findCatidGroup(list);
+
+        return catidGroupList;
+
+    }
 
 }

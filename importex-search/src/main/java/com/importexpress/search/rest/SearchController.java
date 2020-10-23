@@ -5,6 +5,7 @@ import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.ProductSearch;
 import com.importexpress.search.common.VerifySearchParameter;
+import com.importexpress.search.mongo.CatidGroup;
 import com.importexpress.search.pojo.*;
 import com.importexpress.search.service.CategoryService;
 import com.importexpress.search.service.SearchService;
@@ -564,6 +565,29 @@ public class SearchController {
                 wrap.setSearchNavigation(searchNavigation);
                 wrap.setParam(param);
                 return CommonResult.success("GET SOLR RESULT SUCCESSED!",gson.toJson(wrap));
+            }
+        }catch (Exception e){
+            log.error("WRONG HAPPENED",e);
+            return  CommonResult.failed(e.getMessage());
+        }
+    }
+
+    /**产品搜索
+     * @return
+     */
+    @PostMapping("/catidGroup")
+    @ApiOperation("搜索")
+    public CommonResult getCatidGroup() {
+
+        try {
+
+            List<CatidGroup> catidGroupList  = service.getCatidGroup();
+
+            if(catidGroupList == null){
+                return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
+            }else{
+
+                return CommonResult.success("GET SOLR RESULT SUCCESSED!",gson.toJson(catidGroupList));
             }
         }catch (Exception e){
             log.error("WRONG HAPPENED",e);

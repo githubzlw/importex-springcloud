@@ -1,5 +1,6 @@
 package com.importexpress.search.service;
 
+import com.importexpress.search.mongo.CatidGroup;
 import com.importexpress.search.pojo.*;
 import org.apache.solr.client.solrj.response.FacetField;
 
@@ -126,5 +127,10 @@ public interface SearchService {
      * @return
      */
     SearchResultWrap productSerachMongo(SearchParam param);
+
+    /**请求Mongo获取catidGroup
+     * @return
+     */
+    List<CatidGroup> getCatidGroup();
 
 }
