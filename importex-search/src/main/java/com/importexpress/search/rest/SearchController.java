@@ -576,7 +576,7 @@ public class SearchController {
      * @return
      */
     @PostMapping("/catidGroup")
-    @ApiOperation("搜索")
+    @ApiOperation("搜索catid分组商品数量")
     public CommonResult getCatidGroup() {
 
         try {
