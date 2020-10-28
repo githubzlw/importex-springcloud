@@ -200,7 +200,8 @@ public class CartServiceImpl implements CartService {
     private void changePrice(SiteEnum site, Product product, CartItem cartItem) {
 
         //if(site == SiteEnum.KIDS || site == SiteEnum.PETS || site == SiteEnum.IMPORTX){
-        if(site == SiteEnum.KIDS || site == SiteEnum.IMPORTX){
+
+        /*if(site == SiteEnum.KIDS || site == SiteEnum.IMPORTX){
             //range_price
             if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
                 cartItem.setRpe(product.getRange_price_free_new());
@@ -218,7 +219,46 @@ public class CartServiceImpl implements CartService {
             cartItem.setRpe(product.getRange_price());
             //feeprice
             cartItem.setFp(product.getFeeprice());
+        }*/
+
+        //Added <V1.0.1> Start： cjc 10/28/20 15:29 Description : 2C 商品低于500g 免邮，使用 range_price_fee_new,fee_price_new 价格，2b商品 都使用非免邮原价
+        String matchSource = product.getMatchSource();
+        Integer ms = NumberUtils.createInteger(matchSource);
+
+        if(ms == 8){
+            String final_weight = product.getFinal_weight();
+            double weight = NumberUtils.createDouble(final_weight);
+            if(weight < 0.5d){
+                //range_price
+                if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
+                    cartItem.setRpe(product.getRange_price_free_new());
+                }
+                //feeprice
+                if(StringUtils.isNotEmpty(product.getFree_price_new())) {
+                    cartItem.setFp(product.getFree_price_new());
+                }
+                //sku
+                if(StringUtils.isNotEmpty(product.getSku_new())){
+                    cartItem.setSku(product.getSku_new());
+                }
+            }else {
+                //range_price
+                cartItem.setRpe(product.getRange_price());
+                //feeprice
+                cartItem.setFp(product.getFeeprice());
+            }
+        }else {
+            //range_price
+            cartItem.setRpe(product.getRange_price());
+            //feeprice
+            cartItem.setFp(product.getFeeprice());
+            //sku
+            if(StringUtils.isNotEmpty(product.getSku())){
+                cartItem.setSku(product.getSku());
+            }
         }
+        //End：
+
     }
 
     /**
