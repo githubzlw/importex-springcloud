@@ -618,12 +618,49 @@ public class SearchServiceImpl implements SearchService {
         List<com.importexpress.search.mongo.Product> productList = mongoHelp.findProductByCatid(param,param.getPage(), param.getPageSize());
 
         for(com.importexpress.search.mongo.Product product : productList){
-            if(StringUtils.isNotBlank(product.getPrice_import())){
-                product.setPrice_import_sort(Double.parseDouble(product.getPrice_import()));
+            double weight = 0.00;
+            if(StringUtils.isNotBlank(product.getFinal_weight())
+                && StringUtils.isNotBlank(product.getVolume_weight())){
+                if(Double.parseDouble(product.getFinal_weight()) > Double.parseDouble(product.getVolume_weight())){
+                    weight = Double.parseDouble(product.getFinal_weight());
+                }
+                else{
+                    weight = Double.parseDouble(product.getVolume_weight());
+                }
             }
             else{
-                product.setPrice_import_sort(0.00);
+                if(StringUtils.isNotBlank(product.getFinal_weight())){
+                    weight = Double.parseDouble(product.getFinal_weight());
+                }
+                else{
+                    weight = Double.parseDouble(product.getVolume_weight());
+                }
             }
+
+            if(weight >= 0.5){
+                if(StringUtils.isNotBlank(product.getRange_price())){
+                    String priceSort = product.getRange_price().replace("[","").replace("]","");
+                    product.setPrice_import_sort(Double.parseDouble(priceSort.split("-")[0].trim()));
+                }
+                else{
+                    String priceSort = product.getWprice().replace("[","").replace("]","");
+                    product.setPrice_import_sort(Double.parseDouble(priceSort.split(",")[0].split("\\$")[1].trim()));
+                }
+            }
+            else{
+                if(StringUtils.isNotBlank(product.getRange_price_free_new())){
+                    String priceSort = product.getRange_price_free_new().replace("[","").replace("]","");
+                    product.setPrice_import_sort(Double.parseDouble(priceSort.split("-")[0].trim()));
+                }
+                else{
+                    String priceSort = product.getFree_price_new().replace("[","").replace("]","");
+                    if(priceSort.indexOf("$") > 0){
+                        product.setPrice_import_sort(Double.parseDouble(priceSort.split("\\$")[1].split(",")[0].trim()));
+                    }
+
+                }
+            }
+
             if(StringUtils.isNotBlank(product.getSold())){
                 product.setSold_sort(Integer.parseInt(product.getSold()));
             }
