@@ -139,6 +139,11 @@ public class Product {
     private String price_kids;
     private String price_pets;
 
+    private Double price_import_sort;
+    private Integer sold_sort;
+
+
+
 /*    public Product._id get_id() {
         return _id;
     }

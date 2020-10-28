@@ -8,6 +8,7 @@ import com.importexpress.search.common.*;
 import com.importexpress.search.mongo.CatidGroup;
 import com.importexpress.search.mongo.MongoHelp;
 import com.importexpress.search.pojo.*;
+import com.importexpress.search.pojo.Currency;
 import com.importexpress.search.service.*;
 import com.importexpress.search.util.ExhaustUtils;
 import com.importexpress.search.util.Utility;
@@ -21,11 +22,11 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -610,17 +611,75 @@ public class SearchServiceImpl implements SearchService {
      */
     private  SearchResultWrap productsFromMongo(SearchParam param){
         SearchResultWrap wrap = new SearchResultWrap();
-
-
+        List<com.importexpress.search.mongo.Product> productResultList = new ArrayList<>();
+        int page = param.getPage();
+        int pageSize = param.getPageSize();
         //请求mongo获取产品列表
         List<com.importexpress.search.mongo.Product> productList = mongoHelp.findProductByCatid(param,param.getPage(), param.getPageSize());
 
+        for(com.importexpress.search.mongo.Product product : productList){
+            if(StringUtils.isNotBlank(product.getPrice_import())){
+                product.setPrice_import_sort(Double.parseDouble(product.getPrice_import()));
+            }
+            else{
+                product.setPrice_import_sort(0.00);
+            }
+            if(StringUtils.isNotBlank(product.getSold())){
+                product.setSold_sort(Integer.parseInt(product.getSold()));
+            }
+            else{
+                product.setSold_sort(0);
+            }
+
+        }
+
+        if(param.getSort().indexOf("bbPrice") > -1) {
+            if("bbPrice-desc".equals(param.getSort())){
+                productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product ::getPrice_import_sort).reversed());
+            }
+            else{
+                productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product ::getPrice_import_sort));
+            }
+
+        }else if("order-desc".equals(param.getSort())){
+            //销量排序
+            productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product ::getSold_sort).reversed());
+        }
+
+       /* Collections.sort(productList, new Comparator<com.importexpress.search.mongo.Product>(){
+
+            *//*
+             * int compare(Student o1, Student o2) 返回一个基本类型的整型，
+             * 返回负数表示：o1 小于o2  //默认，
+             * 返回0 表示：o1和o2相等，
+             * 返回正数表示：o1大于o2。
+             *//*
+            public int compare(com.importexpress.search.mongo.Product o1, com.importexpress.search.mongo.Product o2) {
+
+                //按照学生的年龄进行升序排列
+                if(o1.getSold_sort() > o2.getSold_sort()){
+                    return 1;
+                }
+                if(o1.getSold_sort() == o2.getSold_sort()){
+                    return 0;
+                }
+                return -1;
+            }
+        });*/
+
+        productList.forEach(item -> {
+            if(productList.indexOf(item) >= (page-1)*pageSize
+                && productList.indexOf(item) < (page)*pageSize){
+                productResultList.add(item);
+            }
+        });
+
         //拼接参数
-        if (productList == null) {
+        if (productResultList == null) {
             return wrap;
         }
         //执行查询
-        SolrResult solrResult = searchItemMongo(param,productList);
+        SolrResult solrResult = searchItemMongo(param,productResultList);
 
 //        //分组数据,第二次查询取得类别分组统计数据--类别统计
         if (param.isFactCategory() && solrResult.getRecordCount() > 0) {
@@ -756,6 +815,11 @@ public class SearchServiceImpl implements SearchService {
                 ChangeCurrency.chang(product, param.getCurrency());
             }
             product.setFinal_weight(solrDocument.getFinal_weight());
+            product.setWprice(solrDocument.getWprice());
+            product.setFree_price_new(solrDocument.getFree_price_new());
+            product.setRange_price(solrDocument.getRange_price());
+            product.setRange_price_free_new(solrDocument.getRange_price_free_new());
+            product.setVolume_weight(solrDocument.getVolume_weight());
             products.add(product);
         }
         return products;
@@ -778,6 +842,7 @@ public class SearchServiceImpl implements SearchService {
         solrResult.setRecordCount(mongoHelp.findProductByCatidCount(param));
 
         List<Product> itemList = mongoDocToProduct(productList, param);
+
         solrResult.setItemList(itemList);
         return solrResult;
     }
