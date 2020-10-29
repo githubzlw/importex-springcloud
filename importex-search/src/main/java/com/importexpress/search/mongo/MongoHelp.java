@@ -81,20 +81,20 @@ MongoHelp {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
                         query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
-                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice() + " && this.final_weight < 0.5"));
+                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice() + " && this.final_weight < 0.5 && this.volume_weight < 0.5"));
                     } else {
                         query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
-                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.final_weight < 0.5"));
+                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.final_weight < 0.5 && this.volume_weight < 0.5"));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
-                            .and("$where").is("&& this.price < " + param.getMaxPrice() + " && this.final_weight < 0.5"));
+                            .and("$where").is("&& this.price < " + param.getMaxPrice() + " && this.final_weight < 0.5 && this.volume_weight < 0.5"));
                 } else {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("$where").is("this.final_weight < 0.5"));
+                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("$where").is("this.final_weight < 0.5 && this.volume_weight < 0.5"));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("$where").is("this.final_weight < 0.5"));
+                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("$where").is("this.final_weight < 0.5 && this.volume_weight < 0.5"));
 
             }
         }
@@ -155,20 +155,20 @@ MongoHelp {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
                         query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
-                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice() + " && this.final_weight < 0.5"));
+                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice() + " && this.final_weight < 0.5 && this.volume_weight < 0.5"));
                     } else {
                         query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
-                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.final_weight < 0.5"));
+                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.final_weight < 0.5 && this.volume_weight < 0.5"));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
-                            .and("$where").is("&& this.price < " + param.getMaxPrice() + " && this.final_weight < 0.5"));
+                            .and("$where").is("&& this.price < " + param.getMaxPrice() + " && this.final_weight < 0.5 && this.volume_weight < 0.5"));
                 } else {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("$where").is("this.final_weight < 0.5"));
+                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("$where").is("this.final_weight < 0.5 && this.volume_weight < 0.5"));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("$where").is("this.final_weight < 0.5"));
+                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("$where").is("this.final_weight < 0.5 && this.volume_weight < 0.5"));
 
             }
         }
