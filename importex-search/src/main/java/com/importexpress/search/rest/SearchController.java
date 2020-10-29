@@ -43,108 +43,117 @@ public class SearchController {
     private ProductSearch productSearch;
     private Gson gson = new Gson();
 
-    /**产品搜索
+    /**
+     * 产品搜索
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/products")
     @ApiOperation("搜索")
     public CommonResult getSearch(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                  HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求solr获取结果
             SearchResultWrap wrap = service.productSerach(param);
 
-            if(wrap == null){
+            if (wrap == null) {
                 return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
-            }else{
+            } else {
                 Map<String, String> searchNavigation =
                         productSearch.searchNavigation(param);
                 wrap.setSearchNavigation(searchNavigation);
                 wrap.setParam(param);
-                return CommonResult.success("GET SOLR RESULT SUCCESSED!",gson.toJson(wrap));
+                return CommonResult.success("GET SOLR RESULT SUCCESSED!", gson.toJson(wrap));
             }
-        }catch (Exception e){
-            log.error("WRONG HAPPENED",e);
-            return  CommonResult.failed(e.getMessage());
+        } catch (Exception e) {
+            log.error("WRONG HAPPENED", e);
+            return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**店铺搜索
+    /**
+     * 店铺搜索
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/shop")
     @ApiOperation("店铺")
     public CommonResult getShop(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-           param  = verifySearchParameter.shopParam(request,param);
+            param = verifySearchParameter.shopParam(request, param);
             //请求solr获取结果
             SearchResultWrap wrap = service.shopSerach(param);
-            if(wrap == null){
+            if (wrap == null) {
                 return CommonResult.failed(" WRONG HAPPENED WHEN GET SHOP RESULT!");
-            }else{
-                return CommonResult.success("GET SHOP PRODUCT SUCCESSED!",gson.toJson(wrap));
+            } else {
+                return CommonResult.success("GET SHOP PRODUCT SUCCESSED!", gson.toJson(wrap));
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**数量
+    /**
+     * 数量
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/count")
     @ApiOperation("统计产品数量")
     public CommonResult count(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                              HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             verifySearchParameter.setFalse(param);
             param.setPageSize(1);
             //请求solr获取结果
             long count = service.serachCount(param);
-            return CommonResult.success("GET COUNT SUCCESSED!",count);
-        }catch (Exception e){
+            return CommonResult.success("GET COUNT SUCCESSED!", count);
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
-    /**类别统计
-     * @param param 搜索参数
+
+    /**
+     * 类别统计
+     *
+     * @param param   搜索参数
      * @param request
      * @return
      */
     @ApiOperation("统计类别列表")
     @PostMapping("/category")
     public CommonResult categoryStatistics(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                           HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             param.setKeyword("*");
             param.setPage(1);
             param.setPageSize(1);
@@ -155,259 +164,283 @@ public class SearchController {
             List<CategoryWrap> categorys = categoryService.categorys(param, facetFields);
 
             categorys = categorys.stream()
-                                 .sorted(Comparator.comparing(CategoryWrap::getName))
-                                 .collect(Collectors.toList());
-            return CommonResult.success("CATEGORY STATISTICS SUCCESSED",gson.toJson(categorys));
+                    .sorted(Comparator.comparing(CategoryWrap::getName))
+                    .collect(Collectors.toList());
+            return CommonResult.success("CATEGORY STATISTICS SUCCESSED", gson.toJson(categorys));
         } catch (Exception e) {
-            log.error("错误--exception:",e);
+            log.error("错误--exception:", e);
             return CommonResult.failed(e.getMessage());
         }
     }
-    /**相似搜索
+
+    /**
+     * 相似搜索
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/similar")
     @ApiOperation("相似搜索")
     public CommonResult similarProduct(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                       HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求solr获取结果
             List<Product> products = service.similarProduct(param);
-            return CommonResult.success("GET SIMILAR PRODUCT SUCCESSED!",gson.toJson(products));
-        }catch (Exception e){
+            return CommonResult.success("GET SIMILAR PRODUCT SUCCESSED!", gson.toJson(products));
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
-    /** guess you like
+
+    /**
+     * guess you like
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/like")
     @ApiOperation("猜测客户喜欢")
     public CommonResult guessYouLike(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                     HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求solr获取结果
             List<Product> products = service.guessYouLike(param);
-            return CommonResult.success("GET GUESS YOU LIKE PRODUCT SUCCESSED!",gson.toJson(products));
-        }catch (Exception e){
+            return CommonResult.success("GET GUESS YOU LIKE PRODUCT SUCCESSED!", gson.toJson(products));
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
-    /**根据已买过的产品推荐产品
+
+    /**
+     * 根据已买过的产品推荐产品
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/bought")
     @ApiOperation("根据已买过的产品推荐产品")
     public CommonResult bought(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                        HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求solr获取结果
             List<Product> products = service.boughtAndBought(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
-        }catch (Exception e){
+            return CommonResult.success("GET PRODUCT SUCCESSED!", gson.toJson(products));
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
-    /**新版购物车该产品没有购买过则根据名称查询推荐商品
+
+    /**
+     * 新版购物车该产品没有购买过则根据名称查询推荐商品
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/boughtandbought")
     @ApiOperation("根据已买过的产品推荐产品")
     public CommonResult boughtAndBought(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
             HttpServletRequest request) {
-        if(param == null){
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求solr获取结果
             List<Product> products = service.boughtAndBought(param);
 
-            if(products.size()<4 && StringUtils.isNotBlank(param.getKeyword())){
+            if (products.size() < 4 && StringUtils.isNotBlank(param.getKeyword())) {
                 String title = param.getKeyword();
                 int length = title.split(" ").length;
-                for(int i=0;i<length && products.size()<5 ;i++){
+                for (int i = 0; i < length && products.size() < 5; i++) {
                     String word = param.getKeyword();
-                    if(!word.contains(" ")){
+                    if (!word.contains(" ")) {
                         break;
                     }
-                    word = word.substring(0,word.lastIndexOf(" "));
+                    word = word.substring(0, word.lastIndexOf(" "));
                     param.setKeyword(word);
                     products = service.boughtAndBought(param);
                 }
             }
-            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
-        }catch (Exception e){
+            return CommonResult.success("GET PRODUCT SUCCESSED!", gson.toJson(products));
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**展示该商品类别下的产品
-     * @param param 搜索参数
+    /**
+     * 展示该商品类别下的产品
+     *
+     * @param param   搜索参数
      * @param request
      * @return
      */
     @PostMapping("/bycatid")
     @ApiOperation("展示该产品类别下的其他产品")
     public CommonResult productsByCatid(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                      HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求solr获取结果
             List<Product> products = service.catidForGoods(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
-        }catch (Exception e){
+            return CommonResult.success("GET PRODUCT SUCCESSED!", gson.toJson(products));
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**发生错误时推荐产品
+    /**
+     * 发生错误时推荐产品
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/recommend")
     @ApiOperation("发生错误时候推荐给用户产品")
     public CommonResult errorRecommend(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                       HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求solr获取结果
             List<Product> products = service.errorRecommend(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
-        }catch (Exception e){
+            return CommonResult.success("GET PRODUCT SUCCESSED!", gson.toJson(products));
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**推荐热销产品
+    /**
+     * 推荐热销产品
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/hot")
     @ApiOperation("推荐热销产品")
     public CommonResult hotProduct(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                   HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求solr获取结果
             List<Product> products = service.hotProduct(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
-        }catch (Exception e){
+            return CommonResult.success("GET PRODUCT SUCCESSED!", gson.toJson(products));
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**根据类别推荐热销产品
+    /**
+     * 根据类别推荐热销产品
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/hotbycatid")
     @ApiOperation("根据类别推荐热销产品")
     public CommonResult hotProductForCatid(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
-                                           HttpServletRequest request) {
-        if(param == null){
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求solr获取结果
             List<Product> products = service.hotProductForCatid(param);
-            return CommonResult.success("GET PRODUCT SUCCESSED!",gson.toJson(products));
-        }catch (Exception e){
+            return CommonResult.success("GET PRODUCT SUCCESSED!", gson.toJson(products));
+        } catch (Exception e) {
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**获取搜索词提示词列表
+    /**
+     * 获取搜索词提示词列表
+     *
      * @param request
      * @param keyWord 搜索词
-     * @param site 网站
+     * @param site    网站
      * @return
      */
     @PostMapping("/auto")
     @ApiOperation("获取搜索词提示词列表")
     public CommonResult searchAutocomplete(
-            @ApiParam(name="keyWord",value="搜索词",required=true) @RequestParam String keyWord,
-            @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
-                                           HttpServletRequest request) {
-        if(StringUtils.isBlank(keyWord)){
+            @ApiParam(name = "keyWord", value = "搜索词", required = true) @RequestParam String keyWord,
+            @ApiParam(name = "site", value = "网站", required = true) @RequestParam String site,
+            HttpServletRequest request) {
+        if (StringUtils.isBlank(keyWord)) {
             return CommonResult.failed(" Keyword IS NULL!");
         }
         site = StrUtils.isNum(site) ? site : "1";
         int _site = Integer.parseInt(site);
-        if((_site & -_site) != _site){
+        if ((_site & -_site) != _site) {
             return CommonResult.failed(" SITE IS WRONG!");
         }
         try {
             List<String> lstAuto = service.searchAutocomplete(keyWord, _site);
-            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!",gson.toJson(lstAuto));
-        }catch (Exception e){
-            log.error("搜索提示词错误",e);
+            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!", gson.toJson(lstAuto));
+        } catch (Exception e) {
+            log.error("搜索提示词错误", e);
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**统计价格区间分布
+    /**
+     * 统计价格区间分布
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/range")
     @ApiOperation("统计价格区间分布")
     public CommonResult loadRangePrice(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
             HttpServletRequest request) {
         try {
             GoodsPriceRangeWrap wrap = new GoodsPriceRangeWrap();
-            param = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             String minprice = param.getMinPrice();
             String maxprice = param.getMaxPrice();
             wrap.setMinPrice(minprice);
@@ -430,7 +463,7 @@ public class SearchController {
             wrap.setRange(goodsPriceRange);
             if (goodsPriceRange != null) {
                 goodsPriceRange.setKeyword(param.getKeyword());
-               int totalNumber = goodsPriceRange.getSectionOneCount()
+                int totalNumber = goodsPriceRange.getSectionOneCount()
                         + goodsPriceRange.getSectionTwoCount()
                         + goodsPriceRange.getSectionThreeCount()
                         + goodsPriceRange.getSectionFourCount();
@@ -438,32 +471,34 @@ public class SearchController {
             } else {
                 wrap.setTotal(0);
             }
-            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!",gson.toJson(wrap));
-        }catch (Exception e){
-            log.error("搜索页异步加载区间价错误",e);
+            return CommonResult.success("GET AUTOCOMPLETE SUCCESSED!", gson.toJson(wrap));
+        } catch (Exception e) {
+            log.error("搜索页异步加载区间价错误", e);
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**获取搜索词其他组合推荐
+    /**
+     * 获取搜索词其他组合推荐
+     *
      * @param keyWord 搜索词
-     * @param site 网站
+     * @param site    网站
      * @param request
      * @return
      */
     @PostMapping("/associate")
     @ApiOperation("获取搜索词其他组合推荐")
     public CommonResult associateKey(
-            @ApiParam(name="keyWord",value="搜索词",required=true) @RequestParam String keyWord,
-            @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
-            @ApiParam(name="salable",value="是否开启不可售限制",required=true) @RequestParam String salable,
+            @ApiParam(name = "keyWord", value = "搜索词", required = true) @RequestParam String keyWord,
+            @ApiParam(name = "site", value = "网站", required = true) @RequestParam String site,
+            @ApiParam(name = "salable", value = "是否开启不可售限制", required = true) @RequestParam String salable,
             HttpServletRequest request) {
-        if(StringUtils.isBlank(keyWord)){
+        if (StringUtils.isBlank(keyWord)) {
             return CommonResult.failed(" Keyword IS NULL!");
         }
         site = StrUtils.isNum(site) ? site : "1";
         int _site = Integer.parseInt(site);
-        if((_site & -_site) != _site){
+        if ((_site & -_site) != _site) {
             return CommonResult.failed(" SITE IS WRONG!");
         }
         try {
@@ -471,45 +506,49 @@ public class SearchController {
             param.setSite(_site);
             param.setSalable("true".equalsIgnoreCase(salable));
             List<AssociateWrap> associate = service.associate(keyWord, param);
-            return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!",gson.toJson(associate));
-        }catch (Exception e){
-            log.error("获取搜索词其他组合推荐错误",e);
+            return CommonResult.success("GET ASSOCIATE KEY SUCCESSED!", gson.toJson(associate));
+        } catch (Exception e) {
+            log.error("获取搜索词其他组合推荐错误", e);
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**异步加载搜索页类别推荐搜索词
+    /**
+     * 异步加载搜索页类别推荐搜索词
+     *
      * @param keyWord 搜索词
-     * @param site 网站
+     * @param site    网站
      * @param request
      * @return
      */
     @PostMapping("/catid/suggest")
     @ApiOperation("异步加载搜索页类别推荐搜索词")
     public CommonResult catidSuggest(
-            @ApiParam(name="keyWord",value="搜索词",required=true) @RequestParam String keyWord,
-            @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
+            @ApiParam(name = "keyWord", value = "搜索词", required = true) @RequestParam String keyWord,
+            @ApiParam(name = "site", value = "网站", required = true) @RequestParam String site,
             HttpServletRequest request) {
-        if(StringUtils.isBlank(keyWord)){
+        if (StringUtils.isBlank(keyWord)) {
             return CommonResult.failed(" Keyword IS NULL!");
         }
         site = StrUtils.isNum(site) ? site : "1";
         int _site = Integer.parseInt(site);
-        if((_site & -_site) != _site){
+        if ((_site & -_site) != _site) {
             return CommonResult.failed(" SITE IS WRONG!");
         }
         try {
             List<SearchWordWrap> list = service.searchWord(keyWord, _site);
-            return CommonResult.success("GET SUGGEST KEY SUCCESSED!",gson.toJson(list));
-        }catch (Exception e){
-            log.error("异步加载搜索页类别推荐搜索词",e);
+            return CommonResult.success("GET SUGGEST KEY SUCCESSED!", gson.toJson(list));
+        } catch (Exception e) {
+            log.error("异步加载搜索页类别推荐搜索词", e);
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**广告落地页
-     * @param keyWord 搜索词
-     * @param site 网站
+    /**
+     * 广告落地页
+     *
+     * @param keyWord   搜索词
+     * @param site      网站
      * @param adgroupid 广告词
      * @param request
      * @return
@@ -517,62 +556,66 @@ public class SearchController {
     @PostMapping("advertisement")
     @ApiOperation("广告落地页")
     public CommonResult advertisement(
-            @ApiParam(name="keyWord",value="搜索词",required=true) @RequestParam String keyWord,
-            @ApiParam(name="site",value="网站",required=true) @RequestParam String site,
-            @ApiParam(name="adgroupid",value="广告词",required=true) @RequestParam String adgroupid,
+            @ApiParam(name = "keyWord", value = "搜索词", required = true) @RequestParam String keyWord,
+            @ApiParam(name = "site", value = "网站", required = true) @RequestParam String site,
+            @ApiParam(name = "adgroupid", value = "广告词", required = true) @RequestParam String adgroupid,
             HttpServletRequest request) {
-        if(StringUtils.isBlank(keyWord)){
+        if (StringUtils.isBlank(keyWord)) {
             return CommonResult.failed(" Keyword IS NULL!");
         }
         site = StrUtils.isNum(site) ? site : "1";
         int _site = Integer.parseInt(site);
-        if((_site & -_site) != _site){
+        if ((_site & -_site) != _site) {
             return CommonResult.failed(" SITE IS WRONG!");
         }
         try {
             SearchResultWrap advertisement = service.advertisement(keyWord, _site, adgroupid);
-            return CommonResult.success("GET ADVERTISEMENT KEY SUCCESSED!",gson.toJson(advertisement));
-        }catch (Exception e){
-            log.error("广告落地页",e);
+            return CommonResult.success("GET ADVERTISEMENT KEY SUCCESSED!", gson.toJson(advertisement));
+        } catch (Exception e) {
+            log.error("广告落地页", e);
             return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**产品搜索
+    /**
+     * 产品搜索
+     *
      * @param request
-     * @param param 搜索参数
+     * @param param   搜索参数
      * @return
      */
     @PostMapping("/productsB2C")
     @ApiOperation("搜索")
     public CommonResult getSearchB2C(
-            @ApiParam(name="searchParam",value="搜索参数",required=true) @RequestBody SearchParam param,
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
             HttpServletRequest request) {
-        if(param == null){
+        if (param == null) {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
             //参数处理
-            param  = verifySearchParameter.verification(request,param);
+            param = verifySearchParameter.verification(request, param);
             //请求mongo获取结果
             SearchResultWrap wrap = service.productSerachMongo(param);
 
-            if(wrap == null){
+            if (wrap == null) {
                 return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
-            }else{
+            } else {
                 Map<String, String> searchNavigation =
                         productSearch.searchNavigation(param);
                 wrap.setSearchNavigation(searchNavigation);
                 wrap.setParam(param);
-                return CommonResult.success("GET SOLR RESULT SUCCESSED!",gson.toJson(wrap));
+                return CommonResult.success("GET SOLR RESULT SUCCESSED!", gson.toJson(wrap));
             }
-        }catch (Exception e){
-            log.error("WRONG HAPPENED",e);
-            return  CommonResult.failed(e.getMessage());
+        } catch (Exception e) {
+            log.error("WRONG HAPPENED", e);
+            return CommonResult.failed(e.getMessage());
         }
     }
 
-    /**产品搜索
+    /**
+     * 产品搜索
+     *
      * @return
      */
     @PostMapping("/catidGroup")
@@ -581,17 +624,17 @@ public class SearchController {
 
         try {
 
-            List<CatidGroup> catidGroupList  = service.getCatidGroup();
+            List<CatidGroup> catidGroupList = service.getCatidGroup();
 
-            if(catidGroupList == null){
+            if (catidGroupList == null) {
                 return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
-            }else{
+            } else {
 
-                return CommonResult.success("GET SOLR RESULT SUCCESSED!",gson.toJson(catidGroupList));
+                return CommonResult.success("GET SOLR RESULT SUCCESSED!", gson.toJson(catidGroupList));
             }
-        }catch (Exception e){
-            log.error("WRONG HAPPENED",e);
-            return  CommonResult.failed(e.getMessage());
+        } catch (Exception e) {
+            log.error("WRONG HAPPENED", e);
+            return CommonResult.failed(e.getMessage());
         }
     }
 
