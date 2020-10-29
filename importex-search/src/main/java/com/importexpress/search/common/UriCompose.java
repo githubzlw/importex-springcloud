@@ -70,7 +70,7 @@ public class UriCompose {
         }else{
             goodnameNew.append(name.replaceAll("(\\s+)", "-"));
         }
-        String url  = "/productInfo/";
+        String url  = "/productbc/";
         if(StringUtils.isNotBlank(goodnameNew.toString())){
             url = url + goodnameNew.deleteCharAt(goodnameNew.length()-1);
         } else {
