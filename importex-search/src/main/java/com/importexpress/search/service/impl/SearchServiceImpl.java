@@ -803,7 +803,7 @@ public class SearchServiceImpl implements SearchService {
                 }
             }
             path = SwitchDomainUtil.checkIsNullAndReplace(path, param.getSite());
-            product.setImage(path.replace("220x220", "285x285"));
+            product.setImage(path.replace("220x220", "285x285").replace("http://","https://"));
 
             /**
              * 添加伪静态化链接
