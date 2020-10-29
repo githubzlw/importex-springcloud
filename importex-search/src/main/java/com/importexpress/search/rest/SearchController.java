@@ -620,11 +620,15 @@ public class SearchController {
      */
     @PostMapping("/catidGroup")
     @ApiOperation("搜索catid分组商品数量")
-    public CommonResult getCatidGroup() {
+    public CommonResult getCatidGroup(@ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+                                      HttpServletRequest request) {
 
         try {
 
-            List<CatidGroup> catidGroupList = service.getCatidGroup();
+            //参数处理
+            param = verifySearchParameter.verification(request, param);
+
+            List<CatidGroup> catidGroupList = service.getCatidGroup(param.getSite());
 
             if (catidGroupList == null) {
                 return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");

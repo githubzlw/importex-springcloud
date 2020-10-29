@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.search.common.InitApplicationParameter;
 import com.importexpress.search.mongo.CatidGroup;
+import com.importexpress.search.pojo.Currency;
 import com.importexpress.search.pojo.Product;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.pojo.SearchResultWrap;
@@ -282,8 +283,13 @@ public class SearchControllerTest {
     @Test
     public void getSearchMongo() throws Exception {
         SearchParam param = new SearchParam();
-        //param.setCatid("9110035");
+        param.setCatid("122584001");
         param.setSort("order-desc");
+        Currency currency = new Currency();
+        currency.setCurrency("EUR");
+        currency.setExchangeRate(0.903);
+        currency.setSymbol("€");
+        param.setCurrency(currency);
         //param.setFreeShipping(2);
         //param.setMaxPrice("1.0");
         //param.setMinPrice("0.01");
@@ -304,7 +310,7 @@ public class SearchControllerTest {
     @Test
     public void getSearchMongoCatidGroup() throws Exception {
         SearchParam param = new SearchParam();
-
+        param.setSite(2);
       /*  param.setCatid("123648007");
         param.setFreeShipping(2);
         param.setMaxPrice("1.0");

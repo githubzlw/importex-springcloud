@@ -165,6 +165,6 @@ public interface SearchService {
      *
      * @return
      */
-    List<CatidGroup> getCatidGroup();
+    List<CatidGroup> getCatidGroup(int site);
 
 }

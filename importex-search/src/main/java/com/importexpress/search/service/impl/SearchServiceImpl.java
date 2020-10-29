@@ -736,7 +736,7 @@ public class SearchServiceImpl implements SearchService {
     private List<Product> mongoDocToProduct(List<com.importexpress.search.mongo.Product> documentList, SearchParam param) {
         List<Product> products = Lists.newArrayList();
         boolean isFree = 2 - param.getFreeShipping() == 0;
-        boolean changeCurrency = !"USD".equals(param.getCurrency());
+        boolean changeCurrency = !"USD".equals(param.getCurrency().getCurrency());
         for (com.importexpress.search.mongo.Product solrDocument : documentList) {
             //产品id
             String itemId = StrUtils.object2Str(solrDocument.getPid());
@@ -844,17 +844,45 @@ public class SearchServiceImpl implements SearchService {
             product.setIsStock(Integer.parseInt(stock));
 
             //其他数据----不是搜索页面必须数据
-
-            //货币切换
-            if (changeCurrency) {
-                ChangeCurrency.chang(product, param.getCurrency());
-            }
-            product.setFinal_weight(solrDocument.getFinal_weight());
             product.setWprice(solrDocument.getWprice());
             product.setFree_price_new(solrDocument.getFree_price_new());
             product.setRange_price(solrDocument.getRange_price());
             product.setRange_price_free_new(solrDocument.getRange_price_free_new());
+
+
+            //货币切换
+
+            if (changeCurrency) {
+                ChangeCurrency.chang(product, param.getCurrency());
+
+                if(StringUtils.isNotBlank(product.getRange_price())){
+                    String range_price = ChangeCurrency.rangePrice(product.getRange_price().trim(),param.getCurrency().getExchangeRate());
+                    product.setRange_price(range_price);
+                }
+                if(StringUtils.isNotBlank(product.getRange_price_free_new())){
+                    String Range_price_free_new = ChangeCurrency.rangePrice(product.getRange_price_free_new().trim(),param.getCurrency().getExchangeRate());
+                    product.setRange_price_free_new(Range_price_free_new);
+                }
+                if(StringUtils.isNotBlank(product.getWprice())){
+                    if(StringUtils.isNotBlank(product.getWprice().replace("[","").replace("]",""))){
+                        String wPrice = product.getWprice().split(",")[0].split("\\$")[1].split("]")[0].trim();
+                        String wPriceChange = ChangeCurrency.calculation(wPrice,param.getCurrency().getExchangeRate());
+                        product.setWprice(product.getWprice().replace(wPrice,wPriceChange));
+                    }
+
+                }
+                if(StringUtils.isNotBlank(product.getFree_price_new())){
+                    if(StringUtils.isNotBlank(product.getFree_price_new().replace("[","").replace("]",""))){
+                        String free_price_new = product.getFree_price_new().split(",")[0].split("\\$")[1].split("]")[0].trim();
+                        String free_price_new_change = ChangeCurrency.calculation(free_price_new,param.getCurrency().getExchangeRate());
+                        product.setFree_price_new(product.getFree_price_new().replace(free_price_new,free_price_new_change));
+                    }
+
+                }
+            }
+            product.setFinal_weight(solrDocument.getFinal_weight());
             product.setVolume_weight(solrDocument.getVolume_weight());
+
             products.add(product);
         }
         return products;
@@ -972,30 +1000,47 @@ public class SearchServiceImpl implements SearchService {
 
 
     @Override
-    public List<CatidGroup> getCatidGroup() {
+    public List<CatidGroup> getCatidGroup(int site) {
 
         //mongo结果
         List list = new ArrayList();
+        // pet
+        if(site == 4){
+            list.add("122584001");
+            list.add("9210034");
+            list.add("9110035");
+            list.add("9210036");
+            list.add("121802003");
+            list.add("9110037");
+            list.add("9110038");
+            list.add("9110039");
+            list.add("122586001");
+            list.add("121840001");
+            list.add("9210040");
+            list.add("9110041");
+            list.add("9110042");
+            list.add("9110043");
+            list.add("9210044");
+            list.add("9110045");
+            list.add("9110046");
+            list.add("121786003");
+            list.add("121776006");
+        }
+        // kids
+        else if(site == 2){
+            list.add("181309");
+            list.add("1813");
+            list.add("122988012");
+            list.add("1037005");
+            list.add("1037192");
+            list.add("1037012");
+            list.add("1037003");
+            list.add("1043351");
+            list.add("1038378");
+            list.add("1037004");
+        }
 
-        list.add("122584001");
-        list.add("9210034");
-        list.add("9110035");
-        list.add("9210036");
-        list.add("121802003");
-        list.add("9110037");
-        list.add("9110038");
-        list.add("9110039");
-        list.add("122586001");
-        list.add("121840001");
-        list.add("9210040");
-        list.add("9110041");
-        list.add("9110042");
-        list.add("9110043");
-        list.add("9210044");
-        list.add("9110045");
-        list.add("9110046");
-        list.add("121786003");
-        list.add("121776006");
+
 
         List<CatidGroup> catidGroupList = mongoHelp.findCatidGroup(list);
 
