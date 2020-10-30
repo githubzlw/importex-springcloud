@@ -3,16 +3,12 @@ package com.importexpress.search.service.impl;
 
 import com.google.common.collect.Lists;
 import com.importexpress.comm.util.StrUtils;
-import com.importexpress.product.mongo.MongoProduct;
 import com.importexpress.search.common.*;
 import com.importexpress.search.mongo.CatidGroup;
-import com.importexpress.search.mongo.MongoHelp;
 import com.importexpress.search.pojo.*;
-import com.importexpress.search.pojo.Currency;
 import com.importexpress.search.service.*;
 import com.importexpress.search.util.ExhaustUtils;
 import com.importexpress.search.util.Utility;
-import com.mongodb.client.model.Filters;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.response.FacetField;
@@ -20,15 +16,14 @@ import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.bson.conversions.Bson;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 
 @Slf4j
 @Service
@@ -55,8 +50,12 @@ public class SearchServiceImpl implements SearchService {
     private ExhaustUtils exhaustUtils;
 //    DecimalFormat df  = new DecimalFormat("#0.00");  //保留两位小数
 
-    @Autowired
-    private MongoHelp mongoHelp;
+    private final ProductServiceFeign productServiceFeign;
+
+    public SearchServiceImpl(ProductServiceFeign productServiceFeign) {
+        this.productServiceFeign = productServiceFeign;
+    }
+
 
     @Override
     public SearchResultWrap advertisement(String key, int site, String adgroupid) {
@@ -620,7 +619,8 @@ public class SearchServiceImpl implements SearchService {
         int page = param.getPage();
         int pageSize = param.getPageSize();
         //请求mongo获取产品列表
-        List<com.importexpress.search.mongo.Product> productList = mongoHelp.findProductByCatid(param, param.getPage(), param.getPageSize());
+        List<com.importexpress.search.mongo.Product> productList = productServiceFeign.findProductByCatid(param);
+        //List<com.importexpress.search.mongo.Product> productList = mongoHelp.findProductByCatid(param, param.getPage(), param.getPageSize());
 
         // 根据重量确定是否是免邮价格，list根据价格销量排序
         for (com.importexpress.search.mongo.Product product : productList) {
@@ -902,7 +902,8 @@ public class SearchServiceImpl implements SearchService {
             return solrResult;
         }
 
-        solrResult.setRecordCount(mongoHelp.findProductByCatidCount(param));
+        solrResult.setRecordCount(productServiceFeign.findProductByCatidCount(param));
+        //solrResult.setRecordCount(mongoHelp.findProductByCatidCount(param));
 
         List<Product> itemList = mongoDocToProduct(productList, param);
 
@@ -1003,7 +1004,7 @@ public class SearchServiceImpl implements SearchService {
     public List<CatidGroup> getCatidGroup(int site) {
 
         //mongo结果
-        List list = new ArrayList();
+        List<String> list = new ArrayList();
         // pet
         if(site == 4){
             list.add("122584001");
@@ -1041,8 +1042,8 @@ public class SearchServiceImpl implements SearchService {
         }
 
 
-
-        List<CatidGroup> catidGroupList = mongoHelp.findCatidGroup(list);
+        List<CatidGroup> catidGroupList = productServiceFeign.findCatidGroup(list);
+        //List<CatidGroup> catidGroupList = mongoHelp.findCatidGroup(list);
 
         return catidGroupList;
 
