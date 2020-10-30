@@ -736,7 +736,7 @@ public class SearchServiceImpl implements SearchService {
     private List<Product> mongoDocToProduct(List<com.importexpress.search.mongo.Product> documentList, SearchParam param) {
         List<Product> products = Lists.newArrayList();
         boolean isFree = 2 - param.getFreeShipping() == 0;
-        boolean changeCurrency = !"USD".equals(param.getCurrency().getCurrency());
+        boolean changeCurrency = !"USD".equals(param.getCurrency());
         for (com.importexpress.search.mongo.Product solrDocument : documentList) {
             //产品id
             String itemId = StrUtils.object2Str(solrDocument.getPid());
