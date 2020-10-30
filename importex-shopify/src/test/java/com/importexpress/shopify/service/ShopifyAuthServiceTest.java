@@ -1,6 +1,5 @@
 package com.importexpress.shopify.service;
 
-import com.importexpress.shopify.pojo.product.ShopifyBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

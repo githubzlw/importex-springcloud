@@ -5,8 +5,6 @@ import com.importexpress.search.pojo.SearchParam;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.response.SpellCheckResponse;
 
-import java.util.Map;
-
 /**
  * @author jack.luo
  * @date 2019/11/22

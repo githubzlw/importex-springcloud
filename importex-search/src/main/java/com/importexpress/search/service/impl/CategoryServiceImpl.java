@@ -2,7 +2,6 @@ package com.importexpress.search.service.impl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.SwitchDomainUtil;
 import com.importexpress.search.mapper.CategoryMapper;
 import com.importexpress.search.pojo.Category;

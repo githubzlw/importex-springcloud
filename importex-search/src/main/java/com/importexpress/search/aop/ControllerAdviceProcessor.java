@@ -3,7 +3,6 @@ package com.importexpress.search.aop;
 import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.comm.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

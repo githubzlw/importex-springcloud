@@ -2,9 +2,7 @@ package com.importexpress.email.service.impl.process;
 
 import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.MailTemplateBean;
-import com.importexpress.comm.pojo.MultiSiteUtil;
 import com.importexpress.email.service.TemplateMailProcess;
-import com.importexpress.email.vo.AccountUpdateMailTemplateBean;
 import com.importexpress.email.vo.ReceivedMailTemplateBean;
 import org.springframework.beans.BeanUtils;
 import org.thymeleaf.spring5.SpringTemplateEngine;

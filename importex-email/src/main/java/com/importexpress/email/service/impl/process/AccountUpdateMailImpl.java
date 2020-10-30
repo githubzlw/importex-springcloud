@@ -4,7 +4,6 @@ import com.importexpress.comm.pojo.MailBean;
 import com.importexpress.comm.pojo.MailTemplateBean;
 import com.importexpress.email.service.TemplateMailProcess;
 import com.importexpress.email.vo.AccountUpdateMailTemplateBean;
-import com.importexpress.email.vo.ActivationMailTemplateBean;
 import org.springframework.beans.BeanUtils;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 

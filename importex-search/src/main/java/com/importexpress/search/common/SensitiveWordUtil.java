@@ -2,9 +2,6 @@ package com.importexpress.search.common;
 
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * 产品标题去敏感词
  * @author Administrator

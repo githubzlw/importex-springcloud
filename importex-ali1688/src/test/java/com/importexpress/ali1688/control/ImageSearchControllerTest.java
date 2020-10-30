@@ -3,8 +3,6 @@ package com.importexpress.ali1688.control;
 
 import com.alibaba.fastjson.JSONObject;
 import com.importexpress.ali1688.model.ItemDetails;
-import com.importexpress.ali1688.service.Ali1688CacheService;
-import com.importexpress.ali1688.service.Ali1688Service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,8 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 

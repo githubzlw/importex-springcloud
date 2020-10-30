@@ -1,6 +1,5 @@
 package com.importexpress.cart.scheduled;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.importexpress.cart.pojo.Cart;
@@ -11,13 +10,15 @@ import com.importexpress.cart.util.SevenZ;
 import com.importexpress.comm.pojo.SiteEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;

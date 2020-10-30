@@ -1,13 +1,11 @@
 package com.importexpress.search.service.impl;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.KeywordCorrect;
 import com.importexpress.search.common.SplicingSyntax;
 import com.importexpress.search.common.SwitchDomainUtil;
 import com.importexpress.search.pojo.GoodsPriceRange;
-import com.importexpress.search.pojo.KeyToCategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.pojo.SolrFacet;
 import com.importexpress.search.service.SolrService;
