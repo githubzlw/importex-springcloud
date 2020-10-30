@@ -1,6 +1,8 @@
 package com.importexpress.product.rest;
 
+import com.importexpress.product.mongo.CatidGroup;
 import com.importexpress.product.mongo.MongoProduct;
+import com.importexpress.product.pojo.SearchParam;
 import com.importexpress.product.service.ProductService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -65,6 +67,27 @@ public class ProductControl {
     public List<MongoProduct> findProductByShopId(@ApiParam(name = "shopid", value = "shopid", required = true) @PathVariable("shopid") String shopid) {
 
         return productService.findProductByShopId(shopid);
+    }
+
+    @PostMapping("/findProductByCatid")
+    @ApiOperation("通过店铺id搜索")
+    public List<MongoProduct> findProductByCatid(@ApiParam(name = "param", value = "param", required = true) @RequestBody SearchParam param) {
+
+        return productService.findProductByCatid(param);
+    }
+
+    @PostMapping("/findProductByCatidCount")
+    @ApiOperation("通过店铺id搜索")
+    public Long findProductByCatidCount(@ApiParam(name = "param", value = "param", required = true) @RequestBody SearchParam param) {
+
+        return productService.findProductByCatidCount(param);
+    }
+
+    @PostMapping("/findCatidGroup")
+    @ApiOperation("通过店铺id搜索")
+    public List<CatidGroup> findCatidGroup(@ApiParam(name = "list", value = "list", required = true)  @RequestBody List<String> list) {
+
+        return productService.findCatidGroup(list);
     }
 
 }

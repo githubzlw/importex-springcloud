@@ -74,6 +74,7 @@ public class CartServiceImpl implements CartService {
             Assert.isTrue(split.length >= 2, "The itemId invalid:" + itemId);
             Assert.isTrue(StringUtils.isNotEmpty(split[0]), "The itemId invalid:" + itemId);
             Product product = productServiceFeign.findProduct(Long.parseLong(split[0]));
+            Objects.requireNonNull(product);
             CartItem cartItem = product2CartItem(site,product, num, split);
             //查找同pid商品做排序处理
             List<CartItem> lstCartItem = getCartItems(site, userId);
@@ -162,6 +163,7 @@ public class CartServiceImpl implements CartService {
     private CartItem product2CartItem(SiteEnum site,Product product, long num, String[] split) {
 
         CartItem cartItem = new CartItem();
+        cartItem.setMs(NumberUtils.toInt(product.getMatchSource()));
         cartItem.setPid(product.getPid());
         cartItem.setSi(product.getShop_id());
         cartItem.setSn(product.getShop_enname());
@@ -199,25 +201,17 @@ public class CartServiceImpl implements CartService {
      */
     private void changePrice(SiteEnum site, Product product, CartItem cartItem) {
 
-        //if(site == SiteEnum.KIDS || site == SiteEnum.PETS || site == SiteEnum.IMPORTX){
-        if(site == SiteEnum.KIDS || site == SiteEnum.IMPORTX){
-            //range_price
-            if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
-                cartItem.setRpe(product.getRange_price_free_new());
-            }
-            //feeprice
-            if(StringUtils.isNotEmpty(product.getFree_price_new())) {
-                cartItem.setFp(product.getFree_price_new());
-            }
-            //sku
-            if(StringUtils.isNotEmpty(product.getSku_new())){
-                cartItem.setSku(product.getSku_new());
-            }
-        }else{
-            //range_price
-            cartItem.setRpe(product.getRange_price());
-            //feeprice
-            cartItem.setFp(product.getFeeprice());
+        //range_price
+        if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
+            cartItem.setRpe(product.getRange_price_free_new());
+        }
+        //feeprice
+        if(StringUtils.isNotEmpty(product.getFree_price_new())) {
+            cartItem.setFp(product.getFree_price_new());
+        }
+        //sku
+        if(StringUtils.isNotEmpty(product.getSku_new())){
+            cartItem.setSku(product.getSku_new());
         }
     }
 

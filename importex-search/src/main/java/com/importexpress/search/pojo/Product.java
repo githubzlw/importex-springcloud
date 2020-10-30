@@ -122,4 +122,43 @@ public class Product implements Serializable {
 	 */
 	@ApiModelProperty(value="商品库存标识  0没有库存  1有库存  hot")
 	private int isStock;
+
+	/**
+	 *商品重量
+	 */
+	@ApiModelProperty(value="商品重量")
+	private String final_weight;
+
+	/**
+	 *非免邮价格
+	 */
+	@ApiModelProperty(value="非免邮价格")
+	private String wprice;
+
+	/**
+	 *免邮价格
+	 */
+	@ApiModelProperty(value="免邮价格")
+	private String free_price_new;
+
+	/**
+	 *非免邮价格区间
+	 */
+	@ApiModelProperty(value="非免邮价格区间")
+	private String range_price;
+
+	/**
+	 *免邮价格区间
+	 */
+	@ApiModelProperty(value="免邮价格区间")
+	private String range_price_free_new;
+
+	/**
+	 *体积重量
+	 */
+	@ApiModelProperty(value="体积重量")
+	private String volume_weight;
+
+
+
 }
