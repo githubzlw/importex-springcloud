@@ -339,7 +339,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<Cart> getCart(SiteEnum site) {
+    public List<Cart> getCart(SiteEnum site) throws Exception {
 
         List<Cart> lstCarts = new ArrayList<>();
         Set<String> letUsers = RedisHelper.scan(this.redisTemplate,getCartKeys(site));
@@ -353,7 +353,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart getCart(SiteEnum site, long userId) {
+    public Cart getCart(SiteEnum site, long userId) throws Exception {
 
         Cart cart = new Cart();
         try {
@@ -367,7 +367,7 @@ public class CartServiceImpl implements CartService {
             return cart;
         } catch (Exception e) {
             log.error("getCart", e);
-            return cart;
+            throw e;
         }
     }
 

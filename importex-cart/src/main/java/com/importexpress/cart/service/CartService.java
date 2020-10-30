@@ -36,7 +36,7 @@ public interface CartService {
      * @param site
      * @return
      */
-    List<Cart> getCart(SiteEnum site);
+    List<Cart> getCart(SiteEnum site) throws Exception;
 
     /**
      * 获取购物车数据
@@ -45,7 +45,7 @@ public interface CartService {
      * @param userId
      * @return
      */
-    Cart getCart(SiteEnum site, long userId);
+    Cart getCart(SiteEnum site, long userId) throws Exception;
 
     /**
      * 更新

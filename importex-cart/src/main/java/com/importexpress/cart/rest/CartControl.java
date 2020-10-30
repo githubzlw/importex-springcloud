@@ -89,8 +89,11 @@ public class CartControl {
     public CommonResult getCart(@PathVariable(value = "site") SiteEnum site,
                                 @PathVariable(value = "userId") long userId) {
 
-        Cart cart = cartService.getCart(site, userId);
-        return CommonResult.success(cart);
+        try {
+            return CommonResult.success(cartService.getCart(site, userId));
+        } catch (Exception e) {
+            return CommonResult.failed(e.getMessage());
+        }
 
     }
 
@@ -98,8 +101,11 @@ public class CartControl {
     @ApiOperation("查询网站中所有用户的购物车商品")
     public CommonResult getAllCarts(@PathVariable(value = "site") SiteEnum site) {
 
-        List<Cart> cart = cartService.getCart(site);
-        return CommonResult.success(cart);
+        try {
+            return CommonResult.success(cartService.getCart(site));
+        } catch (Exception e) {
+            return CommonResult.failed(e.getMessage());
+        }
 
     }
 
