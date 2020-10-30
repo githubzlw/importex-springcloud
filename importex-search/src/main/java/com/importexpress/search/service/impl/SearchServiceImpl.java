@@ -356,7 +356,7 @@ public class SearchServiceImpl implements SearchService {
                     && StringUtils.isNotBlank(StrUtils.object2Str(solrDocument.get("custom_range_price")))){
                 calculatePrice.searchRangePrice(solrDocument);
             }*/
-            if(param.getSite() == 1 || param.getSite() == 2 ){
+//            if(param.getSite() == 1 || param.getSite() == 2 ){
                 if(StringUtils.isNotBlank(
                         StrUtils.object2Str(solrDocument.get("custom_range_price")))){
                     solrDocument.setField(
@@ -367,7 +367,7 @@ public class SearchServiceImpl implements SearchService {
                             "custom_feeprice",
                             solrDocument.get("custom_free_price_new"));
                 }
-            }
+//            }
 
             Product product = new Product();
             product.setId(itemId);
