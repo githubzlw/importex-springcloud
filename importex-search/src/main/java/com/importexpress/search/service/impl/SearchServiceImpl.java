@@ -624,7 +624,7 @@ public class SearchServiceImpl implements SearchService {
 
         // 根据重量确定是否是免邮价格，list根据价格销量排序
         for (com.importexpress.search.mongo.Product product : productList) {
-            double weight = 0.00;
+           /* double weight = 0.00;
             if (StringUtils.isNotBlank(product.getFinal_weight())
                     && StringUtils.isNotBlank(product.getVolume_weight())) {
                 if (Double.parseDouble(product.getFinal_weight()) > Double.parseDouble(product.getVolume_weight())) {
@@ -638,7 +638,7 @@ public class SearchServiceImpl implements SearchService {
                 } else {
                     weight = Double.parseDouble(product.getVolume_weight());
                 }
-            }
+            }*/
 
             //if (weight >= 0.5) {
             if ("0".equals(product.getImg_check())) {
