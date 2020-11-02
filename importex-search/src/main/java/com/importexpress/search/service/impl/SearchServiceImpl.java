@@ -640,7 +640,8 @@ public class SearchServiceImpl implements SearchService {
                 }
             }
 
-            if (weight >= 0.5) {
+            //if (weight >= 0.5) {
+            if ("0".equals(product.getImg_check())) {
                 if (StringUtils.isNotBlank(product.getRange_price())) {
                     String priceSort = product.getRange_price().replace("[", "").replace("]", "");
                     product.setPrice_import_sort(Double.parseDouble(priceSort.split("-")[0].trim()));
