@@ -160,9 +160,9 @@ public class Product implements Serializable {
 	private String volume_weight;
 
 	/**
-	 *是否免邮
+	 *是否免邮 0 非免邮 1 免邮
 	 */
 	@ApiModelProperty(value="是否免邮")
-	private String img_check;
+	private String isFreeShipping;
 
 }

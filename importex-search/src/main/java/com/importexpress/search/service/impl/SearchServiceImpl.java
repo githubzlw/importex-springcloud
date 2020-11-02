@@ -882,7 +882,7 @@ public class SearchServiceImpl implements SearchService {
             }
             product.setFinal_weight(solrDocument.getFinal_weight());
             product.setVolume_weight(solrDocument.getVolume_weight());
-            product.setImg_check(solrDocument.getImg_check());
+            product.setIsFreeShipping(solrDocument.getImg_check());
             products.add(product);
         }
         return products;
