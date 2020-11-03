@@ -624,7 +624,7 @@ public class SearchServiceImpl implements SearchService {
 
         // 根据重量确定是否是免邮价格，list根据价格销量排序
         for (com.importexpress.search.mongo.Product product : productList) {
-            double weight = 0.00;
+           /* double weight = 0.00;
             if (StringUtils.isNotBlank(product.getFinal_weight())
                     && StringUtils.isNotBlank(product.getVolume_weight())) {
                 if (Double.parseDouble(product.getFinal_weight()) > Double.parseDouble(product.getVolume_weight())) {
@@ -638,9 +638,10 @@ public class SearchServiceImpl implements SearchService {
                 } else {
                     weight = Double.parseDouble(product.getVolume_weight());
                 }
-            }
+            }*/
 
-            if (weight >= 0.5) {
+            //if (weight >= 0.5) {
+            if ("0".equals(product.getImg_check())) {
                 if (StringUtils.isNotBlank(product.getRange_price())) {
                     String priceSort = product.getRange_price().replace("[", "").replace("]", "");
                     product.setPrice_import_sort(Double.parseDouble(priceSort.split("-")[0].trim()));
@@ -882,7 +883,7 @@ public class SearchServiceImpl implements SearchService {
             }
             product.setFinal_weight(solrDocument.getFinal_weight());
             product.setVolume_weight(solrDocument.getVolume_weight());
-
+            product.setIsFreeShipping(solrDocument.getImg_check());
             products.add(product);
         }
         return products;
