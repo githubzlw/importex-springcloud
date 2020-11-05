@@ -1040,6 +1040,16 @@ public class SearchServiceImpl implements SearchService {
             list.add("1043351");
             list.add("1038378");
             list.add("1037004");
+            //自定义其他catid
+            list.add("1037011");
+            list.add("1037648");
+            list.add("1042840");
+            list.add("1042841");
+            list.add("1037010");
+            list.add("1037009");
+            list.add("1037011");
+            list.add("1042754");
+            list.add("919987");
         }
 
 
