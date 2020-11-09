@@ -228,26 +228,17 @@ public class CartServiceImpl implements CartService {
         Integer ms = NumberUtils.createInteger(matchSource);
 
         if(ms == 8){
-            String final_weight = product.getFinal_weight();
-            double weight = NumberUtils.createDouble(final_weight);
-            if(weight < 0.5d){
-                //range_price
-                if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
-                    cartItem.setRpe(product.getRange_price_free_new());
-                }
-                //feeprice
-                if(StringUtils.isNotEmpty(product.getFree_price_new())) {
-                    cartItem.setFp(product.getFree_price_new());
-                }
-                //sku
-                if(StringUtils.isNotEmpty(product.getSku_new())){
-                    cartItem.setSku(product.getSku_new());
-                }
-            }else {
-                //range_price
-                cartItem.setRpe(product.getRange_price());
-                //feeprice
-                cartItem.setFp(product.getFeeprice());
+            //range_price
+            if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
+                cartItem.setRpe(product.getRange_price_free_new());
+            }
+            //feeprice
+            if(StringUtils.isNotEmpty(product.getFree_price_new())) {
+                cartItem.setFp(product.getFree_price_new());
+            }
+            //sku
+            if(StringUtils.isNotEmpty(product.getSku_new())){
+                cartItem.setSku(product.getSku_new());
             }
         }else {
             //range_price
