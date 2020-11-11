@@ -203,7 +203,6 @@ MongoHelp {
             if (catidNumm > 0) {
                 CatidGroup catidGroup = new CatidGroup();
                 catidGroup.setCatid(catid);
-                catidGroup.setCategory_name(catidGroupList.get(0).getCategory_name());
                 catidGroup.setNum(String.valueOf(catidNumm));
                 list.add(catidGroup);
             }
