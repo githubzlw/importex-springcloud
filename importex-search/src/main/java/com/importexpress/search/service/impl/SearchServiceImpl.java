@@ -641,7 +641,7 @@ public class SearchServiceImpl implements SearchService {
             }*/
 
             //if (weight >= 0.5) {
-            if ("0".equals(product.getImg_check())) {
+           /* if ("0".equals(product.getImg_check())) {
                 if (StringUtils.isNotBlank(product.getRange_price())) {
                     String priceSort = product.getRange_price().replace("[", "").replace("]", "");
                     product.setPrice_import_sort(Double.parseDouble(priceSort.split("-")[0].trim()));
@@ -660,6 +660,18 @@ public class SearchServiceImpl implements SearchService {
                     }
 
                 }
+            }
+*/
+
+            if (StringUtils.isNotBlank(product.getRange_price_free_new())) {
+                String priceSort = product.getRange_price_free_new().replace("[", "").replace("]", "");
+                product.setPrice_import_sort(Double.parseDouble(priceSort.split("-")[0].trim()));
+            } else {
+                String priceSort = product.getFree_price_new().replace("[", "").replace("]", "");
+                if (priceSort.indexOf("$") > 0) {
+                    product.setPrice_import_sort(Double.parseDouble(priceSort.split("\\$")[1].split(",")[0].trim()));
+                }
+
             }
 
             if (StringUtils.isNotBlank(product.getSold())) {
@@ -681,27 +693,6 @@ public class SearchServiceImpl implements SearchService {
             //销量排序
             productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getSold_sort).reversed());
         }
-
-        /* Collections.sort(productList, new Comparator<com.importexpress.search.mongo.Product>(){
-
-         *//*
-         * int compare(Student o1, Student o2) 返回一个基本类型的整型，
-         * 返回负数表示：o1 小于o2  //默认，
-         * 返回0 表示：o1和o2相等，
-         * 返回正数表示：o1大于o2。
-         *//*
-            public int compare(com.importexpress.search.mongo.Product o1, com.importexpress.search.mongo.Product o2) {
-
-                //按照学生的年龄进行升序排列
-                if(o1.getSold_sort() > o2.getSold_sort()){
-                    return 1;
-                }
-                if(o1.getSold_sort() == o2.getSold_sort()){
-                    return 0;
-                }
-                return -1;
-            }
-        });*/
 
         productList.forEach(item -> {
             if (productList.indexOf(item) >= (page - 1) * pageSize
@@ -1040,6 +1031,16 @@ public class SearchServiceImpl implements SearchService {
             list.add("1043351");
             list.add("1038378");
             list.add("1037004");
+            //自定义其他catid
+            list.add("1037011");
+            list.add("1037648");
+            list.add("1042840");
+            list.add("1042841");
+            list.add("1037010");
+            list.add("1037009");
+            list.add("1037011");
+            list.add("1042754");
+            list.add("919987");
         }
 
 

@@ -14,7 +14,9 @@ public class CatidGroup {
 
     private String catid;
 
-    private String category_name;
+    private String matchSource;
+
+    private String valid;
 
     private String num;
 

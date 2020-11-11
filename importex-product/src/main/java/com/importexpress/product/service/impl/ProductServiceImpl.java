@@ -37,6 +37,7 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 产品搜索
+     *
      * @param pid
      * @return
      */
@@ -48,17 +49,19 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 通过店铺id搜索
+     *
      * @param shopId
      * @return
      */
     @Override
-    public List<MongoProduct> findProductByShopId(String shopId){
+    public List<MongoProduct> findProductByShopId(String shopId) {
         Query query = new Query(Criteria.where("shop_id").is(shopId));
         return mongoTemplate.find(query, MongoProduct.class);
     }
 
     /**
      * 更新产品
+     *
      * @param pid
      * @param valid
      * @return
@@ -75,6 +78,7 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 多个产品搜索
+     *
      * @param pids
      * @param valid
      * @return
@@ -95,28 +99,64 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 多个产品搜索
+     *
      * @param param
      * @return
      */
     @Override
     public List<MongoProduct> findProductByCatid(SearchParam param) {
 
+        List<String> catidList = new ArrayList<>();
+        if("1037012".equals(param.getCatid())){
+            catidList.add("1037012");
+            catidList.add("1037011");
+            catidList.add("1037648");
+            catidList.add("1042840");
+            catidList.add("1042841");
+            catidList.add("1037010");
+            catidList.add("1037009");
+            catidList.add("1037011");
+        }
+        else if("1037192".equals(param.getCatid())){
+            catidList.add("1037192");
+            catidList.add("1042754");
+        }
+        else if("1037004".equals(param.getCatid())){
+            catidList.add("1037004");
+            catidList.add("919987");
+        }
+        else{
+            catidList.add(param.getCatid());
+        }
+
+        List<Criteria> criteriaList = new ArrayList<Criteria>();
+        for (String catid : catidList) {
+            Criteria c1 = null;
+            c1 = c1.where("path_catid").regex("^.*" + catid + ".*$");
+            criteriaList.add(c1);
+        }
+
+        Criteria[] arr = new Criteria[criteriaList.size()];
+
+        criteriaList.toArray(arr);
+        Criteria criteria = new Criteria().orOperator(arr);
+
         Query query = null;
         if (param.getFreeShipping() == 0) {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
+                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1"));
+                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
                 }
 
             } else {
@@ -127,17 +167,17 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("img_check").is("1")
+                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("img_check").is("1")
-                                .and("$where").is("this.price > " + param.getMinPrice() ));
+                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                                .and("$where").is("this.price > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("img_check").is("1")
-                            .and("$where").is("&& this.price < " + param.getMaxPrice() ));
+                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                            .and("$where").is("&& this.price < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
@@ -152,28 +192,65 @@ public class ProductServiceImpl implements ProductService {
 
     /**
      * 产品数量搜索
+     *
      * @param param
      * @return
      */
     @Override
     public Long findProductByCatidCount(SearchParam param) {
 
+        List<String> catidList = new ArrayList<>();
+        if("1037012".equals(param.getCatid())){
+            catidList.add("1037012");
+            catidList.add("1037011");
+            catidList.add("1037648");
+            catidList.add("1042840");
+            catidList.add("1042841");
+            catidList.add("1037010");
+            catidList.add("1037009");
+            catidList.add("1037011");
+        }
+        else if("1037192".equals(param.getCatid())){
+            catidList.add("1037192");
+            catidList.add("1042754");
+        }
+        else if("1037004".equals(param.getCatid())){
+            catidList.add("1037004");
+            catidList.add("919987");
+        }
+        else{
+            catidList.add(param.getCatid());
+        }
+
+        List<Criteria> criteriaList = new ArrayList<Criteria>();
+        for (String catid : catidList) {
+            Criteria c1 = null;
+            c1 = c1.where("path_catid").regex("^.*" + catid + ".*$");
+            criteriaList.add(c1);
+        }
+
+        Criteria[] arr = new Criteria[criteriaList.size()];
+
+        criteriaList.toArray(arr);
+        Criteria criteria = new Criteria().orOperator(arr);
+
+
         Query query = null;
         if (param.getFreeShipping() == 0) {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1")
+                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1"));
+                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
                 }
 
             } else {
@@ -184,17 +261,17 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("img_check").is("1")
+                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("img_check").is("1")
-                                .and("$where").is("this.price > " + param.getMinPrice() ));
+                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                                .and("$where").is("this.price > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("img_check").is("1")
-                            .and("$where").is("&& this.price < " + param.getMaxPrice() ));
+                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                            .and("$where").is("&& this.price < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("path_catid").regex("^.*" + param.getCatid() + ".*$").and("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
@@ -211,6 +288,7 @@ public class ProductServiceImpl implements ProductService {
      * @param catidList
      * @return
      */
+/*
     @Override
     public List<CatidGroup> findCatidGroup(List<String> catidList) {
 
@@ -244,7 +322,81 @@ public class ProductServiceImpl implements ProductService {
 
         return list;
     }
+*/
 
+
+    /**
+     * 产品catid组
+     *
+     * @param catidList
+     * @return
+     */
+    @Override
+    public List<CatidGroup> findCatidGroup(List<String> catidList) {
+
+        List<Criteria> criteriaList = new ArrayList<Criteria>();
+        for (String catid : catidList) {
+            Criteria c1 = null;
+            c1 = c1.where("path_catid").regex("^.*" + catid + ".*$");
+            criteriaList.add(c1);
+        }
+
+        Criteria[] arr = new Criteria[criteriaList.size()];
+
+        criteriaList.toArray(arr);
+        Criteria criteria = new Criteria().orOperator(arr);
+        List<CatidGroup> list = new ArrayList<>();
+        List<CatidGroup> catidGroupList = new ArrayList<>();
+        Aggregation customerAgg = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)),
+                Aggregation.group("path_catid").first("path_catid").as("catid")
+                        .count().as("num")
+        );
+
+        AggregationResults<CatidGroup> outputTypeCount1 =
+                mongoTemplate.aggregate(customerAgg, "product", CatidGroup.class);
+
+        for (Iterator<CatidGroup> iterator = outputTypeCount1.iterator(); iterator.hasNext(); ) {
+            CatidGroup obj = iterator.next();
+            catidGroupList.add(obj);
+        }
+
+        for (String catid : catidList) {
+            int count = 0;
+            for (CatidGroup catidGroup : catidGroupList) {
+                if (catidGroup.getCatid().contains(catid)) {
+                    count += Integer.parseInt(catidGroup.getNum());
+                }
+               if("1037012".equals(catid)){
+                   if(catidGroup.getCatid().contains("1037011")
+                        || catidGroup.getCatid().contains("1037648")
+                           || catidGroup.getCatid().contains("1042840")
+                           || catidGroup.getCatid().contains("1042841")
+                           || catidGroup.getCatid().contains("1037010")
+                           || catidGroup.getCatid().contains("1037009")
+                           || catidGroup.getCatid().contains("1037011")){
+                       count += Integer.parseInt(catidGroup.getNum());
+                   }
+                }
+                else if("1037192".equals(catid)){
+                    if(catidGroup.getCatid().contains("1042754")){
+                        count += Integer.parseInt(catidGroup.getNum());
+                    }
+                }
+                else if("1037004".equals(catid)){
+                    if(catidGroup.getCatid().contains("919987")){
+                        count += Integer.parseInt(catidGroup.getNum());
+                    }
+                }
+            }
+            CatidGroup catidGroup1 = new CatidGroup();
+            catidGroup1.setCatid(catid);
+            catidGroup1.setNum(String.valueOf(count));
+            list.add(catidGroup1);
+        }
+
+        return list;
+    }
 
 
 }
