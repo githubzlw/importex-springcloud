@@ -253,7 +253,7 @@ public class CartServiceImpl implements CartService {
             //range_price
             cartItem.setRpe(product.getRange_price());
             //feeprice
-            cartItem.setFp(product.getFeeprice());
+            cartItem.setFp(product.getWprice());
             //sku
             if(StringUtils.isNotEmpty(product.getSku())){
                 cartItem.setSku(product.getSku());
