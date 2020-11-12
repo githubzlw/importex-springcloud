@@ -469,11 +469,14 @@ public class SearchServiceImpl implements SearchService {
             product.setIsStock(Integer.parseInt(stock));
 
             //其他数据----不是搜索页面必须数据
+            product.setWprice(StrUtils.object2Str(solrDocument.get("custom_wprice")));
+            product.setRange_price(StrUtils.object2Str(solrDocument.get("custom_range_price")));
 
             //货币切换
             if (changeCurrency) {
                 ChangeCurrency.chang(product, param.getCurrency());
             }
+
             products.add(product);
         }
         return products;
