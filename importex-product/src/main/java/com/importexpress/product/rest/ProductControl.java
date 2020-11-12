@@ -90,4 +90,26 @@ public class ProductControl {
         return productService.findCatidGroup(list);
     }
 
+    @PostMapping("/findCatidGroupImport")
+    @ApiOperation("通过店铺id搜索")
+    public List<CatidGroup> findCatidGroupImport(@ApiParam(name = "list", value = "list", required = true)  @RequestBody List<String> list) {
+
+        return productService.findCatidGroupImport(list);
+    }
+
+    @PostMapping("/findProductImport")
+    @ApiOperation("通过店铺id搜索")
+    public List<MongoProduct> findProductImport(@ApiParam(name = "param", value = "param", required = true) @RequestBody SearchParam param) {
+
+        return productService.findProductImport(param);
+    }
+
+    @PostMapping("/findProductCountImport")
+    @ApiOperation("通过店铺id搜索")
+    public Long findProductCountImport(@ApiParam(name = "param", value = "param", required = true) @RequestBody SearchParam param) {
+
+        return productService.findProductCountImport(param);
+    }
+
+
 }

@@ -1054,4 +1054,171 @@ public class SearchServiceImpl implements SearchService {
 
     }
 
+    @Override
+    public SearchResultWrap productSerachMongoImport(SearchParam param) {
+        SearchResultWrap wrap = new SearchResultWrap();
+        wrap.setParam(param);
+        String queryString = param.getKeyword();
+        if (StringUtils.isBlank(queryString)) {
+            return wrap;
+        }
+        //mongo结果
+        param.setSynonym(StringUtils.isBlank(param.getCatid()));
+        SearchResultWrap wrapTemp = productsFromMongoImport(param);
+
+        PageWrap page1 = wrapTemp.getPage();
+        //是否需要推荐联想词
+        long recordCount = page1 == null ? 0 : page1.getRecordCount();
+        boolean suggestKey = isDefault(param);
+        suggestKey = suggestKey && recordCount < 40
+                && param.getKeyword().split("(\\s+)").length > 1;
+        if (suggestKey) {
+            List<AssociateWrap> associate = associate(param.getKeyword(), param);
+            wrapTemp.setAssociates(associate);
+        }
+        wrapTemp.setSuggest(suggestKey ? 1 : 0);
+        return wrapTemp;
+
+    }
+
+
+    @Override
+    public List<CatidGroup> getCatidGroupImport(int site) {
+
+        //mongo结果
+        List<String> list = new ArrayList();
+        list.add("122916001");
+        list.add("1813");
+        list.add("311");
+        list.add("1501");
+        list.add("125386001");
+        list.add("201161703");
+        list.add("125372003");
+        list.add("10165");
+        list.add("10166");
+        list.add("54");
+        list.add("312");
+        list.add("122916002");
+        list.add("97");
+        list.add("130822220");
+        list.add("3007");
+        list.add("18");
+        list.add("5");
+        list.add("6");
+        list.add("13");
+        list.add("15");
+        list.add("96");
+        list.add("68");
+        list.add("19999");
+        list.add("65");
+        list.add("7");
+        list.add("72");
+        list.add("67");
+        list.add("70");
+        list.add("58");
+        list.add("59");
+        list.add("55");
+        list.add("4");
+
+
+        List<CatidGroup> catidGroupList = productServiceFeign.findCatidGroupImport(list);
+
+        return catidGroupList;
+
+    }
+
+
+    /**
+     * 请求mongo解析产品列表
+     *
+     * @param param
+     * @return
+     */
+    private SearchResultWrap productsFromMongoImport(SearchParam param) {
+        SearchResultWrap wrap = new SearchResultWrap();
+        List<com.importexpress.search.mongo.Product> productResultList = new ArrayList<>();
+        int page = param.getPage();
+        int pageSize = param.getPageSize();
+        //请求mongo获取产品列表
+        List<com.importexpress.search.mongo.Product> productList = productServiceFeign.findProductImport(param);
+
+        // 根据重量确定是否是免邮价格，list根据价格销量排序
+        for (com.importexpress.search.mongo.Product product : productList) {
+
+            if (StringUtils.isNotBlank(product.getRange_price_free_new())) {
+                String priceSort = product.getRange_price_free_new().replace("[", "").replace("]", "");
+                product.setPrice_import_sort(Double.parseDouble(priceSort.split("-")[0].trim()));
+            } else {
+                String priceSort = product.getFree_price_new().replace("[", "").replace("]", "");
+                if (priceSort.indexOf("$") > 0) {
+                    product.setPrice_import_sort(Double.parseDouble(priceSort.split("\\$")[1].split(",")[0].trim()));
+                }
+
+            }
+
+            if (StringUtils.isNotBlank(product.getSold())) {
+                product.setSold_sort(Integer.parseInt(product.getSold()));
+            } else {
+                product.setSold_sort(0);
+            }
+
+        }
+
+        if (param.getSort().indexOf("bbPrice") > -1) {
+            if ("bbPrice-desc".equals(param.getSort())) {
+                productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getPrice_import_sort).reversed());
+            } else {
+                productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getPrice_import_sort));
+            }
+
+        } else if ("order-desc".equals(param.getSort())) {
+            //销量排序
+            productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getSold_sort).reversed());
+        }
+
+        productList.forEach(item -> {
+            if (productList.indexOf(item) >= (page - 1) * pageSize
+                    && productList.indexOf(item) < (page) * pageSize) {
+                productResultList.add(item);
+            }
+        });
+
+        //拼接参数
+        if (productResultList == null) {
+            return wrap;
+        }
+        //执行查询
+        SolrResult solrResult = searchItemMongoImport(param, productResultList);
+
+//        //分组数据,第二次查询取得类别分组统计数据--类别统计
+        if (param.isFactCategory() && solrResult.getRecordCount() > 0) {
+            List<FacetField> searchGroup = groupCategory(param);
+            solrResult.setCategoryFacet(searchGroup);
+        }
+        //结果解析
+        return compose(solrResult, param);
+    }
+
+    /**
+     * 请求执行结果
+     *
+     * @param productList
+     * @param param
+     * @return
+     */
+    private SolrResult searchItemMongoImport(SearchParam param, List<com.importexpress.search.mongo.Product> productList) {
+        SolrResult solrResult = new SolrResult();
+        if (productList == null) {
+            return solrResult;
+        }
+
+        solrResult.setRecordCount(productServiceFeign.findProductCountImport(param));
+
+        List<Product> itemList = mongoDocToProduct(productList, param);
+
+        solrResult.setItemList(itemList);
+        return solrResult;
+    }
+
+
 }

@@ -167,4 +167,20 @@ public interface SearchService {
      */
     List<CatidGroup> getCatidGroup(int site);
 
+    /**
+     * 请求Mongo获取搜索
+     *
+     * @param param 搜索参数
+     * @return
+     */
+    SearchResultWrap productSerachMongoImport(SearchParam param);
+
+    /**
+     * 请求Mongo获取catidGroup
+     *
+     * @return
+     */
+    List<CatidGroup> getCatidGroupImport(int site);
+
+
 }

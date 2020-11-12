@@ -643,4 +643,71 @@ public class SearchController {
     }
 
 
+    /**
+     * 产品搜索
+     *
+     * @param request
+     * @param param   搜索参数
+     * @return
+     */
+    @PostMapping("/productsB2CImport")
+    @ApiOperation("搜索")
+    public CommonResult productsB2CImport(
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
+            return CommonResult.failed(" SearchParam IS NULL!");
+        }
+        try {
+            //参数处理
+            param = verifySearchParameter.verification(request, param);
+            //请求mongo获取结果
+            SearchResultWrap wrap = service.productSerachMongoImport(param);
+
+            if (wrap == null) {
+                return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
+            } else {
+                Map<String, String> searchNavigation =
+                        productSearch.searchNavigation(param);
+                wrap.setSearchNavigation(searchNavigation);
+                wrap.setParam(param);
+                return CommonResult.success("GET SOLR RESULT SUCCESSED!", gson.toJson(wrap));
+            }
+        } catch (Exception e) {
+            log.error("WRONG HAPPENED", e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+
+    /**
+     * 产品搜索
+     *
+     * @return
+     */
+    @PostMapping("/catidGroupImport")
+    @ApiOperation("搜索catid分组商品数量")
+    public CommonResult getCatidGroupImport(@ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+                                      HttpServletRequest request) {
+
+        try {
+
+            //参数处理
+            param = verifySearchParameter.verification(request, param);
+
+            List<CatidGroup> catidGroupList = service.getCatidGroupImport(param.getSite());
+
+            if (catidGroupList == null) {
+                return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
+            } else {
+
+                return CommonResult.success("GET SOLR RESULT SUCCESSED!", gson.toJson(catidGroupList));
+            }
+        } catch (Exception e) {
+            log.error("WRONG HAPPENED", e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+
+
+
 }
