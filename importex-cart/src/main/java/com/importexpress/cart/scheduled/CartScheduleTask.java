@@ -1,6 +1,5 @@
 package com.importexpress.cart.scheduled;
 
-import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import com.importexpress.cart.pojo.Cart;
@@ -11,13 +10,15 @@ import com.importexpress.cart.util.SevenZ;
 import com.importexpress.comm.pojo.SiteEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -52,42 +53,42 @@ public class CartScheduleTask {
     @Scheduled(cron = "${cart.cron.exp}")
     public void saveAllCartsToFiles() throws IOException {
 
-        List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS,SiteEnum.E_PIPE,SiteEnum.LINE);
+        List<SiteEnum> siteEnums = Arrays.asList(SiteEnum.IMPORTX, SiteEnum.KIDS, SiteEnum.PETS);
         for (SiteEnum site : siteEnums) {
+            List<Cart> carts = null;
             try {
-                log.info("begin run site:{}",site.getName());
-                List<Cart> carts = this.service.getCart(site);
-                String json = streamIntoJsonString(carts);
-                carts.clear();
-                StringBuilder fileName = getFileName(site);
-                FileUtils.writeStringToFile(
-                        new File(fileName.toString()), json);
-
-                // get multiple resources files to compress
-                File resource = new File(fileName.toString());
-                // compress multiple resources
-                String fileName7z = fileName + ".7z";
-                SevenZ.compress(fileName7z, resource);
-
-                boolean result = FileUtils.deleteQuietly(new File(fileName.toString()));
-                log.info("delete file:[{}] result:[{}]", fileName.toString(), result);
-
-                //sftp upload
-                int beginIndex = fileName7z.lastIndexOf('/');
-                if (beginIndex == -1) {
-                    //windows场合
-                    beginIndex = fileName7z.lastIndexOf('\\');
-                }
-                sFtpUtil.uploadFile(fileName7z.substring(beginIndex + 1));
-            }catch(Exception e){
-                log.error("catch exception,when run:"+site.getName(),e);
+                carts = this.service.getCart(site);
+            } catch (Exception e) {
+                log.error("saveAllCartsToFiles",e);
+                continue;
             }
+            String json = streamIntoJsonString(carts);
+            StringBuilder fileName = getFileName(site);
+            FileUtils.writeStringToFile(
+                    new File(fileName.toString()),json);
+
+            // get multiple resources files to compress
+            File resource = new File(fileName.toString());
+            // compress multiple resources
+            String fileName7z=fileName+".7z";
+            SevenZ.compress(fileName7z, resource);
+
+            boolean result = FileUtils.deleteQuietly(new File(fileName.toString()));
+            log.info("delete file:[{}] result:[{}]",fileName.toString(),result);
+
+            //sftp upload
+            int beginIndex = fileName7z.lastIndexOf('/');
+            if(beginIndex==-1){
+                //windows场合
+                beginIndex = fileName7z.lastIndexOf('\\');
+            }
+            sFtpUtil.uploadFile(fileName7z.substring(beginIndex+1));
         }
 
     }
 
     /**
-     * 通过流的方式写入json（避免OOM)
+     * 通过流的方式写入json（避免OutOfMemoryError)
      * @param carts
      * @return
      */

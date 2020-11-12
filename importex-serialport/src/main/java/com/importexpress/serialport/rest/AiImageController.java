@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.awt.*;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,49 @@ public class AiImageController {
             }
 
             return aiImageService.drawPolygons(url, lstPolygon);
+
+        } catch (IOException e) {
+            log.error("show",e);
+            return null;
+        }
+    }
+
+    @GetMapping(value = "/image/showLocalImg",produces = MediaType.IMAGE_JPEG_VALUE)
+    @ResponseBody
+    @ApiOperation("图片识别后显示")
+    public byte[] showLocalImg()  {
+        try {
+
+//            String[] rects = {  "154,179,385,176,387,302,157,304",
+//                                "152,176,154,306,389,305,388,174",
+//                                "153,177,387,175,389,303,155,305",
+//                                "153,177,387,175,389,303,155,305",
+//                                "153,177,387,175,389,303,155,305",
+//                                "389,174,387,308,154,307,155,172"};
+//            List<String> lstRect = Arrays.asList(rects);
+
+            List<String> lstRect = Files.readAllLines(Paths.get("d:", "squares.dat"));
+
+
+            List<Polygon> lstPolygon = new ArrayList<>(lstRect.size());
+            for (String str : lstRect) {
+                String[] split = str.split(",");
+                Assert.isTrue(split.length == 8);
+                int[] x = new int[4];
+                x[0] = Integer.parseInt(split[0]);
+                x[1] = Integer.parseInt(split[2]);
+                x[2] = Integer.parseInt(split[4]);
+                x[3] = Integer.parseInt(split[6]);
+                int[] y = new int[4];
+                y[0] = Integer.parseInt(split[1]);
+                y[1] = Integer.parseInt(split[3]);
+                y[2] = Integer.parseInt(split[5]);
+                y[3] = Integer.parseInt(split[7]);
+                lstPolygon.add(new Polygon(x, y, 4));
+            }
+
+            byte[] bytes = Files.readAllBytes(Paths.get("d:", "1-2.jpg"));
+            return aiImageService.drawPolygons(bytes, lstPolygon);
 
         } catch (IOException e) {
             log.error("show",e);

@@ -2,8 +2,6 @@ package com.importexpress.shopify.pojo;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class SkuAttr {
 	private String skuAttr;

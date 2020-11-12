@@ -1,7 +1,9 @@
 package com.importexpress.product.service;
 
 
+import com.importexpress.product.mongo.CatidGroup;
 import com.importexpress.product.mongo.MongoProduct;
+import com.importexpress.product.pojo.SearchParam;
 
 import java.util.List;
 
@@ -36,4 +38,12 @@ public interface ProductService {
      * @return
      */
     List<MongoProduct> findProducts(long[] pids, int valid);
+
+    public List<MongoProduct> findProductByCatid(SearchParam param);
+
+    public Long findProductByCatidCount(SearchParam param);
+
+    public List<CatidGroup> findCatidGroup(List<String> catidList);
+
+
 }

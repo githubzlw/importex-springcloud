@@ -70,7 +70,7 @@ public class CartServiceTest {
      * getCartList
      */
     @Test
-    public void cart2() {
+    public void cart2() throws Exception {
         Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
         Assert.assertEquals(368, cart.getItems().get(0).getPri());
@@ -85,7 +85,7 @@ public class CartServiceTest {
      * updateCartNum
      */
     @Test
-    public void cart3() {
+    public void cart3() throws Exception {
 
         Assert.assertEquals
                 (1, cartService.updateCartItem(SITE, USER_ID, ITEM_ID1, 99, 1));
@@ -99,7 +99,7 @@ public class CartServiceTest {
      * addCart
      */
     @Test
-    public void cart4() {
+    public void cart4() throws Exception {
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
         Cart cart = cartService.getCart(SITE, USER_ID);
@@ -120,7 +120,7 @@ public class CartServiceTest {
      * checkAll
      */
     @Test
-    public void cart6() {
+    public void cart6() throws Exception {
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
         Assert.assertEquals
@@ -144,7 +144,7 @@ public class CartServiceTest {
      * delChecked
      */
     @Test
-    public void cart7() {
+    public void cart7() throws Exception {
         Assert.assertEquals
                 (1, cartService.checkAll(SITE, USER_ID, 1));
         Assert.assertEquals
@@ -157,7 +157,7 @@ public class CartServiceTest {
      * sort
      */
     @Test
-    public void cart8() {
+    public void cart8() throws Exception {
 
         // ITEM_ID1 = "560676334685:32162:324514";
         // ITEM_ID2 = "560676334685:32161:324513";
@@ -192,7 +192,7 @@ public class CartServiceTest {
     }
 
     @Test
-    public void cart9() {
+    public void cart9() throws Exception {
 
         // ITEM_ID1 = "560676334685:32162:324514";
         // ITEM_ID2 = "560676334685:32161:324513";
@@ -228,7 +228,7 @@ public class CartServiceTest {
 
 
     @Test
-    public void cart10() {
+    public void cart10() throws Exception {
 
         // ITEM_ID1 = "560676334685:32162:324514";
         // ITEM_ID2 = "560676334685:32161:324513";
@@ -266,7 +266,7 @@ public class CartServiceTest {
      * 单规格情况下的pid
      */
     @Test
-    public void cart11() {
+    public void cart11() throws Exception {
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, "100473434:999999", 199));
 
@@ -299,7 +299,7 @@ public class CartServiceTest {
     }
 
     @Test
-    public void cart13() {
+    public void cart13() throws Exception {
 
         cartService.delAllCartItem(SiteEnum.KIDS, USER_ID);
         Assert.assertEquals
@@ -329,7 +329,7 @@ public class CartServiceTest {
     }
 
     @Test
-    public void cart14() {
+    public void cart14() throws Exception {
 
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, "573788831111:32161", 1));
@@ -375,7 +375,7 @@ public class CartServiceTest {
     }
 
     @Test
-    public void mergeCarts() {
+    public void mergeCarts() throws Exception {
 
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
@@ -408,7 +408,7 @@ public class CartServiceTest {
      * 体积重量测试
      */
     @Test
-    public void cart15() {
+    public void cart15() throws Exception {
 
         Assert.assertEquals
                 (1, cartService.addCartItem(SITE, USER_ID, "615252349161:32161", 1));

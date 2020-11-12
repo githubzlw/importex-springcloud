@@ -7,15 +7,12 @@ import com.importexpress.shopify.pojo.orders.Orders;
 import com.importexpress.shopify.pojo.orders.OrdersWraper;
 import com.importexpress.shopify.pojo.orders.Shipping_address;
 import com.importexpress.shopify.service.ShopifyOrderService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashMap;

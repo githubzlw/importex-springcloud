@@ -4,13 +4,9 @@ import com.google.common.collect.ImmutableList;
 import com.importexpress.shopify.pojo.orders.OrdersWraper;
 import com.importexpress.shopify.service.ShopifyOrderService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 @Slf4j
 @Component

@@ -4,7 +4,6 @@ package com.importexpress.shopify.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.primitives.Longs;
 import com.google.gson.Gson;
 import com.importexpress.comm.pojo.Product;
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author jack.luo

@@ -6,7 +6,6 @@ import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.KeyToCategoryWrap;
 import com.importexpress.search.pojo.SearchParam;
 import com.importexpress.search.pojo.SynonymsCategoryWrap;
-import com.importexpress.search.util.Utility;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;

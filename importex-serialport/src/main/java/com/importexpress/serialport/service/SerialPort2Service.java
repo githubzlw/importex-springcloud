@@ -1,7 +1,6 @@
 package com.importexpress.serialport.service;
 
 
-import com.importexpress.comm.domain.CommonResult;
 import com.importexpress.serialport.bean.GoodsBean;
 import gnu.io.NoSuchPortException;
 import gnu.io.PortInUseException;

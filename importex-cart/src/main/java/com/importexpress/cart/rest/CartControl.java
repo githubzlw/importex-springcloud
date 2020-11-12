@@ -1,6 +1,5 @@
 package com.importexpress.cart.rest;
 
-import com.importexpress.cart.pojo.Cart;
 import com.importexpress.cart.scheduled.CartScheduleTask;
 import com.importexpress.cart.service.CartService;
 import com.importexpress.comm.domain.CommonResult;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 import static com.importexpress.cart.service.CartService.SUCCESS;
 
@@ -89,8 +87,11 @@ public class CartControl {
     public CommonResult getCart(@PathVariable(value = "site") SiteEnum site,
                                 @PathVariable(value = "userId") long userId) {
 
-        Cart cart = cartService.getCart(site, userId);
-        return CommonResult.success(cart);
+        try {
+            return CommonResult.success(cartService.getCart(site, userId));
+        } catch (Exception e) {
+            return CommonResult.failed(e.getMessage());
+        }
 
     }
 
@@ -98,8 +99,11 @@ public class CartControl {
     @ApiOperation("查询网站中所有用户的购物车商品")
     public CommonResult getAllCarts(@PathVariable(value = "site") SiteEnum site) {
 
-        List<Cart> cart = cartService.getCart(site);
-        return CommonResult.success(cart);
+        try {
+            return CommonResult.success(cartService.getCart(site));
+        } catch (Exception e) {
+            return CommonResult.failed(e.getMessage());
+        }
 
     }
 

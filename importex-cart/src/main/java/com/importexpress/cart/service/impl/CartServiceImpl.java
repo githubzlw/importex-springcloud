@@ -228,32 +228,23 @@ public class CartServiceImpl implements CartService {
         Integer ms = NumberUtils.createInteger(matchSource);
 
         if(ms == 8){
-            String final_weight = product.getFinal_weight();
-            double weight = NumberUtils.createDouble(final_weight);
-            if(weight < 0.5d){
-                //range_price
-                if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
-                    cartItem.setRpe(product.getRange_price_free_new());
-                }
-                //feeprice
-                if(StringUtils.isNotEmpty(product.getFree_price_new())) {
-                    cartItem.setFp(product.getFree_price_new());
-                }
-                //sku
-                if(StringUtils.isNotEmpty(product.getSku_new())){
-                    cartItem.setSku(product.getSku_new());
-                }
-            }else {
-                //range_price
-                cartItem.setRpe(product.getRange_price());
-                //feeprice
-                cartItem.setFp(product.getFeeprice());
+            //range_price
+            if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
+                cartItem.setRpe(product.getRange_price_free_new());
+            }
+            //feeprice
+            if(StringUtils.isNotEmpty(product.getFree_price_new())) {
+                cartItem.setFp(product.getFree_price_new());
+            }
+            //sku
+            if(StringUtils.isNotEmpty(product.getSku_new())){
+                cartItem.setSku(product.getSku_new());
             }
         }else {
             //range_price
             cartItem.setRpe(product.getRange_price());
             //feeprice
-            cartItem.setFp(product.getFeeprice());
+            cartItem.setFp(product.getWprice());
             //sku
             if(StringUtils.isNotEmpty(product.getSku())){
                 cartItem.setSku(product.getSku());
@@ -387,7 +378,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public List<Cart> getCart(SiteEnum site) {
+    public List<Cart> getCart(SiteEnum site) throws Exception {
 
         List<Cart> lstCarts = new ArrayList<>();
         Set<String> letUsers = RedisHelper.scan(this.redisTemplate,getCartKeys(site));
@@ -401,7 +392,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Cart getCart(SiteEnum site, long userId) {
+    public Cart getCart(SiteEnum site, long userId) throws Exception {
 
         Cart cart = new Cart();
         try {
@@ -415,7 +406,7 @@ public class CartServiceImpl implements CartService {
             return cart;
         } catch (Exception e) {
             log.error("getCart", e);
-            return cart;
+            throw e;
         }
     }
 

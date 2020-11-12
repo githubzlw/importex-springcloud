@@ -1,8 +1,5 @@
 package com.importexpress.serialport.exception;
 
-import com.importexpress.serialport.service.SerialPort2Service;
-import org.springframework.beans.factory.annotation.Autowired;
-
 /**
  * @Author jack.luo
  * @create 2020/7/11 13:30

@@ -54,7 +54,7 @@ public class ChangeCurrency {
      * @param exchangeRate
      * @return
      */
-    private static String rangePrice(String price,double exchangeRate){
+    public static String rangePrice(String price,double exchangeRate){
         if(!StrUtils.isRangePrice(price)){
             return null;
         }
@@ -91,7 +91,7 @@ public class ChangeCurrency {
      * @param exchangeRate
      * @return
      */
-    private static String calculation(String price,double exchangeRate){
+    public static String calculation(String price,double exchangeRate){
         price = StrUtils.isMatch(price,"(\\d+(\\.\\d+){0,1})")?price : "0";
         BigDecimal resultPrice = new BigDecimal(price);
         resultPrice = resultPrice.multiply(new BigDecimal(exchangeRate));

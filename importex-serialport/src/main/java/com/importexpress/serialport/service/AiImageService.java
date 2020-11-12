@@ -55,6 +55,15 @@ public interface AiImageService {
     byte[] drawPolygons(String downloadUrl, List<Polygon> lstPolygon) throws IOException;
 
     /**
+     * 图片标识出红框
+     * @param bytes
+     * @param lstPolygon
+     * @return
+     * @throws IOException
+     */
+    byte[] drawPolygons(byte[] bytes, List<Polygon> lstPolygon) throws IOException;
+
+    /**
      * call command
      * @param imgUrl
      * @return
