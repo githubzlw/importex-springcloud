@@ -479,6 +479,8 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         //限制美加用户,可售卖标识
         salable(param,fq_condition);
 
+        fq_condition.append(" AND -custom_matchSource:8 ");
+
         return fq_condition.toString();
     }
 
