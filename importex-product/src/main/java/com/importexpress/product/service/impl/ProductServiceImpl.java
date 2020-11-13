@@ -139,7 +139,7 @@ public class ProductServiceImpl implements ProductService {
         Criteria criteria = new Criteria().orOperator(arr);
 
         Query query = null;
-        if (param.getFreeShipping() == 0) {
+        //if (param.getFreeShipping() == 0) {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
@@ -160,7 +160,7 @@ public class ProductServiceImpl implements ProductService {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
 
             }
-        } else {
+     /*   } else {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
@@ -182,7 +182,7 @@ public class ProductServiceImpl implements ProductService {
 
             }
         }
-
+*/
         return mongoTemplate.find(query, MongoProduct.class);
     }
 
@@ -230,7 +230,7 @@ public class ProductServiceImpl implements ProductService {
 
 
         Query query = null;
-        if (param.getFreeShipping() == 0) {
+        //if (param.getFreeShipping() == 0) {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
@@ -251,7 +251,7 @@ public class ProductServiceImpl implements ProductService {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
 
             }
-        } else {
+      /*  } else {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
@@ -272,7 +272,7 @@ public class ProductServiceImpl implements ProductService {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
 
             }
-        }
+        }*/
         return mongoTemplate.count(query, MongoProduct.class);
     }
 
@@ -408,6 +408,10 @@ public class ProductServiceImpl implements ProductService {
             catidGroup.setNum("0");
             catidGroupList.add(catidGroup);
         }
+        CatidGroup catidGroupTemp = new CatidGroup();
+        catidGroupTemp.setCatid("1813-1");
+        catidGroupTemp.setNum("0");
+        catidGroupList.add(catidGroupTemp);
 
         List<Criteria> criteriaList = new ArrayList<Criteria>();
         for (String catid : catidList) {
@@ -435,12 +439,15 @@ public class ProductServiceImpl implements ProductService {
         AggregationResults<CatidGroup> outputTypeCount1 =
                 mongoTemplate.aggregate(customerAgg, "product", CatidGroup.class);
 
+        System.out.println(outputTypeCount1.getRawResults());
+
         for (Iterator<CatidGroup> iterator = outputTypeCount1.iterator(); iterator.hasNext(); ) {
             CatidGroup obj = iterator.next();
             //catidGroupList.add(obj);
             String[] catidArry = obj.getCatid().split(",");
             Integer num = Integer.parseInt(obj.getNum());
             for (String catid : catidArry) {
+
                 for (CatidGroup catidGroup : catidGroupList) {
                     if (catid.equals(catidGroup.getCatid())) {
                         num += Integer.parseInt(catidGroup.getNum());
@@ -451,13 +458,14 @@ public class ProductServiceImpl implements ProductService {
         }
 
         for (CatidGroup catidGroup1 : catidGroupList) {
-            if ("1813".equals(catidGroup1.getCatid())) {
+            if ("1813-1".equals(catidGroup1.getCatid())) {
                 for (CatidGroup catidGroup2 : catidGroupList) {
                     if ("311".equals(catidGroup2.getCatid())
                             || "1501".equals(catidGroup2.getCatid())
                             || "125386001".equals(catidGroup2.getCatid())
                             || "201161703".equals(catidGroup2.getCatid())
-                            || "125372003".equals(catidGroup2.getCatid())) {
+                            || "125372003".equals(catidGroup2.getCatid())
+                            || "1813".equals(catidGroup2.getCatid())) {
                         int numTemp = Integer.parseInt(catidGroup1.getNum());
                         numTemp += Integer.parseInt(catidGroup2.getNum());
                         catidGroup1.setNum(String.valueOf(numTemp));
@@ -536,7 +544,7 @@ public class ProductServiceImpl implements ProductService {
     public List<MongoProduct> findProductImport(SearchParam param) {
 
         List<String> catidList = new ArrayList<>();
-
+        catidList.add(param.getCatid());
         if ("1813".equals(param.getCatid())) {
             catidList.add("311");
             catidList.add("1501");
@@ -568,9 +576,6 @@ public class ProductServiceImpl implements ProductService {
             catidList.add("55");
             catidList.add("4");
         }
-        else {
-            catidList.add(param.getCatid());
-        }
 
         List<Criteria> criteriaList = new ArrayList<Criteria>();
         for (String catid : catidList) {
@@ -589,7 +594,7 @@ public class ProductServiceImpl implements ProductService {
         Criteria criteria = new Criteria().orOperator(arr);
 
         Query query = null;
-        if (param.getFreeShipping() == 0) {
+        //if (param.getFreeShipping() == 0) {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
@@ -610,7 +615,7 @@ public class ProductServiceImpl implements ProductService {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
 
             }
-        } else {
+     /*   } else {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
@@ -631,7 +636,7 @@ public class ProductServiceImpl implements ProductService {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
 
             }
-        }
+        }*/
 
         return mongoTemplate.find(query, MongoProduct.class);
     }
@@ -647,7 +652,7 @@ public class ProductServiceImpl implements ProductService {
     public Long findProductCountImport(SearchParam param) {
 
         List<String> catidList = new ArrayList<>();
-
+        catidList.add(param.getCatid());
         if ("1813".equals(param.getCatid())) {
             catidList.add("311");
             catidList.add("1501");
@@ -679,9 +684,7 @@ public class ProductServiceImpl implements ProductService {
             catidList.add("55");
             catidList.add("4");
         }
-        else {
-            catidList.add(param.getCatid());
-        }
+
 
         List<Criteria> criteriaList = new ArrayList<Criteria>();
         for (String catid : catidList) {
@@ -701,7 +704,7 @@ public class ProductServiceImpl implements ProductService {
 
 
         Query query = null;
-        if (param.getFreeShipping() == 0) {
+        //if (param.getFreeShipping() == 0) {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
@@ -722,7 +725,7 @@ public class ProductServiceImpl implements ProductService {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
 
             }
-        } else {
+  /*      } else {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
@@ -743,7 +746,7 @@ public class ProductServiceImpl implements ProductService {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
 
             }
-        }
+        }*/
         return mongoTemplate.count(query, MongoProduct.class);
     }
 
