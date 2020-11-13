@@ -447,6 +447,7 @@ public class ProductServiceImpl implements ProductService {
             String[] catidArry = obj.getCatid().split(",");
             Integer num = Integer.parseInt(obj.getNum());
             for (String catid : catidArry) {
+
                 for (CatidGroup catidGroup : catidGroupList) {
                     if (catid.equals(catidGroup.getCatid())) {
                         num += Integer.parseInt(catidGroup.getNum());
@@ -543,7 +544,7 @@ public class ProductServiceImpl implements ProductService {
     public List<MongoProduct> findProductImport(SearchParam param) {
 
         List<String> catidList = new ArrayList<>();
-
+        catidList.add(param.getCatid());
         if ("1813".equals(param.getCatid())) {
             catidList.add("311");
             catidList.add("1501");
@@ -574,9 +575,6 @@ public class ProductServiceImpl implements ProductService {
             catidList.add("59");
             catidList.add("55");
             catidList.add("4");
-        }
-        else {
-            catidList.add(param.getCatid());
         }
 
         List<Criteria> criteriaList = new ArrayList<Criteria>();
@@ -654,7 +652,7 @@ public class ProductServiceImpl implements ProductService {
     public Long findProductCountImport(SearchParam param) {
 
         List<String> catidList = new ArrayList<>();
-
+        catidList.add(param.getCatid());
         if ("1813".equals(param.getCatid())) {
             catidList.add("311");
             catidList.add("1501");
@@ -686,9 +684,7 @@ public class ProductServiceImpl implements ProductService {
             catidList.add("55");
             catidList.add("4");
         }
-        else {
-            catidList.add(param.getCatid());
-        }
+
 
         List<Criteria> criteriaList = new ArrayList<Criteria>();
         for (String catid : catidList) {
