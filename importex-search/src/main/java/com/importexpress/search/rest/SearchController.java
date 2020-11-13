@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -593,10 +594,17 @@ public class SearchController {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
+            SearchResultWrap wrap = new SearchResultWrap();
             //参数处理
             param = verifySearchParameter.verification(request, param);
-            //请求mongo获取结果
-            SearchResultWrap wrap = service.productSerachMongo(param);
+            if(1 == param.getSite()){
+                wrap = service.productSerachMongoImport(param);
+            }
+            else{
+                //请求mongo获取结果
+                wrap = service.productSerachMongo(param);
+            }
+
 
             if (wrap == null) {
                 return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
@@ -627,8 +635,14 @@ public class SearchController {
 
             //参数处理
             param = verifySearchParameter.verification(request, param);
+            List<CatidGroup> catidGroupList = new ArrayList<>();
+            if(1 == param.getSite()){
+                catidGroupList = service.getCatidGroupImport(param.getSite());
+            }
+            else{
+                catidGroupList = service.getCatidGroup(param.getSite());
+            }
 
-            List<CatidGroup> catidGroupList = service.getCatidGroup(param.getSite());
 
             if (catidGroupList == null) {
                 return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
@@ -641,6 +655,73 @@ public class SearchController {
             return CommonResult.failed(e.getMessage());
         }
     }
+
+
+    /**
+     * 产品搜索
+     *
+     * @param request
+     * @param param   搜索参数
+     * @return
+     */
+    @PostMapping("/productsB2CImport")
+    @ApiOperation("搜索")
+    public CommonResult productsB2CImport(
+            @ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+            HttpServletRequest request) {
+        if (param == null) {
+            return CommonResult.failed(" SearchParam IS NULL!");
+        }
+        try {
+            //参数处理
+            param = verifySearchParameter.verification(request, param);
+            //请求mongo获取结果
+            SearchResultWrap wrap = service.productSerachMongoImport(param);
+
+            if (wrap == null) {
+                return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
+            } else {
+                Map<String, String> searchNavigation =
+                        productSearch.searchNavigation(param);
+                wrap.setSearchNavigation(searchNavigation);
+                wrap.setParam(param);
+                return CommonResult.success("GET SOLR RESULT SUCCESSED!", gson.toJson(wrap));
+            }
+        } catch (Exception e) {
+            log.error("WRONG HAPPENED", e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+
+    /**
+     * 产品搜索
+     *
+     * @return
+     */
+    @PostMapping("/catidGroupImport")
+    @ApiOperation("搜索catid分组商品数量")
+    public CommonResult getCatidGroupImport(@ApiParam(name = "searchParam", value = "搜索参数", required = true) @RequestBody SearchParam param,
+                                      HttpServletRequest request) {
+
+        try {
+
+            //参数处理
+            param = verifySearchParameter.verification(request, param);
+
+            List<CatidGroup> catidGroupList = service.getCatidGroupImport(param.getSite());
+
+            if (catidGroupList == null) {
+                return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
+            } else {
+
+                return CommonResult.success("GET SOLR RESULT SUCCESSED!", gson.toJson(catidGroupList));
+            }
+        } catch (Exception e) {
+            log.error("WRONG HAPPENED", e);
+            return CommonResult.failed(e.getMessage());
+        }
+    }
+
 
 
 }

@@ -28,6 +28,15 @@ public interface ProductServiceFeign {
 
     @PostMapping(value = "/findCatidGroup")
     List<CatidGroup> findCatidGroup(@RequestBody List<String> list);
+
+    @PostMapping(value = "/findProductImport")
+    List<com.importexpress.search.mongo.Product> findProductImport(@RequestBody SearchParam param);
+
+    @PostMapping(value = "/findProductCountImport")
+    Long findProductCountImport(@RequestBody SearchParam param);
+
+    @PostMapping(value = "/findCatidGroupImport")
+    List<CatidGroup> findCatidGroupImport(@RequestBody List<String> list);
 }
 
 

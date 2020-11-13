@@ -39,11 +39,15 @@ public interface ProductService {
      */
     List<MongoProduct> findProducts(long[] pids, int valid);
 
-    public List<MongoProduct> findProductByCatid(SearchParam param);
+    List<MongoProduct> findProductByCatid(SearchParam param);
 
-    public Long findProductByCatidCount(SearchParam param);
+    Long findProductByCatidCount(SearchParam param);
 
-    public List<CatidGroup> findCatidGroup(List<String> catidList);
+    List<CatidGroup> findCatidGroup(List<String> catidList);
 
+    List<CatidGroup> findCatidGroupImport(List<String> catidList);
 
+    List<MongoProduct> findProductImport(SearchParam param);
+
+    Long findProductCountImport(SearchParam param);
 }
