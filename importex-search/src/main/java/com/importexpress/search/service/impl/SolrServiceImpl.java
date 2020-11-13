@@ -95,7 +95,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         String specialCatidSearch = splicingSyntax.specialCatidSearch(param);
         StringBuilder filterQueries = new StringBuilder(specialCatidSearch);
         filterQueries.append(" custom_valid:1").append(" AND custom_shop_id:" + param.getStoried());
-
+        filterQueries.append(" AND -custom_matchSource:8");
         //权限版搜索,只展示可搜索的产品
         importType(param, filterQueries);
         salable(param,filterQueries);
