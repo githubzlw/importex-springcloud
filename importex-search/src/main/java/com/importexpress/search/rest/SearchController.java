@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -593,10 +594,17 @@ public class SearchController {
             return CommonResult.failed(" SearchParam IS NULL!");
         }
         try {
+            SearchResultWrap wrap = new SearchResultWrap();
             //参数处理
             param = verifySearchParameter.verification(request, param);
-            //请求mongo获取结果
-            SearchResultWrap wrap = service.productSerachMongo(param);
+            if(1 == param.getSite()){
+                wrap = service.productSerachMongoImport(param);
+            }
+            else{
+                //请求mongo获取结果
+                wrap = service.productSerachMongo(param);
+            }
+
 
             if (wrap == null) {
                 return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");
@@ -627,8 +635,14 @@ public class SearchController {
 
             //参数处理
             param = verifySearchParameter.verification(request, param);
+            List<CatidGroup> catidGroupList = new ArrayList<>();
+            if(1 == param.getSite()){
+                catidGroupList = service.getCatidGroupImport(param.getSite());
+            }
+            else{
+                catidGroupList = service.getCatidGroup(param.getSite());
+            }
 
-            List<CatidGroup> catidGroupList = service.getCatidGroup(param.getSite());
 
             if (catidGroupList == null) {
                 return CommonResult.failed(" SOMETHING WRONG HAPPENED WHEN GET SOLR RESULT!");

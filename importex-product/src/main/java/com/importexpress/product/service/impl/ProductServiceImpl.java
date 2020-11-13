@@ -465,15 +465,18 @@ public class ProductServiceImpl implements ProductService {
                 }
             } else if ("10165".equals(catidGroup1.getCatid())) {
                 for (CatidGroup catidGroup2 : catidGroupList) {
-                    if ("10166 ".equals(catidGroup2.getCatid())) {
+                    if ("10166".equals(catidGroup2.getCatid())
+                            || "54".equals(catidGroup2.getCatid())
+                            || "312".equals(catidGroup2.getCatid())) {
                         int numTemp = Integer.parseInt(catidGroup1.getNum());
                         numTemp += Integer.parseInt(catidGroup2.getNum());
                         catidGroup1.setNum(String.valueOf(numTemp));
                     }
                 }
-            } else if ("97 ".equals(catidGroup1.getCatid())) {
+            } else if ("97".equals(catidGroup1.getCatid())) {
                 for (CatidGroup catidGroup2 : catidGroupList) {
-                    if ("130822220 ".equals(catidGroup2.getCatid())) {
+                    if ("130822220".equals(catidGroup2.getCatid())
+                        || "3007".equals(catidGroup2.getCatid())) {
                         int numTemp = Integer.parseInt(catidGroup1.getNum());
                         numTemp += Integer.parseInt(catidGroup2.getNum());
                         catidGroup1.setNum(String.valueOf(numTemp));
@@ -482,8 +485,12 @@ public class ProductServiceImpl implements ProductService {
             } else if ("5".equals(catidGroup1.getCatid())) {
                 for (CatidGroup catidGroup2 : catidGroupList) {
                     if ("13".equals(catidGroup2.getCatid())
+                            || "6".equals(catidGroup2.getCatid())
                             || "15".equals(catidGroup2.getCatid())
-                            || "96".equals(catidGroup2.getCatid())) {
+                            || "96".equals(catidGroup2.getCatid())
+                            || "65".equals(catidGroup2.getCatid())
+                            || "68".equals(catidGroup2.getCatid())
+                            || "19999".equals(catidGroup2.getCatid())) {
                         int numTemp = Integer.parseInt(catidGroup1.getNum());
                         numTemp += Integer.parseInt(catidGroup2.getNum());
                         catidGroup1.setNum(String.valueOf(numTemp));
@@ -501,8 +508,9 @@ public class ProductServiceImpl implements ProductService {
                 }
             } else if ("58".equals(catidGroup1.getCatid())) {
                 for (CatidGroup catidGroup2 : catidGroupList) {
-                    if ("96".equals(catidGroup2.getCatid())
-                            || "59".equals(catidGroup2.getCatid())) {
+                    if ("55".equals(catidGroup2.getCatid())
+                            || "59".equals(catidGroup2.getCatid())
+                            || "4".equals(catidGroup2.getCatid())) {
                         int numTemp = Integer.parseInt(catidGroup1.getNum());
                         numTemp += Integer.parseInt(catidGroup2.getNum());
                         catidGroup1.setNum(String.valueOf(numTemp));
