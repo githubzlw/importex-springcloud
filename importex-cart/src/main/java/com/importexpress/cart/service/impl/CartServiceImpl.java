@@ -225,8 +225,10 @@ public class CartServiceImpl implements CartService {
 
         //Added <V1.0.1> Start： cjc 10/28/20 15:29 Description : 2C 商品低于500g 免邮，使用 range_price_fee_new,fee_price_new 价格，2b商品 都使用非免邮原价
         String matchSource = product.getMatchSource();
-        Integer ms = NumberUtils.createInteger(matchSource);
-
+        Integer ms = 0;
+        if(StringUtils.isNotBlank(matchSource)){
+            ms = NumberUtils.createInteger(matchSource);
+        }
         if(ms == 8){
             //range_price
             if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
