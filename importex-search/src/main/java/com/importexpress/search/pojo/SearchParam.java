@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 搜索请求参数
@@ -118,4 +120,7 @@ public class SearchParam implements Serializable {
 
 	@ApiModelProperty(value = "移动端返回上次请求行数")
 	private int backRows;
+
+	@ApiModelProperty(value = "类别ID集合")
+	private List<String> catidList = new ArrayList<>();
 }
