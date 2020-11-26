@@ -14,8 +14,6 @@ public class CatidGroup {
 
     private String catid;
 
-    private String category_name;
-
     private String num;
 
 }
