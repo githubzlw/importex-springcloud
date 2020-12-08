@@ -225,6 +225,15 @@ public class SerialPortServiceImpl implements SerialPortService {
     }
 
     /**
+     * 托盘区下探（为了稳定释放物品）
+     */
+    @Override
+    public void moveZInCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException {
+
+        sendData(buildSendString(config.CART_X, config.CART_Y, config.CART_Z_1_1, MAGI, true));
+    }
+
+    /**
      * 移动物品到托盘区并且释放,再回到零点
      */
     @Override
@@ -278,6 +287,12 @@ public class SerialPortServiceImpl implements SerialPortService {
 
             log.info("开始移动到托盘区域");
             this.moveToCart();
+        }
+
+        //托盘区下探（为了稳定释放物品）
+        if (PUT_ONE.equals(synchronousQueue.take())) {
+            log.info("托盘区下探（为了稳定释放物品）");
+            this.moveZInCart();
         }
 
         //释放物品
