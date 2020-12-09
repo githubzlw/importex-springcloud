@@ -23,6 +23,9 @@ public class Config {
     @Value("${CART_Z_1}")
     public int CART_Z_1;
 
+    @Value("${CART_Z_1_1}")
+    public int CART_Z_1_1;
+
     @Value("${CART_Z_2}")
     public int CART_Z_2;
 

@@ -84,6 +84,8 @@ public interface SerialPortService {
      */
     void moveToCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
 
+    void moveZInCart() throws PortInUseException, NoSuchPortException, InterruptedException, UnsupportedCommOperationException;
+
     /**
      * 移动物品到托盘区并且释放,再回到零点
      */

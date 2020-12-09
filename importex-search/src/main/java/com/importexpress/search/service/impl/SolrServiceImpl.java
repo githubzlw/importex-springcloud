@@ -393,8 +393,8 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         StringBuilder sorts = new  StringBuilder();
         //时间排序（暂没有这个排序）
         if(param.getSort().contains("bbPrice")){
-            sorts.append("bbPrice-desc".equals(param.getSort())?
-                    getPriceField(param.getSite())+" desc":getPriceField(param.getSite())+" asc");
+            sorts.append("bbPrice-desc".equals(param.getSort()) ?
+                    " custom_price" + " desc" : " custom_price" + " asc");
         }else if(param.getSort().equals("order-desc")){
             sorts.append("sum(custom_sold,custom_ali_sold) desc");
         }else{
@@ -535,11 +535,12 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         String maxPrice = param.getMaxPrice();
         //价格区间设置
         if((StrUtils.isMatch(minPrice, "(\\d+(\\.\\d+){0,1})") && !"0".equals(minPrice) ) ||
-                (StrUtils.isMatch(maxPrice, "(\\d+(\\.\\d+){0,1})") && !"0".equals(maxPrice))){
-            fq_condition.append(" AND "+getPriceField(param.getSite())+":[");
-            fq_condition.append( StringUtils.isNotBlank(minPrice) ? Double.parseDouble(minPrice)+"":"*");
+                (StrUtils.isMatch(maxPrice, "(\\d+(\\.\\d+){0,1})") && !"0".equals(maxPrice))) {
+            fq_condition.append(" AND custom_price:[");
+            //fq_condition.append(" AND "+getPriceField(param.getSite())+":[");
+            fq_condition.append(StringUtils.isNotBlank(minPrice) ? Double.parseDouble(minPrice) + "" : "*");
             fq_condition.append(" TO ");
-            fq_condition.append(StringUtils.isNotBlank(maxPrice) ? maxPrice:"*");
+            fq_condition.append(StringUtils.isNotBlank(maxPrice) ? maxPrice : "*");
             fq_condition.append("] ");
         }
     }
