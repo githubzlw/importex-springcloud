@@ -9,7 +9,7 @@ public enum SiteEnum {
     /**import express网站*/
     IMPORTX(1,"https://www.import-express.com","ImportExpress"),
     /**童装网站*/
-    KIDS(2,"https://www.kidsproductwholesale.com","KidsProductWholesale"),
+    KIDS(2,"https://www.kidscharming.com","KidsCharming"),
     /**宠物网站*/
     PETS(4,"https://www.petstoreinc.com","PetStoreInc"),
     /**家居网站*/
