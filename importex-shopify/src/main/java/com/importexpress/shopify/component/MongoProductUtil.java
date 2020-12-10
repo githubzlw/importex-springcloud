@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class MongoProductUtil {
     private static final String IMPORT_WEBSITE = "import-express.com";
-    private static final String KID_WEBSITE = "kidsproductwholesale.com";
+    private static final String KID_WEBSITE = "kidscharming.com";
     private static final String PET_WEBSITE = "petstoreinc.com";
     private static final String HOME_WEBSITE = "homeproductimport.com";
     private static final String MEDICAL_WEBSITE = "medicaldevicefactory.com";
@@ -28,12 +28,12 @@ public class MongoProductUtil {
 //    private static final String PET_WEBSITE = "petstoreinc.com";
 //    private static final String PET_WEBSITE = "petstoreinc.com";
 //    public static final String HTTP_IMPORT_WEBSITE = "https://www.import-express.com";
-//    public static final String HTTP_KID_WEBSITE = "https://www.kidsproductwholesale.com";
+//    public static final String HTTP_KID_WEBSITE = "https://www.kidscharming.com";
 //    public static final String HTTP_PET_WEBSITE = "https://www.petstoreinc.com";
 
     //    private static final String IMPORT_WEBSITE_VIDEOURL_1 = "img1.import-express.com";
 //    private static final String IMPORT_WEBSITE_VIDEOURL = "img.import-express.com";
-//    private static final String KID_WEBSITE_VIDEOURL = "img1.kidsproductwholesale.com";
+//    private static final String KID_WEBSITE_VIDEOURL = "img1.kidscharming.com";
 //    private static final String PET_WEBSITE_VIDEOURL = "img1.petstoreinc.com";
     private static String chineseChar = "([\\一-\\龥]+)";//()表示匹配字符串，[]表示在首尾字符范围  从 \\一 到 \\龥字符之间，+号表示至少出现一次
 
@@ -200,7 +200,7 @@ public class MongoProductUtil {
         String ven = "";
         switch (site) {
             case 2:
-                ven = "www.kidsproductwholesale.com";
+                ven = "www.kidscharming.com";
                 break;
             case 4:
                 ven = "www.petstoreinc.com";
