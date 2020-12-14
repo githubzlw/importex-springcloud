@@ -471,7 +471,8 @@ public class SearchServiceImpl implements SearchService {
             //其他数据----不是搜索页面必须数据
             product.setWprice(StrUtils.object2Str(solrDocument.get("custom_wprice")));
             product.setRange_price(StrUtils.object2Str(solrDocument.get("custom_range_price")));
-
+            product.setFree_price_new(StrUtils.object2Str(solrDocument.get("custom_free_price_new")));
+            product.setRange_price_free_new(StrUtils.object2Str(solrDocument.get("custom_range_price_free_new")));
             //货币切换
             if (changeCurrency) {
                 ChangeCurrency.chang(product, param.getCurrency());
