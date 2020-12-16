@@ -152,14 +152,14 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getMinPrice())) {
                 if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price > " + param.getMinPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice()));
                 }
             } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                        .and("$where").is("this.price < " + param.getMaxPrice()));
+                        .and("$where").is("this.price_import < " + param.getMaxPrice()));
             } else {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
             }
@@ -173,14 +173,14 @@ public class ProductServiceImpl implements ProductService {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
                         query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
+                                .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
                         query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                                .and("$where").is("this.price > " + param.getMinPrice()));
+                                .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                            .and("$where").is("&& this.price < " + param.getMaxPrice()));
+                            .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
@@ -251,14 +251,14 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getMinPrice())) {
                 if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price > " + param.getMinPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice()));
                 }
             } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                        .and("$where").is("this.price < " + param.getMaxPrice()));
+                        .and("$where").is("this.price_import < " + param.getMaxPrice()));
             } else {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
             }
@@ -272,14 +272,14 @@ public class ProductServiceImpl implements ProductService {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
                         query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
+                                .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
                         query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                                .and("$where").is("this.price > " + param.getMinPrice()));
+                                .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                            .and("$where").is("&& this.price < " + param.getMaxPrice()));
+                            .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
@@ -620,14 +620,14 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getMinPrice())) {
                 if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price > " + param.getMinPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice()));
                 }
             } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                        .and("$where").is("this.price < " + param.getMaxPrice()));
+                        .and("$where").is("this.price_import < " + param.getMaxPrice()));
             } else {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
             }
@@ -641,14 +641,14 @@ public class ProductServiceImpl implements ProductService {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
                         query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
+                                .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
                         query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                                .and("$where").is("this.price > " + param.getMinPrice()));
+                                .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                            .and("$where").is("&& this.price < " + param.getMaxPrice()));
+                            .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
@@ -733,14 +733,14 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getMinPrice())) {
                 if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price > " + param.getMinPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice()));
                 }
             } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                        .and("$where").is("this.price < " + param.getMaxPrice()));
+                        .and("$where").is("this.price_import < " + param.getMaxPrice()));
             } else {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
             }
@@ -754,14 +754,14 @@ public class ProductServiceImpl implements ProductService {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
                         query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                                .and("$where").is("this.price > " + param.getMinPrice() + " && this.price < " + param.getMaxPrice()));
+                                .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
                         query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                                .and("$where").is("this.price > " + param.getMinPrice()));
+                                .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
-                            .and("$where").is("&& this.price < " + param.getMaxPrice()));
+                            .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
