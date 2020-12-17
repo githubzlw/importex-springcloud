@@ -128,7 +128,8 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if(StringUtils.isNotBlank(param.getCatid())){
             fq.append(" AND custom_path_catid:\"" + param.getCatid() + "\"");
         }
-        importType(param,fq);
+        fq.append(" AND -custom_matchSource:8");
+        importType(param, fq);
         salable(param,fq);
 
         setFQ(fq.toString(), solrParams);
@@ -159,7 +160,8 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if(StringUtils.isNotBlank(param.getPid())){
             fq.append(" AND -custom_pid:\"" + param.getPid() + "\"");
         }
-        importType(param,fq);
+        fq.append(" AND -custom_matchSource:8 ");
+        importType(param, fq);
         salable(param,fq);
         setFQ(fq.toString(), solrParams);
         return sendRequest(solrParams, httpSolrClient);
@@ -180,7 +182,8 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         if (StringUtils.isNotBlank(param.getCatid())) {
             fq.append(" AND custom_path_catid:" + param.getCatid());
         }
-        importType(param,fq);
+        fq.append(" AND -custom_matchSource:8 ");
+        importType(param, fq);
         salable(param,fq);
         setFQ(fq.toString(), solrParams);
         return requestSolr(solrParams,param.getSite());
