@@ -536,7 +536,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         //价格区间设置
         if((StrUtils.isMatch(minPrice, "(\\d+(\\.\\d+){0,1})") && !"0".equals(minPrice) ) ||
                 (StrUtils.isMatch(maxPrice, "(\\d+(\\.\\d+){0,1})") && !"0".equals(maxPrice))) {
-            fq_condition.append(" AND custom_price:[");
+            fq_condition.append(" AND custom_price_import:[");
             //fq_condition.append(" AND "+getPriceField(param.getSite())+":[");
             fq_condition.append(StringUtils.isNotBlank(minPrice) ? Double.parseDouble(minPrice) + "" : "*");
             fq_condition.append(" TO ");
