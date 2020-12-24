@@ -279,13 +279,13 @@ public class SearchControllerTest {
     @Test
     public void getSearchMongo() throws Exception {
         SearchParam param = new SearchParam();
-        param.setCatid("122584001");
-        param.setSort("order-desc");
+        param.setCatid("311");
+       /* param.setSort("order-desc");
         Currency currency = new Currency();
         currency.setCurrency("EUR");
         currency.setExchangeRate(0.903);
         currency.setSymbol("€");
-        param.setCurrency(currency);
+        param.setCurrency(currency);*/
         //param.setFreeShipping(2);
         //param.setMaxPrice("1.0");
         //param.setMinPrice("0.01");

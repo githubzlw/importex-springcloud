@@ -20,8 +20,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletContext;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -625,6 +628,7 @@ public class SearchServiceImpl implements SearchService {
         //请求mongo获取产品列表
         List<com.importexpress.search.mongo.Product> productList = productServiceFeign.findProductByCatid(param);
         //List<com.importexpress.search.mongo.Product> productList = mongoHelp.findProductByCatid(param, param.getPage(), param.getPageSize());
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//注意月份是MM
 
         // 根据重量确定是否是免邮价格，list根据价格销量排序
         for (com.importexpress.search.mongo.Product product : productList) {
@@ -683,10 +687,17 @@ public class SearchServiceImpl implements SearchService {
             } else {
                 product.setSold_sort(0);
             }
+            if (StringUtils.isNotBlank(product.getCreatetime())) {
+                try {
+                    product.setCreateTime_sort(simpleDateFormat.parse(product.getCreatetime()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
+            }
         }
 
-        if (param.getSort().indexOf("bbPrice") > -1) {
+        if (param.getSort().contains("bbPrice")) {
             if ("bbPrice-desc".equals(param.getSort())) {
                 productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getPrice_import_sort).reversed());
             } else {
@@ -696,7 +707,10 @@ public class SearchServiceImpl implements SearchService {
         } else if ("order-desc".equals(param.getSort())) {
             //销量排序
             productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getSold_sort).reversed());
+        } else {
+            productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getCreateTime_sort).reversed());
         }
+
 
         productList.forEach(item -> {
             if (productList.indexOf(item) >= (page - 1) * pageSize
@@ -1142,7 +1156,7 @@ public class SearchServiceImpl implements SearchService {
         int pageSize = param.getPageSize();
         //请求mongo获取产品列表
         List<com.importexpress.search.mongo.Product> productList = productServiceFeign.findProductImport(param);
-
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//注意月份是MM
         // 根据重量确定是否是免邮价格，list根据价格销量排序
         for (com.importexpress.search.mongo.Product product : productList) {
 
@@ -1163,9 +1177,18 @@ public class SearchServiceImpl implements SearchService {
                 product.setSold_sort(0);
             }
 
+            if (StringUtils.isNotBlank(product.getCreatetime())) {
+                try {
+                    product.setCreateTime_sort(simpleDateFormat.parse(product.getCreatetime()));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+
         }
 
-        if (param.getSort().indexOf("bbPrice") > -1) {
+        if (param.getSort().contains("bbPrice")) {
             if ("bbPrice-desc".equals(param.getSort())) {
                 productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getPrice_import_sort).reversed());
             } else {
@@ -1175,7 +1198,10 @@ public class SearchServiceImpl implements SearchService {
         } else if ("order-desc".equals(param.getSort())) {
             //销量排序
             productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getSold_sort).reversed());
+        } else {
+            productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getCreateTime_sort).reversed());
         }
+
 
         productList.forEach(item -> {
             if (productList.indexOf(item) >= (page - 1) * pageSize

@@ -13,10 +13,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.LongStream;
 
 /**
@@ -106,6 +105,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public List<MongoProduct> findProductByCatid(SearchParam param) {
+        String preMonth = getPreMonth();
         List<String> catidList = new ArrayList<>();
         if (param.getCatidList() != null
                 && !param.getCatidList().isEmpty()) {
@@ -152,20 +152,20 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getMinPrice())) {
                 if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price_import > " + param.getMinPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                 }
             } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                        .and("$where").is("this.price_import < " + param.getMaxPrice()));
+                        .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
             }
 
         } else {
-            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
 
         }
      /*   } else {
@@ -203,7 +203,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Long findProductByCatidCount(SearchParam param) {
-
+        String preMonth = getPreMonth();
         List<String> catidList = new ArrayList<>();
         if (param.getCatidList() != null
                 && !param.getCatidList().isEmpty()) {
@@ -251,20 +251,20 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getMinPrice())) {
                 if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price_import > " + param.getMinPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                 }
             } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                        .and("$where").is("this.price_import < " + param.getMaxPrice()));
+                        .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
             }
 
         } else {
-            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
 
         }
       /*  } else {
@@ -343,7 +343,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public List<CatidGroup> findCatidGroup(List<String> catidList) {
-
+        String preMonth = getPreMonth();
         List<Criteria> criteriaList = new ArrayList<Criteria>();
         for (String catid : catidList) {
             Criteria c1 = null;
@@ -358,7 +358,7 @@ public class ProductServiceImpl implements ProductService {
         List<CatidGroup> list = new ArrayList<>();
         List<CatidGroup> catidGroupList = new ArrayList<>();
         Aggregation customerAgg = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)),
+                Aggregation.match(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth).andOperator(criteria)),
                 Aggregation.group("path_catid").first("path_catid").as("catid")
                         .count().as("num")
         );
@@ -415,7 +415,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public List<CatidGroup> findCatidGroupImport(List<String> catidList) {
-
+        String preMonth = getPreMonth();
         List<CatidGroup> list = new ArrayList<>();
         List<CatidGroup> catidGroupList = new ArrayList<>();
         for (String catid : catidList) {
@@ -447,7 +447,7 @@ public class ProductServiceImpl implements ProductService {
 
 
         Aggregation customerAgg = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)),
+                Aggregation.match(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth).andOperator(criteria)),
                 Aggregation.group("path_catid").first("path_catid").as("catid")
                         .count().as("num")
         );
@@ -558,7 +558,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public List<MongoProduct> findProductImport(SearchParam param) {
-
+        String preMonth = getPreMonth();
         List<String> catidList = new ArrayList<>();
         if (param.getCatidList() != null
                 && !param.getCatidList().isEmpty()) {
@@ -620,20 +620,20 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getMinPrice())) {
                 if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price_import > " + param.getMinPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                 }
             } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                        .and("$where").is("this.price_import < " + param.getMaxPrice()));
+                        .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
             }
 
         } else {
-            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
 
         }
      /*   } else {
@@ -671,7 +671,7 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Long findProductCountImport(SearchParam param) {
-
+        String preMonth = getPreMonth();
         List<String> catidList = new ArrayList<>();
         if (param.getCatidList() != null
                 && !param.getCatidList().isEmpty()) {
@@ -733,20 +733,20 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getMinPrice())) {
                 if (StringUtils.isNotBlank(param.getMaxPrice())) {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
                     query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                            .and("$where").is("this.price_import > " + param.getMinPrice()));
+                            .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                 }
             } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
                 query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
-                        .and("$where").is("this.price_import < " + param.getMaxPrice()));
+                        .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
             }
 
         } else {
-            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
 
         }
   /*      } else {
@@ -773,5 +773,14 @@ public class ProductServiceImpl implements ProductService {
         }*/
         return mongoTemplate.count(query, MongoProduct.class);
     }
+
+    private String getPreMonth() {
+        Calendar ca = Calendar.getInstance();//得到一个Calendar的实例
+        ca.add(Calendar.MONTH, -1); //月份减1
+        Date lastMonth = ca.getTime(); //结果
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+        return sf.format(lastMonth);
+    }
+
 
 }
