@@ -3,6 +3,8 @@ package com.importexpress.search.mongo;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 
+import java.util.Date;
+
 /**
  * @author luohao
  * @String 2018/11/28
@@ -142,6 +144,7 @@ public class Product {
     private Double price_import_sort;
     private Integer sold_sort;
 
+    private Date createTime_sort;
 
 
 /*    public Product._id get_id() {
@@ -870,5 +873,13 @@ public class Product {
 
     public void setPrice_pets(String price_pets) {
         this.price_pets = price_pets;
+    }
+
+    public Date getCreateTime_sort() {
+        return createTime_sort;
+    }
+
+    public void setCreateTime_sort(Date createTime_sort) {
+        this.createTime_sort = createTime_sort;
     }
 }
