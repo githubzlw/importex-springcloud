@@ -711,21 +711,28 @@ public class SearchServiceImpl implements SearchService {
             productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getCreateTime_sort).reversed());
         }
 
-        if (param.getBackRows() == 0) {
-            productList.forEach(item -> {
-                if (productList.indexOf(item) >= (page - 1) * pageSize
-                        && productList.indexOf(item) < (page) * pageSize) {
-                    productResultList.add(item);
-                }
-            });
+        if (StringUtils.isNotBlank(param.getCatid())) {
+            if (param.getBackRows() == 0) {
+                productList.forEach(item -> {
+                    if (productList.indexOf(item) >= (page - 1) * pageSize
+                            && productList.indexOf(item) < (page) * pageSize) {
+                        productResultList.add(item);
+                    }
+                });
+            } else {
+                productList.forEach(item -> {
+                    if (productList.indexOf(item) >= 0
+                            && productList.indexOf(item) < param.getBackRows()) {
+                        productResultList.add(item);
+                    }
+                });
+            }
         } else {
             productList.forEach(item -> {
-                if (productList.indexOf(item) >= 0
-                        && productList.indexOf(item) < param.getBackRows()) {
-                    productResultList.add(item);
-                }
+                productResultList.add(item);
             });
         }
+
 
         //拼接参数
         if (productResultList == null) {
@@ -1210,19 +1217,25 @@ public class SearchServiceImpl implements SearchService {
             productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getCreateTime_sort).reversed());
         }
 
-        if (param.getBackRows() == 0) {
-            productList.forEach(item -> {
-                if (productList.indexOf(item) >= (page - 1) * pageSize
-                        && productList.indexOf(item) < (page) * pageSize) {
-                    productResultList.add(item);
-                }
-            });
+        if (StringUtils.isNotBlank(param.getCatid())) {
+            if (param.getBackRows() == 0) {
+                productList.forEach(item -> {
+                    if (productList.indexOf(item) >= (page - 1) * pageSize
+                            && productList.indexOf(item) < (page) * pageSize) {
+                        productResultList.add(item);
+                    }
+                });
+            } else {
+                productList.forEach(item -> {
+                    if (productList.indexOf(item) >= 0
+                            && productList.indexOf(item) < param.getBackRows()) {
+                        productResultList.add(item);
+                    }
+                });
+            }
         } else {
             productList.forEach(item -> {
-                if (productList.indexOf(item) >= 0
-                        && productList.indexOf(item) < param.getBackRows()) {
-                    productResultList.add(item);
-                }
+                productResultList.add(item);
             });
         }
 
