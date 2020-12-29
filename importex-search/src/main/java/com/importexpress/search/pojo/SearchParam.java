@@ -123,4 +123,7 @@ public class SearchParam implements Serializable {
 
 	@ApiModelProperty(value = "类别ID集合")
 	private List<String> catidList = new ArrayList<>();
+
+	@ApiModelProperty(value = "新品上线时间排序")
+	private String newarrival;
 }
