@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -217,6 +218,9 @@ public class ProductServiceImpl implements ProductService {
             }
         }
 */
+        if (!CollectionUtils.isEmpty(param.getCatidList())) {
+            query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
+        }
         return mongoTemplate.find(query, MongoProduct.class);
     }
 
@@ -340,6 +344,9 @@ public class ProductServiceImpl implements ProductService {
 
             }
         }*/
+        if (!CollectionUtils.isEmpty(param.getCatidList())) {
+            query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
+        }
         return mongoTemplate.count(query, MongoProduct.class);
     }
 
@@ -734,7 +741,9 @@ public class ProductServiceImpl implements ProductService {
 
             }
         }*/
-
+        if (!CollectionUtils.isEmpty(param.getCatidList())) {
+            query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
+        }
         return mongoTemplate.find(query, MongoProduct.class);
     }
 
@@ -872,6 +881,9 @@ public class ProductServiceImpl implements ProductService {
 
             }
         }*/
+        if (!CollectionUtils.isEmpty(param.getCatidList())) {
+            query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
+        }
         return mongoTemplate.count(query, MongoProduct.class);
     }
 
