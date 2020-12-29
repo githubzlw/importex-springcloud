@@ -219,7 +219,18 @@ public class ProductServiceImpl implements ProductService {
         }
 */
         if (!CollectionUtils.isEmpty(param.getCatidList())) {
-            query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
+            criteriaList = new ArrayList<Criteria>();
+            for (String catid : param.getCatidList()) {
+                Criteria c1 = null;
+                c1 = c1.where("catid1").is(catid);
+                criteriaList.add(c1);
+            }
+
+            arr = new Criteria[criteriaList.size()];
+
+            criteriaList.toArray(arr);
+            criteria = new Criteria().orOperator(arr);
+            query.addCriteria(criteria);
         }
         return mongoTemplate.find(query, MongoProduct.class);
     }
@@ -345,7 +356,18 @@ public class ProductServiceImpl implements ProductService {
             }
         }*/
         if (!CollectionUtils.isEmpty(param.getCatidList())) {
-            query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
+            criteriaList = new ArrayList<Criteria>();
+            for (String catid : param.getCatidList()) {
+                Criteria c1 = null;
+                c1 = c1.where("catid1").is(catid);
+                criteriaList.add(c1);
+            }
+
+            arr = new Criteria[criteriaList.size()];
+
+            criteriaList.toArray(arr);
+            criteria = new Criteria().orOperator(arr);
+            query.addCriteria(criteria);
         }
         return mongoTemplate.count(query, MongoProduct.class);
     }
@@ -742,7 +764,18 @@ public class ProductServiceImpl implements ProductService {
             }
         }*/
         if (!CollectionUtils.isEmpty(param.getCatidList())) {
-            query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
+            criteriaList = new ArrayList<Criteria>();
+            for (String catid : param.getCatidList()) {
+                Criteria c1 = null;
+                c1 = c1.where("catid1").is(catid);
+                criteriaList.add(c1);
+            }
+
+            arr = new Criteria[criteriaList.size()];
+
+            criteriaList.toArray(arr);
+            criteria = new Criteria().orOperator(arr);
+            query.addCriteria(criteria);
         }
         return mongoTemplate.find(query, MongoProduct.class);
     }
@@ -882,7 +915,18 @@ public class ProductServiceImpl implements ProductService {
             }
         }*/
         if (!CollectionUtils.isEmpty(param.getCatidList())) {
-            query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
+            criteriaList = new ArrayList<Criteria>();
+            for (String catid : param.getCatidList()) {
+                Criteria c1 = null;
+                c1 = c1.where("catid1").is(catid);
+                criteriaList.add(c1);
+            }
+
+            arr = new Criteria[criteriaList.size()];
+
+            criteriaList.toArray(arr);
+            criteria = new Criteria().orOperator(arr);
+            query.addCriteria(criteria);
         }
         return mongoTemplate.count(query, MongoProduct.class);
     }
