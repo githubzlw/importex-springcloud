@@ -5,9 +5,12 @@ import com.importexpress.product.mongo.MongoProduct;
 import com.importexpress.product.pojo.SearchParam;
 import com.importexpress.product.service.ProductService;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.query.Collation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -221,6 +224,29 @@ public class ProductServiceImpl implements ProductService {
         if (!CollectionUtils.isEmpty(param.getCatidList())) {
             query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
         }
+        if (param.getBackRows() == 0) {
+            query.skip((param.getPage() - 1) * param.getPageSize());
+            query.limit(param.getPageSize() * param.getPage());
+            if (param.getSort().contains("bbPrice")) {
+                Document document = Collation.of("zh").toDocument();
+                document.put("numericOrdering", true);
+                query.collation(Collation.from(document));
+
+                if ("bbPrice-desc".equals(param.getSort())) {
+                    query.with(new Sort(Sort.Direction.DESC, "price_import"));
+                } else {
+                    query.with(new Sort(Sort.Direction.ASC, "price_import"));
+                }
+
+            } else if ("order-desc".equals(param.getSort())) {
+                Document document = Collation.of("zh").toDocument();
+                document.put("numericOrdering", true);
+                query.collation(Collation.from(document));
+                //销量排序
+                query.with(new Sort(Sort.Direction.DESC, "sold"));
+            }
+        }
+
         return mongoTemplate.find(query, MongoProduct.class);
     }
 
@@ -743,6 +769,29 @@ public class ProductServiceImpl implements ProductService {
         }*/
         if (!CollectionUtils.isEmpty(param.getCatidList())) {
             query.addCriteria(Criteria.where("catid1").in(param.getCatidList()));
+        }
+
+        if (param.getBackRows() == 0) {
+            query.skip((param.getPage() - 1) * param.getPageSize());
+            query.limit(param.getPageSize() * param.getPage());
+            if (param.getSort().contains("bbPrice")) {
+                Document document = Collation.of("zh").toDocument();
+                document.put("numericOrdering", true);
+                query.collation(Collation.from(document));
+
+                if ("bbPrice-desc".equals(param.getSort())) {
+                    query.with(new Sort(Sort.Direction.DESC, "price_import"));
+                } else {
+                    query.with(new Sort(Sort.Direction.ASC, "price_import"));
+                }
+
+            } else if ("order-desc".equals(param.getSort())) {
+                Document document = Collation.of("zh").toDocument();
+                document.put("numericOrdering", true);
+                query.collation(Collation.from(document));
+                //销量排序
+                query.with(new Sort(Sort.Direction.DESC, "sold"));
+            }
         }
         return mongoTemplate.find(query, MongoProduct.class);
     }

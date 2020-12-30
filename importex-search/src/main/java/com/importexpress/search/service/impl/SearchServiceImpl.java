@@ -431,7 +431,7 @@ public class SearchServiceImpl implements SearchService {
                 }
             }
             path = SwitchDomainUtil.checkIsNullAndReplace(path, param.getSite());
-            product.setImage(path.replace("220x220", "285x285"));
+            product.setImage(path.replace("220x220", "285x285").replace("http://", "https://"));
 
             /**
              * 添加伪静态化链接
@@ -711,21 +711,25 @@ public class SearchServiceImpl implements SearchService {
             productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getCreateTime_sort).reversed());
         }
 
-        if (param.getBackRows() == 0) {
-            productList.forEach(item -> {
-                if (productList.indexOf(item) >= (page - 1) * pageSize
-                        && productList.indexOf(item) < (page) * pageSize) {
+        //if (StringUtils.isNotBlank(param.getCatid())) {
+            if (param.getBackRows() == 0) {
+                productList.forEach(item -> {
                     productResultList.add(item);
-                }
-            });
-        } else {
+                });
+            } else {
+                productList.forEach(item -> {
+                    if (productList.indexOf(item) >= 0
+                            && productList.indexOf(item) < param.getBackRows()) {
+                        productResultList.add(item);
+                    }
+                });
+            }
+        /*} else {
             productList.forEach(item -> {
-                if (productList.indexOf(item) >= 0
-                        && productList.indexOf(item) < param.getBackRows()) {
-                    productResultList.add(item);
-                }
+                productResultList.add(item);
             });
-        }
+        }*/
+
 
         //拼接参数
         if (productResultList == null) {
@@ -1210,21 +1214,25 @@ public class SearchServiceImpl implements SearchService {
             productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getCreateTime_sort).reversed());
         }
 
-        if (param.getBackRows() == 0) {
-            productList.forEach(item -> {
-                if (productList.indexOf(item) >= (page - 1) * pageSize
-                        && productList.indexOf(item) < (page) * pageSize) {
+        // if (StringUtils.isNotBlank(param.getCatid())) {
+            if (param.getBackRows() == 0) {
+                productList.forEach(item -> {
                     productResultList.add(item);
-                }
-            });
-        } else {
+
+                });
+            } else {
+                productList.forEach(item -> {
+                    if (productList.indexOf(item) >= 0
+                            && productList.indexOf(item) < param.getBackRows()) {
+                        productResultList.add(item);
+                    }
+                });
+            }
+     /*   } else {
             productList.forEach(item -> {
-                if (productList.indexOf(item) >= 0
-                        && productList.indexOf(item) < param.getBackRows()) {
-                    productResultList.add(item);
-                }
+                productResultList.add(item);
             });
-        }
+        }*/
 
 
         //拼接参数
