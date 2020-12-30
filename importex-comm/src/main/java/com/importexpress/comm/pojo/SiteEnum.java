@@ -6,20 +6,34 @@ package com.importexpress.comm.pojo;
  */
 public enum SiteEnum {
 
-    /**import express网站*/
-    IMPORTX(1,"https://www.import-express.com","ImportExpress"),
-    /**童装网站*/
-    KIDS(2,"https://www.kidsproductwholesale.com","KidsProductWholesale"),
-    /**宠物网站*/
-    PETS(4,"https://www.petstoreinc.com","PetStoreInc"),
-    /**家居网站*/
-    HOME(8,"https://www.homeproductimport.com","HomeProductImport"),
-    /**医疗网站*/
-    MEDIC(16,"https://www.medicaldevicefactory.com","MedicalDeviceFactory"),
-    /**管接头网站*/
-    E_PIPE(32,"https://www.pipe.com","E_PIPE"),
-    /**电缆网站*/
-    LINE(64,"https://www.line.com","LINE"),
+    /**
+     * import express网站
+     */
+    IMPORTX(1, "https://www.import-express.com", "ImportExpress"),
+    /**
+     * 童装网站
+     */
+    KIDS(2, "https://www.kidscharming.com", "kidscharming"),
+    /**
+     * 宠物网站
+     */
+    PETS(4, "https://www.petstoreinc.com", "PetStoreInc"),
+    /**
+     * 家居网站
+     */
+    HOME(8, "https://www.homeproductimport.com", "HomeProductImport"),
+    /**
+     * 医疗网站
+     */
+    MEDIC(16, "https://www.medicaldevicefactory.com", "MedicalDeviceFactory"),
+    /**
+     * 管接头网站
+     */
+    E_PIPE(32, "https://www.pipe.com", "E_PIPE"),
+    /**
+     * 电缆网站
+     */
+    LINE(64, "https://www.line.com", "LINE"),
     /**HS_CODE网站*/
     S_HS_CODE(128,"http://img.import-express.com:8080","S_HS_CODE");
 
@@ -59,9 +73,9 @@ public enum SiteEnum {
         return name;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         System.out.println(SiteEnum.valueOf("importx"));
-        System.out.println(SiteEnum.valueOf("pets"));
+        System.out.println(SiteEnum.valueOf("kids"));
         System.out.println(SiteEnum.valueOf("pets").code);
     }
 }
