@@ -711,13 +711,10 @@ public class SearchServiceImpl implements SearchService {
             productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getCreateTime_sort).reversed());
         }
 
-        if (StringUtils.isNotBlank(param.getCatid())) {
+        //if (StringUtils.isNotBlank(param.getCatid())) {
             if (param.getBackRows() == 0) {
                 productList.forEach(item -> {
-                    if (productList.indexOf(item) >= (page - 1) * pageSize
-                            && productList.indexOf(item) < (page) * pageSize) {
-                        productResultList.add(item);
-                    }
+                    productResultList.add(item);
                 });
             } else {
                 productList.forEach(item -> {
@@ -727,11 +724,11 @@ public class SearchServiceImpl implements SearchService {
                     }
                 });
             }
-        } else {
+        /*} else {
             productList.forEach(item -> {
                 productResultList.add(item);
             });
-        }
+        }*/
 
 
         //拼接参数
@@ -1217,13 +1214,11 @@ public class SearchServiceImpl implements SearchService {
             productList.sort(Comparator.comparing(com.importexpress.search.mongo.Product::getCreateTime_sort).reversed());
         }
 
-        if (StringUtils.isNotBlank(param.getCatid())) {
+        // if (StringUtils.isNotBlank(param.getCatid())) {
             if (param.getBackRows() == 0) {
                 productList.forEach(item -> {
-                    if (productList.indexOf(item) >= (page - 1) * pageSize
-                            && productList.indexOf(item) < (page) * pageSize) {
-                        productResultList.add(item);
-                    }
+                    productResultList.add(item);
+
                 });
             } else {
                 productList.forEach(item -> {
@@ -1233,11 +1228,11 @@ public class SearchServiceImpl implements SearchService {
                     }
                 });
             }
-        } else {
+     /*   } else {
             productList.forEach(item -> {
                 productResultList.add(item);
             });
-        }
+        }*/
 
 
         //拼接参数
