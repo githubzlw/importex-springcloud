@@ -492,7 +492,7 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      * @param fq_condition
      */
     private void salable(SearchParam param,StringBuilder fq_condition){
-        if(param.isSalable() && param.getSite()==2 ){
+        if (param.isSalable()) {
             fq_condition.append(" AND -custom_salable:1");
         }
     }
