@@ -253,7 +253,7 @@ public class ProductServiceImpl implements ProductService {
         }
         if (param.getBackRows() == 0) {
             query.skip((param.getPage() - 1) * param.getPageSize());
-            query.limit(param.getPageSize() * param.getPage());
+            query.limit(param.getPageSize());
             if (param.getSort().contains("bbPrice")) {
                 Document document = Collation.of("zh").toDocument();
                 document.put("numericOrdering", true);
@@ -839,7 +839,7 @@ public class ProductServiceImpl implements ProductService {
 
         if (param.getBackRows() == 0) {
             query.skip((param.getPage() - 1) * param.getPageSize());
-            query.limit(param.getPageSize() * param.getPage());
+            query.limit(param.getPageSize());
             if (param.getSort().contains("bbPrice")) {
                 Document document = Collation.of("zh").toDocument();
                 document.put("numericOrdering", true);
