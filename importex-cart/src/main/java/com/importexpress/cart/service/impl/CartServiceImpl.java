@@ -293,16 +293,16 @@ public class CartServiceImpl implements CartService {
         //设置规格
         cartItem.setTn(sb.toString().trim());
 
-        if (str3.equals(product.getWprice())) {
-            ImmutablePair<Float, Long> weiAndPri = getWeiAndPri(product.getSku(), cartItem);
-            Assert.isTrue(weiAndPri != null, "weiAndPri is null. product.getSku()="+product.getSku() + ",cartItem=" + cartItem);
+        if (StringUtils.isNotBlank(product.getRange_price_free_new())) {
+            ImmutablePair<Float, Long> weiAndPri = getWeiAndPri(product.getSku_new(), cartItem);
+            Assert.isTrue(weiAndPri != null, "weiAndPri is null. product.getSku()="+product.getSku_new() + ",cartItem=" + cartItem);
             cartItem.setWei(weiAndPri.getLeft());
             cartItem.setPri(weiAndPri.getRight());
         }else{
             //单个重量
             float finalWeight = NumberUtils.toFloat(product.getFinal_weight());
             float volumeWeight = NumberUtils.toFloat(product.getVolume_weight());
-            cartItem.setWei(volumeWeight > finalWeight?volumeWeight:finalWeight);
+            cartItem.setWei(Math.max(volumeWeight, finalWeight));
         }
     }
 
