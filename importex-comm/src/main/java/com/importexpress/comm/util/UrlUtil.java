@@ -227,6 +227,7 @@ public class UrlUtil {
      */
     public JSONObject callUrlByGet(String url) throws IOException {
 
+        log.info("callUrlByGet:{}", url);
         Request request = new Request.Builder().url(url).build();
 
         Response response = client.newCall(request).execute();
@@ -306,6 +307,9 @@ public class UrlUtil {
      * @throws IOException
      */
     public JSONObject callUrlByPut(String url, Map<String, String> params) throws IOException {
+
+        log.info("callUrlByPut:{},params:{}", url, params);
+
         FormBody.Builder builder = new FormBody.Builder();
         params.forEach((k, v) -> {
             if (v != null) builder.add(k, v);
@@ -328,6 +332,8 @@ public class UrlUtil {
      * @throws IOException
      */
     public JSONObject callUrlByPost(String url, Map<String, String> params) throws IOException {
+
+        log.info("callUrlByPost:{},params:{}", url, params);
 
         FormBody.Builder builder = new FormBody.Builder();
         params.forEach((k, v) -> {
