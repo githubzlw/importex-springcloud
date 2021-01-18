@@ -157,21 +157,21 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
+                query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("createtime").gte(preMonth));
 
             }
         } else {
@@ -179,45 +179,45 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria));
                 }
 
             } else {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
                     if (StringUtils.isNotBlank(param.getMinPrice())) {
                         if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                            query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                     .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                         } else {
-                            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                            query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                     .and("$where").is("this.price_import > " + param.getMinPrice()));
                         }
                     } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1"));
                     }
                 }
 
@@ -228,21 +228,21 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                             .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1"));
 
             }
         }
@@ -335,21 +335,21 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
+                query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("createtime").gte(preMonth));
 
             }
         } else {
@@ -357,45 +357,45 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria));
                 }
 
             } else {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
                     if (StringUtils.isNotBlank(param.getMinPrice())) {
                         if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                            query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                     .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                         } else {
-                            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                            query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                     .and("$where").is("this.price_import > " + param.getMinPrice()));
                         }
                     } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1"));
                     }
                 }
 
@@ -405,21 +405,21 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                             .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1"));
 
             }
         }*/
@@ -445,7 +445,7 @@ public class ProductServiceImpl implements ProductService {
             int catidNumm = 0;
             Aggregation customerAgg = Aggregation.newAggregation(
                     //Aggregation.project("catid1","category_name","num","matchSource","valid"),
-                    Aggregation.match(Criteria.where("matchSource").is("8").and("path_catid").regex("^.*" + catid + ".*$").and("valid").is("1")),
+                    Aggregation.match(Criteria.where("matchSource").ne("8").and("path_catid").regex("^.*" + catid + ".*$").and("valid").is("1")),
                     Aggregation.group("catid1").first("catid1").as("catid")
                             .first("matchSource").as("matchSource").first("valid").as("valid").count().as("num")
             );
@@ -495,7 +495,7 @@ public class ProductServiceImpl implements ProductService {
         List<CatidGroup> list = new ArrayList<>();
         List<CatidGroup> catidGroupList = new ArrayList<>();
         Aggregation customerAgg = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)),
+                Aggregation.match(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)),
                 Aggregation.group("path_catid").first("path_catid").as("catid")
                         .count().as("num")
         );
@@ -584,7 +584,7 @@ public class ProductServiceImpl implements ProductService {
 
 
         Aggregation customerAgg = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)),
+                Aggregation.match(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)),
                 Aggregation.group("path_catid").first("path_catid").as("catid")
                         .count().as("num")
         );
@@ -758,21 +758,21 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
+                query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("createtime").gte(preMonth));
 
             }
         } else {
@@ -780,33 +780,33 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria));
                 }
 
             } else {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1"));
                 }
 
             }
@@ -815,21 +815,21 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                             .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1"));
 
             }
         }*/
@@ -934,21 +934,21 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
+                query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("createtime").gte(preMonth));
 
             }
         } else {
@@ -956,33 +956,33 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").andOperator(criteria));
                 }
 
             } else {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1")
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1"));
                 }
 
             }
@@ -991,21 +991,21 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
                             .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                query = new Query(Criteria.where("matchSource").ne("8").and("valid").is("1").and("img_check").is("1"));
 
             }
         }*/
