@@ -30,121 +30,133 @@ public class FlushControllerTest {
         this.mockMvc = webAppContextSetup(this.wac).build();
         init.init(wac.getServletContext());
     }
-    /**全部1688Category的数据导入
+
+    /**
+     * 全部1688Category的数据导入
      */
     @Test
-    public void category() throws Exception{
+    public void category() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/category"))
                 .andReturn().getResponse().getContentAsString();
 
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
 
-    /**获取规格属性表信息
+    /**
+     * 获取规格属性表信息
      */
     @Test
-    public void newPvid() throws Exception{
+    public void newPVid() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/atrrid"))
                 .andReturn().getResponse().getContentAsString();
 
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
 
-    /**初始化同义词列表
+    /**
+     * 初始化同义词列表
      */
     @Test
-    public void synonyms() throws Exception{
+    public void synonyms() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/synonyms/key"))
                 .andReturn().getResponse().getContentAsString();
 
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
-    /**初始化类别同义词列表
+
+    /**
+     * 初始化类别同义词列表
      */
     @Test
-    public void synonymsCategory() throws Exception{
+    public void synonymsCategory() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/synonyms/category"))
                 .andReturn().getResponse().getContentAsString();
 
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
 
-    /**初始化搜索词对应的最低价和最高价
+    /**
+     * 初始化搜索词对应的最低价和最高价
      */
     @Test
-    public void categoryPrice() throws Exception{
+    public void categoryPrice() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/category/price"))
                 .andReturn().getResponse().getContentAsString();
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
 
-    /**初始化盲搜类别列表
+    /**
+     * 初始化盲搜类别列表
      */
     @Test
-    public void blindSearchCategory() throws Exception{
+    public void blindSearchCategory() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/blind/category"))
                 .andReturn().getResponse().getContentAsString();
 
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
 
-    /**初始化类别限制列表
+    /**
+     * 初始化类别限制列表
      */
     @Test
-    public void specialCatid() throws Exception{
+    public void specialCatid() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/special/category"))
                 .andReturn().getResponse().getContentAsString();
 
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
 
-    /**初始化优先类别列表
+    /**
+     * 初始化优先类别列表
      */
     @Test
-    public void priorityCategory() throws Exception{
+    public void priorityCategory() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/priority/category"))
                 .andReturn().getResponse().getContentAsString();
 
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
 
-    /**初始化反关键词集合
+    /**
+     * 初始化反关键词集合
      */
     @Test
-    public void autiKey() throws Exception{
+    public void autiKey() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/autikey"))
                 .andReturn().getResponse().getContentAsString();
 
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
 
-    /**获取搜索页面底部推荐词 whj
+    /**
+     * 获取搜索页面底部推荐词 whj
      */
     @Test
-    public void recommendedWords() throws Exception{
+    public void recommendedWords() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/recommen"))
                 .andReturn().getResponse().getContentAsString();
 
-        CommonResult result = new Gson().fromJson(contentAsString,CommonResult.class);
-        Assert.assertEquals(200,result.getCode());
-        System.out.println("结果:"+result.getData().toString());
+        CommonResult result = new Gson().fromJson(contentAsString, CommonResult.class);
+        Assert.assertEquals(200, result.getCode());
+        System.out.println("结果:" + result.getData().toString());
     }
 }
