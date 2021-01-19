@@ -48,7 +48,7 @@ public class FlushControllerTest {
      * 获取规格属性表信息
      */
     @Test
-    public void newPVid() throws Exception {
+    public void newPvid() throws Exception {
         String contentAsString = mockMvc.perform(get("/flush/atrrid"))
                 .andReturn().getResponse().getContentAsString();
 
