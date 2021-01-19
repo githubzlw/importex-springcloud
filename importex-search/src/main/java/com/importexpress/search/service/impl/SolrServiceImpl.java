@@ -472,17 +472,19 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         }
 
         //如果访问链接有限制店铺id
-        if(StringUtils.isNotBlank(param.getStoried())){
-            fq_condition.append(" AND custom_shop_id:"+param.getStoried()+" ");
+        if (StringUtils.isNotBlank(param.getStoried())) {
+            fq_condition.append(" AND custom_shop_id:" + param.getStoried() + " ");
         }
 
         //权限版搜索,只展示可搜索的产品
-        importType(param,fq_condition);
+        importType(param, fq_condition);
 
         //限制美加用户,可售卖标识
-        salable(param,fq_condition);
+        salable(param, fq_condition);
 
-        fq_condition.append(" AND -custom_matchSource:8 ");
+        if (param.getSite() == 1) {
+            fq_condition.append(" AND -custom_matchSource:8 ");
+        }
 
         return fq_condition.toString();
     }
