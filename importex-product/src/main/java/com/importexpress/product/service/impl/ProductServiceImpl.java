@@ -115,33 +115,18 @@ public class ProductServiceImpl implements ProductService {
                 && !param.getCatidList().isEmpty()) {
             catidList = param.getCatidList();
         } else {
-            if ("1037012".equals(param.getCatid())) {
-                catidList.add("1037012");
-                catidList.add("1037011");
-                catidList.add("1037648");
-                catidList.add("1042840");
-                catidList.add("1042841");
-                catidList.add("1037010");
-                catidList.add("1037009");
-                catidList.add("1037011");
-                catidList.add("127430004");
-            } else if ("1037192".equals(param.getCatid())) {
-                catidList.add("1037192");
-                catidList.add("1042754");
-                catidList.add("1042754");
-            } else if ("1037004".equals(param.getCatid())) {
-                catidList.add("1037004");
-                catidList.add("919987");
-                catidList.add("127430003");
-            } else {
-                catidList.add(param.getCatid());
-            }
+            catidList.add(param.getCatid());
+            catidList.addAll(getCatidList(param));
         }
 
         List<Criteria> criteriaList = new ArrayList<Criteria>();
         for (String catid : catidList) {
             Criteria c1 = null;
-            c1 = c1.where("path_catid").regex("^.*" + catid + ".*$");
+            c1 = c1.where("path_catid").regex("^" + catid + ",.*$");
+            criteriaList.add(c1);
+            c1 = c1.where("path_catid").regex("^.*," + catid + ",.*$");
+            criteriaList.add(c1);
+            c1 = c1.where("path_catid").regex("^.*," + catid + "$");
             criteriaList.add(c1);
         }
 
@@ -157,21 +142,21 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
+                    query = new Query(Criteria.where("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
+                query = new Query(Criteria.where("valid").is("1").and("createtime").gte(preMonth));
 
             }
         } else {
@@ -179,45 +164,45 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("valid").is("1").andOperator(criteria));
                 }
 
             } else {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                    query = new Query(Criteria.where("valid").is("1")
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
                     if (StringUtils.isNotBlank(param.getMinPrice())) {
                         if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                            query = new Query(Criteria.where("valid").is("1")
                                     .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                         } else {
-                            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                            query = new Query(Criteria.where("valid").is("1")
                                     .and("$where").is("this.price_import > " + param.getMinPrice()));
                         }
                     } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("valid").is("1")
                                 .and("$where").is("this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+                        query = new Query(Criteria.where("valid").is("1"));
                     }
                 }
 
@@ -228,21 +213,21 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                             .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                query = new Query(Criteria.where("valid").is("1").and("img_check").is("1"));
 
             }
         }
@@ -292,33 +277,18 @@ public class ProductServiceImpl implements ProductService {
                 && !param.getCatidList().isEmpty()) {
             catidList = param.getCatidList();
         } else {
-            if ("1037012".equals(param.getCatid())) {
-                catidList.add("1037012");
-                catidList.add("1037011");
-                catidList.add("1037648");
-                catidList.add("1042840");
-                catidList.add("1042841");
-                catidList.add("1037010");
-                catidList.add("1037009");
-                catidList.add("1037011");
-                catidList.add("127430004");
-            } else if ("1037192".equals(param.getCatid())) {
-                catidList.add("1037192");
-                catidList.add("1042754");
-                catidList.add("1042754");
-            } else if ("1037004".equals(param.getCatid())) {
-                catidList.add("1037004");
-                catidList.add("919987");
-                catidList.add("127430003");
-            } else {
-                catidList.add(param.getCatid());
-            }
+            catidList.add(param.getCatid());
+            catidList.addAll(getCatidList(param));
         }
 
         List<Criteria> criteriaList = new ArrayList<Criteria>();
         for (String catid : catidList) {
             Criteria c1 = null;
-            c1 = c1.where("path_catid").regex("^.*" + catid + ".*$");
+            c1 = c1.where("path_catid").regex("^" + catid + ",.*$");
+            criteriaList.add(c1);
+            c1 = c1.where("path_catid").regex("^.*," + catid + ",.*$");
+            criteriaList.add(c1);
+            c1 = c1.where("path_catid").regex("^.*," + catid + "$");
             criteriaList.add(c1);
         }
 
@@ -335,21 +305,21 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()).and("createtime").gte(preMonth));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()).and("createtime").gte(preMonth));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
+                    query = new Query(Criteria.where("valid").is("1").andOperator(criteria).and("createtime").gte(preMonth));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("createtime").gte(preMonth));
+                query = new Query(Criteria.where("valid").is("1").and("createtime").gte(preMonth));
 
             }
         } else {
@@ -357,45 +327,45 @@ public class ProductServiceImpl implements ProductService {
 
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("valid").is("1").andOperator(criteria)
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("valid").is("1").andOperator(criteria));
                 }
 
             } else {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("valid").is("1")
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                    query = new Query(Criteria.where("valid").is("1")
                             .and("$where").is("this.price_import < " + param.getMaxPrice()));
                 } else {
                     if (StringUtils.isNotBlank(param.getMinPrice())) {
                         if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                            query = new Query(Criteria.where("valid").is("1")
                                     .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                         } else {
-                            query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                            query = new Query(Criteria.where("valid").is("1")
                                     .and("$where").is("this.price_import > " + param.getMinPrice()));
                         }
                     } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1")
+                        query = new Query(Criteria.where("valid").is("1")
                                 .and("$where").is("this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1"));
+                        query = new Query(Criteria.where("valid").is("1"));
                     }
                 }
 
@@ -405,21 +375,21 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                             .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                query = new Query(Criteria.where("valid").is("1").and("img_check").is("1"));
 
             }
         }*/
@@ -445,7 +415,7 @@ public class ProductServiceImpl implements ProductService {
             int catidNumm = 0;
             Aggregation customerAgg = Aggregation.newAggregation(
                     //Aggregation.project("catid1","category_name","num","matchSource","valid"),
-                    Aggregation.match(Criteria.where("matchSource").is("8").and("path_catid").regex("^.*" + catid + ".*$").and("valid").is("1")),
+                    Aggregation.match(Criteria.where("matchSource").and("path_catid").regex("^.*" + catid + ".*$").and("valid").is("1")),
                     Aggregation.group("catid1").first("catid1").as("catid")
                             .first("matchSource").as("matchSource").first("valid").as("valid").count().as("num")
             );
@@ -495,7 +465,7 @@ public class ProductServiceImpl implements ProductService {
         List<CatidGroup> list = new ArrayList<>();
         List<CatidGroup> catidGroupList = new ArrayList<>();
         Aggregation customerAgg = Aggregation.newAggregation(
-                Aggregation.match(Criteria.where("matchSource").is("8").and("valid").is("1").andOperator(criteria)),
+                Aggregation.match(Criteria.where("valid").is("1").andOperator(criteria)),
                 Aggregation.group("path_catid").first("path_catid").as("catid")
                         .count().as("num")
         );
@@ -702,36 +672,7 @@ public class ProductServiceImpl implements ProductService {
             catidList = param.getCatidList();
         } else {
             catidList.add(param.getCatid());
-            if ("1813".equals(param.getCatid())) {
-                catidList.add("311");
-                catidList.add("1501");
-                catidList.add("125386001");
-                catidList.add("201161703");
-                catidList.add("125372003");
-            } else if ("10165".equals(param.getCatid())) {
-                catidList.add("10166");
-                catidList.add("54");
-                catidList.add("312");
-            } else if ("97".equals(param.getCatid())) {
-                catidList.add("130822220");
-                catidList.add("3007");
-            } else if ("5".equals(param.getCatid())) {
-                catidList.add("6");
-                catidList.add("13");
-                catidList.add("15");
-                catidList.add("96");
-                catidList.add("68");
-                catidList.add("19999");
-                catidList.add("65");
-            } else if ("7".equals(param.getCatid())) {
-                catidList.add("72");
-                catidList.add("67");
-                catidList.add("70");
-            } else if ("58".equals(param.getCatid())) {
-                catidList.add("59");
-                catidList.add("55");
-                catidList.add("4");
-            }
+            catidList.addAll(getCatidList(param));
         }
 
 
@@ -815,21 +756,21 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                             .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                query = new Query(Criteria.where("valid").is("1").and("img_check").is("1"));
 
             }
         }*/
@@ -878,36 +819,7 @@ public class ProductServiceImpl implements ProductService {
             catidList = param.getCatidList();
         } else {
             catidList.add(param.getCatid());
-            if ("1813".equals(param.getCatid())) {
-                catidList.add("311");
-                catidList.add("1501");
-                catidList.add("125386001");
-                catidList.add("201161703");
-                catidList.add("125372003");
-            } else if ("10165".equals(param.getCatid())) {
-                catidList.add("10166");
-                catidList.add("54");
-                catidList.add("312");
-            } else if ("97".equals(param.getCatid())) {
-                catidList.add("130822220");
-                catidList.add("3007");
-            } else if ("5".equals(param.getCatid())) {
-                catidList.add("6");
-                catidList.add("13");
-                catidList.add("15");
-                catidList.add("96");
-                catidList.add("68");
-                catidList.add("19999");
-                catidList.add("65");
-            } else if ("7".equals(param.getCatid())) {
-                catidList.add("72");
-                catidList.add("67");
-                catidList.add("70");
-            } else if ("58".equals(param.getCatid())) {
-                catidList.add("59");
-                catidList.add("55");
-                catidList.add("4");
-            }
+            catidList.addAll(getCatidList(param));
         }
 
         List<Criteria> criteriaList = new ArrayList<Criteria>();
@@ -991,21 +903,21 @@ public class ProductServiceImpl implements ProductService {
             if (StringUtils.isNotBlank(param.getCatid())) {
                 if (StringUtils.isNotBlank(param.getMinPrice())) {
                     if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice() + " && this.price_import < " + param.getMaxPrice()));
                     } else {
-                        query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                        query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                                 .and("$where").is("this.price_import > " + param.getMinPrice()));
                     }
                 } else if (StringUtils.isNotBlank(param.getMaxPrice())) {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria)
+                    query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria)
                             .and("$where").is("&& this.price_import < " + param.getMaxPrice()));
                 } else {
-                    query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1").andOperator(criteria));
+                    query = new Query(Criteria.where("valid").is("1").and("img_check").is("1").andOperator(criteria));
                 }
 
             } else {
-                query = new Query(Criteria.where("matchSource").is("8").and("valid").is("1").and("img_check").is("1"));
+                query = new Query(Criteria.where("valid").is("1").and("img_check").is("1"));
 
             }
         }*/
@@ -1021,6 +933,57 @@ public class ProductServiceImpl implements ProductService {
         Date lastMonth = ca.getTime(); //结果
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
         return sf.format(lastMonth);
+    }
+
+    private List<String> getCatidList(SearchParam param) {
+        List<String> catidList = new ArrayList<>();
+        if ("1037012".equals(param.getCatid())) {
+            catidList.add("1037011");
+            catidList.add("1037648");
+            catidList.add("1042840");
+            catidList.add("1042841");
+            catidList.add("1037010");
+            catidList.add("1037009");
+            catidList.add("1037011");
+            catidList.add("127430004");
+        } else if ("1037192".equals(param.getCatid())) {
+            catidList.add("1042754");
+            catidList.add("1042754");
+        } else if ("1037004".equals(param.getCatid())) {
+            catidList.add("919987");
+            catidList.add("127430003");
+        }
+        if ("1813".equals(param.getCatid())) {
+            catidList.add("311");
+            catidList.add("1501");
+            catidList.add("125386001");
+            catidList.add("201161703");
+            catidList.add("125372003");
+        } else if ("10165".equals(param.getCatid())) {
+            catidList.add("10166");
+            catidList.add("54");
+            catidList.add("312");
+        } else if ("97".equals(param.getCatid())) {
+            catidList.add("130822220");
+            catidList.add("3007");
+        } else if ("5".equals(param.getCatid())) {
+            catidList.add("6");
+            catidList.add("13");
+            catidList.add("15");
+            catidList.add("96");
+            catidList.add("68");
+            catidList.add("19999");
+            catidList.add("65");
+        } else if ("7".equals(param.getCatid())) {
+            catidList.add("72");
+            catidList.add("67");
+            catidList.add("70");
+        } else if ("58".equals(param.getCatid())) {
+            catidList.add("59");
+            catidList.add("55");
+            catidList.add("4");
+        }
+        return catidList;
     }
 
 
