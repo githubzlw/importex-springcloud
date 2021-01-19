@@ -15,6 +15,7 @@ import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.FacetField.Count;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.ServletContext;
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		//facet结果集
 		List<CategoryWrap> categorys = facetCategory(facetFields, catidList, param);
 
+		if (selectedList == null) {
+			selectedList = new ArrayList<>();
+		}
 		List<CategoryWrap> categoryWrapList = getOtherCategories(param, selectedList);
 		categorys.addAll(categoryWrapList);
 
@@ -354,7 +358,8 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 	}
 
 	private List getOtherCategories(SearchParam param, List<String> catidList) {
-		catidList.add(param.getCatid());
+
+
 		List<CategoryWrap> categorys = new ArrayList<>();
 		List<Category> categoryList = getCategoriesByIds(param.getSite());
 		for (Category category : categoryList) {
