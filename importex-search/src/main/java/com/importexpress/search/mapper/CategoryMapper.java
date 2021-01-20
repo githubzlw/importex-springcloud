@@ -9,10 +9,7 @@ package com.importexpress.search.mapper;
 
 import com.importexpress.search.pojo.Category;
 import com.importexpress.search.pojo.SearchWordWrap;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -47,6 +44,25 @@ public interface CategoryMapper {
 	@Results({
 			@Result(column = "key_word", property = "keyWord"),
 			@Result(column = "path", property = "path")
-			})
+	})
 	List<SearchWordWrap> getRecommendedWords();
+
+	/**
+	 * 查询
+	 */
+	@Select({
+			"<script>" +
+					"select id,category_id,en_name,path,lv " +
+					"from 1688_category where category_id in " +
+					"<foreach collection='ids' item='item' open='(' separator=',' close=')'>" +
+					"#{item}" +
+					"</foreach>" +
+					"</script>"
+	})
+	@Results({@Result(column = "id", property = "id"),
+			@Result(column = "category_id", property = "catid"),
+			@Result(column = "path", property = "path"),
+			@Result(column = "en_name", property = "name"),
+			@Result(column = "lv", property = "level")})
+	List<Category> getCategoriesByIds(@Param("ids") List<String> ids);
 }
