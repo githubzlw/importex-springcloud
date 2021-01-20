@@ -953,7 +953,7 @@ public class ProductServiceImpl implements ProductService {
             catidList.add("919987");
             catidList.add("127430003");
         }
-        if ("1813".equals(param.getCatid())) {
+        if ("1813".equals(param.getCatid()) && param.getSite() == 1) {
             catidList.add("311");
             catidList.add("1501");
             catidList.add("125386001");
