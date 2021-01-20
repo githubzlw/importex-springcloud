@@ -50,19 +50,22 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		//facet结果集
 		List<CategoryWrap> categorys = facetCategory(facetFields, catidList, param);
 
-		if (param.getSite() == 2 || param.getSite() == 4) {
-			if ("122584001".equals(param.getCatid())
-					|| "9210134".equals(param.getCatid())
-					|| "9110131".equals(param.getCatid())
-					|| "121776006".equals(param.getCatid())) {
-				if (CollectionUtils.isEmpty(selectedList)) {
-					selectedList = new ArrayList<>();
-				}
-				selectedList.add(param.getCatid());
-			}
-			List<CategoryWrap> categoryWrapList = getOtherCategories(param, selectedList);
-			categorys.addAll(categoryWrapList);
+		if ("1813,311,1501,125386001,201161703,125372003".equals(param.getCatid())) {
+			param.setCatid("1818031101501");
 		}
+		if ("122584001".equals(param.getCatid())
+				|| "9210134".equals(param.getCatid())
+				|| "9110131".equals(param.getCatid())
+				|| "121776006".equals(param.getCatid())
+				|| "1818031101501".equals(param.getCatid())) {
+			if (CollectionUtils.isEmpty(selectedList)) {
+				selectedList = new ArrayList<>();
+			}
+			selectedList.add(param.getCatid());
+		}
+		List<CategoryWrap> categoryWrapList = getOtherCategories(param, selectedList);
+		categorys.addAll(categoryWrapList);
+
 
 		//子类类别集合
 		List<CategoryWrap> dealCategoryChildren = dealCategoryChildren(categorys, selectedList);
@@ -368,114 +371,118 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 	private List getOtherCategories(SearchParam param, List<String> catidList) {
 
 		List<CategoryWrap> categorys = new ArrayList<>();
-		List<Category> categoryList = getCategoriesByIds(param.getSite());
-		for (Category category : categoryList) {
-			CategoryWrap categoryWrap = new CategoryWrap();
-			categoryWrap.setId(category.getCatid());
-			categoryWrap.setName(category.getName());
-			//categoryWrap.setParentCategory("121828001");
-			categoryWrap.setLevel(category.getLevel());
-			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=" + category.getCatid());
-			if (catidList.contains(category.getCatid())) {
-				categoryWrap.setSelected(1);
-			} else {
-				categoryWrap.setSelected(0);
-			}
-			if ("9410061".equals(category.getCatid())
-					|| "9410062".equals(category.getCatid())
-					|| "9410063".equals(category.getCatid())
-					|| "9410064".equals(category.getCatid())
-					|| "9410065".equals(category.getCatid())
-					|| "9410066".equals(category.getCatid())
-					|| "9410067".equals(category.getCatid())
-					|| "9410068".equals(category.getCatid())
-			) {
-				categoryWrap.setParentCategory("9210054");
-				categoryWrap.setLevel(2);
-			} else if ("9410069".equals(category.getCatid())
-					|| "9410070".equals(category.getCatid())
-					|| "9410071".equals(category.getCatid())
-					|| "9410072".equals(category.getCatid())
-					|| "9410073".equals(category.getCatid())
-					|| "9410074".equals(category.getCatid())
-					|| "9410075".equals(category.getCatid())
-					|| "9410076".equals(category.getCatid())
-					|| "9410077".equals(category.getCatid())
-					|| "9410078".equals(category.getCatid())
-					|| "9410079".equals(category.getCatid())
-					|| "9410080".equals(category.getCatid())
-					|| "9410081".equals(category.getCatid())
-					|| "9410082".equals(category.getCatid())
-					|| "9410083".equals(category.getCatid())
-			) {
-				categoryWrap.setParentCategory("9210052");
-				categoryWrap.setLevel(2);
-			} else if ("9410084".equals(category.getCatid())
-					|| "9410085".equals(category.getCatid())
-					|| "9410086".equals(category.getCatid())
-					|| "9410087".equals(category.getCatid())
-					|| "9410088".equals(category.getCatid())
-					|| "9410089".equals(category.getCatid())
-					|| "9410090".equals(category.getCatid())
-					|| "9410091".equals(category.getCatid())
-					|| "9410092".equals(category.getCatid())
-					|| "9410093".equals(category.getCatid())
-					|| "9410094".equals(category.getCatid())
-					|| "9410095".equals(category.getCatid())
-					|| "9410096".equals(category.getCatid())
-					|| "9410097".equals(category.getCatid())
-			) {
-				categoryWrap.setParentCategory("9210053");
-				categoryWrap.setLevel(2);
-			} else if ("9410123".equals(category.getCatid())
-					|| "9410124".equals(category.getCatid())
-					|| "9410125".equals(category.getCatid())
-					|| "9410127".equals(category.getCatid())
-					|| "9410128".equals(category.getCatid())
+		if (param.getSite() == 2 || param.getSite() == 4) {
+			List<Category> categoryList = getCategoriesByIds(param.getSite());
+			for (Category category : categoryList) {
+				CategoryWrap categoryWrap = new CategoryWrap();
+				categoryWrap.setId(category.getCatid());
+				categoryWrap.setName(category.getName());
+				//categoryWrap.setParentCategory("121828001");
+				categoryWrap.setLevel(category.getLevel());
+				categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=" + category.getCatid());
+				if (catidList.contains(category.getCatid())) {
+					categoryWrap.setSelected(1);
+				} else {
+					categoryWrap.setSelected(0);
+				}
+				if ("9410061".equals(category.getCatid())
+						|| "9410062".equals(category.getCatid())
+						|| "9410063".equals(category.getCatid())
+						|| "9410064".equals(category.getCatid())
+						|| "9410065".equals(category.getCatid())
+						|| "9410066".equals(category.getCatid())
+						|| "9410067".equals(category.getCatid())
+						|| "9410068".equals(category.getCatid())
+				) {
+					categoryWrap.setParentCategory("9210054");
+					categoryWrap.setLevel(2);
+				} else if ("9410069".equals(category.getCatid())
+						|| "9410070".equals(category.getCatid())
+						|| "9410071".equals(category.getCatid())
+						|| "9410072".equals(category.getCatid())
+						|| "9410073".equals(category.getCatid())
+						|| "9410074".equals(category.getCatid())
+						|| "9410075".equals(category.getCatid())
+						|| "9410076".equals(category.getCatid())
+						|| "9410077".equals(category.getCatid())
+						|| "9410078".equals(category.getCatid())
+						|| "9410079".equals(category.getCatid())
+						|| "9410080".equals(category.getCatid())
+						|| "9410081".equals(category.getCatid())
+						|| "9410082".equals(category.getCatid())
+						|| "9410083".equals(category.getCatid())
+				) {
+					categoryWrap.setParentCategory("9210052");
+					categoryWrap.setLevel(2);
+				} else if ("9410084".equals(category.getCatid())
+						|| "9410085".equals(category.getCatid())
+						|| "9410086".equals(category.getCatid())
+						|| "9410087".equals(category.getCatid())
+						|| "9410088".equals(category.getCatid())
+						|| "9410089".equals(category.getCatid())
+						|| "9410090".equals(category.getCatid())
+						|| "9410091".equals(category.getCatid())
+						|| "9410092".equals(category.getCatid())
+						|| "9410093".equals(category.getCatid())
+						|| "9410094".equals(category.getCatid())
+						|| "9410095".equals(category.getCatid())
+						|| "9410096".equals(category.getCatid())
+						|| "9410097".equals(category.getCatid())
+				) {
+					categoryWrap.setParentCategory("9210053");
+					categoryWrap.setLevel(2);
+				} else if ("9410123".equals(category.getCatid())
+						|| "9410124".equals(category.getCatid())
+						|| "9410125".equals(category.getCatid())
+						|| "9410127".equals(category.getCatid())
+						|| "9410128".equals(category.getCatid())
 
-			) {
-				categoryWrap.setParentCategory("9310121");
-				categoryWrap.setLevel(2);
-			} else if ("9410117".equals(category.getCatid())
-					|| "9410120".equals(category.getCatid())
-					|| "9410114".equals(category.getCatid())
-					|| "9410126".equals(category.getCatid())
-					|| "9410118".equals(category.getCatid())
-					|| "9410119".equals(category.getCatid())
-					|| "9410116".equals(category.getCatid())
+				) {
+					categoryWrap.setParentCategory("9310121");
+					categoryWrap.setLevel(2);
+				} else if ("9410117".equals(category.getCatid())
+						|| "9410120".equals(category.getCatid())
+						|| "9410114".equals(category.getCatid())
+						|| "9410126".equals(category.getCatid())
+						|| "9410118".equals(category.getCatid())
+						|| "9410119".equals(category.getCatid())
+						|| "9410116".equals(category.getCatid())
 
-			) {
-				categoryWrap.setParentCategory("9210134");
-				categoryWrap.setLevel(2);
-			} else if ("9210054".equals(category.getCatid())
-					|| "9210052".equals(category.getCatid())
-					|| "9210053".equals(category.getCatid())
-					|| "9310121".equals(category.getCatid())
-					|| "9210134".equals(category.getCatid())
-					|| "9110131".equals(category.getCatid())
-			) {
-				categoryWrap.setParentCategory("0");
-				categoryWrap.setLevel(1);
-			} else {
-				String path = category.getPath();
-				if (StringUtils.isNotBlank(path)) {
-					String[] pathString = path.split(",");
-					if (pathString.length == 1) {
-						categoryWrap.setParentCategory("0");
-					} else if (pathString.length == 2 || pathString.length == 3) {
-						categoryWrap.setParentCategory(pathString[pathString.length - 2]);
-					} else {
-						categoryWrap.setParentCategory("0");
+				) {
+					categoryWrap.setParentCategory("9210134");
+					categoryWrap.setLevel(2);
+				} else if ("9210054".equals(category.getCatid())
+						|| "9210052".equals(category.getCatid())
+						|| "9210053".equals(category.getCatid())
+						|| "9310121".equals(category.getCatid())
+						|| "9210134".equals(category.getCatid())
+						|| "9110131".equals(category.getCatid())
+				) {
+					categoryWrap.setParentCategory("0");
+					categoryWrap.setLevel(1);
+				} else {
+					String path = category.getPath();
+					if (StringUtils.isNotBlank(path)) {
+						String[] pathString = path.split(",");
+						if (pathString.length == 1) {
+							categoryWrap.setParentCategory("0");
+						} else if (pathString.length == 2 || pathString.length == 3) {
+							categoryWrap.setParentCategory(pathString[pathString.length - 2]);
+						} else {
+							categoryWrap.setParentCategory("0");
+						}
 					}
 				}
-			}
 //			/categoryWrap.setCount(20);
 
-			categorys.add(categoryWrap);
+				categorys.add(categoryWrap);
+			}
 		}
+
+		CategoryWrap categoryWrap = new CategoryWrap();
 		// 自定义catid
 		if (param.getSite() == 4) {
-			CategoryWrap categoryWrap = new CategoryWrap();
+
 			categoryWrap.setId("122584001");
 			categoryWrap.setName("Cat Litter ");
 			categoryWrap.setParentCategory("0");
@@ -501,7 +508,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			categorys.add(categoryWrap);
 
 		} else if (param.getSite() == 2) {
-			CategoryWrap categoryWrap = new CategoryWrap();
+			categoryWrap = new CategoryWrap();
 			categoryWrap.setId("9210134");
 			categoryWrap.setName("Shoes & Socks");
 			categoryWrap.setParentCategory("0");
@@ -525,6 +532,98 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 				categoryWrap.setSelected(0);
 			}
 			categorys.add(categoryWrap);
+		} else if (param.getSite() == 1) {
+			categoryWrap = new CategoryWrap();
+			categoryWrap.setId("1818031101501");
+			categoryWrap.setName("Toys, Kids & Babies");
+			categoryWrap.setParentCategory("0");
+			categoryWrap.setLevel(1);
+			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=1818031101501");
+			if (catidList.contains("1818031101501")
+					|| catidList.contains("9210054")
+					|| catidList.contains("9210052")
+					|| catidList.contains("9210053")
+					|| catidList.contains("9210107")
+					|| catidList.contains("9210134")
+					|| catidList.contains("9110131")) {
+				categoryWrap.setSelected(1);
+			} else {
+				categoryWrap.setSelected(0);
+			}
+			categorys.add(categoryWrap);
+			categoryWrap = new CategoryWrap();
+			categoryWrap.setId("9210054");
+			categoryWrap.setName("Baby(0-12M)");
+			categoryWrap.setParentCategory("1818031101501");
+			categoryWrap.setLevel(2);
+			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=9210054");
+			if (catidList.contains("9210054")) {
+				categoryWrap.setSelected(1);
+			} else {
+				categoryWrap.setSelected(0);
+			}
+			categorys.add(categoryWrap);
+			categoryWrap = new CategoryWrap();
+			categoryWrap.setId("9210052");
+			categoryWrap.setName("Toddler(1-6T)");
+			categoryWrap.setParentCategory("1818031101501");
+			categoryWrap.setLevel(2);
+			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=9210052");
+			if (catidList.contains("9210052")) {
+				categoryWrap.setSelected(1);
+			} else {
+				categoryWrap.setSelected(0);
+			}
+			categorys.add(categoryWrap);
+			categoryWrap = new CategoryWrap();
+			categoryWrap.setId("9210053");
+			categoryWrap.setName("Kids(6-14T)");
+			categoryWrap.setParentCategory("1818031101501");
+			categoryWrap.setLevel(2);
+			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=9210053");
+			if (catidList.contains("9210053")) {
+				categoryWrap.setSelected(1);
+			} else {
+				categoryWrap.setSelected(0);
+			}
+			categorys.add(categoryWrap);
+			categoryWrap = new CategoryWrap();
+			categoryWrap.setId("9210107");
+			categoryWrap.setName("Baby Product");
+			categoryWrap.setParentCategory("1818031101501");
+			categoryWrap.setLevel(2);
+			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=9210107");
+			if (catidList.contains("9210107")) {
+				categoryWrap.setSelected(1);
+			} else {
+				categoryWrap.setSelected(0);
+			}
+			categorys.add(categoryWrap);
+			categoryWrap = new CategoryWrap();
+			categoryWrap.setId("9210134");
+			categoryWrap.setName("Shoes & Socks");
+			categoryWrap.setParentCategory("1818031101501");
+			categoryWrap.setLevel(2);
+			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=9210134");
+			if (catidList.contains("9210134")) {
+				categoryWrap.setSelected(1);
+			} else {
+				categoryWrap.setSelected(0);
+			}
+			categorys.add(categoryWrap);
+			categoryWrap = new CategoryWrap();
+			categoryWrap.setId("9110131");
+			categoryWrap.setName("Toys");
+			categoryWrap.setParentCategory("1818031101501");
+			categoryWrap.setLevel(2);
+			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=9110131");
+			if (catidList.contains("9110131")) {
+				categoryWrap.setSelected(1);
+			} else {
+				categoryWrap.setSelected(0);
+			}
+			categorys.add(categoryWrap);
+
 		}
 		return categorys;
 

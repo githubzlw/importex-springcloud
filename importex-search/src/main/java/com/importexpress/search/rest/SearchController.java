@@ -62,6 +62,12 @@ public class SearchController {
         try {
             //参数处理
             param = verifySearchParameter.verification(request, param);
+
+            if ("1813,311,1501,125386001,201161703,125372003".equals(param.getCatid())) {
+                param.setFactCategory(true);
+                param.setFactPvid(true);
+            }
+
             //请求solr获取结果
             SearchResultWrap wrap = service.productSerach(param);
 
