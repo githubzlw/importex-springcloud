@@ -227,6 +227,7 @@ public class UrlUtil {
      */
     public JSONObject callUrlByGet(String url) throws IOException {
 
+        log.info("callUrlByGet:{}", url);
         Request request = new Request.Builder().url(url).build();
 
         Response response = client.newCall(request).execute();
@@ -244,13 +245,13 @@ public class UrlUtil {
      * @return
      * @throws IOException
      */
-    public boolean isAccessURL(String url)  {
+    public boolean isAccessURL(String url) {
 
         Request request = new Request.Builder().url(url).build();
         try {
             if (client.newCall(request).execute().isSuccessful()) {
                 return true;
-            }else{
+            } else {
                 return false;
             }
         } catch (IOException e) {
@@ -261,16 +262,17 @@ public class UrlUtil {
 
     /**
      * do post
+     *
      * @param url
      * @param tp
      * @param fileName
      * @return
      * @throws IOException
      */
-    public JSONObject doPostForImgUpload(String url, String tp, String fileName, String key,String secret) throws IOException {
-        log.info("url:{} tp:{} fileName:{}",url,tp,fileName);
+    public JSONObject doPostForImgUpload(String url, String tp, String fileName, String key, String secret) throws IOException {
+        log.info("url:{} tp:{} fileName:{}", url, tp, fileName);
 
-        File file=new File(fileName);
+        File file = new File(fileName);
         // .addFormDataPart("imgcode", file.getName(),
         //                        RequestBody.create(MediaType.parse("image/jpeg"), file))
         RequestBody body = RequestBody.create(MediaType.parse("image/*"), file);
@@ -288,7 +290,7 @@ public class UrlUtil {
         // Create a new Call object with put method.
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {
-            log.error("response:{}",response);
+            log.error("response:{}", response);
 
             throw new IOException("doPostForImgUpload's response is not successful");
         }
@@ -300,12 +302,16 @@ public class UrlUtil {
 
     /**
      * callUrlByPut
+     *
      * @param url
      * @param params
      * @return
      * @throws IOException
      */
     public JSONObject callUrlByPut(String url, Map<String, String> params) throws IOException {
+
+        log.info("callUrlByPut:{},params:{}", url, params);
+
         FormBody.Builder builder = new FormBody.Builder();
         params.forEach((k, v) -> {
             if (v != null) builder.add(k, v);
@@ -322,12 +328,15 @@ public class UrlUtil {
 
     /**
      * callUrlByPost
+     *
      * @param url
      * @param params
      * @return
      * @throws IOException
      */
     public JSONObject callUrlByPost(String url, Map<String, String> params) throws IOException {
+
+        log.info("callUrlByPost:{},params:{}", url, params);
 
         FormBody.Builder builder = new FormBody.Builder();
         params.forEach((k, v) -> {
@@ -345,6 +354,7 @@ public class UrlUtil {
 
     /**
      * call url by retry times
+     *
      * @param url
      * @param request
      * @return
@@ -352,21 +362,21 @@ public class UrlUtil {
      */
     @Nullable
     private JSONObject executeCall(String url, Request request) throws IOException {
-        Response response =null;
-        try{
+        Response response = null;
+        try {
             response = client.newCall(request).execute();
-        }catch(IOException ioe){
+        } catch (IOException ioe) {
             //重试15次（每次1秒）
             try {
-                int count=0;
-                while(true){
+                int count = 0;
+                while (true) {
                     Thread.sleep(1000);
                     try {
                         response = client.newCall(request).execute();
                     } catch (IOException e) {
-                        log.warn("do retry ,times=[{}]",count);
+                        log.warn("do retry ,times=[{}]", count);
                     }
-                    if(count>15){
+                    if (count > 15) {
                         break;
                     }
                     ++count;
@@ -375,7 +385,7 @@ public class UrlUtil {
             }
         }
 
-        if (response==null || !response.isSuccessful()) {
+        if (response == null || !response.isSuccessful()) {
             log.error("url:[{}]", url);
             throw new IOException("call url is not successful");
         }
@@ -386,15 +396,16 @@ public class UrlUtil {
 
     /**
      * addParamToBuilder
+     *
      * @param map
      * @return
      */
-    private FormBody.Builder addParamToBuilder( Map<String,Object> map){
-        FormBody.Builder builder=new FormBody.Builder();
-        if(map!=null){
-            Iterator<Map.Entry<String,Object>> ite= map.entrySet().iterator();
-            for(;ite.hasNext();){
-                Map.Entry<String,Object> kv=ite.next();
+    private FormBody.Builder addParamToBuilder(Map<String, Object> map) {
+        FormBody.Builder builder = new FormBody.Builder();
+        if (map != null) {
+            Iterator<Map.Entry<String, Object>> ite = map.entrySet().iterator();
+            for (; ite.hasNext(); ) {
+                Map.Entry<String, Object> kv = ite.next();
                 builder.add(kv.getKey(), kv.getValue().toString());
             }
         }

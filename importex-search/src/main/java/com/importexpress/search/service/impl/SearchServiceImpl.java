@@ -809,8 +809,8 @@ public class SearchServiceImpl implements SearchService {
 
             String catid1 = "0";
             String catid2 = "0";
-            if (StringUtils.isNotBlank(catid) && catid.indexOf(" ") > -1) {
-                String[] catids = catid.split(" ");
+            if (StringUtils.isNotBlank(catid) && catid.indexOf(",") > -1) {
+                String[] catids = catid.split(",");
                 catid1 = catids[0];
                 catid2 = catids[1];
             }
