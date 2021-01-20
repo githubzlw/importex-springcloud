@@ -51,6 +51,15 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		List<CategoryWrap> categorys = facetCategory(facetFields, catidList, param);
 
 		if (param.getSite() == 2 || param.getSite() == 4) {
+			if ("122584001".equals(param.getCatid())
+					|| "9210134".equals(param.getCatid())
+					|| "9110131".equals(param.getCatid())
+					|| "121776006".equals(param.getCatid())) {
+				if (CollectionUtils.isEmpty(selectedList)) {
+					selectedList = new ArrayList<>();
+				}
+				selectedList.add(param.getCatid());
+			}
 			List<CategoryWrap> categoryWrapList = getOtherCategories(param, selectedList);
 			categorys.addAll(categoryWrapList);
 		}
@@ -287,7 +296,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			//list.add("9110045");
 			//list.add("9110046");
 			//list.add("121786003");
-			//list.add("121776006");
+			list.add("121776006");
 		}
 		// kids
 		else if (site == 2) {
@@ -367,7 +376,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			//categoryWrap.setParentCategory("121828001");
 			categoryWrap.setLevel(category.getLevel());
 			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=" + category.getCatid());
-			if (catidList.contains(category.getCatid()) || category.getCatid().equals(param.getCatid())) {
+			if (catidList.contains(category.getCatid())) {
 				categoryWrap.setSelected(1);
 			} else {
 				categoryWrap.setSelected(0);
@@ -472,12 +481,25 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			categoryWrap.setParentCategory("0");
 			categoryWrap.setLevel(1);
 			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=122584001");
-			if (catidList.contains("122584001") || "122584001".equals(param.getCatid())) {
+			if (catidList.contains("122584001")) {
 				categoryWrap.setSelected(1);
 			} else {
 				categoryWrap.setSelected(0);
 			}
 			categorys.add(categoryWrap);
+			categoryWrap = new CategoryWrap();
+			categoryWrap.setId("121776006");
+			categoryWrap.setName("Others ");
+			categoryWrap.setParentCategory("0");
+			categoryWrap.setLevel(1);
+			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=121776006");
+			if (catidList.contains("121776006")) {
+				categoryWrap.setSelected(1);
+			} else {
+				categoryWrap.setSelected(0);
+			}
+			categorys.add(categoryWrap);
+
 		} else if (param.getSite() == 2) {
 			CategoryWrap categoryWrap = new CategoryWrap();
 			categoryWrap.setId("9210134");
@@ -485,7 +507,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			categoryWrap.setParentCategory("0");
 			categoryWrap.setLevel(1);
 			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=9210134");
-			if (catidList.contains("9210134") || "9210134".equals(param.getCatid())) {
+			if (catidList.contains("9210134")) {
 				categoryWrap.setSelected(1);
 			} else {
 				categoryWrap.setSelected(0);
@@ -497,7 +519,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			categoryWrap.setParentCategory("0");
 			categoryWrap.setLevel(1);
 			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=9110131");
-			if (catidList.contains("9110131") || "9110131".equals(param.getCatid())) {
+			if (catidList.contains("9110131")) {
 				categoryWrap.setSelected(1);
 			} else {
 				categoryWrap.setSelected(0);
