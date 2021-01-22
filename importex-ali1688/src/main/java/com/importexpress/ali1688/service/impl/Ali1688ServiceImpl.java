@@ -68,9 +68,9 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     private final static String IMG_UPLOAD_TAOBAO_API_1 = "%staobao/api_call.php";
 
     /**
-     * image search API URL
+     * image search API URL(图片搜索)
      */
-    private final static String IMG_SEARCH_TAOBAO_API = "%staobao/api_call.php?imgid=%s&lang=en&key=%s&secret=%s&api_name=item_search_img&cat=";
+    private final static String IMG_SEARCH_TAOBAO_API = "%staobao/item_search_img?imgid=%s&lang=en&key=%s&secret=%s";
 
 
     private final static String URL_TAOBAO_ITEM_DETAILS = "https://api.onebound.cn/taobao/api_call.php?is_promotion=1&api_name=item_get&lang=en&key=%s&secret=%s&num_iid=%s";
