@@ -539,18 +539,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 				categoryWrap.setSelected(0);
 			}
 			categorys.add(categoryWrap);
-			categoryWrap = new CategoryWrap();
-			categoryWrap.setId("121776006");
-			categoryWrap.setName("Others ");
-			categoryWrap.setParentCategory("0");
-			categoryWrap.setLevel(1);
-			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=121776006");
-			if (catidList.contains("121776006")) {
-				categoryWrap.setSelected(1);
-			} else {
-				categoryWrap.setSelected(0);
-			}
-			categorys.add(categoryWrap);
+
 
 		} else if (param.getSite() == 2) {
 			categoryWrap = new CategoryWrap();
