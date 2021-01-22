@@ -69,6 +69,51 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 
 		//子类类别集合
 		List<CategoryWrap> dealCategoryChildren = dealCategoryChildren(categorys, selectedList);
+		for (CategoryWrap categoryWrap : dealCategoryChildren) {
+			if ("122584001".equals(categoryWrap.getId())) {
+				categoryWrap.setName("Cat Litter");
+			} else if ("9210134".equals(categoryWrap.getId())) {
+				categoryWrap.setName("Shoes & Socks");
+			} else if ("9110131".equals(categoryWrap.getId())) {
+				categoryWrap.setName("Toys");
+			} else if ("121776006".equals(categoryWrap.getId())) {
+				categoryWrap.setName("Others");
+			} else if ("1818031101501".equals(categoryWrap.getId())) {
+				categoryWrap.setName("Toys, Kids & Babies");
+			}
+
+			if (!CollectionUtils.isEmpty(categoryWrap.getChilden())) {
+				for (CategoryWrap categoryWrap1 : categoryWrap.getChilden()) {
+					if ("122584001".equals(categoryWrap1.getId())) {
+						categoryWrap1.setName("Cat Litter");
+					} else if ("9210134".equals(categoryWrap1.getId())) {
+						categoryWrap1.setName("Shoes & Socks");
+					} else if ("9110131".equals(categoryWrap1.getId())) {
+						categoryWrap1.setName("Toys");
+					} else if ("121776006".equals(categoryWrap1.getId())) {
+						categoryWrap1.setName("Others");
+					} else if ("1818031101501".equals(categoryWrap1.getId())) {
+						categoryWrap1.setName("Toys, Kids & Babies");
+					}
+					if (!CollectionUtils.isEmpty(categoryWrap1.getChilden())) {
+						for (CategoryWrap categoryWrap2 : categoryWrap1.getChilden()) {
+							if ("122584001".equals(categoryWrap2.getId())) {
+								categoryWrap2.setName("Cat Litter");
+							} else if ("9210134".equals(categoryWrap2.getId())) {
+								categoryWrap2.setName("Shoes & Socks");
+							} else if ("9110131".equals(categoryWrap2.getId())) {
+								categoryWrap2.setName("Toys");
+							} else if ("121776006".equals(categoryWrap2.getId())) {
+								categoryWrap2.setName("Others");
+							} else if ("1818031101501".equals(categoryWrap2.getId())) {
+								categoryWrap2.setName("Toys, Kids & Babies");
+							}
+						}
+					}
+				}
+
+			}
+		}
 
 		if (selectedList.isEmpty()) {
 			return dealCategoryChildren;
