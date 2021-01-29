@@ -38,11 +38,13 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 
 	@Override
 	public List<CategoryWrap> categorys(SearchParam param, List<FacetField> facetFields) {
-		if(facetFields == null) {
+		if (facetFields == null) {
 			return Lists.newArrayList();
 		}
 		//所有类别列表全局变量
 		Map<String, Category> catidList = (Map<String, Category>) application.getAttribute("categorys");
+
+		catidList.remove("9110051");
 
 		//已选择类别
 		List<String> selectedList = selectedCatid(param, catidList);
