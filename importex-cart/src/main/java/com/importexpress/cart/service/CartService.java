@@ -29,7 +29,7 @@ public interface CartService {
      * @param num
      * @return 1:成功 0:失败
      */
-    int addCartItem(SiteEnum site, long userId, String itemId, long num);
+    int addCartItem(SiteEnum site, long userId, String itemId, long num, Integer chk);
 
     /**
      * 获取购物车数据

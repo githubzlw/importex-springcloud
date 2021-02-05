@@ -44,23 +44,23 @@ public class CartServiceTest {
     public void cart1() {
 
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, "554783602333:321628", 1));
+                (1, cartService.addCartItem(SITE, USER_ID, "554783602333:321628", 1,1));
         Assert.assertEquals
                 (1, cartService.delCartItem(SITE, USER_ID, "554783602333:321628"));
 
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, "567465400208:0", 1));
+                (1, cartService.addCartItem(SITE, USER_ID, "567465400208:0", 1,1));
         Assert.assertEquals
                 (1, cartService.delCartItem(SITE, USER_ID, "567465400208:0"));
 
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, "534622289169:324511:32161", 1));
+                (1, cartService.addCartItem(SITE, USER_ID, "534622289169:324511:32161", 1,1));
         Assert.assertEquals
                 (1, cartService.delCartItem(SITE, USER_ID, "534622289169:324511:32161"));
 
 
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, "597742932103:32161:324511",1));
+                (1, cartService.addCartItem(SITE, USER_ID, "597742932103:32161:324511",1,1));
         Assert.assertEquals
                 (1, cartService.delCartItem(SITE, USER_ID, "597742932103:32161:324511"));
 
@@ -101,7 +101,7 @@ public class CartServiceTest {
     @Test
     public void cart4() throws Exception {
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1,1));
         Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
         Assert.assertEquals(314, cart.getItems().get(0).getPri());
@@ -122,9 +122,9 @@ public class CartServiceTest {
     @Test
     public void cart6() throws Exception {
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2,1));
         Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(3, cart.getTotalAmount());
         Assert.assertEquals(1005, cart.getTotalPrice());
@@ -164,13 +164,13 @@ public class CartServiceTest {
         // ITEM_ID3 = "530333452003:32164:324512";
         // ITEM_ID4 = "547188149310:32161:324514";
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 3));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 3,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID4, 4));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID4, 4,1));
 
 
         Cart cart = cartService.getCart(SITE, USER_ID);
@@ -199,13 +199,13 @@ public class CartServiceTest {
         // ITEM_ID3 = "530333452003:32164:324512";
         // ITEM_ID4 = "547188149310:32161:324514";
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 1));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 1,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 2));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 2,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID4, 3));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID4, 3,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 4));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 4,1));
 
 
         Cart cart = cartService.getCart(SITE, USER_ID);
@@ -235,13 +235,13 @@ public class CartServiceTest {
         // ITEM_ID3 = "530333452003:32164:324512";
         // ITEM_ID4 = "547188149310:32161:324514";
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 1));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 1,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID4, 2));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID4, 2,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 3));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 3,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 4));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 4,1));
 
 
         Cart cart = cartService.getCart(SITE, USER_ID);
@@ -268,7 +268,7 @@ public class CartServiceTest {
     @Test
     public void cart11() throws Exception {
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, "100473434:999999", 199));
+                (1, cartService.addCartItem(SITE, USER_ID, "100473434:999999", 199,1));
 
         Cart cart = cartService.getCart(SITE, USER_ID);
         Assert.assertEquals(1, cart.getItems().size());
@@ -293,7 +293,7 @@ public class CartServiceTest {
     @Test
     public void cart12() {
         Assert.assertEquals
-                (1, cartService.addCartItem(SiteEnum.E_PIPE, USER_ID, "567465400208:0", 1));
+                (1, cartService.addCartItem(SiteEnum.E_PIPE, USER_ID, "567465400208:0", 1,1));
         Assert.assertEquals
                 (1, cartService.delCartItem(SiteEnum.E_PIPE, USER_ID, "567465400208:0"));
     }
@@ -303,7 +303,7 @@ public class CartServiceTest {
 
         cartService.delAllCartItem(SiteEnum.KIDS, USER_ID);
         Assert.assertEquals
-                (1, cartService.addCartItem(SiteEnum.KIDS, USER_ID, "521127446329:32161:4502", 1));
+                (1, cartService.addCartItem(SiteEnum.KIDS, USER_ID, "521127446329:32161:4502", 1,1));
 
         Cart cart = cartService.getCart(SiteEnum.KIDS, USER_ID);
         Assert.assertEquals(1,cart.getItems().size());
@@ -311,7 +311,7 @@ public class CartServiceTest {
 
         cartService.delAllCartItem(SiteEnum.IMPORTX, USER_ID);
         Assert.assertEquals
-                (1, cartService.addCartItem(SiteEnum.IMPORTX, USER_ID, "521127446329:32161:4502", 1));
+                (1, cartService.addCartItem(SiteEnum.IMPORTX, USER_ID, "521127446329:32161:4502", 1,1));
 
         cart = cartService.getCart(SiteEnum.IMPORTX, USER_ID);
         Assert.assertEquals(1,cart.getItems().size());
@@ -320,7 +320,7 @@ public class CartServiceTest {
 
         cartService.delAllCartItem(SiteEnum.PETS, USER_ID);
         Assert.assertEquals
-                (1, cartService.addCartItem(SiteEnum.PETS, USER_ID, "521127446329:32161:4502", 1));
+                (1, cartService.addCartItem(SiteEnum.PETS, USER_ID, "521127446329:32161:4502", 1,1));
 
         cart = cartService.getCart(SiteEnum.PETS, USER_ID);
         Assert.assertEquals(1,cart.getItems().size());
@@ -332,7 +332,7 @@ public class CartServiceTest {
     public void cart14() throws Exception {
 
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, "573788831111:32161", 1));
+                (1, cartService.addCartItem(SITE, USER_ID, "573788831111:32161", 1,1));
         Cart cart = cartService.getCart(SITE, USER_ID);
         cart.new CalculatePrice().fillCartItemsPrice();
 
@@ -378,16 +378,16 @@ public class CartServiceTest {
     public void mergeCarts() throws Exception {
 
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2,1));
         long touristId = this.cartService.generateTouristId(SITE);
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, touristId, ITEM_ID2, 3));
+                (1, cartService.addCartItem(SITE, touristId, ITEM_ID2, 3,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, touristId, ITEM_ID1, 4));
+                (1, cartService.addCartItem(SITE, touristId, ITEM_ID1, 4,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, touristId, ITEM_ID3, 10));
+                (1, cartService.addCartItem(SITE, touristId, ITEM_ID3, 10,1));
 
         Assert.assertEquals(2, this.cartService.getCart(SITE, USER_ID).getItems().size());
         Assert.assertEquals(3, this.cartService.getCart(SITE, touristId).getItems().size());
@@ -411,7 +411,7 @@ public class CartServiceTest {
     public void cart15() throws Exception {
 
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, "615252349161:32161", 1));
+                (1, cartService.addCartItem(SITE, USER_ID, "615252349161:32161", 1,1));
         Cart cart = cartService.getCart(SITE, USER_ID);
         List<CartItem> items = cart.getItems();
         cartService.delAllCartItem(SITE, USER_ID);
