@@ -38,11 +38,13 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 
 	@Override
 	public List<CategoryWrap> categorys(SearchParam param, List<FacetField> facetFields) {
-		if(facetFields == null) {
+		if (facetFields == null) {
 			return Lists.newArrayList();
 		}
 		//所有类别列表全局变量
 		Map<String, Category> catidList = (Map<String, Category>) application.getAttribute("categorys");
+
+		catidList.remove("9110051");
 
 		//已选择类别
 		List<String> selectedList = selectedCatid(param, catidList);
@@ -54,7 +56,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			param.setCatid("1818031101501");
 		}
 		if ("122584001".equals(param.getCatid())
-				|| "9210134".equals(param.getCatid())
+				//|| "9210134".equals(param.getCatid())
 				|| "9110131".equals(param.getCatid())
 				|| "121776006".equals(param.getCatid())
 				|| "1818031101501".equals(param.getCatid())) {
@@ -72,9 +74,9 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		for (CategoryWrap categoryWrap : dealCategoryChildren) {
 			if ("122584001".equals(categoryWrap.getId())) {
 				categoryWrap.setName("Cat Litter");
-			} else if ("9210134".equals(categoryWrap.getId())) {
+			} /*else if ("9210134".equals(categoryWrap.getId())) {
 				categoryWrap.setName("Shoes & Socks");
-			} else if ("9110131".equals(categoryWrap.getId())) {
+			} */ else if ("9110131".equals(categoryWrap.getId())) {
 				categoryWrap.setName("Toys");
 			} else if ("121776006".equals(categoryWrap.getId())) {
 				categoryWrap.setName("Others");
@@ -86,9 +88,9 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 				for (CategoryWrap categoryWrap1 : categoryWrap.getChilden()) {
 					if ("122584001".equals(categoryWrap1.getId())) {
 						categoryWrap1.setName("Cat Litter");
-					} else if ("9210134".equals(categoryWrap1.getId())) {
+					} /*else if ("9210134".equals(categoryWrap1.getId())) {
 						categoryWrap1.setName("Shoes & Socks");
-					} else if ("9110131".equals(categoryWrap1.getId())) {
+					}*/ else if ("9110131".equals(categoryWrap1.getId())) {
 						categoryWrap1.setName("Toys");
 					} else if ("121776006".equals(categoryWrap1.getId())) {
 						categoryWrap1.setName("Others");
@@ -99,9 +101,9 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 						for (CategoryWrap categoryWrap2 : categoryWrap1.getChilden()) {
 							if ("122584001".equals(categoryWrap2.getId())) {
 								categoryWrap2.setName("Cat Litter");
-							} else if ("9210134".equals(categoryWrap2.getId())) {
+							} /*else if ("9210134".equals(categoryWrap2.getId())) {
 								categoryWrap2.setName("Shoes & Socks");
-							} else if ("9110131".equals(categoryWrap2.getId())) {
+							} */ else if ("9110131".equals(categoryWrap2.getId())) {
 								categoryWrap2.setName("Toys");
 							} else if ("121776006".equals(categoryWrap2.getId())) {
 								categoryWrap2.setName("Others");
@@ -393,7 +395,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			list.add("9410125");
 			list.add("9410127");
 			list.add("9410128");
-			list.add("9210134");
+			//list.add("9210134");
 			list.add("9410117");
 			list.add("9410120");
 			list.add("9410114");
@@ -485,7 +487,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 				) {
 					categoryWrap.setParentCategory("9310121");
 					categoryWrap.setLevel(2);
-				} else if ("9410117".equals(category.getCatid())
+				}/* else if ("9410117".equals(category.getCatid())
 						|| "9410120".equals(category.getCatid())
 						|| "9410114".equals(category.getCatid())
 						|| "9410126".equals(category.getCatid())
@@ -496,11 +498,11 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 				) {
 					categoryWrap.setParentCategory("9210134");
 					categoryWrap.setLevel(2);
-				} else if ("9210054".equals(category.getCatid())
+				} */ else if ("9210054".equals(category.getCatid())
 						|| "9210052".equals(category.getCatid())
 						|| "9210053".equals(category.getCatid())
 						|| "9310121".equals(category.getCatid())
-						|| "9210134".equals(category.getCatid())
+						//|| "9210134".equals(category.getCatid())
 						|| "9110131".equals(category.getCatid())
 				) {
 					categoryWrap.setParentCategory("0");
@@ -539,21 +541,10 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 				categoryWrap.setSelected(0);
 			}
 			categorys.add(categoryWrap);
-			categoryWrap = new CategoryWrap();
-			categoryWrap.setId("121776006");
-			categoryWrap.setName("Others ");
-			categoryWrap.setParentCategory("0");
-			categoryWrap.setLevel(1);
-			categoryWrap.setUrl("keyword=&srt=default&isFreeShip=2&catid=121776006");
-			if (catidList.contains("121776006")) {
-				categoryWrap.setSelected(1);
-			} else {
-				categoryWrap.setSelected(0);
-			}
-			categorys.add(categoryWrap);
+
 
 		} else if (param.getSite() == 2) {
-			categoryWrap = new CategoryWrap();
+			/*categoryWrap = new CategoryWrap();
 			categoryWrap.setId("9210134");
 			categoryWrap.setName("Shoes & Socks");
 			categoryWrap.setParentCategory("0");
@@ -564,7 +555,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			} else {
 				categoryWrap.setSelected(0);
 			}
-			categorys.add(categoryWrap);
+			categorys.add(categoryWrap);*/
 			categoryWrap = new CategoryWrap();
 			categoryWrap.setId("9110131");
 			categoryWrap.setName("Toys");
@@ -589,7 +580,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 					|| catidList.contains("9210052")
 					|| catidList.contains("9210053")
 					|| catidList.contains("9210107")
-					|| catidList.contains("9210134")
+					//|| catidList.contains("9210134")
 					|| catidList.contains("9110131")) {
 				categoryWrap.setSelected(1);
 			} else {
@@ -644,7 +635,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 				categoryWrap.setSelected(0);
 			}
 			categorys.add(categoryWrap);
-			categoryWrap = new CategoryWrap();
+			/*categoryWrap = new CategoryWrap();
 			categoryWrap.setId("9210134");
 			categoryWrap.setName("Shoes & Socks");
 			categoryWrap.setParentCategory("1818031101501");
@@ -655,7 +646,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			} else {
 				categoryWrap.setSelected(0);
 			}
-			categorys.add(categoryWrap);
+			categorys.add(categoryWrap);*/
 			categoryWrap = new CategoryWrap();
 			categoryWrap.setId("9110131");
 			categoryWrap.setName("Toys");
