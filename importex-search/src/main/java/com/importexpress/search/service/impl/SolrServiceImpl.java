@@ -502,35 +502,40 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
      * @param param
      * @param fq_condition
      */
-    private void importType(SearchParam param,StringBuilder fq_condition){
-        if(param.getSite() == 8){
+    private void importType(SearchParam param, StringBuilder fq_condition){
+        if (param.getSite() == 8) {
             return;
         }
-        fq_condition.append(" AND (");
-        //0 默认全部可搜 1-描述很精彩   2-卖过的   3-精选店铺
-        if(param.getImportType() == 1){
-            fq_condition.append("custom_describe_good_flag:1");
-        }else if(param.getImportType() == 2){
-            fq_condition.append("custom_sold_flag:1");
-        }else if(param.getImportType() == 3){
-            fq_condition.append("custom_shop_type:1");
-        }else{
-            fq_condition.append("custom_searchable:1")
-                    .append(" OR ").append("custom_describe_good_flag:1")
-                    .append(" OR ").append("custom_sold_flag:1")
-                    .append(" OR ").append("custom_shop_type:1");
+        if (param.getSite() == 1) {
+            fq_condition.append(" AND (");
+            //0 默认全部可搜 1-描述很精彩   2-卖过的   3-精选店铺
+            if (param.getImportType() == 1) {
+                fq_condition.append("custom_describe_good_flag:1");
+            } else if (param.getImportType() == 2) {
+                fq_condition.append("custom_sold_flag:1");
+            } else if (param.getImportType() == 3) {
+                fq_condition.append("custom_shop_type:1");
+            } else {
+                fq_condition.append("custom_searchable:1")
+                        .append(" OR ").append("custom_describe_good_flag:1")
+                        .append(" OR ").append("custom_sold_flag:1")
+                        .append(" OR ").append("custom_shop_type:1");
+            }
+            fq_condition.append(" )");
         }
-        fq_condition.append(" )");
+
     }
 
-    /**价格区间设置
+    /**
+     * 价格区间设置
+     *
      * @param param
      * @param fq_condition
      */
     private void priceFQ(SearchParam param, StringBuilder fq_condition) {
         String minPrices = splicingSyntax.categoryPrice(param.getKeyword());
-        if(StringUtils.isNotBlank(minPrices)){
-            fq_condition.append(" AND "+getPriceField(param.getSite())+":["+minPrices+" TO *]");
+        if (StringUtils.isNotBlank(minPrices)) {
+            fq_condition.append(" AND " + getPriceField(param.getSite()) + ":[" + minPrices + " TO *]");
             param.setPrices(minPrices);
         }
 
