@@ -328,37 +328,11 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 		List<String> list = new ArrayList();
 		// pet
 		if (site == 4) {
-			list.add("122584001");
-			list.add("9210034");
-			//list.add("9110035");
-			list.add("9210036");
-			//list.add("121802003");
-			//list.add("9110037");
-			//list.add("9110038");
-			list.add("9110039");
-			//list.add("122586001");
-			//list.add("121840001");
-			//list.add("9210040");
-			//list.add("9110041");
-			//list.add("9110042");
-			//list.add("9110043");
 			list.add("9210044");
-			//list.add("9110045");
-			//list.add("9110046");
-			//list.add("121786003");
 			list.add("121776006");
 		}
 		// kids
 		else if (site == 2) {
-			list.add("9410061");
-			list.add("9410062");
-			list.add("9410063");
-			list.add("9410064");
-			list.add("9410065");
-			list.add("9410066");
-			list.add("9410067");
-			list.add("9410068");
-			//list.add("9210052");
 			list.add("9410069");
 			list.add("9410070");
 			list.add("9410071");
@@ -374,39 +348,19 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			list.add("9410081");
 			list.add("9410082");
 			list.add("9410083");
-			list.add("9410084");
-			list.add("9410085");
-			list.add("9410086");
-			list.add("9410087");
-			list.add("9410088");
-			list.add("9410089");
-			list.add("9410090");
-			list.add("9410091");
-			list.add("9410092");
-			list.add("9410093");
 			list.add("9410094");
 			list.add("9410095");
 			list.add("9410096");
 			list.add("9410097");
 			list.add("9310121");
-			list.add("9410123");
-
-			list.add("9410124");
-			list.add("9410125");
-			list.add("9410127");
-			list.add("9410128");
-			//list.add("9210134");
 			list.add("9410117");
 			list.add("9410120");
 			list.add("9410114");
 			list.add("9410126");
-
 			list.add("9410118");
 			list.add("9410119");
 			list.add("9410116");
-			list.add("125386001");
 			list.add("1813");
-
 			list.add("9210054");
 			list.add("9210053");
 
