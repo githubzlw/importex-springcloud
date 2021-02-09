@@ -53,7 +53,7 @@ public interface CategoryMapper {
 	@Select({
 			"<script>" +
 					"select id,category_id,en_name,path,lv " +
-					"from 1688_category where category_id in " +
+					"from change_1688_category where category_id in " +
 					"<foreach collection='ids' item='item' open='(' separator=',' close=')'>" +
 					"#{item}" +
 					"</foreach>" +
