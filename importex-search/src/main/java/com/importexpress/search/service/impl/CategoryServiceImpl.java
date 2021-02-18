@@ -18,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.servlet.ServletContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class CategoryServiceImpl extends UriService implements CategoryService {
@@ -46,8 +43,16 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 
 		catidList.remove("9110051");
 
+		List<Category> list = getCategoriesByIds(param.getSite());
+
 		//已选择类别
 		List<String> selectedList = selectedCatid(param, catidList);
+
+		List<CategoryWrap> categoryWrapList = getOtherCategories(param, selectedList);
+
+		for (Category category : list) {
+			catidList.put(category.getCatid(), category);
+		}
 
 		//facet结果集
 		List<CategoryWrap> categorys = facetCategory(facetFields, catidList, param);
@@ -65,7 +70,20 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			}
 			selectedList.add(param.getCatid());
 		}
-		List<CategoryWrap> categoryWrapList = getOtherCategories(param, selectedList);
+		//List<CategoryWrap> categoryWrapList = getOtherCategories(param, selectedList);
+		for (CategoryWrap categoryWrap : categoryWrapList) {
+			for (FacetField facet : facetFields) {
+				List<Count> values = facet.getValues();
+				for (Count value : values) {
+					String catid = value.getName();
+					if (catid.equals(categoryWrap.getId())) {
+						categoryWrap.setCount(value.getCount());
+						break;
+					}
+				}
+			}
+		}
+
 		categorys.addAll(categoryWrapList);
 
 
@@ -327,12 +345,12 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 	private List<Category> getCategoriesByIds(int site) {
 		List<String> list = new ArrayList();
 		// pet
-		if (site == 4) {
+		if (site == 4 || site == 1) {
 			list.add("9210044");
 			list.add("121776006");
 		}
 		// kids
-		else if (site == 2) {
+		else if (site == 2 || site == 1) {
 			list.add("9410069");
 			list.add("9410070");
 			list.add("9410071");

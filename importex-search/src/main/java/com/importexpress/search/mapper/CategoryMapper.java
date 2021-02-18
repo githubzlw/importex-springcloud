@@ -30,7 +30,7 @@ public interface CategoryMapper {
 	 * @return List<Category>
 	 */
 	@Select("select id,category_id,en_name,path,lv,new_arrivals_flag,new_arrival_date " +
-			"from 1688_category where flag=0 and en_name !='' and en_name is not null")
+			"from change_1688_category where flag=0 and en_name !='' and en_name is not null")
 	@Results({@Result(column = "id", property = "id"),
 			@Result(column = "category_id", property = "catid"),
 			@Result(column = "path", property = "path"),
@@ -52,8 +52,8 @@ public interface CategoryMapper {
 	 */
 	@Select({
 			"<script>" +
-					"select id,category_id,en_name,path,lv " +
-					"from 1688_category where category_id in " +
+					"select id,category_id,en_name,path,lv,parent_id " +
+					"from change_1688_category where category_id in " +
 					"<foreach collection='ids' item='item' open='(' separator=',' close=')'>" +
 					"#{item}" +
 					"</foreach>" +
@@ -63,6 +63,7 @@ public interface CategoryMapper {
 			@Result(column = "category_id", property = "catid"),
 			@Result(column = "path", property = "path"),
 			@Result(column = "en_name", property = "name"),
-			@Result(column = "lv", property = "level")})
+			@Result(column = "lv", property = "level"),
+			@Result(column = "parent_id", property = "parentCategory")})
 	List<Category> getCategoriesByIds(@Param("ids") List<String> ids);
 }
