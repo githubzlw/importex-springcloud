@@ -52,7 +52,7 @@ public interface CategoryMapper {
 	 */
 	@Select({
 			"<script>" +
-					"select id,category_id,en_name,path,lv " +
+					"select id,category_id,en_name,path,lv,parent_id " +
 					"from change_1688_category where category_id in " +
 					"<foreach collection='ids' item='item' open='(' separator=',' close=')'>" +
 					"#{item}" +
@@ -63,6 +63,7 @@ public interface CategoryMapper {
 			@Result(column = "category_id", property = "catid"),
 			@Result(column = "path", property = "path"),
 			@Result(column = "en_name", property = "name"),
-			@Result(column = "lv", property = "level")})
+			@Result(column = "lv", property = "level"),
+			@Result(column = "parent_id", property = "parentCategory")})
 	List<Category> getCategoriesByIds(@Param("ids") List<String> ids);
 }
