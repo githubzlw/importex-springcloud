@@ -21,7 +21,6 @@
         <module>importex-product</module>
         <module>importex-cart</module>
         <module>importex-message</module>
-        <module>importex-serialport</module>
         <module>importex-login</module>
     </modules>
 
