@@ -32,7 +32,7 @@ public interface KeywordRecordMapper {
 	 *
 	 * @return
 	 */
-	@Select("select catid,type from  search_special")
+	@Select("select catid,type from  search_special where valid = 1")
 	List<Map<String, Object>> getSpecialCategoryList();
 
 	/**
