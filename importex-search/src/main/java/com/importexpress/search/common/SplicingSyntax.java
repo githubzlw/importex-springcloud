@@ -135,6 +135,7 @@ public class SplicingSyntax {
         StringBuilder fq_condition = new StringBuilder();
         List<String> specialCatidList = specialCatid.get(param.getSite());
         if(specialCatidList != null){
+            getCategoriesBySite(specialCatidList, param.getSite());
             fq_condition.append("(");
             for(int i=0,size=specialCatidList.size();i<size;i++){
                 fq_condition.append("custom_path_catid:\"").append(specialCatidList.get(i)).append("\" ");
@@ -354,6 +355,47 @@ public class SplicingSyntax {
         StringBuilder str = new StringBuilder(auto).append("@")
                 .append(cid).append("@").append(category);
         return str.toString();
+    }
+
+    private void getCategoriesBySite(List<String> list, int site) {
+        // pet
+        if (site == 4) {
+            list.add("9210044");
+            list.add("121776006");
+        }
+        // kids
+        else if (site == 2) {
+            list.add("9410069");
+            list.add("9410070");
+            list.add("9410071");
+            list.add("9410072");
+            list.add("9410073");
+            list.add("9410074");
+            list.add("9410075");
+            list.add("9410076");
+            list.add("9410077");
+            list.add("9410078");
+            list.add("9410079");
+            list.add("9410080");
+            list.add("9410081");
+            list.add("9410082");
+            list.add("9410083");
+            list.add("9410094");
+            list.add("9410095");
+            list.add("9410096");
+            list.add("9410097");
+            list.add("9310121");
+            list.add("9410117");
+            list.add("9410120");
+            list.add("9410114");
+            list.add("9410126");
+            list.add("9410118");
+            list.add("9410119");
+            list.add("9410116");
+            list.add("1813");
+            list.add("9210054");
+            list.add("9210053");
+        }
     }
 
 }
