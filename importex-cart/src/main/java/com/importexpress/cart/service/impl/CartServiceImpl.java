@@ -49,7 +49,7 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public int addCartItem(SiteEnum site, long userId, String itemId, long num) {
+    public int addCartItem(SiteEnum site, long userId, String itemId, long num, Integer chk) {
 
         try {
             checkItemId(itemId);
@@ -75,7 +75,7 @@ public class CartServiceImpl implements CartService {
             Assert.isTrue(StringUtils.isNotEmpty(split[0]), "The itemId invalid:" + itemId);
             Product product = productServiceFeign.findProduct(Long.parseLong(split[0]));
             Objects.requireNonNull(product);
-            CartItem cartItem = product2CartItem(site,product, num, split);
+            CartItem cartItem = product2CartItem(site,product, num, split,chk);
             //查找同pid商品做排序处理
             List<CartItem> lstCartItem = getCartItems(site, userId);
             for (CartItem item : lstCartItem) {
@@ -160,7 +160,7 @@ public class CartServiceImpl implements CartService {
      * @param split
      * @return
      */
-    private CartItem product2CartItem(SiteEnum site,Product product, long num, String[] split) {
+    private CartItem product2CartItem(SiteEnum site,Product product, long num, String[] split, Integer chk) {
 
         CartItem cartItem = new CartItem();
         cartItem.setMs(NumberUtils.toInt(product.getMatchSource()));
@@ -174,7 +174,7 @@ public class CartServiceImpl implements CartService {
         if (split.length >= 3) {
             cartItem.setSid2(NumberUtils.toLong(split[2]));
         }
-        cartItem.setChk(1);
+        cartItem.setChk(chk);
         if ("0".equals(product.getValid())) {
             //下架商品
             cartItem.setSt(0);
@@ -541,7 +541,7 @@ public class CartServiceImpl implements CartService {
         try {
             List<CartItem> cartItemsTourist = this.getCartItems(site, touristId);
             for (CartItem item : cartItemsTourist) {
-                this.addCartItem(site, userId, item.getItemId(), item.getNum());
+                this.addCartItem(site, userId, item.getItemId(), item.getNum(),item.getChk());
             }
             //删除游客购物车key
             redisTemplate.delete(getCartKey(site, touristId));

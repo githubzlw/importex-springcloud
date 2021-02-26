@@ -41,9 +41,9 @@ public class RefreshCartTest {
         Assert.assertEquals
                 (1, cartService.delAllCartItem(SITE, USER_ID));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID4, 2));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID4, 2,1));
         Assert.assertEquals
                 (0, cartService.refreshCart(SITE, USER_ID));
         Assert.assertEquals
@@ -58,12 +58,12 @@ public class RefreshCartTest {
         Assert.assertEquals
                 (1, cartService.delAllCartItem(SITE, USER_ID));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1,1));
         productServiceFeign.updateProduct(Long.parseLong(ITEM_ID2.substring(0, ITEM_ID2.indexOf(":"))), 0);
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 3));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 3,1));
         //判断无变更
         Assert.assertEquals
                 (1, cartService.refreshCart(SITE, USER_ID));
@@ -81,11 +81,11 @@ public class RefreshCartTest {
         Assert.assertEquals
                 (1, cartService.delAllCartItem(SITE, USER_ID));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID1, 1,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID2, 2,1));
         Assert.assertEquals
-                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 3));
+                (1, cartService.addCartItem(SITE, USER_ID, ITEM_ID3, 3,1));
 
         productServiceFeign.updateProduct(Long.parseLong(ITEM_ID2.substring(0, ITEM_ID2.indexOf(":"))), 0);
         Assert.assertEquals
