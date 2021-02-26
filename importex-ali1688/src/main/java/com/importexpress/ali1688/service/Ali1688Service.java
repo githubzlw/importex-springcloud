@@ -160,5 +160,5 @@ public interface Ali1688Service {
      * @param pid 商品ID
      * @return
      */
-    JSONObject getAlibabaDetail(Long pid);
+    JSONObject getAlibabaDetail(Long pid, boolean isCache);
 }

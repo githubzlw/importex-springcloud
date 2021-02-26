@@ -74,9 +74,9 @@ public class Ali1688Controller {
      * @return
      */
     @GetMapping("/alibaba")
-    public JSONObject getAlibabaDetail(@RequestParam("pid") Long pid) {
+    public JSONObject getAlibabaDetail(@RequestParam("pid") Long pid, @RequestParam(value = "isCache", required = false, defaultValue = "true") boolean isCache) {
 
-        return ali1688Service.getAlibabaDetail(pid);
+        return ali1688Service.getAlibabaDetail(pid, isCache);
     }
 
 

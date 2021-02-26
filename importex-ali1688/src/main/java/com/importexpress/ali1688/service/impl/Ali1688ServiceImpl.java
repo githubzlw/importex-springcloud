@@ -602,14 +602,14 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @return
      */
     @Override
-    public JSONObject getAlibabaDetail(Long pid) {
+    public JSONObject getAlibabaDetail(Long pid, boolean isCache) {
         Objects.requireNonNull(pid);
 
         Callable<JSONObject> callable = new Callable<JSONObject>() {
 
             @Override
             public JSONObject call() {
-                return getAlibabaItem(pid);
+                return getAlibabaItem(pid, isCache);
 
             }
         };
@@ -633,13 +633,23 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @param numIid
      * @return
      */
-    private JSONObject getAlibabaItem(Long pid) {
+    private JSONObject getAlibabaItem(Long pid, boolean isCache) {
         Objects.requireNonNull(pid);
+
+        if (isCache) {
+            JSONObject itemFromRedis = this.ali1688CacheService.getItemInfo(String.valueOf(pid));
+            if (null != itemFromRedis) {
+                checkPidInfo(String.valueOf(pid), itemFromRedis);
+                return itemFromRedis;
+            }
+        }
 
         try {
             JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET_ALIBABA, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
             jsonObject = checkResult(pid, jsonObject);
             checkItem(pid, jsonObject);
+
+            this.ali1688CacheService.setItemInfo(String.valueOf(pid), jsonObject);
 
             return jsonObject;
         } catch (IOException e) {

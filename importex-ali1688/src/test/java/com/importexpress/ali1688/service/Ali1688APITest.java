@@ -121,7 +121,7 @@ public class Ali1688APITest {
     @Test
     public void getAlibabaDetail() {
 
-        Assert.assertNotNull(ali1688Service.getAlibabaDetail(1600165367826L));
+        Assert.assertNotNull(ali1688Service.getAlibabaDetail(1600165367826L, true));
 
 
     }
