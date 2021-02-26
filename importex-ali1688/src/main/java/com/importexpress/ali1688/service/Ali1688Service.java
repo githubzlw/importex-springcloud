@@ -161,4 +161,12 @@ public interface Ali1688Service {
      * @return
      */
     JSONObject getAlibabaDetail(Long pid, boolean isCache);
+
+    /**
+     * 获取速卖通商品详情
+     *
+     * @param pid 商品ID
+     * @return
+     */
+    JSONObject getAliexpressDetail(Long pid, boolean isCache);
 }

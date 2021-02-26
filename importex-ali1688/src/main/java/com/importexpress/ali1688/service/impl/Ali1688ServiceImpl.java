@@ -61,6 +61,8 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      */
     private final static String URL_ITEM_GET_ALIBABA = "%salibaba/item_get/?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
 
+    private final static String URL_ITEM_GET_ALIEXPRESS = "%saliexpress/item_get/?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
+
     /**
      * img_upload API URL
      */
@@ -596,6 +598,38 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
 
     /**
+     * 获取速卖通商品详情
+     *
+     * @param pid
+     * @return
+     */
+    @Override
+    public JSONObject getAliexpressDetail(Long pid, boolean isCache) {
+        Objects.requireNonNull(pid);
+
+        Callable<JSONObject> callable = new Callable<JSONObject>() {
+
+            @Override
+            public JSONObject call() {
+                return getAlibabaOrAliExpressItem(pid, isCache, TypeSite.ALIEXPRESS);
+
+            }
+        };
+
+        Retryer<JSONObject> retryer = RetryerBuilder.<JSONObject>newBuilder()
+                .retryIfResult(Predicates.isNull())
+                .retryIfExceptionOfType(IllegalStateException.class)
+                .withWaitStrategy(WaitStrategies.fixedWait(2000, TimeUnit.MILLISECONDS))
+                .withStopStrategy(StopStrategies.stopAfterAttempt(3))
+                .build();
+        try {
+            return retryer.call(callable);
+        } catch (RetryException | ExecutionException e) {
+            throw new BizException(e.getMessage());
+        }
+    }
+
+    /**
      * 获取阿里巴巴商品详情
      *
      * @param pid
@@ -609,7 +643,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
             @Override
             public JSONObject call() {
-                return getAlibabaItem(pid, isCache);
+                return getAlibabaOrAliExpressItem(pid, isCache, TypeSite.ALIBABA);
 
             }
         };
@@ -631,9 +665,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * 通过numIid搜索商品（阿里巴巴）详情
      *
      * @param numIid
+     * @param isCache
+     * @param type
      * @return
      */
-    private JSONObject getAlibabaItem(Long pid, boolean isCache) {
+    private JSONObject getAlibabaOrAliExpressItem(Long pid, boolean isCache, TypeSite type) {
         Objects.requireNonNull(pid);
 
         if (isCache) {
@@ -645,7 +681,11 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         }
 
         try {
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET_ALIBABA, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
+            String url = URL_ITEM_GET_ALIBABA;
+            if (type == TypeSite.ALIEXPRESS) {
+                url = URL_ITEM_GET_ALIEXPRESS;
+            }
+            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(url, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
             jsonObject = checkResult(pid, jsonObject);
             checkItem(pid, jsonObject);
 
