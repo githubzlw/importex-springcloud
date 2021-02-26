@@ -21,20 +21,26 @@ public interface KeywordRecordMapper {
 
 	/**
 	 * 初始化搜索优先类别列表
+	 *
 	 * @return
 	 */
 	@Select("select keyword,category from priority_category where status=0")
-	List<Map<String,String>> getPriorityCategoryList();
-	/**初始化限定类别搜索类别列表
+	List<Map<String, String>> getPriorityCategoryList();
+
+	/**
+	 * 初始化限定类别搜索类别列表
+	 *
 	 * @return
 	 */
-	@Select("select catid,type from  search_special where valid=1")
-	List<Map<String,Object>> getSpecialCategoryList();
+	@Select("select catid,type from  search_special where valid = 1")
+	List<Map<String, Object>> getSpecialCategoryList();
+
 	/**
-	 *初始化搜索词对应的最低价和最高价
+	 * 初始化搜索词对应的最低价和最高价
+	 *
 	 * @return
 	 */
 	@Select("SELECT keyword,CONCAT(IFNULL(minPrice,'-'),'@',IFNULL(maxPrice,'-')) " +
 			"as price FROM priority_category where status=0")
-	List<Map<String,String>> getCategoryPriceList();
+	List<Map<String, String>> getCategoryPriceList();
 }
