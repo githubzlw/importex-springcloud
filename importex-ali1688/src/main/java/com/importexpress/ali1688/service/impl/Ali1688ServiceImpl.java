@@ -52,9 +52,14 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     private final StringRedisTemplate redisTemplate;
 
     /**
-     * 获取商品详情
+     * 获取商品详情（1688）
      */
     private final static String URL_ITEM_GET = "%s1688/api_call.php?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
+
+    /**
+     * 获取商品详情（Alibaba）
+     */
+    private final static String URL_ITEM_GET_ALIBABA = "%salibaba/item_get/?key=%s&secret=%s&num_iid=%s&api_name=item_get&lang=zh-CN";
 
     /**
      * img_upload API URL
@@ -62,7 +67,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     private final static String IMG_UPLOAD_TAOBAO_API = "%staobao/demo/img_upload.php";
 
 
-     /**
+    /**
      * img_upload API URL
      */
     private final static String IMG_UPLOAD_TAOBAO_API_1 = "%staobao/api_call.php";
@@ -93,6 +98,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
+    /**
+     * 通过PID搜索商品（1688）详情
+     *
+     * @param pid
+     * @param isCache
+     * @return
+     */
     private JSONObject getItemByPid(Long pid, boolean isCache) {
         Objects.requireNonNull(pid);
         if (isCache) {
@@ -113,7 +125,6 @@ public class Ali1688ServiceImpl implements Ali1688Service {
                 if (error.contains("你的授权已经过期")) {
                     throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
                 } else if (error.contains("超过")) {
-                    //TODO
                     throw new BizException(BizErrorCodeEnum.LIMIT_EXCEED_FAIL);
                 } else if (error.contains("item-not-found")) {
                     throw new IllegalStateException("item-not-found");
@@ -584,6 +595,82 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
+    /**
+     * 获取阿里巴巴商品详情
+     *
+     * @param pid
+     * @return
+     */
+    @Override
+    public JSONObject getAlibabaDetail(Long pid) {
+        Objects.requireNonNull(pid);
+
+        Callable<JSONObject> callable = new Callable<JSONObject>() {
+
+            @Override
+            public JSONObject call() {
+                return getAlibabaItem(pid);
+
+            }
+        };
+
+        Retryer<JSONObject> retryer = RetryerBuilder.<JSONObject>newBuilder()
+                .retryIfResult(Predicates.isNull())
+                .retryIfExceptionOfType(IllegalStateException.class)
+                .withWaitStrategy(WaitStrategies.fixedWait(2000, TimeUnit.MILLISECONDS))
+                .withStopStrategy(StopStrategies.stopAfterAttempt(3))
+                .build();
+        try {
+            return retryer.call(callable);
+        } catch (RetryException | ExecutionException e) {
+            throw new BizException(e.getMessage());
+        }
+    }
+
+    /**
+     * 通过numIid搜索商品（阿里巴巴）详情
+     *
+     * @param numIid
+     * @return
+     */
+    private JSONObject getAlibabaItem(Long pid) {
+        Objects.requireNonNull(pid);
+
+        try {
+            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET_ALIBABA, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
+            jsonObject = checkResult(pid, jsonObject);
+            checkItem(pid, jsonObject);
+
+            return jsonObject;
+        } catch (IOException e) {
+            log.error("getItem", e);
+            throw new BizException(BizErrorCodeEnum.UNSPECIFIED);
+        }
+    }
+
+    /**
+     * 判断返回json是否有异常信息
+     *
+     * @param pid
+     * @param jsonObject
+     * @return
+     */
+    private JSONObject checkResult(Long pid, JSONObject jsonObject) {
+        String error = jsonObject.getString("error");
+        if (StringUtils.isNotEmpty(error)) {
+            if (error.contains("你的授权已经过期")) {
+                throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
+            } else if (error.contains("超过")) {
+                throw new BizException(BizErrorCodeEnum.LIMIT_EXCEED_FAIL);
+            } else if (error.contains("item-not-found")) {
+                throw new IllegalStateException("item-not-found");
+            }
+            log.warn("json's error is not empty:[{}]，numIid:[{}]", error, pid);
+            jsonObject = InvalidPid.of(pid, error);
+        }
+        return jsonObject;
+    }
+
     private JSONObject getItemInfo(String pid, boolean isCache) {
         Objects.requireNonNull(pid);
         if (isCache) {
@@ -598,19 +685,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_TAOBAO_ITEM_DETAILS, config.API_KEY, config.API_SECRET, pid));
             String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
             this.redisTemplate.opsForHash().increment(REDIS_TAOBAO_PID_COUNT, "pid_" + strYmd, 1);
-            String error = jsonObject.getString("error");
-            if (StringUtils.isNotEmpty(error)) {
-                if (error.contains("你的授权已经过期")) {
-                    throw new BizException(BizErrorCodeEnum.EXPIRE_FAIL);
-                } else if (error.contains("超过")) {
-                    //TODO
-                    throw new BizException(BizErrorCodeEnum.LIMIT_EXCEED_FAIL);
-                } else if (error.contains("item-not-found")) {
-                    throw new IllegalStateException("item-not-found");
-                }
-                log.warn("json's error is not empty:[{}]，pid:[{}]", error, pid);
-                jsonObject = InvalidPid.of(Long.parseLong(pid), error);
-            }
+            jsonObject = this.checkResult(Long.parseLong(pid), jsonObject);
             checkPidInfo(pid, jsonObject);
             this.ali1688CacheService.setItemInfo(pid, jsonObject);
 
@@ -688,6 +763,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     }
 
 
+    /**
+     * 校验内容是否正确
+     *
+     * @param pid
+     * @param jsonObject
+     */
     private void checkItem(Long pid, JSONObject jsonObject) {
         Objects.requireNonNull(pid);
         Objects.requireNonNull(jsonObject);

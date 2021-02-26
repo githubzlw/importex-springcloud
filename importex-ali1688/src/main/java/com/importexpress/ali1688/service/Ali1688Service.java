@@ -140,6 +140,7 @@ public interface Ali1688Service {
 
     /**
      * pid_queue表：删除pid
+     *
      * @param id
      * @return
      */
@@ -147,8 +148,17 @@ public interface Ali1688Service {
 
     /**
      * 获取淘宝商品详情
+     *
      * @param pid
      * @return
      */
     CommonResult getDetails(String pid);
+
+    /**
+     * 获取阿里巴巴商品详情
+     *
+     * @param pid 商品ID
+     * @return
+     */
+    JSONObject getAlibabaDetail(Long pid);
 }
