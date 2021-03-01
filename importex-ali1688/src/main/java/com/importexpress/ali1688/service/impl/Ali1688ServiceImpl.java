@@ -577,7 +577,6 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             }
             itemDetail.setTypeJson(typeRsJson);
 
-
             // 解析属性标签
             List<Map> parseArray = JSONArray.parseArray(itemJson.getString("props"), Map.class);
             JSONObject propsMap = new JSONObject();
@@ -596,7 +595,6 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         }
     }
 
-
     /**
      * 获取速卖通商品详情
      *
@@ -607,14 +605,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     public JSONObject getAliexpressDetail(Long pid, boolean isCache) {
         Objects.requireNonNull(pid);
 
-        Callable<JSONObject> callable = new Callable<JSONObject>() {
-
-            @Override
-            public JSONObject call() {
-                return getAlibabaOrAliExpressItem(pid, isCache, TypeSite.ALIEXPRESS);
-
-            }
-        };
+        Callable<JSONObject> callable = () -> getAlibabaOrAliExpressItem(pid, isCache, TypeSite.ALIEXPRESS);
 
         Retryer<JSONObject> retryer = RetryerBuilder.<JSONObject>newBuilder()
                 .retryIfResult(Predicates.isNull())
@@ -639,14 +630,7 @@ public class Ali1688ServiceImpl implements Ali1688Service {
     public JSONObject getAlibabaDetail(Long pid, boolean isCache) {
         Objects.requireNonNull(pid);
 
-        Callable<JSONObject> callable = new Callable<JSONObject>() {
-
-            @Override
-            public JSONObject call() {
-                return getAlibabaOrAliExpressItem(pid, isCache, TypeSite.ALIBABA);
-
-            }
-        };
+        Callable<JSONObject> callable = () -> getAlibabaOrAliExpressItem(pid, isCache, TypeSite.ALIBABA);
 
         Retryer<JSONObject> retryer = RetryerBuilder.<JSONObject>newBuilder()
                 .retryIfResult(Predicates.isNull())
