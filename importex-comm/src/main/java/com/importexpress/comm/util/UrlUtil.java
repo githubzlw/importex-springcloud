@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -225,17 +226,28 @@ public class UrlUtil {
      * @return
      * @throws IOException
      */
-    public JSONObject callUrlByGet(String url) throws IOException {
+    public Optional<JSONObject> callUrlByGet(String url) {
 
         log.info("callUrlByGet:{}", url);
         Request request = new Request.Builder().url(url).build();
 
-        Response response = client.newCall(request).execute();
-        if (!response.isSuccessful()) {
-            throw new IOException("response is not successful");
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+        } catch (IOException e) {
+            log.error("IOException", e);
+            return Optional.empty();
         }
-        return response.body() != null ?
-                JSON.parseObject(response.body().string()) : null;
+        if (!response.isSuccessful()) {
+            return Optional.empty();
+        }
+        try {
+            return response.body() != null ?
+                    Optional.of(JSON.parseObject(response.body().string())) : Optional.empty();
+        } catch (IOException e) {
+            log.error("IOException", e);
+            return Optional.empty();
+        }
     }
 
     /**

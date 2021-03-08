@@ -117,8 +117,9 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             }
         }
 
-        try {
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_GET, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
+        if (jsonObjectOpt.isPresent()) {
+            JSONObject jsonObject = jsonObjectOpt.get();
             String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
             this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "pid_" + strYmd, 1);
             String error = jsonObject.getString("error");
@@ -138,10 +139,10 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             checkItem(pid, jsonObject);
 
             return jsonObject;
-        } catch (IOException e) {
-            log.error("getItem", e);
-            throw new BizException(BizErrorCodeEnum.UNSPECIFIED);
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
         }
+
     }
 
     /**
@@ -316,11 +317,14 @@ public class Ali1688ServiceImpl implements Ali1688Service {
      * @throws IOException
      */
     @Override
-    public JSONObject searchImgFromTaobao(String imgUrl) throws IOException{
+    public JSONObject searchImgFromTaobao(String imgUrl) throws IOException {
 
-        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(IMG_SEARCH_TAOBAO_API, config.API_HOST ,imgUrl,config.API_KEY, config.API_SECRET ));
-
-        return jsonObject;
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(IMG_SEARCH_TAOBAO_API, config.API_HOST, imgUrl, config.API_KEY, config.API_SECRET));
+        if (jsonObjectOpt.isPresent()) {
+            return jsonObjectOpt.get();
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
+        }
     }
 
     /**
@@ -465,6 +469,12 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return this.pidQueueMapper.deleteByPrimaryKey(pidQueue);
     }
 
+    /**
+     * 获取淘宝商品详情
+     *
+     * @param pid
+     * @return
+     */
     @Override
     public CommonResult getDetails(String pid) {
         JSONObject itemInfo = getItemInfo(pid, true);
@@ -664,22 +674,20 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             }
         }
 
-        try {
-            String url = URL_ITEM_GET_ALIBABA;
-            if (type == TypeSite.ALIEXPRESS) {
-                url = URL_ITEM_GET_ALIEXPRESS;
-            }
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(url, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
-            jsonObject = checkResult(pid, jsonObject);
-            checkItem(pid, jsonObject);
-
-            this.ali1688CacheService.setItemInfo(String.valueOf(pid), jsonObject);
-
-            return jsonObject;
-        } catch (IOException e) {
-            log.error("getItem", e);
-            throw new BizException(BizErrorCodeEnum.UNSPECIFIED);
+        String url = URL_ITEM_GET_ALIBABA;
+        if (type == TypeSite.ALIEXPRESS) {
+            url = URL_ITEM_GET_ALIEXPRESS;
         }
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(url, config.API_HOST, config.API_KEY, config.API_SECRET, pid));
+        if (jsonObjectOpt.isPresent()) {
+            JSONObject jsonObject = checkResult(pid, jsonObjectOpt.get());
+            checkItem(pid, jsonObject);
+            this.ali1688CacheService.setItemInfo(String.valueOf(pid), jsonObject);
+            return jsonObject;
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
+        }
+
     }
 
     /**
@@ -705,6 +713,13 @@ public class Ali1688ServiceImpl implements Ali1688Service {
         return jsonObject;
     }
 
+    /**
+     * 获取淘宝商品详情
+     *
+     * @param pid
+     * @param isCache
+     * @return
+     */
     private JSONObject getItemInfo(String pid, boolean isCache) {
         Objects.requireNonNull(pid);
         if (isCache) {
@@ -715,19 +730,18 @@ public class Ali1688ServiceImpl implements Ali1688Service {
             }
         }
 
-        try {
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_TAOBAO_ITEM_DETAILS, config.API_KEY, config.API_SECRET, pid));
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(URL_TAOBAO_ITEM_DETAILS, config.API_KEY, config.API_SECRET, pid));
+        if (jsonObjectOpt.isPresent()) {
             String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
             this.redisTemplate.opsForHash().increment(REDIS_TAOBAO_PID_COUNT, "pid_" + strYmd, 1);
-            jsonObject = this.checkResult(Long.parseLong(pid), jsonObject);
+            JSONObject jsonObject = this.checkResult(Long.parseLong(pid), jsonObjectOpt.get());
             checkPidInfo(pid, jsonObject);
             this.ali1688CacheService.setItemInfo(pid, jsonObject);
-
             return jsonObject;
-        } catch (IOException e) {
-            log.error("getItemInfo,pid[{}]", pid, e);
-            throw new BizException(BizErrorCodeEnum.UNSPECIFIED);
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
         }
+
     }
 
 
@@ -763,23 +777,28 @@ public class Ali1688ServiceImpl implements Ali1688Service {
 
         Map<String, Integer> result = new HashMap<>(3);
 
-        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_HOST, config.API_KEY, config.API_SECRET, shopid, page));
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_SEARCH, config.API_HOST, config.API_KEY, config.API_SECRET, shopid, page));
 
-        String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
-        this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "shop_" + strYmd, 1);
+        if (jsonObjectOpt.isPresent()) {
+            JSONObject jsonObject = jsonObjectOpt.get();
+            String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
+            this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "shop_" + strYmd, 1);
 
-        checkReturnJson(jsonObject);
+            checkReturnJson(jsonObject);
 
-        JSONObject items = jsonObject.getJSONObject("items");
-        Ali1688Item[] ali1688Items = JSON.parseObject(items.getJSONArray("item").toJSONString(), Ali1688Item[].class);
-        log.info("end fillItems: size:[{}] ", ali1688Items.length);
-        lstAllItems.addAll(Arrays.asList(ali1688Items));
+            JSONObject items = jsonObject.getJSONObject("items");
+            Ali1688Item[] ali1688Items = JSON.parseObject(items.getJSONArray("item").toJSONString(), Ali1688Item[].class);
+            log.info("end fillItems: size:[{}] ", ali1688Items.length);
+            lstAllItems.addAll(Arrays.asList(ali1688Items));
 
-        result.put("pagecount", Integer.parseInt(items.getString("pagecount")));
-        result.put("total_results", Integer.parseInt(items.getString("total_results")));
-        result.put("page_size", Integer.parseInt(items.getString("page_size")));
+            result.put("pagecount", Integer.parseInt(items.getString("pagecount")));
+            result.put("total_results", Integer.parseInt(items.getString("total_results")));
+            result.put("page_size", Integer.parseInt(items.getString("page_size")));
 
-        return result;
+            return result;
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
+        }
     }
 
     /**

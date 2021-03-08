@@ -7,10 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -66,28 +63,26 @@ public class ImageServerUtils {
         lines.stream().parallel().forEach( line ->{
 
             String[] split = line.split("/");
-            long pid =0;
+            long pid = 0;
 
-            if(type==1 || type ==3 ){
+            if (type == 1 || type == 3) {
                 //无效PID 侵权
                 pid = Long.parseLong(split[split.length - 1]);
-            }else {
+            } else {
                 //硬下架
                 pid = Long.parseLong(split[split.length - 2]);
             }
 
-            JSONObject jsonObject = null;
-            try {
-                jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL, pid));
-            } catch (IOException e) {
-                e.printStackTrace();
+            Optional<JSONObject> jsonObjectOpt = null;
+            jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(URL, pid));
+            if (jsonObjectOpt.isPresent()) {
+                JSONObject goodsBean = (JSONObject) jsonObjectOpt.get().get("goodsBean");
+                String valid = goodsBean.getString("valid");
+                if (!"0".equals(valid)) {
+                    lstInvalid.add(pid);
+                }
+                System.out.println("process:" + count.incrementAndGet());
             }
-            JSONObject goodsBean = (JSONObject)jsonObject.get("goodsBean");
-            String valid = goodsBean.getString("valid");
-            if(!"0".equals(valid)){
-                lstInvalid.add(pid);
-            }
-            System.out.println("process:" + count.incrementAndGet());
         });
 
         System.out.println("finished!");

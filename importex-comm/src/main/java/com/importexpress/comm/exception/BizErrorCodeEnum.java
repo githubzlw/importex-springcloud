@@ -7,25 +7,32 @@ package com.importexpress.comm.exception;
  */
 public enum BizErrorCodeEnum implements ErrorCode {
 
-    /** 未指明的异常 */
+    /**
+     * 未指明的异常
+     */
     UNSPECIFIED(500, "网络异常，请稍后再试"),
     NO_SERVICE(404, "网络异常, 服务器熔断"),
 
     // 通用异常
     REQUEST_ERROR(400, "入参异常,请检查入参后再次调用"),
-    DESC_IS_NULL(4001,"DESC不能为空"),
+    DESC_IS_NULL(4001, "DESC不能为空"),
 
-    ITEM_IS_NULL(4002,"ITEM无数据"),
+    ITEM_IS_NULL(4002, "ITEM无数据"),
+    BODY_IS_NULL(4003, "body is null"),
 
-    FAIL(30000,"调用API返回错误"),
-    EXPIRE_FAIL(30001,"你的授权已经过期"),
-    LIMIT_EXCEED_FAIL(30002,"调用次数超过使用量");
+    FAIL(30000, "调用API返回错误"),
+    EXPIRE_FAIL(30001, "你的授权已经过期"),
+    LIMIT_EXCEED_FAIL(30002, "调用次数超过使用量");
 
 
-    /** 错误码 */
+    /**
+     * 错误码
+     */
     private final int code;
 
-    /** 描述 */
+    /**
+     * 描述
+     */
     private final String description;
 
     /**
