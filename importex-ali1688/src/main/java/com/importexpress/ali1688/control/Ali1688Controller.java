@@ -67,9 +67,21 @@ public class Ali1688Controller {
         }
     }
 
+    /**
+     * alibaba国际站商品详情查询
+     *
+     * @param pid
+     * @return
+     */
+    @GetMapping("/alibaba")
+    public JSONObject getAlibabaDetail(@RequestParam("pid") Long pid, @RequestParam(value = "isCache", required = false, defaultValue = "true") boolean isCache) {
+
+        return ali1688Service.getAlibabaDetail(pid, isCache);
+    }
+
 
     @GetMapping("/shop/{shopid}")
-    public CommonResult getItemsInShop(@PathVariable("shopid") String shopid,@RequestParam(value = "minSales", required = false, defaultValue = "10") int minSales) {
+    public CommonResult getItemsInShop(@PathVariable("shopid") String shopid, @RequestParam(value = "minSales", required = false, defaultValue = "10") int minSales) {
 
         if (!isRunnable(true)) {
             return CommonResult.failed("非运行期间");

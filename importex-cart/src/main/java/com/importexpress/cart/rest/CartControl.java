@@ -43,7 +43,7 @@ public class CartControl {
                                     @PathVariable(value = "userId") long userId,
                                     @PathVariable(value = "itemId") String itemId,@RequestParam Integer num) {
 
-        int result = cartService.addCartItem(site, userId, itemId, num);
+        int result = cartService.addCartItem(site, userId, itemId, num,1);
         if (result == SUCCESS) {
             return CommonResult.success();
         } else {
