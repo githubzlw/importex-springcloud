@@ -381,8 +381,22 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			list.add("1813");
 			list.add("9210054");
 			list.add("9210053");
-
-
+		} else if(site == 8){
+			list.add("9110135");
+			list.add("9210136");
+			list.add("9210137");
+			list.add("9210138");
+			list.add("9210139");
+			list.add("9210140");
+			list.add("9210141");
+			list.add("9210142");
+			list.add("9210143");
+			list.add("9210144");
+			list.add("9210145");
+			list.add("9210146");
+			list.add("9210147");
+			list.add("9210148");
+			list.add("13");
 		}
 		return categoryMapper.getCategoriesByIds(list);
 	}
