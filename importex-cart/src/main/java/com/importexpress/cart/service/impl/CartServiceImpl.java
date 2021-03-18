@@ -191,7 +191,7 @@ public class CartServiceImpl implements CartService {
         cartItem.setCt(now);
         cartItem.setUt(now);
 
-        fillOthersInfoToProduct(product, cartItem, SiteEnum.HOME == site);
+        fillOthersInfoToProduct(product, cartItem, site);
         return cartItem;
     }
 
@@ -255,7 +255,8 @@ public class CartServiceImpl implements CartService {
      * @param product
      * @param cartItem
      */
-    private void fillOthersInfoToProduct(Product product, CartItem cartItem, boolean isHome) {
+    private void fillOthersInfoToProduct(Product product, CartItem cartItem, SiteEnum site) {
+
         //Entype:[[id=32161, type=Color, value=White beard, img=560676334685/9168867283_2128907802.60x60.jpg], [id=32162, type=Color, value=greybeard, img=560676334685/9192394532_2128907802.60x60.jpg], [id=32163, type=Color, value=Blue wave point, img=560676334685/9210989827_2128907802.60x60.jpg], [id=32164, type=Color, value=Powder point, img=560676334685/9210995840_2128907802.60x60.jpg], [id=324511, type=Spec, value=59cm(23 inch | age 0-3M), img=], [id=324512, type=Spec, value=66cm(26 inch | age 3-6M), img=], [id=324513, type=Spec, value=73cm(29 inch | age 6-9M), img=], [id=324514, type=Spec, value=80cm(31 inch | age 9-12M), img=], [id=324515, type=Spec, value=85cm(33 inch | age 9-12M), img=], [id=324516, type=Spec, value=90cm(35 inch | age 1-2T), img=], [id=324517, type=Spec, value=95cm(37 inch | age 1-2T), img=]]
         final String str1 = "value=";
         final String str2 = "img=";
@@ -296,7 +297,7 @@ public class CartServiceImpl implements CartService {
         cartItem.setTn(sb.toString().trim());
 
         if (StringUtils.isNotBlank(product.getRange_price_free_new())) {
-            ImmutablePair<Float, Long> weiAndPri = getWeiAndPri(product.getSku_new(), cartItem, isHome);
+            ImmutablePair<Float, Long> weiAndPri = getWeiAndPri(product.getSku_new(), cartItem, site);
             Assert.isTrue(weiAndPri != null, "weiAndPri is null. product.getSku()="+product.getSku_new() + ",cartItem=" + cartItem);
             cartItem.setWei(weiAndPri.getLeft());
             cartItem.setPri(weiAndPri.getRight());
@@ -305,7 +306,7 @@ public class CartServiceImpl implements CartService {
             float finalWeight = NumberUtils.toFloat(product.getFinal_weight());
             float volumeWeight = NumberUtils.toFloat(product.getVolume_weight());
             cartItem.setVlm(BigDecimalUtil.truncateDouble(volumeWeight, 2));
-            if(isHome){
+            if(SiteEnum.HOME == site){
                 // 如果是home网站，则volumeWeight是体积
                 cartItem.setWei(finalWeight);
             } else{
@@ -322,7 +323,7 @@ public class CartServiceImpl implements CartService {
      * @param cartItem
      * @return
      */
-    private ImmutablePair<Float, Long> getWeiAndPri(String sku, CartItem cartItem, boolean isHome) {
+    private ImmutablePair<Float, Long> getWeiAndPri(String sku, CartItem cartItem, SiteEnum site) {
         //sample: [{"skuAttr":"3216:32168", "skuPropIds":"32168", "specId":"3757601142926", "skuId":"3757601142926", "fianlWeight":"0.12","volumeWeight":"0.12", "wholesalePrice":"[≥1 $ 7.0-14.0]", "skuVal":{"actSkuCalPrice":"2.76", "actSkuMultiCurrencyCalPrice":"2.76", "actSkuMultiCurrencyDisplayPrice":"2.76", "availQuantity":0, "inventory":0, "isActivity":true, "skuCalPrice":"2.76", "skuMultiCurrencyCalPrice":"2.76", "skuMultiCurrencyDisplayPrice":"2.76", "costPrice":"14.0", "freeSkuPrice":"3.96"}]
         Type type = new TypeToken<Map<String, String>>() {
         }.getType();
@@ -337,7 +338,7 @@ public class CartServiceImpl implements CartService {
                         float finalWeight = NumberUtils.toFloat(String.valueOf(map.get("fianlWeight")));
                         float volumeWeight = NumberUtils.toFloat(String.valueOf(map.get("volumeWeight")));
                         float wei = Math.max(volumeWeight, finalWeight);
-                        if (isHome){
+                        if (SiteEnum.HOME == site){
                             // 如果是home网站，volumeWeight表示体积
                             wei = finalWeight;
                         }
@@ -587,7 +588,7 @@ public class CartServiceImpl implements CartService {
                 Product product = productServiceFeign.findProduct(cartItem.getPid());
 
                 //刷新图片，价格，重量
-                fillOthersInfoToProduct(product, cartItem, SiteEnum.HOME == site);
+                fillOthersInfoToProduct(product, cartItem, site);
                 //改变价格
                 changePrice(site, product, cartItem);
 
