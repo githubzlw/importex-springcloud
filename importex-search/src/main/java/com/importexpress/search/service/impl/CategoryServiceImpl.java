@@ -19,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 
 import javax.servlet.ServletContext;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryServiceImpl extends UriService implements CategoryService {
@@ -43,19 +44,76 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 
 		catidList.remove("9110051");
 
-		List<Category> list = getCategoriesByIds(param.getSite());
+		if (param.getSite() == 8) {
+			catidList.remove("13");
+		}
+
+
+		catidList.forEach((key, value) -> {
+			if (param.getSite() == 1) {
+				if (("9110135".equals(key)) || "9110135".equals(value.getParentCategory())) {
+					catidList.remove(key);
+				}
+			} else if (param.getSite() == 8) {
+				if ("9110135".equals(key)) {
+					value.setLevel(1);
+					value.setParentCategory("0");
+					value.setPath("9110135");
+				}
+				if ("9110135".equals(value.getParentCategory())) {
+					value.setLevel(2);
+					value.setPath("9110135," + value.getCatid());
+				}
+			}
+
+		});
+
+
+		if (param.getSite() == 1 || param.getSite() == 2 || param.getSite() == 4) {
+			List<Category> list = getCategoriesByIds(param.getSite());
+			for (Category category : list) {
+				catidList.put(category.getCatid(), category);
+			}
+		}
+
 
 		//已选择类别
 		List<String> selectedList = selectedCatid(param, catidList);
 
 		List<CategoryWrap> categoryWrapList = getOtherCategories(param, selectedList);
 
-		for (Category category : list) {
-			catidList.put(category.getCatid(), category);
-		}
 
 		//facet结果集
 		List<CategoryWrap> categorys = facetCategory(facetFields, catidList, param);
+
+		if (param.getSite() == 8) {
+			String url = initUri(param);
+			Object special = application.getAttribute("specialCatidList");
+			Map<Integer, List<String>> specialCatid = (Map<Integer, List<String>>) special;
+			List<String> specialCatidList = specialCatid.get(param.getSite());
+			for (String str : specialCatidList) {
+				int count = 0;
+				for (CategoryWrap categoryWrap : categorys) {
+					if (str.equals(categoryWrap.getId())) {
+						count++;
+						break;
+					}
+				}
+				if (count == 0) {
+					String[] categoryPaths = catidList.get(str).getPath().split(",");
+					CategoryWrap categoryWrap = new CategoryWrap();
+					categoryWrap.setCount(0);
+					categoryWrap.setId(str);
+					categoryWrap.setName(catidList.get(str).getName());
+					categoryWrap.setLevel(catidList.get(str).getLevel());
+					categoryWrap.setUrl(url + str);
+					categoryWrap.setParentCategory(categoryPaths.length > 1 ? categoryPaths[categoryPaths.length - 2] : "0");
+					categoryWrap.setSelected(0);
+					categorys.add(categoryWrap);
+				}
+			}
+
+		}
 
 		if ("1813,311,1501,125386001,201161703,125372003".equals(param.getCatid())) {
 			param.setCatid("1818031101501");
@@ -68,7 +126,10 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			if (CollectionUtils.isEmpty(selectedList)) {
 				selectedList = new ArrayList<>();
 			}
-			selectedList.add(param.getCatid());
+			if (!selectedList.contains(param.getCatid())) {
+				selectedList.add(param.getCatid());
+			}
+
 		}
 		//List<CategoryWrap> categoryWrapList = getOtherCategories(param, selectedList);
 		for (CategoryWrap categoryWrap : categoryWrapList) {
@@ -378,7 +439,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			list.add("9410118");
 			list.add("9410119");
 			list.add("9410116");
-			list.add("1813");
+			//list.add("1813");
 			list.add("9210054");
 			list.add("9210053");
 		} else if(site == 8){

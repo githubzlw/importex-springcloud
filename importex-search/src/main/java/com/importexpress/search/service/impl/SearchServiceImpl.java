@@ -6,6 +6,7 @@ import com.importexpress.comm.util.StrUtils;
 import com.importexpress.search.common.*;
 import com.importexpress.search.mongo.CatidGroup;
 import com.importexpress.search.pojo.*;
+import com.importexpress.search.pojo.Currency;
 import com.importexpress.search.service.*;
 import com.importexpress.search.util.ExhaustUtils;
 import com.importexpress.search.util.Utility;
@@ -22,10 +23,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j

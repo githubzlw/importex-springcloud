@@ -54,18 +54,25 @@ public class SolrServiceImpl extends SolrBase implements SolrService {
         paramNew.setOrder(false);
         paramNew.setFactPvid(false);
         ModifiableSolrParams solrParams = getSolrQuery(paramNew);
-        if(solrParams == null){
+        if (solrParams == null) {
             return null;
         }
-        SolrFacet facet = new SolrFacet("custom_path_catid",4,5000);
-        setFacet(solrParams,facet);
+        SolrFacet facet = null;
 
-        setFQ(removeFQ(solrParams,paramNew),solrParams);
-        setFL("custom_enname,custom_pid",solrParams);
-        setRows(0,1,solrParams);
+        if (param.getSite() == 8) {
+            facet = new SolrFacet("custom_path_catid", 1, 5000);
+        } else {
+            facet = new SolrFacet("custom_path_catid", 4, 5000);
+        }
+
+        setFacet(solrParams, facet);
+
+        setFQ(removeFQ(solrParams, paramNew), solrParams);
+        setFL("custom_enname,custom_pid", solrParams);
+        setRows(0, 1, solrParams);
 
         //获取请求
-        QueryResponse response = sendRequest(solrParams,httpSolrClient);
+        QueryResponse response = sendRequest(solrParams, httpSolrClient);
         //取分组统计列表
         return response;
     }
