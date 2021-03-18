@@ -494,6 +494,10 @@ public class SearchServiceImpl implements SearchService {
      */
     private boolean productPrice(boolean isFree, SolrDocument solrDocument, Product searchGoods, int site) {
         String rangePrice = StrUtils.object2Str(solrDocument.get("custom_range_price"));
+        if(site == com.importexpress.comm.pojo.SiteEnum.HOME.getCode()){
+            // home网站使用非免邮价
+            isFree = false;
+        }
         if (StringUtils.isNotBlank(rangePrice)) {
             if (isFree) {
                 String rangePriceFree = StrUtils.object2Str(
