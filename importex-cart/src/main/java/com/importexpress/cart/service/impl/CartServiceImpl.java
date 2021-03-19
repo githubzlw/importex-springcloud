@@ -202,19 +202,30 @@ public class CartServiceImpl implements CartService {
      * @param cartItem
      */
     private void changePrice(SiteEnum site, Product product, CartItem cartItem) {
-
-        //range_price
-        if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
-            cartItem.setRpe(product.getRange_price_free_new());
-        }
-        //feeprice
-        if(StringUtils.isNotEmpty(product.getFree_price_new())) {
-            cartItem.setFp(product.getFree_price_new());
+        if (SiteEnum.HOME == site) {
+//range_price
+            if (StringUtils.isNotEmpty(product.getRange_price())) {
+                cartItem.setRpe(product.getRange_price());
+            }
+            //feeprice
+            if (StringUtils.isNotEmpty(product.getWprice())) {
+                cartItem.setFp(product.getWprice());
+            }
+        } else {
+            //range_price
+            if (StringUtils.isNotEmpty(product.getRange_price_free_new())) {
+                cartItem.setRpe(product.getRange_price_free_new());
+            }
+            //feeprice
+            if (StringUtils.isNotEmpty(product.getFree_price_new())) {
+                cartItem.setFp(product.getFree_price_new());
+            }
         }
         //sku
-        if(StringUtils.isNotEmpty(product.getSku_new())){
+        if (StringUtils.isNotEmpty(product.getSku_new())) {
             cartItem.setSku(product.getSku_new());
         }
+
 
     }
 
