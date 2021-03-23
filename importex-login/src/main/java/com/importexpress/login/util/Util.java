@@ -17,6 +17,7 @@ public class Util {
         String strFacebookClientSecret;
         switch (site){
             case IMPORTX:
+            case HOME:
                 strGoogleClientId=config.IMPORT_GOOGLE_CLIENT_ID;
                 strFacebookClientId=config.IMPORT_FACEBOOK_CLIENT_ID;
                 strFacebookClientSecret=config.IMPORT_FACEBOOK_CLIENT_SECRET;

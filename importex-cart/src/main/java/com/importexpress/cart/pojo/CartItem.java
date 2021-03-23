@@ -33,6 +33,11 @@ public class CartItem {
     private float wei;
 
     /**
+     * 体积
+     */
+    private double vlm;
+
+    /**
      * 状态 上架:1 下架:0
      */
     private int st = 1;
