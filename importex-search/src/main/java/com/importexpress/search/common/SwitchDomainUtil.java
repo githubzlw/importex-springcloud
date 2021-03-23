@@ -11,7 +11,7 @@ public class SwitchDomainUtil {
     private static final String IMPORT_WEBSITE = "import-express.com";
     private static final String KID_WEBSITE = "kidscharming.com";
     private static final String PET_WEBSITE = "petstoreinc.com";
-    private static final String HOME_WEBSITE = "homeproductimport.com";
+    private static final String HOME_WEBSITE = "homeproductimport.com";  // 原homeproductimport.com 暂时用
     private static final String MEDIC_WEBSITE = "medicaldevicefactory.com";
 //    public static final String HTTP_IMPORT_WEBSITE = "https://www.import-express.com";
 //    public static final String HTTP_KID_WEBSITE = "https://www.kidscharming.com";

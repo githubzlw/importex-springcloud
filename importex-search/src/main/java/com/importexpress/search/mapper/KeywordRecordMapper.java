@@ -17,7 +17,7 @@ public interface KeywordRecordMapper {
 	@Select("SELECT  keyword,catid1,catid2,catid3 FROM  synonym " +
 			" WHERE (catid1 REGEXP '[0-9]+' OR catid2 REGEXP '[0-9]+' " +
 			"OR catid3 REGEXP '[0-9]+') AND isDelete=0 and issyn=1")
-	List<Map<String,String>> getKeywordCatidList();
+	List<Map<String, String>> getKeywordCatidList();
 
 	/**
 	 * 初始化搜索优先类别列表
