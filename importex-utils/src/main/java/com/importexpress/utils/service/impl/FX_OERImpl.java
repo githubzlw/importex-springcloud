@@ -2,6 +2,8 @@ package com.importexpress.utils.service.impl;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.importexpress.comm.exception.BizErrorCodeEnum;
+import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.util.UrlUtil;
 import com.importexpress.utils.service.ExchangeRateService;
 import com.importexpress.utils.util.CurrencyEnum;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class FX_OERImpl implements ExchangeRateService {
@@ -42,19 +45,22 @@ public class FX_OERImpl implements ExchangeRateService {
         Map<String, BigDecimal> mapResult = new HashMap<>();
 
 
-        JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(URL);
-        Assert.isTrue("USD".equals(jsonObject.getString("base")), "query is error");
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(URL);
+        if (jsonObjectOpt.isPresent()) {
+            Assert.isTrue("USD".equals(jsonObjectOpt.get().getString("base")), "query is error");
+            JSONObject rates = jsonObjectOpt.get().getJSONObject("rates");
+            mapResult.put("USD" + CurrencyEnum.AUD.toString(), rates.getBigDecimal(CurrencyEnum.AUD.toString()));
+            mapResult.put("USD" + CurrencyEnum.CAD.toString(), rates.getBigDecimal(CurrencyEnum.CAD.toString()));
+            mapResult.put("USD" + CurrencyEnum.EUR.toString(), rates.getBigDecimal(CurrencyEnum.EUR.toString()));
+            mapResult.put("USD" + CurrencyEnum.GBP.toString(), rates.getBigDecimal(CurrencyEnum.GBP.toString()));
+            mapResult.put("USD" + CurrencyEnum.CNY.toString(), rates.getBigDecimal(CurrencyEnum.CNY.toString()));
 
-        JSONObject rates = jsonObject.getJSONObject("rates");
-        mapResult.put("USD" + CurrencyEnum.AUD.toString(), rates.getBigDecimal(CurrencyEnum.AUD.toString()));
-        mapResult.put("USD" + CurrencyEnum.CAD.toString(), rates.getBigDecimal(CurrencyEnum.CAD.toString()));
-        mapResult.put("USD" + CurrencyEnum.EUR.toString(), rates.getBigDecimal(CurrencyEnum.EUR.toString()));
-        mapResult.put("USD" + CurrencyEnum.GBP.toString(), rates.getBigDecimal(CurrencyEnum.GBP.toString()));
-        mapResult.put("USD" + CurrencyEnum.CNY.toString(), rates.getBigDecimal(CurrencyEnum.CNY.toString()));
+            Assert.isTrue(mapResult.size() == 5, "get rate result is not 5");
 
-        Assert.isTrue(mapResult.size() == 5, "get rate result is not 5");
-
-        return mapResult;
+            return mapResult;
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
+        }
 
     }
 

@@ -1,11 +1,14 @@
 package com.importexpress.utils.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.importexpress.comm.exception.BizErrorCodeEnum;
+import com.importexpress.comm.exception.BizException;
 import com.importexpress.comm.util.UrlUtil;
 import com.importexpress.utils.service.IpService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  * 免费调用次数：每月10000次
@@ -53,7 +56,12 @@ public class IpServiceIPStackImpl implements IpService {
 
     @Override
     public JSONObject queryIp(String ip) throws IOException {
-        return UrlUtil.getInstance().callUrlByGet(String.format(URL, ip));
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(URL, ip));
+        if (jsonObjectOpt.isPresent()) {
+            return jsonObjectOpt.get();
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
+        }
     }
 
 

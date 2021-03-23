@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -274,20 +273,21 @@ public class AliExpressServiceImpl implements AliExpressService {
             }
         }
 
-        try {
-            // 组合过滤条件
-            StringBuffer sb = new StringBuffer(URL_ITEM_SEARCH);
-            if (StringUtils.isNotBlank(start_price)) {
-                sb.append("&start_price=" + start_price);
-            }
-            if (StringUtils.isNotBlank(end_price)) {
-                sb.append("&end_price=" + end_price);
-            }
-            if (StringUtils.isNotBlank(sort)) {
-                sb.append("&sort=" + sort);
-            }
-            System.err.println("url:" + sb.toString());
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(sb.toString(), config.API_KEY, config.API_SECRET, keyword, page));
+        // 组合过滤条件
+        StringBuffer sb = new StringBuffer(URL_ITEM_SEARCH);
+        if (StringUtils.isNotBlank(start_price)) {
+            sb.append("&start_price=" + start_price);
+        }
+        if (StringUtils.isNotBlank(end_price)) {
+            sb.append("&end_price=" + end_price);
+        }
+        if (StringUtils.isNotBlank(sort)) {
+            sb.append("&sort=" + sort);
+        }
+        System.err.println("url:" + sb.toString());
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(sb.toString(), config.API_KEY, config.API_SECRET, keyword, page));
+        if (jsonObjectOpt.isPresent()) {
+            JSONObject jsonObject = jsonObjectOpt.get();
             String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
             this.redisTemplate.opsForHash().increment(REDIS_CALL_COUNT, "keyword_" + strYmd, 1);
             String error = jsonObject.getString("error");
@@ -307,10 +307,10 @@ public class AliExpressServiceImpl implements AliExpressService {
             checkKeyWord(page, keyword, jsonObject);
 
             return jsonObject;
-        } catch (IOException e) {
-            log.error("getItemByKeyword,keyword[{}]", keyword, e);
-            throw new BizException(BizErrorCodeEnum.UNSPECIFIED);
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
         }
+
     }
 
     private void checkKeyWord(Integer page, String keyword, JSONObject jsonObject) {
@@ -337,8 +337,9 @@ public class AliExpressServiceImpl implements AliExpressService {
             }
         }
 
-        try {
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_DETAILS, config.API_KEY, config.API_SECRET, pid));
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_DETAILS, config.API_KEY, config.API_SECRET, pid));
+        if (jsonObjectOpt.isPresent()) {
+            JSONObject jsonObject = jsonObjectOpt.get();
             String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
             this.redisTemplate.opsForHash().increment(REDIS_PID_COUNT, "pid_" + strYmd, 1);
             String error = jsonObject.getString("error");
@@ -359,10 +360,10 @@ public class AliExpressServiceImpl implements AliExpressService {
             this.cacheService.setItemInfo(pid, jsonObject);
 
             return jsonObject;
-        } catch (IOException e) {
-            log.error("getItemInfo,pid[{}]", pid, e);
-            throw new BizException(BizErrorCodeEnum.UNSPECIFIED);
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
         }
+
     }
 
 

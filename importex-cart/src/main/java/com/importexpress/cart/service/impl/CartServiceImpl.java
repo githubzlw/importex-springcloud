@@ -202,19 +202,30 @@ public class CartServiceImpl implements CartService {
      * @param cartItem
      */
     private void changePrice(SiteEnum site, Product product, CartItem cartItem) {
-
-        //range_price
-        if(StringUtils.isNotEmpty(product.getRange_price_free_new())) {
-            cartItem.setRpe(product.getRange_price_free_new());
-        }
-        //feeprice
-        if(StringUtils.isNotEmpty(product.getFree_price_new())) {
-            cartItem.setFp(product.getFree_price_new());
+        if (SiteEnum.HOME == site) {
+//range_price
+            if (StringUtils.isNotEmpty(product.getRange_price())) {
+                cartItem.setRpe(product.getRange_price());
+            }
+            //feeprice
+            if (StringUtils.isNotEmpty(product.getWprice())) {
+                cartItem.setFp(product.getWprice());
+            }
+        } else {
+            //range_price
+            if (StringUtils.isNotEmpty(product.getRange_price_free_new())) {
+                cartItem.setRpe(product.getRange_price_free_new());
+            }
+            //feeprice
+            if (StringUtils.isNotEmpty(product.getFree_price_new())) {
+                cartItem.setFp(product.getFree_price_new());
+            }
         }
         //sku
-        if(StringUtils.isNotEmpty(product.getSku_new())){
+        if (StringUtils.isNotEmpty(product.getSku_new())) {
             cartItem.setSku(product.getSku_new());
         }
+
 
     }
 
@@ -308,7 +319,7 @@ public class CartServiceImpl implements CartService {
             cartItem.setVlm(BigDecimalUtil.truncateDouble(volumeWeight, 2));
             if(SiteEnum.HOME == site){
                 // 如果是home网站，则volumeWeight是体积
-                cartItem.setWei(finalWeight);
+                cartItem.setWei(Math.max(finalWeight, 0.01F));
             } else{
                 cartItem.setWei(Math.max(volumeWeight, finalWeight));
             }
@@ -340,7 +351,7 @@ public class CartServiceImpl implements CartService {
                         float wei = Math.max(volumeWeight, finalWeight);
                         if (SiteEnum.HOME == site){
                             // 如果是home网站，volumeWeight表示体积
-                            wei = finalWeight;
+                            wei = Math.max(finalWeight, 0.01F);
                         }
                         //重新设置价格
                         Map<String, String> skuVal = new Gson().fromJson(String.valueOf(map.get("skuVal")), type);

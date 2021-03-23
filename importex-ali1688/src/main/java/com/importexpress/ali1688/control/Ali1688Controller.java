@@ -79,6 +79,18 @@ public class Ali1688Controller {
         return ali1688Service.getAlibabaDetail(pid, isCache);
     }
 
+    /**
+     * 速卖通商品详情查询
+     *
+     * @param pid
+     * @return
+     */
+    @GetMapping("/aliexpress")
+    public JSONObject getAliexpressDetail(@RequestParam("pid") Long pid, @RequestParam(value = "isCache", required = false, defaultValue = "true") boolean isCache) {
+
+        return ali1688Service.getAliexpressDetail(pid, isCache);
+    }
+
 
     @GetMapping("/shop/{shopid}")
     public CommonResult getItemsInShop(@PathVariable("shopid") String shopid, @RequestParam(value = "minSales", required = false, defaultValue = "10") int minSales) {
