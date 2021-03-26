@@ -40,8 +40,12 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			return Lists.newArrayList();
 		}
 		//所有类别列表全局变量
-		Map<String, Category> catidList = (Map<String, Category>) application.getAttribute("categorys");
+		//Map<String, Category> catidList = (Map<String, Category>) application.getAttribute("categorys");
 
+		Map<String, Category> catidListTemp = (Map<String, Category>) application.getAttribute("categorys");
+
+		Map<String, Category> catidList = new HashMap<>();
+		catidListTemp.forEach(catidList::put);
 		catidList.remove("9110051");
 
 		if (param.getSite() == 8) {
@@ -200,6 +204,7 @@ public class CategoryServiceImpl extends UriService implements CategoryService {
 			return dealCategoryChildren;
 		}
 
+		catidList.clear();
 		//新品日志列表
 		newArrivalDate(param, dealCategoryChildren);
 
