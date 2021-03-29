@@ -1,9 +1,12 @@
 package com.importexpress.ali1688.control;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.rholder.retry.*;
+import com.google.common.base.Predicates;
 import com.importexpress.ali1688.service.Ali1688Service;
 import com.importexpress.ali1688.util.Config;
 import com.importexpress.comm.domain.CommonResult;
+import com.importexpress.comm.exception.BizException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author jack.luo
@@ -61,21 +67,38 @@ public class ImageSearchController {
             }
             //缓存中判断
             JSONObject imageSearchFromCatch = ali1688Service.getImageSearchFromCatch(md5);
-            if(imageSearchFromCatch !=null){
+            if (imageSearchFromCatch != null) {
                 return CommonResult.success(imageSearchFromCatch);
             }
 
             String url = ali1688Service.uploadImgToTaobao(dest.getAbsolutePath());
-            if(StringUtils.isEmpty(url)){
+            if (StringUtils.isEmpty(url)) {
                 return CommonResult.failed("upload image failed");
             }
-            JSONObject jsonObject = ali1688Service.searchImgFromTaobao(url);
+
+            Callable<JSONObject> callable = () -> ali1688Service.searchImgFromTaobao(url);
+
+            JSONObject jsonObject = null;
+            //增加重试次数
+            Retryer<JSONObject> retryer = RetryerBuilder.<JSONObject>newBuilder()
+                    .retryIfResult(Predicates.isNull())
+                    .retryIfExceptionOfType(IllegalStateException.class)
+                    .retryIfExceptionOfType(BizException.class)
+                    .withWaitStrategy(WaitStrategies.randomWait(1000, TimeUnit.MILLISECONDS))
+                    .withStopStrategy(StopStrategies.stopAfterAttempt(3))
+                    .build();
+            try {
+                jsonObject = retryer.call(callable);
+            } catch (ExecutionException | RetryException e) {
+                log.error("Retry", e);
+                return CommonResult.failed(e.toString());
+            }
+
             //缓存中保存
             ali1688Service.saveImageSearchFromCatch(md5, jsonObject);
 
             return CommonResult.success(jsonObject);
         } catch (IOException e) {
-            e.printStackTrace();
             log.error(e.toString(), e);
             return CommonResult.failed(e.toString());
         }finally {
@@ -89,7 +112,24 @@ public class ImageSearchController {
     @GetMapping("/details/{pid}")
     @ResponseBody
     public CommonResult getDetails(@PathVariable(name = "pid") String pid) {
-        return ali1688Service.getDetails(pid);
+        try {
+
+            Callable<CommonResult> callable = () -> ali1688Service.getDetails(pid);
+
+            //增加重试次数
+            Retryer<CommonResult> retryer = RetryerBuilder.<CommonResult>newBuilder()
+                    .retryIfResult(Predicates.isNull())
+                    .retryIfExceptionOfType(IllegalStateException.class)
+                    .retryIfExceptionOfType(BizException.class)
+                    .withWaitStrategy(WaitStrategies.randomWait(1000, TimeUnit.MILLISECONDS))
+                    .withStopStrategy(StopStrategies.stopAfterAttempt(3))
+                    .build();
+            return retryer.call(callable);
+
+        } catch (Exception e) {
+            log.error(e.toString(), e);
+            return CommonResult.failed(e.toString());
+        }
     }
 
 }

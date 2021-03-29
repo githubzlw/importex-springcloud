@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -187,10 +186,11 @@ public class AmazonServiceImpl implements AmazonService {
             }
         }
 
-        try {
-            JSONObject jsonObject = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_DETAILS, config.API_KEY, config.API_SECRET, pid));
+        Optional<JSONObject> jsonObjectOpt = UrlUtil.getInstance().callUrlByGet(String.format(URL_ITEM_DETAILS, config.API_KEY, config.API_SECRET, pid));
+        if (jsonObjectOpt.isPresent()) {
             String strYmd = LocalDate.now().format(DateTimeFormatter.ofPattern(YYYYMMDD));
             this.redisTemplate.opsForHash().increment(REDIS_PID_COUNT, "pid_" + strYmd, 1);
+            JSONObject jsonObject = jsonObjectOpt.get();
             String error = jsonObject.getString("error");
             if (StringUtils.isNotEmpty(error)) {
                 if (error.contains("你的授权已经过期")) {
@@ -209,10 +209,10 @@ public class AmazonServiceImpl implements AmazonService {
             this.cacheService.setItemInfo(pid, jsonObject);
 
             return jsonObject;
-        } catch (IOException e) {
-            log.error("getItemInfo,pid[{}]", pid, e);
-            throw new BizException(BizErrorCodeEnum.UNSPECIFIED);
+        } else {
+            throw new BizException(BizErrorCodeEnum.BODY_IS_NULL);
         }
+
     }
 
 
